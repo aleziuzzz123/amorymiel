@@ -195,6 +195,40 @@ function AdminPanel({ paleta, products, setProducts, services, setServices, onCl
   </div>);
 }
 
+function ProductModal({ item, selectedVariant, setSelectedVariant, onAdd, onClose }){
+  return (
+    <div style={{ position:"fixed", inset:0, zIndex:70 }}>
+      <div onClick={onClose} style={{ position:"absolute", inset:0, background:"rgba(0,0,0,.45)" }} />
+      <div style={{ position:"absolute", left:"50%", top:"50%", transform:"translate(-50%, -50%)", width:"min(760px,92vw)", background:"#fff", borderRadius:18, overflow:"hidden", boxShadow:"0 20px 50px rgba(0,0,0,.25)" }}>
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr" }}>
+          <img src={item.imagen} alt={item.nombre} style={{ width:"100%", height:"100%", maxHeight:380, objectFit:"cover" }} />
+          <div style={{ padding:16 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"start", gap:8 }}>
+              <h3 style={{ margin:0, fontSize:22 }}>{item.nombre}</h3>
+              <button className="btn-outline" onClick={onClose}>✖️</button>
+            </div>
+            {Array.isArray(item.variantes)&&item.variantes.length ? (
+              <div style={{ marginTop:10 }}>
+                <label style={{ fontSize:12, opacity:.75 }}>Variante</label>
+                <select value={selectedVariant?.sku||""} onChange={(e)=>{ const v=(item.variantes||[]).find(v=>v.sku===e.target.value)||null; setSelectedVariant(v); }} style={{ width:'100%', marginTop:6, padding:'10px 12px', borderRadius:12, border:'1px solid rgba(0,0,0,.12)' }}>
+                  {(item.variantes||[]).map(v=> <option key={v.sku} value={v.sku}>{v.titulo} — {money(v.precio, item.moneda||'MXN')}</option>)}
+                </select>
+              </div>
+            ) : null}
+            <div style={{ marginTop:12, fontWeight:700, fontSize:18 }}>{money(selectedVariant?.precio ?? (item.precio || minPrice(item)), item.moneda||'MXN')}</div>
+            <div style={{ marginTop:12, display:"flex", gap:8 }}>
+              {item.categoria==='Servicios'
+                ? <a href={item.bookingLink} target="_blank" rel="noreferrer" className="btn" style={{ background:"#E0A73A", color:"#1A1714" }}>📞 Reservar</a>
+                : <button className="btn" style={{ background:"#E0A73A", color:"#1A1714" }} onClick={()=>{ onAdd(item, selectedVariant); onClose(); }}>🛒 Añadir</button>}
+              <button className="btn-outline" onClick={onClose}>Cerrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function App(){
   const [query,setQuery]=useState(""); const [category,setCategory]=useState("Todos");
   const [cart,setCart]=useState([]); const [openCart,setOpenCart]=useState(false);
@@ -230,88 +264,567 @@ export default function App(){
     }catch(e){ alert("Configura MP_ACCESS_TOKEN en Vercel y el endpoint /api/checkout/mp"); }
   };
 
-  return <div>
-    <div className="container" style={{ display:'flex', gap:8, alignItems:'center', padding:'8px 0' }}>
-      <small style={{ opacity:.7 }}>Tema:</small>
-      <button className="btn-outline" style={{ borderColor: paleta.miel, background: paleta.miel }}>Boutique Mosaico</button>
-      <button className="btn-outline" style={{ borderColor: paleta.miel, marginLeft:'auto' }} onClick={()=>setShowAdmin(s=>!s)}>⚙️ Admin</button>
-    </div>
-    <div className="container" style={{ padding:'10px 0' }}>
-      <div style={{ display:'flex', gap:8, alignItems:'center' }}>
-        🔎<input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar..." style={{ padding:'8px 10px', borderRadius:12, border:'1px solid rgba(0,0,0,.12)', width:260 }} />
-      </div>
-    </div>
-    {/** Product grid + services */}
-    {React.createElement(VariationD, { paleta, items:products, onAdd, onOpen, cart, setOpenCart, category, setCategory, query, setQuery, services })}
+  const filteredItems = React.useMemo(() => {
+    const allItems = [...products, ...services];
+    const q = (query || "").toLowerCase().trim();
+    return allItems.filter(item => 
+      (category === "Todos" || item.categoria === category) && 
+      (!q || item.nombre.toLowerCase().includes(q) || (item.tags || []).some(t => (t || "").toLowerCase().includes(q)))
+    );
+  }, [products, services, category, query]);
 
-    {openCart && (<div style={{ position:"fixed", inset:0, zIndex:60 }}>
-      <div onClick={()=>setOpenCart(false)} style={{ position:"absolute", inset:0, background:"rgba(0,0,0,.35)" }} />
-      <div style={{ position:"absolute", right:0, top:0, height:"100%", width:"min(420px,100%)", background:"#fff", display:"flex", flexDirection:"column", boxShadow:"-12px 0 28px rgba(0,0,0,.15)" }}>
-        <div style={{ padding:14, borderBottom:"1px solid rgba(0,0,0,.08)", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-          <strong style={{ display:"flex", alignItems:"center", gap:8 }}>🛍️ Tu carrito</strong>
-          <button onClick={()=>setOpenCart(false)} className="btn-outline" style={{ borderColor:"#ddd" }}>✖️</button>
-        </div>
-        <div style={{ padding:14, overflow:"auto", flex:1 }}>
-          {cart.length===0 && <div style={{ opacity:.6 }}>Tu carrito está vacío.</div>}
-          {cart.map((it)=> (
-            <div key={it.id} style={{ display:"flex", gap:10, marginBottom:12 }}>
-              <img src={it.imagen} alt={it.nombre} style={{ width:72, height:72, objectFit:"cover", borderRadius:12 }} />
-              <div style={{ flex:1 }}>
-                <div style={{ fontWeight:600 }}>{it.nombre}</div>
-                <div style={{ opacity:.7, fontSize:14 }}>{money(it.precio)}</div>
-                <div style={{ marginTop:6, display:"flex", gap:6, alignItems:"center" }}>
-                  <button className="btn-outline" onClick={()=> setCart(prev=> prev.map(p=> p.id===it.id? { ...p, cantidad: Math.max(1, p.cantidad-1) } : p))}>-</button>
-                  <span>{it.cantidad}</span>
-                  <button className="btn-outline" onClick={()=> setCart(prev=> prev.map(p=> p.id===it.id? { ...p, cantidad: p.cantidad+1 } : p))}>+</button>
-                </div>
-              </div>
-              <button className="btn-outline" onClick={()=> setCart(prev=> prev.filter(p=> p.id!==it.id))}>Eliminar</button>
-            </div>
-          ))}
-        </div>
-        <div style={{ padding:14, borderTop:"1px solid rgba(0,0,0,.08)" }}>
-          <div style={{ display:"flex", justifyContent:"space-between", fontWeight:700 }}><span>Subtotal</span><span>{money(subtotal)}</span></div>
-          <button className="btn" style={{ background: paleta.miel, color: paleta.carbon, width:"100%", marginTop:10 }} onClick={checkoutMP}>🛒 Pagar con Mercado Pago</button>
-        </div>
-      </div>
-    </div>)}
+  return (
+    <div style={{ background: paleta.fondo, minHeight: "100vh" }}>
+      <UIStyles />
+      
+      {/* Header */}
+      <header style={{ 
+        background: "white", 
+        boxShadow: "0 2px 20px rgba(0,0,0,0.08)", 
+        position: "sticky", 
+        top: 0, 
+        zIndex: 100 
+      }}>
+        <div className="container" style={{ 
+          display: "flex", 
+          alignItems: "center", 
+          justifyContent: "space-between", 
+          padding: "1rem", 
+          gap: "2rem" 
+        }}>
+          {/* Logo */}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <span style={{ fontSize: "1.5rem" }}>🐝</span>
+            <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: "600", color: paleta.carbon }}>
+              Amor y Miel
+            </h1>
+          </div>
 
-    {modal && (<div style={{ position:"fixed", inset:0, zIndex:70 }}>
-      <div onClick={()=>close()} style={{ position:"absolute", inset:0, background:"rgba(0,0,0,.45)" }} />
-      <div style={{ position:"absolute", left:"50%", top:"50%", transform:"translate(-50%, -50%)", width:"min(760px,92vw)", background:"#fff", borderRadius:18, overflow:"hidden", boxShadow:"0 20px 50px rgba(0,0,0,.25)" }}>
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr" }}>
-          <img src={modal.imagen} alt={modal.nombre} style={{ width:"100%", height:"100%", maxHeight:380, objectFit:"cover" }} />
-          <div style={{ padding:16 }}>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"start", gap:8 }}>
-              <h3 style={{ margin:0, fontSize:22 }}>{modal.nombre}</h3>
-              <button className="btn-outline" onClick={()=>close()}>✖️</button>
+          {/* Navigation */}
+          <nav style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
+            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500" }}>Inicio</a>
+            <a href="#productos" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500" }}>Productos</a>
+            <a href="#servicios" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500" }}>Servicios</a>
+            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500" }}>Kits</a>
+            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500" }}>Blog</a>
+            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500" }}>Quiénes somos</a>
+            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500" }}>Contacto</a>
+          </nav>
+
+          {/* Search and Cart */}
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <input 
+              value={query} 
+              onChange={e => setQuery(e.target.value)} 
+              placeholder="Buscar productos..." 
+              style={{ 
+                padding: "0.5rem 1rem", 
+                borderRadius: "25px", 
+                border: "1px solid rgba(0,0,0,0.1)", 
+                width: "200px",
+                fontSize: "0.9rem"
+              }} 
+            />
+            <button 
+              onClick={() => setOpenCart(true)} 
+              style={{ 
+                background: "transparent", 
+                border: "none", 
+                cursor: "pointer", 
+                position: "relative",
+                padding: "0.5rem"
+              }}
+            >
+              🛍️
+              {cart.length > 0 && (
+                <span style={{
+                  position: "absolute",
+                  top: "-5px",
+                  right: "-5px",
+                  background: paleta.miel,
+                  color: "white",
+                  borderRadius: "50%",
+                  width: "20px",
+                  height: "20px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "0.75rem",
+                  fontWeight: "bold"
+                }}>
+                  {cart.length}
+                </span>
+              )}
+            </button>
+            <button 
+              onClick={() => setShowAdmin(s => !s)} 
+              style={{ 
+                background: "transparent", 
+                border: "1px solid rgba(0,0,0,0.1)", 
+                borderRadius: "25px", 
+                padding: "0.5rem 1rem", 
+                cursor: "pointer",
+                fontSize: "0.9rem"
+              }}
+            >
+              ⚙️ Admin
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section style={{ 
+        padding: "4rem 0", 
+        textAlign: "center", 
+        background: "linear-gradient(135deg, #FBF2DE 0%, #FFFFFF 100%)" 
+      }}>
+        <div className="container">
+          <h2 style={{ 
+            fontSize: "3rem", 
+            fontWeight: "700", 
+            margin: "0 0 1rem 0", 
+            color: paleta.carbon,
+            lineHeight: "1.2"
+          }}>
+            Cuidado natural, artesanal y{" "}
+            <span style={{ color: paleta.miel }}>con amor.</span>
+          </h2>
+          <p style={{ 
+            fontSize: "1.2rem", 
+            color: "rgba(0,0,0,0.7)", 
+            margin: "0 0 2rem 0", 
+            maxWidth: "600px", 
+            marginLeft: "auto", 
+            marginRight: "auto" 
+          }}>
+            Productos y rituales holísticos inspirados en la miel, las plantas y la energía del bienestar.
+          </p>
+          <div style={{ display: "flex", gap: "1rem", justifyContent: "center", marginBottom: "3rem" }}>
+            <button 
+              onClick={() => document.getElementById('productos').scrollIntoView({ behavior: 'smooth' })}
+              style={{ 
+                background: paleta.miel, 
+                color: "white", 
+                border: "none", 
+                borderRadius: "25px", 
+                padding: "1rem 2rem", 
+                fontSize: "1.1rem", 
+                fontWeight: "600", 
+                cursor: "pointer" 
+              }}
+            >
+              Ver productos
+            </button>
+            <button 
+              onClick={() => document.getElementById('servicios').scrollIntoView({ behavior: 'smooth' })}
+              style={{ 
+                background: "transparent", 
+                color: paleta.miel, 
+                border: `2px solid ${paleta.miel}`, 
+                borderRadius: "25px", 
+                padding: "1rem 2rem", 
+                fontSize: "1.1rem", 
+                fontWeight: "600", 
+                cursor: "pointer" 
+              }}
+            >
+              Ver servicios
+            </button>
+          </div>
+          <div style={{ display: "flex", gap: "3rem", justifyContent: "center", alignItems: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <span style={{ fontSize: "1.5rem" }}>🌿</span>
+              <span style={{ fontWeight: "500" }}>100% natural</span>
             </div>
-            {Array.isArray(modal.variantes)&&modal.variantes.length ? (
-              <div style={{ marginTop:10 }}>
-                <label style={{ fontSize:12, opacity:.75 }}>Variante</label>
-                <select value={selectedVariant?.sku||""} onChange={(e)=>{ const v=(modal.variantes||[]).find(v=>v.sku===e.target.value)||null; setSelectedVariant(v); }} style={{ width:'100%', marginTop:6, padding:'10px 12px', borderRadius:12, border:'1px solid rgba(0,0,0,.12)' }}>
-                  {(modal.variantes||[]).map(v=> <option key={v.sku} value={v.sku}>{v.titulo} — {money(v.precio, modal.moneda||'MXN')}</option>)}
-                </select>
-              </div>
-            ) : null}
-            <div style={{ marginTop:12, fontWeight:700, fontSize:18 }}>{money(selectedVariant?.precio ?? (modal.precio || minPrice(modal)), modal.moneda||'MXN')}</div>
-            <div style={{ marginTop:12, display:"flex", gap:8 }}>
-              {modal.categoria==='Servicios'
-                ? <a href={modal.bookingLink} target="_blank" rel="noreferrer" className="btn" style={{ background:"#E0A73A", color:"#1A1714" }}>📞 Reservar</a>
-                : <button className="btn" style={{ background:"#E0A73A", color:"#1A1714" }} onClick={()=>{ onAdd(modal, selectedVariant); close(); }}>🛒 Añadir</button>}
-              <button className="btn-outline" onClick={()=>close()}>Cerrar</button>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <span style={{ fontSize: "1.5rem" }}>💰</span>
+              <span style={{ fontWeight: "500" }}>Precios justos</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <span style={{ fontSize: "1.5rem" }}>💝</span>
+              <span style={{ fontWeight: "500" }}>Hecho con amor</span>
             </div>
           </div>
         </div>
-      </div>
-    </div>)}
+      </section>
 
-    <button onClick={()=>setShowAdmin(s=>!s)} aria-label="Admin" style={{ position:'fixed', right:20, bottom:20, zIndex:80, background: '#628D6A', color:'#fff', border:'none', borderRadius:999, padding:14, boxShadow:'0 10px 24px rgba(0,0,0,.25)' }}>⚙️</button>
-    {showAdmin && (<div style={{ position:"fixed", inset:0, zIndex:90 }}>
-      <div onClick={()=>setShowAdmin(false)} style={{ position:"absolute", inset:0, background:"rgba(0,0,0,.35)" }} />
-      <div style={{ position:"absolute", right:0, top:0, height:"100%", width:"min(860px,100%)", background:"#fff", overflow:'auto', padding:16 }}>
-        <AdminPanel paleta={paleta} products={products} setProducts={setProducts} services={services} setServices={setServices} onClose={()=>setShowAdmin(false)} />
-      </div>
-    </div>)}
-  </div>
+      {/* Category Filter */}
+      <section style={{ padding: "2rem 0", background: "white" }}>
+        <div className="container">
+          <h3 style={{ margin: "0 0 1.5rem 0", fontSize: "1.5rem", fontWeight: "600" }}>
+            Filtrar por
+          </h3>
+          <div style={{ 
+            display: "flex", 
+            flexWrap: "wrap", 
+            gap: "0.75rem", 
+            justifyContent: "center" 
+          }}>
+            {CATEGORIES.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setCategory(cat)}
+                style={{
+                  background: category === cat ? paleta.miel : "transparent",
+                  color: category === cat ? "white" : paleta.carbon,
+                  border: `2px solid ${paleta.miel}`,
+                  borderRadius: "25px",
+                  padding: "0.75rem 1.5rem",
+                  cursor: "pointer",
+                  fontWeight: "500",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Products Section */}
+      <section id="productos" style={{ padding: "3rem 0" }}>
+        <div className="container">
+          <h2 style={{ 
+            textAlign: "center", 
+            margin: "0 0 3rem 0", 
+            fontSize: "2.5rem", 
+            fontWeight: "700",
+            color: paleta.carbon
+          }}>
+            Nuestros Productos
+          </h2>
+          <div style={{ 
+            display: "grid", 
+            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", 
+            gap: "2rem" 
+          }}>
+            {filteredItems.map(item => (
+              <div key={item.id} className="card" style={{ 
+                border: "1px solid rgba(0,0,0,0.08)", 
+                transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                cursor: "pointer"
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-5px)"}
+              onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}
+              >
+                <div style={{ position: "relative" }}>
+                  <img 
+                    src={item.imagen} 
+                    alt={item.nombre} 
+                    style={{ 
+                      width: "100%", 
+                      height: "250px", 
+                      objectFit: "cover",
+                      borderTopLeftRadius: "18px",
+                      borderTopRightRadius: "18px"
+                    }} 
+                  />
+                  <div style={{ 
+                    position: "absolute", 
+                    top: "1rem", 
+                    left: "1rem", 
+                    background: paleta.miel, 
+                    color: "white", 
+                    borderRadius: "20px", 
+                    padding: "0.5rem 1rem", 
+                    fontWeight: "600", 
+                    fontSize: "0.8rem" 
+                  }}>
+                    {item.categoria}
+                  </div>
+                </div>
+                <div style={{ padding: "1.5rem" }}>
+                  <h3 style={{ 
+                    margin: "0 0 0.5rem 0", 
+                    fontSize: "1.3rem", 
+                    fontWeight: "600",
+                    color: paleta.carbon
+                  }}>
+                    {item.nombre}
+                  </h3>
+                  <p style={{ 
+                    margin: "0 0 1rem 0", 
+                    color: "rgba(0,0,0,0.6)", 
+                    fontSize: "0.9rem" 
+                  }}>
+                    {item.categoria}
+                  </p>
+                  <div style={{ 
+                    display: "flex", 
+                    justifyContent: "space-between", 
+                    alignItems: "center", 
+                    marginBottom: "1rem" 
+                  }}>
+                    <span style={{ 
+                      fontSize: "1.2rem", 
+                      fontWeight: "700", 
+                      color: paleta.miel 
+                    }}>
+                      {hasVariants(item) 
+                        ? `Desde ${money(minPrice(item), item.moneda || 'MXN')}` 
+                        : (item.categoria === 'Servicios' 
+                          ? money(item.precio, item.moneda) 
+                          : money(item.precio || minPrice(item), item.moneda)
+                        )
+                      }
+                    </span>
+                  </div>
+                  <div style={{ display: "flex", gap: "0.75rem" }}>
+                    {item.categoria === 'Servicios' ? (
+                      <a 
+                        className="btn" 
+                        href={item.bookingLink} 
+                        target="_blank" 
+                        rel="noreferrer" 
+                        style={{ 
+                          background: paleta.miel, 
+                          color: "white",
+                          flex: 1,
+                          textAlign: "center",
+                          textDecoration: "none"
+                        }}
+                      >
+                        Reservar
+                      </a>
+                    ) : hasVariants(item) ? (
+                      <button 
+                        className="btn" 
+                        onClick={() => onOpen(item)} 
+                        style={{ 
+                          background: paleta.miel, 
+                          color: "white",
+                          flex: 1
+                        }}
+                      >
+                        Elegir
+                      </button>
+                    ) : (
+                      <button 
+                        className="btn" 
+                        onClick={() => onAdd(item)} 
+                        style={{ 
+                          background: paleta.miel, 
+                          color: "white",
+                          flex: 1
+                        }}
+                      >
+                        Añadir
+                      </button>
+                    )}
+                    <button 
+                      className="btn-outline" 
+                      onClick={() => onOpen(item)} 
+                      style={{ 
+                        borderColor: paleta.miel,
+                        color: paleta.miel,
+                        flex: 1
+                      }}
+                    >
+                      Ver más
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Cart Modal */}
+      {openCart && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 1000 }}>
+          <div 
+            onClick={() => setOpenCart(false)} 
+            style={{ 
+              position: "absolute", 
+              inset: 0, 
+              background: "rgba(0,0,0,0.5)" 
+            }} 
+          />
+          <div style={{ 
+            position: "absolute", 
+            right: 0, 
+            top: 0, 
+            height: "100%", 
+            width: "min(450px,100%)", 
+            background: "white", 
+            display: "flex", 
+            flexDirection: "column", 
+            boxShadow: "-10px 0 30px rgba(0,0,0,0.2)" 
+          }}>
+            <div style={{ 
+              padding: "1.5rem", 
+              borderBottom: "1px solid rgba(0,0,0,0.1)", 
+              display: "flex", 
+              alignItems: "center", 
+              justifyContent: "space-between" 
+            }}>
+              <h3 style={{ margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                🛍️ Tu carrito ({cart.length})
+              </h3>
+              <button 
+                onClick={() => setOpenCart(false)} 
+                style={{ 
+                  background: "transparent", 
+                  border: "none", 
+                  fontSize: "1.5rem", 
+                  cursor: "pointer",
+                  padding: "0.5rem"
+                }}
+              >
+                ✖️
+              </button>
+            </div>
+            <div style={{ padding: "1.5rem", overflow: "auto", flex: 1 }}>
+              {cart.length === 0 ? (
+                <div style={{ textAlign: "center", opacity: 0.6, padding: "2rem" }}>
+                  Tu carrito está vacío
+                </div>
+              ) : (
+                cart.map(item => (
+                  <div key={item.id} style={{ 
+                    display: "flex", 
+                    gap: "1rem", 
+                    marginBottom: "1rem", 
+                    padding: "1rem", 
+                    border: "1px solid rgba(0,0,0,0.1)", 
+                    borderRadius: "12px" 
+                  }}>
+                    <img 
+                      src={item.imagen} 
+                      alt={item.nombre} 
+                      style={{ 
+                        width: "80px", 
+                        height: "80px", 
+                        objectFit: "cover", 
+                        borderRadius: "8px" 
+                      }} 
+                    />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: "600", marginBottom: "0.25rem" }}>
+                        {item.nombre}
+                      </div>
+                      <div style={{ opacity: 0.7, fontSize: "0.9rem", marginBottom: "0.5rem" }}>
+                        {money(item.precio)}
+                      </div>
+                      <div style={{ 
+                        display: "flex", 
+                        gap: "0.5rem", 
+                        alignItems: "center" 
+                      }}>
+                        <button 
+                          className="btn-outline" 
+                          onClick={() => setCart(prev => 
+                            prev.map(p => p.id === item.id 
+                              ? { ...p, cantidad: Math.max(1, p.cantidad - 1) } 
+                              : p
+                            )
+                          )}
+                          style={{ 
+                            borderColor: paleta.miel, 
+                            color: paleta.miel,
+                            padding: "0.25rem 0.5rem",
+                            minWidth: "30px"
+                          }}
+                        >
+                          -
+                        </button>
+                        <span style={{ minWidth: "20px", textAlign: "center" }}>
+                          {item.cantidad}
+                        </span>
+                        <button 
+                          className="btn-outline" 
+                          onClick={() => setCart(prev => 
+                            prev.map(p => p.id === item.id 
+                              ? { ...p, cantidad: p.cantidad + 1 } 
+                              : p
+                            )
+                          )}
+                          style={{ 
+                            borderColor: paleta.miel, 
+                            color: paleta.miel,
+                            padding: "0.25rem 0.5rem",
+                            minWidth: "30px"
+                          }}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                    <button 
+                      className="btn-outline" 
+                      onClick={() => setCart(prev => prev.filter(p => p.id !== item.id))}
+                      style={{ 
+                        borderColor: "#ff4444", 
+                        color: "#ff4444",
+                        padding: "0.5rem",
+                        alignSelf: "flex-start"
+                      }}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+            {cart.length > 0 && (
+              <div style={{ 
+                padding: "1.5rem", 
+                borderTop: "1px solid rgba(0,0,0,0.1)",
+                background: "#f8f9fa"
+              }}>
+                <div style={{ 
+                  display: "flex", 
+                  justifyContent: "space-between", 
+                  alignItems: "center", 
+                  marginBottom: "1rem",
+                  fontSize: "1.2rem",
+                  fontWeight: "600"
+                }}>
+                  <span>Total:</span>
+                  <span>{money(subtotal)}</span>
+                </div>
+                <button 
+                  className="btn" 
+                  onClick={checkoutMP} 
+                  style={{ 
+                    background: paleta.miel, 
+                    color: "white", 
+                    width: "100%",
+                    padding: "1rem"
+                  }}
+                >
+                  Proceder al pago
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Admin Panel */}
+      {showAdmin && (
+        <AdminPanel 
+          products={products} 
+          setProducts={setProducts} 
+          services={services} 
+          setServices={setServices} 
+          onClose={() => setShowAdmin(false)} 
+        />
+      )}
+
+      {/* Product Modal */}
+      {modal && (
+        <ProductModal 
+          item={modal} 
+          selectedVariant={selectedVariant} 
+          setSelectedVariant={setSelectedVariant} 
+          onAdd={onAdd} 
+          onClose={close} 
+        />
+      )}
+    </div>
+  );
 }
