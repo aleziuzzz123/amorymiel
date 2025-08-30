@@ -162,8 +162,17 @@ function AdminPanel({ paleta, products, setProducts, services, setServices, onCl
   }
   function downloadCSV(){
     const rows=[...products,...services].map(it=>({ id:it.id, nombre:it.nombre, categoria:it.categoria, prompt_es:aiPromptFor(it), aspect_ratio:'4:3', style:'estudio minimalista cálido, realista, high key' }));
-    const header=Object.keys(rows[0]); const csv=[header.join(','), *[','.join('\"'+str(r[h]).replace('\"','\"\"')+'\"' for h in header) for r in rows]];
-    const blob=new Blob([csv.join('\\n')],{type:'text/csv;charset=utf-8;'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='ai_image_prompts.csv'; a.click(); URL.revokeObjectURL(a.href);
+    const header=Object.keys(rows[0]);
+    const csvRows = rows.map(r => 
+      header.map(h => `"${String(r[h] || '').replace(/"/g, '""')}"`).join(',')
+    );
+    const csv = [header.join(','), ...csvRows];
+    const blob=new Blob([csv.join('\n')],{type:'text/csv;charset=utf-8;'}); 
+    const a=document.createElement('a'); 
+    a.href=URL.createObjectURL(blob); 
+    a.download='ai_image_prompts.csv'; 
+    a.click(); 
+    URL.revokeObjectURL(a.href);
   }
   if(!passOk) return (<div className="card" style={{padding:16}}><h3>⚙️ Admin</h3><p>Clave demo: <code>abeja</code></p><input value={password} onChange={e=>setPassword(e.target.value)} placeholder="Clave" type="password" /><button className="btn" onClick={unlock} style={{marginLeft:8, background: paleta.miel}}>Entrar</button></div>);
   return (<div className="card" style={{padding:16}}>
