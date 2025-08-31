@@ -887,7 +887,7 @@ export default function App(){
               </div>
             </div>
 
-            {/* Right Side - Image Placeholder */}
+            {/* Right Side - Hero Image */}
             <div style={{ 
               display: "flex", 
               justifyContent: "center", 
@@ -897,43 +897,34 @@ export default function App(){
               <div style={{ 
                 width: "550px", 
                 height: "350px", 
-                background: "white", 
                 borderRadius: "20px",
-                boxShadow: "0 20px 40px rgba(0,0,0,0.12)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                position: "relative",
-                overflow: "hidden"
+                boxShadow: "0 20px 40px rgba(0,0,0,0.15)",
+                overflow: "hidden",
+                position: "relative"
               }}>
-                {/* Blurred circular shapes like in the image */}
-                <div style={{ 
-                  position: "absolute",
-                  top: "20%",
-                  left: "15%",
-                  width: "120px",
-                  height: "120px",
-                  background: "linear-gradient(45deg, #FFE5B4, #FFD700)",
-                  borderRadius: "50%",
-                  filter: "blur(20px)",
-                  opacity: "0.6"
-                }} />
-                <div style={{ 
-                  position: "absolute",
-                  bottom: "20%",
-                  right: "15%",
-                  width: "90px",
-                  height: "90px",
-                  background: "linear-gradient(45deg, #98FB98, #90EE90)",
-                  borderRadius: "50%",
-                  filter: "blur(18px)",
-                  opacity: "0.5"
-                }} />
-                <div style={{ 
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
+                <img
+                  src="/images/placeholders/Lucid_Origin_Stunning_3D_rendered_lifestyle_image_featuring_la_0.jpg"
+                  alt="Amor y Miel - Productos Holísticos"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    objectPosition: "center"
+                  }}
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+                {/* Fallback placeholder if image fails to load */}
+                <div style={{
+                  display: 'none',
+                  width: "100%",
+                  height: "100%",
+                  background: "white",
+                  borderRadius: "20px",
+                  alignItems: "center",
+                  justifyContent: "center",
                   fontSize: "1.4rem",
                   color: "rgba(0,0,0,0.25)",
                   fontWeight: "500"
