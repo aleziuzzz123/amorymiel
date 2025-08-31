@@ -759,30 +759,15 @@ export default function App(){
         }}>
           {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <img 
-              src="/images/placeholders/amorymiellogo2.JPG" 
-              alt="Amor y Miel Logo" 
-              style={{ 
-                height: "45px", 
-                width: "auto",
-                objectFit: "contain",
-                borderRadius: "8px"
-              }}
-              onError={(e) => {
-                // Fallback to text if image fails to load
-                e.target.style.display = "none";
-                e.target.nextSibling.style.display = "block";
-              }}
-            />
+            <span style={{ fontSize: "1.1rem" }}>🐝</span>
             <h1 style={{ 
               margin: 0, 
               fontSize: "1.1rem", 
               fontWeight: "600", 
               color: PALETAS.D.carbon, 
-              whiteSpace: "nowrap",
-              display: "none" // Hidden by default, shows if logo fails
+              whiteSpace: "nowrap"
             }}>
-              🐝 Amor y Miel
+              Amor y Miel
             </h1>
           </div>
 
