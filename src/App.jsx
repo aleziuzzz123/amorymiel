@@ -294,21 +294,21 @@ export default function App(){
         }}>
           {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <span style={{ fontSize: "1.5rem" }}>🐝</span>
-            <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: "600", color: paleta.carbon }}>
+            <span style={{ fontSize: "1.2rem" }}>🐝</span>
+            <h1 style={{ margin: 0, fontSize: "1.2rem", fontWeight: "600", color: paleta.carbon, whiteSpace: "nowrap" }}>
               Amor y Miel
             </h1>
           </div>
 
           {/* Navigation */}
-          <nav style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
-            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.95rem" }}>Inicio</a>
-            <a href="#productos" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.95rem" }}>Productos</a>
-            <a href="#servicios" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.95rem" }}>Servicios</a>
-            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.95rem" }}>Kits</a>
-            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.95rem" }}>Blog</a>
-            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.95rem" }}>Quiénes somos</a>
-            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.95rem" }}>Contacto</a>
+          <nav style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
+            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.85rem" }}>Inicio</a>
+            <a href="#productos" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.85rem" }}>Productos</a>
+            <a href="#servicios" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.85rem" }}>Servicios</a>
+            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.85rem" }}>Kits</a>
+            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.85rem" }}>Blog</a>
+            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.85rem" }}>Quiénes somos</a>
+            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.85rem" }}>Contacto</a>
           </nav>
 
           {/* Search and Cart */}
@@ -319,11 +319,11 @@ export default function App(){
                 onChange={e => setQuery(e.target.value)} 
                 placeholder="Buscar productos..." 
                 style={{ 
-                  padding: "0.5rem 1rem 0.5rem 2.5rem", 
+                  padding: "0.4rem 1rem 0.4rem 2.2rem", 
                   borderRadius: "25px", 
                   border: "1px solid rgba(0,0,0,0.1)", 
-                  width: "200px",
-                  fontSize: "0.9rem",
+                  width: "180px",
+                  fontSize: "0.8rem",
                   background: "white"
                 }} 
               />
@@ -332,7 +332,7 @@ export default function App(){
                 left: "0.75rem", 
                 top: "50%", 
                 transform: "translateY(-50%)", 
-                fontSize: "1rem",
+                fontSize: "0.9rem",
                 color: "rgba(0,0,0,0.5)"
               }}>
                 🔍
@@ -341,16 +341,17 @@ export default function App(){
             <button 
               onClick={() => setOpenCart(true)} 
               style={{ 
-                background: "rgba(255,255,255,0.8)", 
+                background: "rgba(255,255,255,0.9)", 
                 border: "1px solid rgba(0,0,0,0.1)", 
-                borderRadius: "25px", 
-                padding: "0.5rem 1rem", 
+                borderRadius: "20px", 
+                padding: "0.4rem 0.8rem", 
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
-                gap: "0.5rem",
-                fontSize: "0.9rem",
-                color: paleta.carbon
+                gap: "0.4rem",
+                fontSize: "0.8rem",
+                color: paleta.carbon,
+                fontWeight: "500"
               }}
             >
               🛍️ Carrito ({cart.length})
@@ -360,10 +361,10 @@ export default function App(){
               style={{ 
                 background: "transparent", 
                 border: "1px solid rgba(0,0,0,0.1)", 
-                borderRadius: "25px", 
-                padding: "0.5rem 1rem", 
+                borderRadius: "20px", 
+                padding: "0.4rem 0.8rem", 
                 cursor: "pointer",
-                fontSize: "0.9rem",
+                fontSize: "0.8rem",
                 color: paleta.carbon
               }}
             >
@@ -389,7 +390,7 @@ export default function App(){
             {/* Left Side - Text Content */}
             <div style={{ textAlign: "left" }}>
               <h2 style={{ 
-                fontSize: "3.5rem", 
+                fontSize: "3rem", 
                 fontWeight: "700", 
                 margin: "0 0 1.5rem 0", 
                 color: paleta.carbon,
@@ -399,7 +400,7 @@ export default function App(){
                 <span style={{ color: paleta.miel }}>con amor.</span>
               </h2>
               <p style={{ 
-                fontSize: "1.3rem", 
+                fontSize: "1.1rem", 
                 color: "rgba(0,0,0,0.7)", 
                 margin: "0 0 2.5rem 0", 
                 lineHeight: "1.6"
@@ -414,8 +415,8 @@ export default function App(){
                     color: "white", 
                     border: "none", 
                     borderRadius: "8px", 
-                    padding: "1rem 2rem", 
-                    fontSize: "1.1rem", 
+                    padding: "0.9rem 1.8rem", 
+                    fontSize: "1rem", 
                     fontWeight: "600", 
                     cursor: "pointer",
                     display: "flex",
@@ -423,7 +424,7 @@ export default function App(){
                     gap: "0.5rem"
                   }}
                 >
-                  <span style={{ fontSize: "1.2rem" }}>📋</span>
+                  <span style={{ fontSize: "1.1rem" }}>📋</span>
                   Ver productos
                 </button>
                 <button 
@@ -433,8 +434,8 @@ export default function App(){
                     color: paleta.miel, 
                     border: `2px solid ${paleta.miel}`, 
                     borderRadius: "8px", 
-                    padding: "1rem 2rem", 
-                    fontSize: "1.1rem", 
+                    padding: "0.9rem 1.8rem", 
+                    fontSize: "1rem", 
                     fontWeight: "600", 
                     cursor: "pointer",
                     display: "flex",
@@ -442,7 +443,7 @@ export default function App(){
                     gap: "0.5rem"
                   }}
                 >
-                  <span style={{ fontSize: "1.2rem" }}>➕</span>
+                  <span style={{ fontSize: "1.1rem" }}>➕</span>
                   Ver servicios
                 </button>
               </div>
@@ -452,36 +453,36 @@ export default function App(){
                   alignItems: "center", 
                   gap: "0.5rem",
                   background: "rgba(255,255,255,0.8)",
-                  padding: "0.5rem 1rem",
+                  padding: "0.4rem 0.8rem",
                   borderRadius: "20px",
                   border: "1px solid rgba(0,0,0,0.1)"
                 }}>
-                  <span style={{ fontSize: "1.2rem" }}>🌿</span>
-                  <span style={{ fontWeight: "500", fontSize: "0.9rem" }}>100% natural</span>
+                  <span style={{ fontSize: "1.1rem" }}>🌿</span>
+                  <span style={{ fontWeight: "500", fontSize: "0.85rem" }}>100% natural</span>
                 </div>
                 <div style={{ 
                   display: "flex", 
                   alignItems: "center", 
                   gap: "0.5rem",
                   background: "rgba(255,255,255,0.8)",
-                  padding: "0.5rem 1rem",
+                  padding: "0.4rem 0.8rem",
                   borderRadius: "20px",
                   border: "1px solid rgba(0,0,0,0.1)"
                 }}>
-                  <span style={{ fontSize: "1.2rem" }}>💰</span>
-                  <span style={{ fontWeight: "500", fontSize: "0.9rem" }}>Precios justos</span>
+                  <span style={{ fontSize: "1.1rem" }}>💰</span>
+                  <span style={{ fontWeight: "500", fontSize: "0.85rem" }}>Precios justos</span>
                 </div>
                 <div style={{ 
                   display: "flex", 
                   alignItems: "center", 
                   gap: "0.5rem",
                   background: "rgba(255,255,255,0.8)",
-                  padding: "0.5rem 1rem",
+                  padding: "0.4rem 0.8rem",
                   borderRadius: "20px",
                   border: "1px solid rgba(0,0,0,0.1)"
                 }}>
-                  <span style={{ fontSize: "1.2rem" }}>💝</span>
-                  <span style={{ fontWeight: "500", fontSize: "0.9rem" }}>Hecho con amor</span>
+                  <span style={{ fontSize: "1.1rem" }}>💝</span>
+                  <span style={{ fontWeight: "500", fontSize: "0.85rem" }}>Hecho con amor</span>
                 </div>
               </div>
             </div>
