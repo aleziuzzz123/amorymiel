@@ -18,7 +18,7 @@ const DEFAULT_PRODUCTS = [
     beneficios: "Purifica espacios, atrae abundancia, ideal para meditación y rituales de manifestación.",
     elaboracion: "Elaboradas artesanalmente con cera natural de abeja 100% pura, consagradas bajo la luna llena con intenciones de abundancia y prosperidad. Cada vela es bendecida individualmente para potenciar su energía sagrada.",
     proposito: "Purificar espacios, atraer abundancia y prosperidad, facilitar la conexión espiritual durante meditaciones y rituales de manifestación. Su llama dorada activa la ley de la atracción y abre caminos hacia la riqueza material y espiritual.",
-    modoUso: "Encender en un lugar seguro y tranquilo. Antes de encender, establecer la intención de abundancia. Dejar que se consuma completamente o apagar con cuidado. Ideal usar durante la luna llena para potenciar efectos."
+    modoUso: "Encender en un lugar seguro y tranquilo. Antes de encender, establecer la intención de abundancia. Dejar que se consuma completamente o apagar con cuidado. Ideal usar durante la luna llena para potenciar efectos." 
   },
   { 
     id: "locion-atrayente", 
@@ -587,97 +587,322 @@ function AdminPanel({ paleta, products, setProducts, services, setServices, onCl
 function ProductModal({ item, selectedVariant, setSelectedVariant, onAdd, onClose }){
   return (
     <div style={{ position:"fixed", inset:0, zIndex:70 }}>
-      <div onClick={onClose} style={{ position:"absolute", inset:0, background:"rgba(0,0,0,.45)" }} />
-      <div style={{ position:"absolute", left:"50%", top:"50%", transform:"translate(-50%, -50%)", width:"min(900px,95vw)", maxHeight:"90vh", background:"#fff", borderRadius:18, overflow:"hidden", boxShadow:"0 20px 50px rgba(0,0,0,.25)" }}>
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, height:"100%", maxHeight:"90vh" }}>
+      <div onClick={onClose} style={{ position:"absolute", inset:0, background:"rgba(0,0,0,.6)" }} />
+      <div style={{ 
+        position:"absolute", 
+        left:"50%", 
+        top:"50%", 
+        transform:"translate(-50%, -50%)", 
+        width:"min(1000px,96vw)", 
+        maxHeight:"92vh", 
+        background:"#fff", 
+        borderRadius:20, 
+        overflow:"hidden", 
+        boxShadow:"0 25px 60px rgba(0,0,0,.3)",
+        display:"flex",
+        flexDirection:"column"
+      }}>
+        {/* Header */}
+        <div style={{ 
+          display:"flex", 
+          justifyContent:"space-between", 
+          alignItems:"center", 
+          padding:"20px 24px", 
+          borderBottom:"1px solid rgba(0,0,0,.08)",
+          background:"#FBF2DE"
+        }}>
+          <h2 style={{ margin:0, fontSize:22, color:"#1A1714", fontWeight:600 }}>{item.nombre}</h2>
+          <button 
+            onClick={onClose} 
+            style={{ 
+              background:"transparent", 
+              border:"none", 
+              fontSize:20, 
+              cursor:"pointer", 
+              padding:"8px", 
+              borderRadius:"50%",
+              color:"#666",
+              transition:"all 0.2s ease"
+            }}
+            onMouseEnter={(e) => e.target.style.background = "rgba(0,0,0,.1)"}
+            onMouseLeave={(e) => e.target.style.background = "transparent"}
+          >
+            ✖️
+          </button>
+        </div>
+
+        {/* Content */}
+        <div style={{ display:"flex", flex:1, overflow:"hidden" }}>
           {/* Left Side - Image */}
-          <div style={{ position:"relative", height:"100%" }}>
-            <img src={item.imagen} alt={item.nombre} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
-            <div style={{ position:"absolute", top:12, left:12, background: "#E0A73A", color: "#1A1714", borderRadius:999, padding:'4px 10px', fontWeight:600, fontSize:12 }}>{item.categoria}</div>
+          <div style={{ 
+            flex:"0 0 45%", 
+            position:"relative", 
+            background:"#F8F9FA",
+            display:"flex",
+            alignItems:"center",
+            justifyContent:"center"
+          }}>
+            <img 
+              src={item.imagen} 
+              alt={item.nombre} 
+              style={{ 
+                width:"100%", 
+                height:"100%", 
+                objectFit:"cover",
+                objectPosition:"center"
+              }} 
+              onError={(e) => {
+                e.target.style.display = "none";
+                e.target.nextSibling.style.display = "flex";
+              }}
+            />
+            <div style={{
+              display: "none",
+              width: "100%",
+              height: "100%",
+              background: "linear-gradient(135deg, #FBF2DE, #E0A73A)",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "3rem",
+              color: "#8B4513"
+            }}>
+              🖼️
+            </div>
+            <div style={{ 
+              position:"absolute", 
+              top:16, 
+              left:16, 
+              background: "#E0A73A", 
+              color: "#1A1714", 
+              borderRadius:999, 
+              padding:'6px 12px', 
+              fontWeight:600, 
+              fontSize:12,
+              boxShadow:"0 2px 8px rgba(224, 167, 58, 0.3)"
+            }}>
+              {item.categoria}
+            </div>
           </div>
           
           {/* Right Side - Product Details */}
-          <div style={{ padding:20, overflowY:"auto", height:"100%", display:"flex", flexDirection:"column" }}>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"start", gap:8, marginBottom:16 }}>
-              <h2 style={{ margin:0, fontSize:24, color:"#1A1714" }}>{item.nombre}</h2>
-              <button className="btn-outline" onClick={onClose} style={{ borderColor: "#E0A73A", padding:"8px 12px" }}>✖️</button>
-            </div>
+          <div style={{ 
+            flex:"1", 
+            padding:"24px", 
+            overflowY:"auto", 
+            display:"flex", 
+            flexDirection:"column",
+            gap:"20px"
+          }}>
             
             {/* Variants Selection */}
             {Array.isArray(item.variantes)&&item.variantes.length ? (
-              <div style={{ marginBottom:16 }}>
+              <div style={{ marginBottom:8 }}>
                 <label style={{ fontSize:14, fontWeight:600, color:"#666", marginBottom:8, display:"block" }}>Variante</label>
-                <select value={selectedVariant?.sku||""} onChange={(e)=>{ const v=(item.variantes||[]).find(v=>v.sku===e.target.value)||null; setSelectedVariant(v); }} style={{ width:'100%', padding:'12px 16px', borderRadius:12, border:'1px solid rgba(0,0,0,.12)', fontSize:14 }}>
+                <select 
+                  value={selectedVariant?.sku||""} 
+                  onChange={(e)=>{ const v=(item.variantes||[]).find(v=>v.sku===e.target.value)||null; setSelectedVariant(v); }} 
+                  style={{ 
+                    width:'100%', 
+                    padding:'14px 16px', 
+                    borderRadius:12, 
+                    border:'2px solid rgba(0,0,0,.12)', 
+                    fontSize:14,
+                    background:"#fff",
+                    transition:"border-color 0.2s ease"
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = "#E0A73A"}
+                  onBlur={(e) => e.target.style.borderColor = "rgba(0,0,0,.12)"}
+                >
                   {(item.variantes||[]).map(v=> <option key={v.sku} value={v.sku}>{v.titulo} — {money(v.precio, item.moneda||'MXN')}</option>)}
                 </select>
               </div>
             ) : null}
             
             {/* Price */}
-            <div style={{ marginBottom:20, padding:"16px", background:"#FBF2DE", borderRadius:12, border:"1px solid #E0A73A" }}>
-              <div style={{ fontSize:14, color:"#666", marginBottom:4 }}>Precio</div>
-              <div style={{ fontSize:28, fontWeight:700, color:"#E0A73A" }}>
+            <div style={{ 
+              padding:"20px", 
+              background:"linear-gradient(135deg, #FBF2DE, #FFF8E1)", 
+              borderRadius:16, 
+              border:"2px solid #E0A73A",
+              textAlign:"center",
+              boxShadow:"0 4px 12px rgba(224, 167, 58, 0.15)"
+            }}>
+              <div style={{ fontSize:14, color:"#666", marginBottom:6, fontWeight:500 }}>Precio</div>
+              <div style={{ fontSize:32, fontWeight:700, color:"#E0A73A" }}>
                 {money(selectedVariant?.precio ?? (item.precio || minPrice(item)), item.moneda||'MXN')}
               </div>
             </div>
             
             {/* Product Information Sections */}
-            <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+            <div style={{ display:"flex", flexDirection:"column", gap:16, flex:1 }}>
               
               {/* Descripción */}
               {item.descripcion && (
-                <div style={{ padding:"16px", background:"#F8F9FA", borderRadius:12, border:"1px solid rgba(0,0,0,.08)" }}>
-                  <h4 style={{ margin:"0 0 8px 0", fontSize:16, color:"#E0A73A", fontWeight:600 }}>Descripción</h4>
-                  <p style={{ margin:0, fontSize:14, lineHeight:1.5, color:"#333" }}>{item.descripcion}</p>
+                <div style={{ 
+                  padding:"20px", 
+                  background:"#F8F9FA", 
+                  borderRadius:16, 
+                  border:"1px solid rgba(0,0,0,.08)",
+                  boxShadow:"0 2px 8px rgba(0,0,0,.05)"
+                }}>
+                  <h4 style={{ margin:"0 0 12px 0", fontSize:16, color:"#E0A73A", fontWeight:600, display:"flex", alignItems:"center", gap:8 }}>
+                    📝 Descripción
+                  </h4>
+                  <p style={{ margin:0, fontSize:14, lineHeight:1.6, color:"#333" }}>{item.descripcion}</p>
                 </div>
               )}
               
               {/* Beneficios */}
               {item.beneficios && (
-                <div style={{ padding:"16px", background:"#F0F8FF", borderRadius:12, border:"1px solid rgba(0,0,0,.08)" }}>
-                  <h4 style={{ margin:"0 0 8px 0", fontSize:16, color:"#E0A73A", fontWeight:600 }}>Beneficios</h4>
-                  <p style={{ margin:0, fontSize:14, lineHeight:1.5, color:"#333" }}>{item.beneficios}</p>
+                <div style={{ 
+                  padding:"20px", 
+                  background:"#F0F8FF", 
+                  borderRadius:16, 
+                  border:"1px solid rgba(0,0,0,.08)",
+                  boxShadow:"0 2px 8px rgba(0,0,0,.05)"
+                }}>
+                  <h4 style={{ margin:"0 0 12px 0", fontSize:16, color:"#E0A73A", fontWeight:600, display:"flex", alignItems:"center", gap:8 }}>
+                    ✨ Beneficios
+                  </h4>
+                  <p style={{ margin:0, fontSize:14, lineHeight:1.6, color:"#333" }}>{item.beneficios}</p>
                 </div>
               )}
               
               {/* Elaboración */}
               {item.elaboracion && (
-                <div style={{ padding:"16px", background:"#FFF8E1", borderRadius:12, border:"1px solid rgba(0,0,0,.08)" }}>
-                  <h4 style={{ margin:"0 0 8px 0", fontSize:16, color:"#E0A73A", fontWeight:600 }}>Elaboración</h4>
-                  <p style={{ margin:0, fontSize:14, lineHeight:1.5, color:"#333" }}>{item.elaboracion}</p>
+                <div style={{ 
+                  padding:"20px", 
+                  background:"#FFF8E1", 
+                  borderRadius:16, 
+                  border:"1px solid rgba(0,0,0,.08)",
+                  boxShadow:"0 2px 8px rgba(0,0,0,.05)"
+                }}>
+                  <h4 style={{ margin:"0 0 12px 0", fontSize:16, color:"#E0A73A", fontWeight:600, display:"flex", alignItems:"center", gap:8 }}>
+                    🏭 Elaboración
+                  </h4>
+                  <p style={{ margin:0, fontSize:14, lineHeight:1.6, color:"#333" }}>{item.elaboracion}</p>
                 </div>
               )}
               
               {/* Propósito */}
               {item.proposito && (
-                <div style={{ padding:"16px", background:"#F3E5F5", borderRadius:12, border:"1px solid rgba(0,0,0,.08)" }}>
-                  <h4 style={{ margin:"0 0 8px 0", fontSize:16, color:"#E0A73A", fontWeight:600 }}>Propósito</h4>
-                  <p style={{ margin:0, fontSize:14, lineHeight:1.5, color:"#333" }}>{item.proposito}</p>
+                <div style={{ 
+                  padding:"20px", 
+                  background:"#F3E5F5", 
+                  borderRadius:16, 
+                  border:"1px solid rgba(0,0,0,.08)",
+                  boxShadow:"0 2px 8px rgba(0,0,0,.05)"
+                }}>
+                  <h4 style={{ margin:"0 0 12px 0", fontSize:16, color:"#E0A73A", fontWeight:600, display:"flex", alignItems:"center", gap:8 }}>
+                    🎯 Propósito
+                  </h4>
+                  <p style={{ margin:0, fontSize:14, lineHeight:1.6, color:"#333" }}>{item.proposito}</p>
                 </div>
               )}
               
               {/* Modo de Uso */}
               {item.modoUso && (
-                <div style={{ padding:"16px", background:"#E8F5E8", borderRadius:12, border:"1px solid rgba(0,0,0,.08)" }}>
-                  <h4 style={{ margin:"0 0 8px 0", fontSize:16, color:"#E0A73A", fontWeight:600 }}>Modo de Uso</h4>
-                  <p style={{ margin:0, fontSize:14, lineHeight:1.5, color:"#333" }}>{item.modoUso}</p>
+                <div style={{ 
+                  padding:"20px", 
+                  background:"#E8F5E8", 
+                  borderRadius:16, 
+                  border:"1px solid rgba(0,0,0,.08)",
+                  boxShadow:"0 2px 8px rgba(0,0,0,.05)"
+                }}>
+                  <h4 style={{ margin:"0 0 12px 0", fontSize:16, color:"#E0A73A", fontWeight:600, display:"flex", alignItems:"center", gap:8 }}>
+                    📖 Modo de Uso
+                  </h4>
+                  <p style={{ margin:0, fontSize:14, lineHeight:1.6, color:"#333" }}>{item.modoUso}</p>
                 </div>
               )}
             </div>
             
             {/* Action Buttons */}
-            <div style={{ marginTop:"auto", paddingTop:24, display:"flex", gap:12 }}>
+            <div style={{ 
+              paddingTop:20, 
+              display:"flex", 
+              gap:12,
+              borderTop:"1px solid rgba(0,0,0,.08)",
+              marginTop:"auto"
+            }}>
               {item.categoria==='Servicios'
-                ? <a href={item.bookingLink} target="_blank" rel="noreferrer" className="btn" style={{ background:"#E0A73A", color:"#1A1714", flex:1, textAlign:"center", textDecoration:"none" }}>📞 Reservar</a>
-                : <button className="btn" style={{ background:"#E0A73A", color:"#1A1714", flex:1 }} onClick={()=>{ onAdd(item, selectedVariant); onClose(); }}>🛒 Añadir al Carrito</button>}
-              <button className="btn-outline" onClick={onClose} style={{ borderColor: "#E0A73A", padding:"12px 24px" }}>Cerrar</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+                ? <a 
+                    href={item.bookingLink} 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="btn" 
+                    style={{ 
+                      background:"#E0A73A", 
+                      color:"#1A1714", 
+                      flex:1, 
+                      textAlign:"center", 
+                      textDecoration:"none",
+                      padding:"16px 24px",
+                      borderRadius:12,
+                      fontWeight:600,
+                      fontSize:16,
+                      transition:"all 0.2s ease",
+                      boxShadow:"0 4px 12px rgba(224, 167, 58, 0.3)"
+                    }}
+                    onMouseEnter={(e) => e.target.style.transform = "translateY(-2px)"}
+                    onMouseLeave={(e) => e.target.style.transform = "translateY(0)"}
+                  >
+                    📞 Reservar
+                  </a>
+                : <button 
+                    className="btn" 
+                    style={{ 
+                      background:"#E0A73A", 
+                      color:"#1A1714", 
+                      flex:1,
+                      padding:"16px 24px",
+                      borderRadius:12,
+                      fontWeight:600,
+                      fontSize:16,
+                      border:"none",
+                      cursor:"pointer",
+                      transition:"all 0.2s ease",
+                      boxShadow:"0 4px 12px rgba(224, 167, 58, 0.3)"
+                    }} 
+                    onClick={()=>{ onAdd(item, selectedVariant); onClose(); }}
+                    onMouseEnter={(e) => e.target.style.transform = "translateY(-2px)"}
+                    onMouseLeave={(e) => e.target.style.transform = "translateY(0)"}
+                  >
+                    🛒 Añadir al Carrito
+                  </button>
+              }
+              <button 
+                className="btn-outline" 
+                onClick={onClose} 
+                style={{ 
+                  borderColor: "#E0A73A", 
+                  padding:"16px 24px",
+                  borderRadius:12,
+                  background:"transparent",
+                  color:"#E0A73A",
+                  fontWeight:600,
+                  fontSize:16,
+                  cursor:"pointer",
+                  transition:"all 0.2s ease"
+                }}
+                                 onMouseEnter={(e) => {
+                   e.target.style.background = "#E0A73A";
+                   e.target.style.color = "#1A1714";
+                 }}
+                 onMouseLeave={(e) => {
+                   e.target.style.background = "transparent";
+                   e.target.style.color = "#E0A73A";
+                 }}
+               >
+                 Cerrar
+               </button>
+             </div>
+           </div>
+         </div>
+       </div>
+     </div>
+   );
+ }
 
 export default function App(){
   const [cart, setCart] = useState([]);
