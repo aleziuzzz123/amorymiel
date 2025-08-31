@@ -1965,10 +1965,10 @@ export default function App(){
                   <span style={{ fontSize: "0.9rem" }}>+52 331 736 1884</span>
                 </a>
                 
-                <a 
-                  href="https://facebook.com/Amor.y.Miel" 
-                  target="_blank" 
-                  rel="noreferrer"
+                                 <a 
+                   href="https://www.facebook.com/profile.php?id=100089698655453" 
+                   target="_blank" 
+                   rel="noreferrer"
                   style={{ 
                     display: "flex", 
                     alignItems: "center", 
