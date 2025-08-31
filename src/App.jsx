@@ -442,7 +442,7 @@ function UIStyles(){ return (<style>{`
 `}</style>); }
 
 function MosaicGrid({ paleta, items, category, query, onAdd, onOpen }){
-  const filtered = React.useMemo(()=>filterItems(items,category,query),[items,category,query]);
+  const filtered = useMemo(()=>filterItems(items,category,query),[items,category,query]);
   const cells = filtered.map((it,idx)=>({...it, span: idx%7===0?2:1}));
   return <div style={{ display:'grid', gap:12, gridTemplateColumns:'repeat(3, minmax(0,1fr))' }}>
     {cells.map(item=>(
@@ -475,27 +475,6 @@ function MosaicGrid({ paleta, items, category, query, onAdd, onOpen }){
             🖼️
           </div>
           <div style={{ position:'absolute', top:12, left:12, background: PALETAS.D.miel, color: PALETAS.D.carbon, borderRadius:999, padding:'4px 10px', fontWeight:600, fontSize:12 }}>{item.categoria}</div>
-          
-          {/* NEW: Stock Indicator */}
-          {item.categoria !== 'Servicios' && (
-            <div style={{ 
-              position: 'absolute', 
-              top: 12, 
-              right: 12, 
-              background: isLowStock(item.id) ? '#ff6b6b' : '#51cf66', 
-              color: 'white', 
-              borderRadius: 999, 
-              padding: '4px 8px', 
-              fontWeight: 600, 
-              fontSize: 10,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px'
-            }}>
-              {isLowStock(item.id) ? '⚠️' : '✅'}
-              {isLowStock(item.id) ? 'Stock Bajo' : `${checkStock(item.id)} disponibles`}
-            </div>
-          )}
         </div>
         <div style={{ padding:14 }}>
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'start', gap:8 }}>
@@ -1622,7 +1601,7 @@ const [showRecommendations, setShowRecommendations] = useState(false);
     }
   };
 
-  const filteredItems = React.useMemo(() => {
+  const filteredItems = useMemo(() => {
     const allItems = [...products, ...services];
     const q = (query || "").toLowerCase().trim();
     
