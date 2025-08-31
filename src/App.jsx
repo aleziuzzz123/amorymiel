@@ -13,7 +13,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["ch", "Chica", 150], ["gd", "Grande", 200]]), 
     tags: ["artesanal", "abeja", "abundancia", "natural"], 
-    imagen: "/images/placeholders/velasdemiel1.JPG",
+    imagen: "/images/placeholders/velas-de-miel-product.png",
     descripcion: "Velas artesanales de cera natural de abeja, elaboradas con amor y consagradas para rituales de abundancia. Su llama dorada purifica el ambiente y atrae energías de prosperidad y abundancia.",
     beneficios: "Purifica espacios, atrae abundancia, ideal para meditación y rituales de manifestación."
   },
@@ -24,7 +24,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["ch", "Chica", 180], ["gd", "Grande", 250]]), 
     tags: ["atracción", "abundancia", "natural"], 
-    imagen: "/images/placeholders/locion-atraente1.JPG",
+    imagen: "/images/placeholders/locion-atrayente-product.png",
     descripcion: "Loción artesanal con esencias naturales seleccionadas para atraer energías positivas y abundancia. Su aroma dulce y envolvente activa la ley de atracción en tu vida.",
     beneficios: "Activa la ley de atracción, atrae prosperidad y energías positivas."
   },
@@ -35,7 +35,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["ch", "Chica", 200], ["gd", "Grande", 280]]), 
     tags: ["protección", "limpieza", "palo santo"], 
-    imagen: "/images/placeholders/ticonpalosanto1.JPG",
+    imagen: "/images/placeholders/locion-palo-santo-product.png",
     descripcion: "Loción sagrada con esencia pura de Palo Santo, consagrada para limpieza energética profunda y protección espiritual. Su aroma sagrado purifica el aura y crea un escudo de protección.",
     beneficios: "Limpieza energética profunda, protección espiritual y purificación del aura."
   },
@@ -46,7 +46,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["ch", "Chica", 180], ["gd", "Grande", 250]]), 
     tags: ["limpieza", "energética", "florida"], 
-    imagen: "/images/placeholders/agua-florida.JPG",
+    imagen: "/images/placeholders/agua-florida-product.png",
     descripcion: "Agua Florida tradicional de la más alta pureza, consagrada para limpieza energética y purificación del ambiente y la persona. Su esencia floral purifica y renueva las energías.",
     beneficios: "Limpieza energética profunda, purificación del ambiente y renovación espiritual."
   },
@@ -57,7 +57,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["ch", "Chica", 220], ["gd", "Grande", 300]]), 
     tags: ["dinero", "prosperidad", "limpieza energética"], 
-    imagen: "/images/placeholders/brisa-aurica-bendicion-del-dinero.JPG",
+    imagen: "/images/placeholders/brisa-bendicion-dinero-product.png",
     descripcion: "Brisa áurica artesanal con aceites esenciales de Vainilla, Laurel, Canela y semillas de abundancia. Consagrada e intencionada para limpiar la energía del dinero y atraer prosperidad financiera.",
     beneficios: "Limpieza energética del dinero, elimina energías negativas y atrae prosperidad financiera.",
     modoUso: "Agitar antes de usar. Aplicar sobre caja registradora, cartera o donde coloques tu dinero para eliminar energías negativas."
@@ -69,7 +69,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["ch", "Chica", 220], ["gd", "Grande", 300]]), 
     tags: ["prosperidad", "equilibrio", "limpieza"], 
-    imagen: "/images/placeholders/brisa-aurica-prosperidad.JPG",
+    imagen: "/images/placeholders/brisa-prosperidad-product.png",
     descripcion: "Brisa áurica especializada en limpieza energética emocional, liberando malas vibras que se adhieren al interactuar con personas o visitar ciertos lugares. Restaura tu energía natural.",
     beneficios: "Limpieza energética emocional, liberación de energías negativas y protección áurica.",
     modoUso: "Agitar antes de usar. Aplicar sobre el cuerpo o en el ambiente para limpieza energética."
@@ -81,7 +81,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["ch", "Chica", 220], ["gd", "Grande", 300]]), 
     tags: ["abundancia", "expansión", "energía positiva"], 
-    imagen: "/images/placeholders/brisa-aurica-abundancia.JPG",
+    imagen: "/images/placeholders/brisa-abundancia-product.png",
     descripcion: "Brisa áurica consagrada para atraer abundancia y expansión en todas las áreas de tu vida. Su energía activa la ley de la abundancia universal.",
     beneficios: "Atrae abundancia, expansión y energías positivas para el crecimiento personal.",
     modoUso: "Agitar antes de usar. Aplicar sobre el cuerpo o en el ambiente para atraer abundancia."
@@ -93,7 +93,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 180]]), 
     tags: ["renovación", "ritual", "abre caminos"], 
-    imagen: "/images/placeholders/exfoliante abrecaminos.JPG",
+    imagen: "/images/placeholders/exfoliante-abrecaminos-product.png",
     descripcion: "Exfoliante artesanal con Miel, Canela, Azúcar y Café, ingredientes seleccionados para exfoliar e hidratar tu piel. Consagrado para abrir caminos a la prosperidad y abundancia.",
     beneficios: "Remueve energías negativas, exfolia la piel y abre caminos a la prosperidad.",
     modoUso: "Usar 1-2 veces por semana. Exfoliar desde rostro hacia pies, repitiendo tu oración o decreto."
