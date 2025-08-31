@@ -294,7 +294,18 @@ export default function App(){
         }}>
           {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <span style={{ fontSize: "1.1rem" }}>🐝</span>
+            <div style={{ 
+              width: "32px", 
+              height: "32px", 
+              borderRadius: "50%", 
+              background: "#8B4513", 
+              display: "flex", 
+              alignItems: "center", 
+              justifyContent: "center",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
+            }}>
+              <span style={{ fontSize: "1rem", color: "white" }}>🐝</span>
+            </div>
             <h1 style={{ margin: 0, fontSize: "1.1rem", fontWeight: "600", color: paleta.carbon, whiteSpace: "nowrap" }}>
               Amor y Miel
             </h1>
@@ -495,8 +506,8 @@ export default function App(){
               height: "100%"
             }}>
               <div style={{ 
-                width: "350px", 
-                height: "350px", 
+                width: "400px", 
+                height: "225px", 
                 background: "white", 
                 borderRadius: "15px",
                 boxShadow: "0 15px 30px rgba(0,0,0,0.08)",
@@ -509,10 +520,10 @@ export default function App(){
                 {/* Blurred circular shapes like in the image */}
                 <div style={{ 
                   position: "absolute",
-                  top: "15%",
+                  top: "20%",
                   left: "15%",
-                  width: "100px",
-                  height: "100px",
+                  width: "80px",
+                  height: "80px",
                   background: "linear-gradient(45deg, #FFE5B4, #FFD700)",
                   borderRadius: "50%",
                   filter: "blur(15px)",
@@ -520,10 +531,10 @@ export default function App(){
                 }} />
                 <div style={{ 
                   position: "absolute",
-                  bottom: "25%",
-                  right: "20%",
-                  width: "80px",
-                  height: "80px",
+                  bottom: "20%",
+                  right: "15%",
+                  width: "60px",
+                  height: "60px",
                   background: "linear-gradient(45deg, #98FB98, #90EE90)",
                   borderRadius: "50%",
                   filter: "blur(12px)",
@@ -534,7 +545,7 @@ export default function App(){
                   top: "50%",
                   left: "50%",
                   transform: "translate(-50%, -50%)",
-                  fontSize: "1.2rem",
+                  fontSize: "1.1rem",
                   color: "rgba(0,0,0,0.25)",
                   fontWeight: "500"
                 }}>
