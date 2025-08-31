@@ -279,7 +279,7 @@ export default function App(){
       
       {/* Header */}
       <header style={{ 
-        background: "white", 
+        background: "#FBF2DE", 
         boxShadow: "0 2px 20px rgba(0,0,0,0.08)", 
         position: "sticky", 
         top: 0, 
@@ -302,59 +302,58 @@ export default function App(){
 
           {/* Navigation */}
           <nav style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
-            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500" }}>Inicio</a>
-            <a href="#productos" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500" }}>Productos</a>
-            <a href="#servicios" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500" }}>Servicios</a>
-            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500" }}>Kits</a>
-            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500" }}>Blog</a>
-            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500" }}>Quiénes somos</a>
-            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500" }}>Contacto</a>
+            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.95rem" }}>Inicio</a>
+            <a href="#productos" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.95rem" }}>Productos</a>
+            <a href="#servicios" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.95rem" }}>Servicios</a>
+            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.95rem" }}>Kits</a>
+            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.95rem" }}>Blog</a>
+            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.95rem" }}>Quiénes somos</a>
+            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.95rem" }}>Contacto</a>
           </nav>
 
           {/* Search and Cart */}
           <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <input 
-              value={query} 
-              onChange={e => setQuery(e.target.value)} 
-              placeholder="Buscar productos..." 
-              style={{ 
-                padding: "0.5rem 1rem", 
-                borderRadius: "25px", 
-                border: "1px solid rgba(0,0,0,0.1)", 
-                width: "200px",
-                fontSize: "0.9rem"
-              }} 
-            />
+            <div style={{ position: "relative" }}>
+              <input 
+                value={query} 
+                onChange={e => setQuery(e.target.value)} 
+                placeholder="Buscar productos..." 
+                style={{ 
+                  padding: "0.5rem 1rem 0.5rem 2.5rem", 
+                  borderRadius: "25px", 
+                  border: "1px solid rgba(0,0,0,0.1)", 
+                  width: "200px",
+                  fontSize: "0.9rem",
+                  background: "white"
+                }} 
+              />
+              <span style={{ 
+                position: "absolute", 
+                left: "0.75rem", 
+                top: "50%", 
+                transform: "translateY(-50%)", 
+                fontSize: "1rem",
+                color: "rgba(0,0,0,0.5)"
+              }}>
+                🔍
+              </span>
+            </div>
             <button 
               onClick={() => setOpenCart(true)} 
               style={{ 
-                background: "transparent", 
-                border: "none", 
-                cursor: "pointer", 
-                position: "relative",
-                padding: "0.5rem"
+                background: "rgba(255,255,255,0.8)", 
+                border: "1px solid rgba(0,0,0,0.1)", 
+                borderRadius: "25px", 
+                padding: "0.5rem 1rem", 
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                fontSize: "0.9rem",
+                color: paleta.carbon
               }}
             >
-              🛍️
-              {cart.length > 0 && (
-                <span style={{
-                  position: "absolute",
-                  top: "-5px",
-                  right: "-5px",
-                  background: paleta.miel,
-                  color: "white",
-                  borderRadius: "50%",
-                  width: "20px",
-                  height: "20px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "0.75rem",
-                  fontWeight: "bold"
-                }}>
-                  {cart.length}
-                </span>
-              )}
+              🛍️ Carrito ({cart.length})
             </button>
             <button 
               onClick={() => setShowAdmin(s => !s)} 
@@ -364,7 +363,8 @@ export default function App(){
                 borderRadius: "25px", 
                 padding: "0.5rem 1rem", 
                 cursor: "pointer",
-                fontSize: "0.9rem"
+                fontSize: "0.9rem",
+                color: paleta.carbon
               }}
             >
               ⚙️ Admin
@@ -548,7 +548,8 @@ export default function App(){
       {/* Category Filter */}
       <section style={{ padding: "2rem 0", background: "white" }}>
         <div className="container">
-          <h3 style={{ margin: "0 0 1.5rem 0", fontSize: "1.5rem", fontWeight: "600" }}>
+          <h3 style={{ margin: "0 0 1.5rem 0", fontSize: "1.5rem", fontWeight: "600", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <span style={{ fontSize: "1.2rem" }}>⚙️</span>
             Filtrar por
           </h3>
           <div style={{ 
@@ -600,7 +601,10 @@ export default function App(){
               <div key={item.id} className="card" style={{ 
                 border: "1px solid rgba(0,0,0,0.08)", 
                 transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                cursor: "pointer"
+                cursor: "pointer",
+                background: "white",
+                borderRadius: "18px",
+                overflow: "hidden"
               }}
               onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-5px)"}
               onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}
@@ -612,9 +616,7 @@ export default function App(){
                     style={{ 
                       width: "100%", 
                       height: "250px", 
-                      objectFit: "cover",
-                      borderTopLeftRadius: "18px",
-                      borderTopRightRadius: "18px"
+                      objectFit: "cover"
                     }} 
                   />
                   <div style={{ 
@@ -679,7 +681,10 @@ export default function App(){
                           color: "white",
                           flex: 1,
                           textAlign: "center",
-                          textDecoration: "none"
+                          textDecoration: "none",
+                          borderRadius: "8px",
+                          padding: "0.75rem 1rem",
+                          fontWeight: "600"
                         }}
                       >
                         Reservar
@@ -691,7 +696,10 @@ export default function App(){
                         style={{ 
                           background: paleta.miel, 
                           color: "white",
-                          flex: 1
+                          flex: 1,
+                          borderRadius: "8px",
+                          padding: "0.75rem 1rem",
+                          fontWeight: "600"
                         }}
                       >
                         Elegir
@@ -703,7 +711,10 @@ export default function App(){
                         style={{ 
                           background: paleta.miel, 
                           color: "white",
-                          flex: 1
+                          flex: 1,
+                          borderRadius: "8px",
+                          padding: "0.75rem 1rem",
+                          fontWeight: "600"
                         }}
                       >
                         Añadir
@@ -715,7 +726,10 @@ export default function App(){
                       style={{ 
                         borderColor: paleta.miel,
                         color: paleta.miel,
-                        flex: 1
+                        flex: 1,
+                        borderRadius: "8px",
+                        padding: "0.75rem 1rem",
+                        fontWeight: "600"
                       }}
                     >
                       Ver más
