@@ -1,0 +1,26 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="16" cy="16" r="15" fill="#E0A73A" stroke="#1A1714" stroke-width="1"/>
+  
+  <!-- Bee body -->
+  <ellipse cx="16" cy="16" rx="8" ry="6" fill="#FFD700" stroke="#1A1714" stroke-width="0.5"/>
+  
+  <!-- Bee stripes -->
+  <ellipse cx="16" cy="14" rx="7" ry="1.5" fill="#1A1714"/>
+  <ellipse cx="16" cy="18" rx="7" ry="1.5" fill="#1A1714"/>
+  
+  <!-- Bee wings -->
+  <ellipse cx="12" cy="12" rx="3" ry="2" fill="#F0F8FF" stroke="#1A1714" stroke-width="0.3" opacity="0.8"/>
+  <ellipse cx="20" cy="12" rx="3" ry="2" fill="#F0F8FF" stroke="#1A1714" stroke-width="0.3" opacity="0.8"/>
+  
+  <!-- Bee antennae -->
+  <line x1="14" y1="10" x2="13" y2="8" stroke="#1A1714" stroke-width="1" stroke-linecap="round"/>
+  <line x1="18" y1="10" x2="19" y2="8" stroke="#1A1714" stroke-width="1" stroke-linecap="round"/>
+  
+  <!-- Small heart representing "Amor" -->
+  <path d="M22 8 Q22 6 20 6 Q18 6 18 8 Q18 10 20 12 Q22 10 22 8" fill="#FF6B9D" stroke="#1A1714" stroke-width="0.3"/>
+  
+  <!-- Honey drops -->
+  <ellipse cx="8" cy="20" rx="1.5" ry="2" fill="#FFD700" stroke="#1A1714" stroke-width="0.3"/>
+  <ellipse cx="24" cy="20" rx="1.5" ry="2" fill="#FFD700" stroke="#1A1714" stroke-width="0.3"/>
+</svg>
