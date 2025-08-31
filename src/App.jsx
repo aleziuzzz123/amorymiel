@@ -203,20 +203,9 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/feromonas-damas-caballeros-product.png",
     descripcion: "Feromonas especiales diseñadas para damas y caballeros, fortalecen la conexión de pareja y aumentan la atracción mutua de forma natural.",
     beneficios: "Fortalece la conexión de pareja y aumenta la atracción mutua.",
-    modoUso: "Aplicar sobre puntos de pulso para mayor efectividad en la conexión de pareja."
-  },
-  { 
-    id: "agua-micelar", 
-    nombre: "Agua Micelar", 
-    categoria: "Faciales", 
-    precio: 220,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/agua-micelar-product.png",
-    descripcion: "Agua micelar artesanal formada a base de micelas naturales que atraen y retiran suciedad, impurezas y sebo, dejando la piel limpia y fresca.",
-    beneficios: "Limpieza profunda sin irritación, desmaquillante efectivo, ideal para pieles sensibles y alérgicas, sin colorantes ni perfumes agresivos.",
-    modoUso: "Puedes aplicarlo tanto en tu rutina matutina como en la nocturna. Por la mañana, limpia tu piel antes de aplicar el sérum y la hidratante. Por la noche, desmaquilla y limpia tu rostro intensamente, tonificando e hidratando la piel.",
-    elaboracion: "Es un producto cosmético que está formado a base de micelas, estas son un grupo de moléculas que logran atraer y retirar suciedad, impurezas y sebo, dejando la piel limpia y fresca. No suele contener colorantes, perfumes o alcoholes, componentes que son agresivos con la epidermis.",
-    proposito: "Sirve como desmaquillante y limpiador facial para eliminar maquillaje, células muertas e impurezas, entre otros. Asimismo, el agua micelar contiene una analogía biológica particular dado que resulta muy amigable con la piel, incluso la de las personas más sensibles y alérgicas."
+    elaboracion: "Elaboradas con feromonas específicas para cada género, extraídas de plantas y flores naturales, diluidas en aceite base de jojoba. Cada lote es procesado bajo condiciones estériles y consagrado para potenciar la conexión de pareja.",
+    proposito: "Fortalecer la conexión emocional y física entre parejas, aumentar la atracción mutua, mejorar la comunicación íntima y crear un vínculo más profundo basado en la química natural.",
+    modoUso: "Aplicar sobre puntos de pulso (muñecas, cuello, sienes) para mayor efectividad en la conexión de pareja. Usar antes de encuentros románticos o momentos especiales juntos."
   },
   { 
     id: "agua-rosas", 
@@ -230,19 +219,6 @@ const DEFAULT_PRODUCTS = [
     elaboracion: "El agua de rosas contiene vitamina B, C y E. Todos estos nutrientes te ayudarán a suavizar la piel, hidratarla y combatir la oxidación. La ausencia de alcohol la hace ideal para las pieles sensibles y reactivas, además de cerrar los poros. Limpia profundamente y arrastra el exceso de grasa.",
     proposito: "Los pétalos de las Rosas contienen compuestos antioxidantes, antimicrobianos, antinflamatorios, antisépticos, inmunosupresivos y actividad prebiótica, entre otros.",
     modoUso: "Se aplica con un suave masaje después de la higiene facial y hay que dejarla actuar unos minutos antes de seguir con el resto de los productos."
-  },
-  { 
-    id: "aceite-abre", 
-    nombre: "Aceite Abre Caminos", 
-    categoria: "Aceites", 
-    precio: 200,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/aceite-abrecaminos.JPG",
-    descripcion: "Aceite artesanal elaborado con extracción de esencias naturales de plantas medicinales mexicanas, enriquecido con feromonas para potenciar su efecto energético.",
-    beneficios: "El aceite Abre Caminos, como su nombre lo indica, es un excelente producto para realizar nuestras afirmaciones y decretos, ayuda a suavizar las situaciones negativas y abrirte paso a lo positivo.",
-    elaboracion: "Es un producto artesanal, elaborado con extracción de esencias naturales de las plantas.",
-    proposito: "El aceite Abrecaminos, como su nombre lo indica, es un excelente producto para realizar nuestras afirmaciones y decretos, ayuda a suavizar las situaciones negativas y abrirte paso a lo positivo.",
-    modoUso: "Con ayuda del gotero, aplica de 2 a 3 gotitas del Aceite Abrecaminos en tus manos, frótalo y mientras lo haces puedes repetir la oración o decreto de tu gusto."
   },
   { 
     id: "aceite-ungir", 
@@ -266,6 +242,8 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/shampoo-artesanal-product.png",
     descripcion: "Es un producto artesanal elaborado con ingredientes naturales de la más alta calidad para el cuidado del cabello. Sin químicos agresivos.",
     beneficios: "Limpieza natural del cabello, sin químicos agresivos, promueve el brillo natural y la salud capilar.",
+    elaboracion: "Elaborado con ingredientes 100% naturales seleccionados cuidadosamente: aceite de coco, aloe vera, aceite de almendras dulces y extractos botánicos. Sin sulfatos, parabenos ni químicos agresivos que dañen el cabello.",
+    proposito: "Proporcionar una limpieza suave y efectiva del cabello, manteniendo su humectación natural, promoviendo el brillo y la salud capilar sin el uso de químicos agresivos que puedan causar daño o irritación.",
     modoUso: "Usar como shampoo regular, masajear suavemente el cuero cabelludo para estimular la circulación."
   },
   { 
@@ -277,6 +255,8 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/shampoo-miel-product.png",
     descripcion: "Es un producto artesanal elaborado con extracto de miel natural de la más alta pureza para suavizar y nutrir el cabello.",
     beneficios: "Suaviza el cabello, nutre con propiedades naturales de la miel y promueve la salud capilar integral.",
+    elaboracion: "Elaborado con extracto de miel natural 100% pura, combinado con aceites esenciales y extractos botánicos. La miel es conocida por sus propiedades humectantes y nutritivas que suavizan y fortalecen el cabello naturalmente.",
+    proposito: "Proporcionar nutrición profunda al cabello utilizando las propiedades naturales de la miel, suavizando la textura, restaurando la humectación y promoviendo un cabello más saludable y manejable.",
     modoUso: "Usar como shampoo regular, dejar actuar por 2-3 minutos para mayor beneficio y absorción de nutrientes."
   },
   { 
@@ -288,6 +268,8 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/shampoo-romero-product.png",
     descripcion: "Es un producto artesanal elaborado con extracto de romero natural para fortalecer y dar volumen al cabello.",
     beneficios: "Fortalece el cabello, da volumen natural y promueve el crecimiento saludable del cabello.",
+    elaboracion: "Elaborado con extracto de romero natural 100% puro, conocido por sus propiedades estimulantes y fortalecedoras. El romero mejora la circulación sanguínea en el cuero cabelludo y fortalece los folículos capilares.",
+    proposito: "Fortalecer el cabello desde la raíz, estimular el crecimiento saludable, dar volumen natural y mejorar la circulación sanguínea del cuero cabelludo para un cabello más fuerte y resistente.",
     modoUso: "Usar como shampoo regular, masajear el cuero cabelludo para estimular la circulación y activar los folículos."
   },
   { 
@@ -299,6 +281,8 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/mascarilla-capilar-product.png",
     descripcion: "Es un producto artesanal elaborado con ingredientes naturales de la más alta calidad para hidratar y dar brillo al cabello.",
     beneficios: "Hidratación profunda, brillo natural y reparación integral del cabello dañado, restaura su vitalidad natural.",
+    elaboracion: "Elaborada con ingredientes naturales 100% puros: aceite de argán, aceite de coco, aloe vera y extractos botánicos hidratantes. Cada lote es preparado artesanalmente para proporcionar nutrición profunda y reparación del cabello.",
+    proposito: "Proporcionar hidratación profunda al cabello, restaurar su brillo natural, reparar daños causados por factores externos y nutrir desde la raíz hasta las puntas para un cabello más saludable y manejable.",
     modoUso: "Aplicar después del shampoo, dejar actuar por 10-15 minutos para máxima absorción y enjuagar abundantemente."
   },
   { 
@@ -323,6 +307,8 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/miel-consagrada-product.png",
     descripcion: "Es un producto artesanal elaborado con miel consagrada de la más alta pureza para rituales de prosperidad y abundancia.",
     beneficios: "Su dulzura sagrada activa la ley de la abundancia universal, atrae prosperidad, abundancia y dulzura a la vida.",
+    elaboracion: "Miel natural 100% pura consagrada bajo la luna llena con intenciones de abundancia y prosperidad. Cada lote es bendecido individualmente y energizado con la energía sagrada de la miel, considerada en muchas culturas como el néctar de los dioses.",
+    proposito: "Activar la ley de la abundancia universal, atraer prosperidad y riqueza material y espiritual, endulzar la vida y crear un flujo constante de bendiciones y oportunidades. La miel consagrada es un poderoso catalizador para manifestar deseos de abundancia.",
     modoUso: "Usar en rituales sagrados, ofrendas espirituales o consumir para atraer abundancia y prosperidad."
   },
   { 
@@ -334,6 +320,8 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/sal-negra-product.png",
     descripcion: "Es un producto artesanal elaborado con sal negra sagrada para protección y limpieza energética integral.",
     beneficios: "Su poder purificador elimina energías negativas, crea un escudo de protección y limpia espacios de manera profunda.",
+    elaboracion: "Sal negra sagrada consagrada bajo la luna menguante para potenciar sus propiedades purificadoras y protectoras. La sal negra es conocida en muchas tradiciones como un poderoso elemento de limpieza energética y protección contra energías negativas.",
+    proposito: "Proteger espacios y personas contra energías negativas, limpiar y purificar ambientes de contaminación energética, crear un escudo protector espiritual y restaurar la armonía energética en el hogar y lugares de trabajo.",
     modoUso: "Colocar en esquinas de la casa, usar en rituales de limpieza energética o protección espiritual."
   },
   { 
@@ -345,6 +333,8 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/polvo-de-oro-product.png",
     descripcion: "Es un producto artesanal elaborado con polvo de oro sagrado para rituales de abundancia y manifestación.",
     beneficios: "Su energía dorada activa la ley de la atracción y la manifestación de deseos, atrae abundancia y riqueza material y espiritual.",
+    elaboracion: "Polvo de oro sagrado consagrado bajo la luna llena con intenciones de abundancia y manifestación. Cada lote es energizado con la energía dorada del oro, considerado en muchas tradiciones como el metal de los dioses y símbolo de riqueza y poder.",
+    proposito: "Activar la ley de la atracción y la manifestación de deseos, atraer abundancia y riqueza material y espiritual, potenciar rituales de prosperidad y crear un campo energético dorado que facilite la materialización de intenciones positivas.",
     modoUso: "Usar en rituales de abundancia, espolvorear en velas sagradas o usar en decretos y afirmaciones."
   },
   { 
@@ -356,6 +346,8 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/palo-santo-product.png",
     descripcion: "Es un producto artesanal elaborado con palo santo sagrado para purificación y armonía del ambiente.",
     beneficios: "Su humo purificador elimina energías negativas, crea un espacio sagrado de paz y restaura la armonía energética.",
+    elaboracion: "Palo Santo (Bursera graveolens) recolectado de manera sostenible y consagrado bajo la luna llena. Este árbol sagrado es conocido por sus propiedades purificadoras y su aroma dulce y sagrado que limpia energías negativas y restaura la armonía.",
+    proposito: "Purificar espacios de energías negativas, crear un ambiente sagrado de paz y armonía, limpiar el aura personal y del ambiente, y facilitar la conexión espiritual durante meditaciones y rituales de purificación.",
     modoUso: "Encender y dejar que el humo purifique el espacio, ideal para limpieza energética y rituales de purificación."
   },
   { 
@@ -367,6 +359,8 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/sahumerios-product.png",
     descripcion: "Es un producto artesanal elaborado con sahumerios naturales de la más alta pureza para purificación y limpieza energética.",
     beneficios: "Su aroma sagrado purifica el ambiente, limpia energías negativas y crea un espacio de paz y armonía espiritual.",
+    elaboracion: "Sahumerios artesanales elaborados con resinas naturales, hierbas sagradas y aceites esenciales puros. Cada lote es consagrado bajo la luna llena para potenciar sus propiedades purificadoras y limpiadoras de energías negativas.",
+    proposito: "Purificar ambientes de energías negativas, limpiar espacios de contaminación energética, crear un ambiente de paz y armonía espiritual, y facilitar la conexión con lo sagrado durante rituales y meditaciones.",
     modoUso: "Encender y dejar que el humo purifique el espacio, ideal para limpieza energética y rituales de purificación."
   },
   { 
@@ -401,7 +395,7 @@ const DEFAULT_PRODUCTS = [
     categoria: "Baños Energéticos", 
     precio: 120,
     moneda: "MXN", 
-    imagen: "/images/placeholders/Cinnamon-orange.png",
+    imagen: "/images/placeholders/bano-energetico-abre-caminos.JPG",
     descripcion: "Es un producto artesanal elaborado con mezcla de plantas sanadoras sagradas: Canela, Naranja y Laureles.",
     beneficios: "Ayuda a conectar con la energía cuando hay estancamiento en economía, trabajo o crecimiento laboral, abre caminos y elimina estancamientos.",
     elaboracion: "Es una mezcla de plantas sanadoras entre ellas Canela, Naranja y Laureles.",
@@ -417,9 +411,36 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/locion-ellas-y-ellos.JPG",
     descripcion: "Es un producto artesanal elaborado con extracción de flores y esencias naturales, con tonos suaves para Ellas y tonos frescos para Ellos.",
     beneficios: "Ideal para parejas que desean reforzar su conexión y amor propio, aumenta autoestima, amor propio y seguridad.",
+    elaboracion: "Elaborada con extracción de flores y esencias naturales específicas para cada género: tonos suaves y florales para Ellas (rosa, lavanda, vainilla) y tonos frescos y cítricos para Ellos (bergamota, sándalo, cedro). Cada lote es consagrado para potenciar el amor propio y la conexión de pareja.",
+    proposito: "Fortalecer el amor propio y la autoestima individual, reforzar la conexión emocional entre parejas, aumentar la seguridad personal y crear un vínculo más profundo basado en el respeto y la valoración mutua.",
     modoUso: "Usar como loción de diario para reforzar tu seguridad, aplicar después de bañarse para máxima absorción."
   },
-
+  { 
+    id: "kit-bienestar", 
+    nombre: "Kit de Bienestar", 
+    categoria: "Kits", 
+    precio: 450,
+    moneda: "MXN", 
+    imagen: "/images/placeholders/velas-de-miel-product.png",
+    descripcion: "Kit completo para tu ritual de autocuidado, incluye todo lo necesario para purificar espacios y atraer abundancia.",
+    beneficios: "Ahorras $150, incluye guía de ritual, productos complementarios para máxima efectividad.",
+    elaboracion: "Kit cuidadosamente seleccionado que incluye: Vela de cera de abeja, Loción Aqua Florida, Palo Santo y guía de ritual incluida. Cada producto es consagrado individualmente y el kit completo es bendecido para potenciar la sinergia entre todos los elementos.",
+    proposito: "Proporcionar una experiencia completa de autocuidado y limpieza energética, facilitando la práctica de rituales de abundancia y purificación de espacios. El kit está diseñado para que cada elemento complemente y potencie los efectos de los demás.",
+    modoUso: "Seguir la guía de ritual incluida. Usar los productos en el orden recomendado: primero el Palo Santo para purificar el espacio, luego la Loción Aqua Florida para limpiar energías personales, y finalmente encender la Vela de Miel para atraer abundancia."
+  },
+  { 
+    id: "kit-amor-propio", 
+    nombre: "Kit de Amor Propio", 
+    categoria: "Kits", 
+    precio: 580,
+    moneda: "MXN", 
+    imagen: "/images/placeholders/exfoliante-venus-product.png",
+    descripcion: "Kit especial para celebrar y honrar tu belleza interior, diseñado para aumentar el amor propio y la autoestima.",
+    beneficios: "Ahorras $200, productos complementarios para el amor propio, incluye mascarilla facial natural.",
+    elaboracion: "Kit especializado que incluye: Exfoliante Venus, Loción Ellas y Ellos, Baño Energético Amor Propio y mascarilla facial natural. Cada producto está consagrado bajo la energía de Venus para potenciar el amor propio y la belleza interior.",
+    proposito: "Facilitar el proceso de reconexión con el amor propio, aumentar la autoestima y celebrar la belleza interior. El kit está diseñado para crear una experiencia holística de autocuidado que nutra tanto el cuerpo como el espíritu.",
+    modoUso: "Usar el Baño Energético Amor Propio primero para limpiar energías, luego el Exfoliante Venus para renovar la piel, aplicar la mascarilla facial natural, y finalmente usar la Loción Ellas y Ellos para sellar el ritual de amor propio."
+  }
 ];
 
 // Updated services with your prices and new images
@@ -432,7 +453,7 @@ const DEFAULT_SERVICES = [
   { id:"serv-radiestesia", nombre:"Radiestesia", categoria:"Servicios", precio:550, moneda:"MXN", duracion:"—", modalidad:"online/presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Radiestesia", imagen:"/images/placeholders/Radiestesia.png" }
 ];
 
-const CATEGORIES = ["Todos","Velas","Lociones","Brisas Áuricas","Exfoliantes","Feromonas","Faciales","Aceites","Shampoo","Cabello","Energéticos","Miel","Protección","Rituales","Sahumerios","Baños Energéticos","Servicios"];
+const CATEGORIES = ["Todos","Velas","Lociones","Brisas Áuricas","Exfoliantes","Feromonas","Faciales","Aceites","Shampoo","Cabello","Energéticos","Miel","Protección","Rituales","Sahumerios","Baños Energéticos","Kits","Servicios"];
 const money = (v,m="MXN") => new Intl.NumberFormat("es-MX",{style:"currency",currency:m}).format(v);
 const hasVariants = it => it.categoria!=='Servicios' && Array.isArray(it.variantes) && it.variantes.length>0;
 const minPrice = it => hasVariants(it) ? Math.min(...it.variantes.map(v=>v.precio||0)) : (it.precio||0);
