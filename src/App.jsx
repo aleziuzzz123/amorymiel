@@ -1997,10 +1997,10 @@ export default function App(){
                   <span style={{ fontSize: "0.9rem" }}>Amor y Miel</span>
                 </a>
                 
-                <a 
-                  href="https://instagram.com/Amor_y_Miel" 
-                  target="_blank" 
-                  rel="noreferrer"
+                                 <a 
+                   href="https://www.instagram.com/_amor_y_miel_" 
+                   target="_blank" 
+                   rel="noreferrer"
                   style={{ 
                     display: "flex", 
                     alignItems: "center", 
