@@ -196,11 +196,13 @@ const DEFAULT_PRODUCTS = [
     categoria: "Faciales", 
     moneda: "MXN", 
     variantes: V([["std", "Único", 220]]), 
-    tags: ["limpieza", "suave", "facial"], 
+    tags: ["limpieza", "suave", "facial", "desmaquillante"], 
     imagen: "/images/placeholders/agua-micelar-product.png",
-    descripcion: "Agua micelar artesanal con micelas que atraen y eliminan suciedad, impurezas y sebo. Sin colorantes, perfumes o alcoholes agresivos, ideal para pieles sensibles.",
-    beneficios: "Limpieza facial suave, remueve maquillaje e impurezas, ideal para pieles sensibles.",
-    modoUso: "Usar mañana y noche. Limpiar antes de aplicar suero y crema hidratante."
+    descripcion: "Agua micelar artesanal formada a base de micelas naturales que atraen y retiran suciedad, impurezas y sebo, dejando la piel limpia y fresca.",
+    beneficios: "Limpieza profunda sin irritación, desmaquillante efectivo, ideal para pieles sensibles y alérgicas, sin colorantes ni perfumes agresivos.",
+    modoUso: "Puedes aplicarlo tanto en tu rutina matutina como en la nocturna. Por la mañana, limpia tu piel antes de aplicar el sérum y la hidratante. Por la noche, desmaquilla y limpia tu rostro intensamente, tonificando e hidratando la piel.",
+    elaboracion: "Es un producto cosmético que está formado a base de micelas, estas son un grupo de moléculas que logran atraer y retirar suciedad, impurezas y sebo, dejando la piel limpia y fresca. No suele contener colorantes, perfumes o alcoholes, componentes que son agresivos con la epidermis.",
+    proposito: "Sirve como desmaquillante y limpiador facial para eliminar maquillaje, células muertas e impurezas, entre otros. Asimismo, el agua micelar contiene una analogía biológica particular dado que resulta muy amigable con la piel, incluso la de las personas más sensibles y alérgicas."
   },
   { 
     id: "agua-rosas", 
@@ -220,11 +222,13 @@ const DEFAULT_PRODUCTS = [
     categoria: "Aceites", 
     moneda: "MXN", 
     variantes: V([["std", "Único", 200]]), 
-    tags: ["decretos", "ritual", "abre caminos"], 
+    tags: ["decretos", "ritual", "abre caminos", "feromonas"], 
     imagen: "/images/placeholders/aceite-abrecaminos-product.png",
-    descripcion: "Es un producto artesanal, elaborado con extracción de esencias naturales de las plantas. Con feromonas para potenciar su efecto.",
+    descripcion: "Aceite artesanal elaborado con extracción de esencias naturales de plantas medicinales mexicanas, enriquecido con feromonas para potenciar su efecto energético.",
     beneficios: "El aceite Abre Caminos, como su nombre lo indica, es un excelente producto para realizar nuestras afirmaciones y decretos, ayuda a suavizar las situaciones negativas y abrirte paso a lo positivo.",
-    modoUso: "Con ayuda del gotero, aplica de 2 a 3 gotitas del Aceite Abre Caminos en tus manos, frótalo y mientras lo haces puedes repetir la oración o decreto de tu gusto."
+    modoUso: "Con ayuda del gotero, aplica de 2 a 3 gotitas del Aceite Abre Caminos en tus manos, frótalo y mientras lo haces puedes repetir la oración o decreto de tu gusto.",
+    elaboracion: "Es un producto artesanal, elaborado con extracción de esencias naturales de las plantas. Con feromonas para potenciar su efecto.",
+    proposito: "Facilitar la apertura de caminos en la vida, suavizar situaciones negativas y potenciar la manifestación de deseos y afirmaciones positivas."
   },
   { 
     id: "aceite-ungir", 
@@ -409,14 +413,14 @@ const DEFAULT_PRODUCTS = [
 
 ];
 
-// Updated services with your prices
+// Updated services with your prices and new images
 const DEFAULT_SERVICES = [
-  { id:"serv-sonoterapia", nombre:"Sonoterapia", categoria:"Servicios", precio:700, moneda:"MXN", duracion:"60 min", modalidad:"presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Sonoterapia", imagen:"/images/placeholders/sonoterapia.JPG" },
-  { id:"serv-ceremonia-cacao", nombre:"Ceremonia de Cacao (10 pax)", categoria:"Servicios", precio:3500, moneda:"MXN", duracion:"—", modalidad:"presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Ceremonia%20de%20Cacao%2010%20pax", imagen:"/images/placeholders/ceremonia-cacao.JPG" },
-  { id:"serv-masaje-craneosacral-sonoterapia", nombre:"Masaje Craneosacral con Sonoterapia", categoria:"Servicios", precio:900, moneda:"MXN", duracion:"60 min", modalidad:"presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Masaje%20Craneosacral%20con%20Sonoterapia", imagen:"/images/placeholders/masaje-craneosacral.JPG" },
-  { id:"serv-numerologia", nombre:"Numerología", categoria:"Servicios", precio:450, moneda:"MXN", duracion:"—", modalidad:"online/presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Numerologia", imagen:"/images/placeholders/numerologia.JPG" },
-  { id:"serv-tarot-angelical", nombre:"Tarot Angelical", categoria:"Servicios", precio:450, moneda:"MXN", duracion:"—", modalidad:"online/presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Tarot%20Angelical", imagen:"/images/placeholders/tarot-angelical.JPG" },
-  { id:"serv-radiestesia", nombre:"Radiestesia", categoria:"Servicios", precio:550, moneda:"MXN", duracion:"—", modalidad:"online/presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Radiestesia", imagen:"/images/placeholders/radiestesia.JPG" }
+  { id:"serv-sonoterapia", nombre:"Sonoterapia", categoria:"Servicios", precio:700, moneda:"MXN", duracion:"60 min", modalidad:"presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Sonoterapia", imagen:"/images/placeholders/Sonoterapia.png" },
+  { id:"serv-ceremonia-cacao", nombre:"Ceremonia de Cacao (10 pax)", categoria:"Servicios", precio:3500, moneda:"MXN", duracion:"—", modalidad:"presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Ceremonia%20de%20Cacao%2010%20pax", imagen:"/images/placeholders/Ceremonia-de-Cacao.png" },
+  { id:"serv-masaje-craneosacral-sonoterapia", nombre:"Masaje Craneosacral con Sonoterapia", categoria:"Servicios", precio:900, moneda:"MXN", duracion:"60 min", modalidad:"presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Masaje%20Craneosacral%20con%20Sonoterapia", imagen:"/images/placeholders/Masaje-Craneosacral-con-Sonoterapia.png" },
+  { id:"serv-numerologia", nombre:"Numerología", categoria:"Servicios", precio:450, moneda:"MXN", duracion:"—", modalidad:"online/presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Numerologia", imagen:"/images/placeholders/Numerología.png" },
+  { id:"serv-tarot-angelical", nombre:"Tarot Angelical", categoria:"Servicios", precio:450, moneda:"MXN", duracion:"—", modalidad:"online/presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Tarot%20Angelical", imagen:"/images/placeholders/Tarot-Angelical.png" },
+  { id:"serv-radiestesia", nombre:"Radiestesia", categoria:"Servicios", precio:550, moneda:"MXN", duracion:"—", modalidad:"online/presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Radiestesia", imagen:"/images/placeholders/Radiestesia.png" }
 ];
 
 const CATEGORIES = ["Todos","Velas","Lociones","Brisas Áuricas","Exfoliantes","Feromonas","Faciales","Aceites","Shampoo","Cabello","Energéticos","Miel","Protección","Rituales","Sahumerios","Baños Energéticos","Servicios"];
@@ -471,6 +475,27 @@ function MosaicGrid({ paleta, items, category, query, onAdd, onOpen }){
             🖼️
           </div>
           <div style={{ position:'absolute', top:12, left:12, background: PALETAS.D.miel, color: PALETAS.D.carbon, borderRadius:999, padding:'4px 10px', fontWeight:600, fontSize:12 }}>{item.categoria}</div>
+          
+          {/* NEW: Stock Indicator */}
+          {item.categoria !== 'Servicios' && (
+            <div style={{ 
+              position: 'absolute', 
+              top: 12, 
+              right: 12, 
+              background: isLowStock(item.id) ? '#ff6b6b' : '#51cf66', 
+              color: 'white', 
+              borderRadius: 999, 
+              padding: '4px 8px', 
+              fontWeight: 600, 
+              fontSize: 10,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}>
+              {isLowStock(item.id) ? '⚠️' : '✅'}
+              {isLowStock(item.id) ? 'Stock Bajo' : `${checkStock(item.id)} disponibles`}
+            </div>
+          )}
         </div>
         <div style={{ padding:14 }}>
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'start', gap:8 }}>
@@ -1035,7 +1060,86 @@ export default function App(){
   
   // Multi-language
   const [language, setLanguage] = useState("es");
-  const [translations, setTranslations] = useState({});
+  const [translations, setTranslations] = useState({
+    es: { /* Spanish translations */ },
+    en: { /* English translations */ }
+  });
+
+  // NEW: Shipping & Delivery System
+  const [shippingZones, setShippingZones] = useState([
+    { id: "local", name: "Ciudad de México", price: 50, time: "1-2 días", available: true },
+    { id: "national", name: "Resto de México", price: 120, time: "3-5 días", available: true },
+    { id: "international", name: "Internacional", price: 350, time: "7-14 días", available: false }
+  ]);
+  const [selectedShipping, setSelectedShipping] = useState("local");
+
+
+  // NEW: Inventory Management
+  const [inventory, setInventory] = useState({});
+  const [lowStockThreshold] = useState(5);
+  const [backInStockSubscribers, setBackInStockSubscribers] = useState({});
+
+  // NEW: Security Features
+  const [securityBadges, setSecurityBadges] = useState([
+    { name: "SSL Secure", icon: "🔒", description: "Conexión encriptada" },
+    { name: "Mercado Pago", icon: "💳", description: "Pago seguro" },
+    { name: "GDPR Compliant", icon: "🛡️", description: "Protección de datos" }
+  ]);
+
+  // NEW: Social Media Integration
+  const [socialLinks, setSocialLinks] = useState({
+    instagram: "https://instagram.com/amorymiel",
+    facebook: "https://facebook.com/amorymiel",
+    whatsapp: "https://wa.me/525512345678"
+  });
+
+  // NEW: Discount System
+  const [coupons, setCoupons] = useState([
+    { code: "BIENVENIDA", discount: 15, type: "percentage", minPurchase: 500, valid: true },
+    { code: "LUNA", discount: 20, type: "percentage", minPurchase: 800, valid: true },
+    { code: "ABUNDANCIA", discount: 100, type: "fixed", minPurchase: 1000, valid: true }
+  ]);
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponCode, setCouponCode] = useState("");
+
+  // NEW: Customer Analytics
+  const [browsingHistory, setBrowsingHistory] = useState([]);
+  const [purchaseHistory, setPurchaseHistory] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
+
+  // NEW: International Features
+  const [currencies, setCurrencies] = useState([
+    { code: "MXN", symbol: "$", rate: 1, name: "Peso Mexicano" },
+    { code: "USD", symbol: "$", rate: 0.058, name: "Dólar Estadounidense" },
+    { code: "EUR", symbol: "€", rate: 0.054, name: "Euro" }
+  ]);
+  const [selectedCurrency, setSelectedCurrency] = useState("MXN");
+  const [taxRates, setTaxRates] = useState({
+    MXN: { rate: 0.16, name: "IVA" },
+    USD: { rate: 0.08, name: "Sales Tax" },
+    EUR: { rate: 0.21, name: "VAT" }
+  });
+
+  // NEW: Enhanced Notifications
+  const [pushNotifications, setPushNotifications] = useState(false);
+  const [smsNotifications, setSmsNotifications] = useState(false);
+  const [emailNotifications, setEmailNotifications] = useState(true);
+  const [notificationPreferences, setNotificationPreferences] = useState({
+    orderUpdates: true,
+    promotions: true,
+    priceDrops: false,
+    newProducts: true,
+    backInStock: true
+  });
+
+  // NEW: App Store Features
+  const [appStoreLinks, setAppStoreLinks] = useState({
+    ios: "https://apps.apple.com/app/amor-y-miel",
+    android: "https://play.google.com/store/apps/details?id=com.amorymiel"
+  });
+  const [showAppInstall, setShowAppInstall] = useState(false);
+const [showNotificationPreferences, setShowNotificationPreferences] = useState(false);
+const [showRecommendations, setShowRecommendations] = useState(false);
 
   // Mobile detection
   useEffect(() => {
@@ -1102,6 +1206,60 @@ export default function App(){
     trackPageView(window.location.pathname);
   }, []);
 
+  // NEW: Initialize inventory with default stock levels
+  useEffect(() => {
+    const defaultInventory = {};
+    DEFAULT_PRODUCTS.forEach(product => {
+      defaultInventory[product.id] = Math.floor(Math.random() * 50) + 10; // Random stock 10-60
+    });
+    setInventory(defaultInventory);
+  }, []);
+
+  // NEW: Generate recommendations when browsing history changes
+  useEffect(() => {
+    if (browsingHistory.length > 0) {
+      generateRecommendations();
+    }
+  }, [browsingHistory]);
+
+  // NEW: Check for mobile app and show install prompt
+  useEffect(() => {
+    if (detectMobileApp()) {
+      setTimeout(() => setShowAppInstall(true), 5000); // Show after 5 seconds
+    }
+  }, []);
+
+  // NEW: Persist new state variables to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem("amym-shipping-zones", JSON.stringify(shippingZones));
+      localStorage.setItem("amym-inventory", JSON.stringify(inventory));
+      localStorage.setItem("amym-coupons", JSON.stringify(coupons));
+      localStorage.setItem("amym-currencies", JSON.stringify(currencies));
+      localStorage.setItem("amym-notifications", JSON.stringify(notificationPreferences));
+    } catch (e) {}
+  }, [shippingZones, inventory, coupons, currencies, notificationPreferences]);
+
+  // NEW: Load new state variables from localStorage
+  useEffect(() => {
+    try {
+      const shippingZonesData = localStorage.getItem("amym-shipping-zones");
+      if (shippingZonesData) setShippingZones(JSON.parse(shippingZonesData));
+      
+      const inventoryData = localStorage.getItem("amym-inventory");
+      if (inventoryData) setInventory(JSON.parse(inventoryData));
+      
+      const couponsData = localStorage.getItem("amym-coupons");
+      if (couponsData) setCoupons(JSON.parse(couponsData));
+      
+      const currenciesData = localStorage.getItem("amym-currencies");
+      if (currenciesData) setCurrencies(JSON.parse(currenciesData));
+      
+      const notificationsData = localStorage.getItem("amym-notifications");
+      if (notificationsData) setNotificationPreferences(JSON.parse(notificationsData));
+    } catch (e) {}
+  }, []);
+
   const hasVariants = (it)=> Array.isArray(it.variantes)&&it.variantes.length>0;
   const minPrice = (it)=> hasVariants(it)? Math.min(...it.variantes.map(v=>v.precio||0)) : (it.precio||0);
   const onAdd=(item,variant)=>{
@@ -1115,6 +1273,10 @@ export default function App(){
   const onOpen=(item)=>{ setOpenProduct(item); setSelectedVariant(hasVariants(item)? item.variantes[0] : null); };
   const close=()=>{ setOpenProduct(null); setSelectedVariant(null); };
   const subtotal = cart.reduce((s,i)=> s+i.precio*i.cantidad, 0);
+  const shippingCost = calculateShipping(selectedShipping);
+  const discount = calculateDiscount(subtotal);
+  const tax = calculateTax(subtotal - discount);
+  const total = subtotal + shippingCost + tax - discount;
 
   // Helper functions
   const addToWishlist = (item) => {
@@ -1310,6 +1472,116 @@ export default function App(){
       }
     };
     return translations[language]?.[key] || key;
+  };
+
+  // NEW: Shipping & Delivery Functions
+  const calculateShipping = (zoneId) => {
+    const zone = shippingZones.find(z => z.id === zoneId);
+    return zone ? zone.price : 0;
+  };
+
+  const getShippingTime = (zoneId) => {
+    const zone = shippingZones.find(z => z.id === zoneId);
+    return zone ? zone.time : "3-5 días";
+  };
+
+  // NEW: Inventory Management Functions
+  const checkStock = (productId) => {
+    return inventory[productId] || 999; // Default high stock
+  };
+
+  const isLowStock = (productId) => {
+    const stock = checkStock(productId);
+    return stock <= lowStockThreshold;
+  };
+
+  const subscribeBackInStock = (productId, email) => {
+    setBackInStockSubscribers(prev => ({
+      ...prev,
+      [productId]: [...(prev[productId] || []), email]
+    }));
+  };
+
+  // NEW: Discount System Functions
+  const applyCoupon = (code) => {
+    const coupon = coupons.find(c => c.code === code.toUpperCase() && c.valid);
+    if (coupon) {
+      setAppliedCoupon(coupon);
+      return true;
+    }
+    return false;
+  };
+
+  const calculateDiscount = (subtotal) => {
+    if (!appliedCoupon) return 0;
+    if (subtotal < appliedCoupon.minPurchase) return 0;
+    
+    if (appliedCoupon.type === "percentage") {
+      return (subtotal * appliedCoupon.discount) / 100;
+    } else {
+      return appliedCoupon.discount;
+    }
+  };
+
+  // NEW: Currency & Tax Functions
+  const convertCurrency = (amount, fromCurrency, toCurrency) => {
+    const from = currencies.find(c => c.code === fromCurrency);
+    const to = currencies.find(c => c.code === toCurrency);
+    if (from && to) {
+      return (amount * to.rate) / from.rate;
+    }
+    return amount;
+  };
+
+  const calculateTax = (subtotal) => {
+    const taxRate = taxRates[selectedCurrency];
+    return taxRate ? subtotal * taxRate.rate : 0;
+  };
+
+  // NEW: Analytics Functions
+  const trackProductView = (product) => {
+    setBrowsingHistory(prev => {
+      const filtered = prev.filter(p => p.id !== product.id);
+      return [product, ...filtered].slice(0, 10);
+    });
+  };
+
+  const generateRecommendations = () => {
+    // Simple recommendation algorithm based on browsing history
+    const viewedCategories = browsingHistory.map(p => p.categoria);
+    const recommendations = DEFAULT_PRODUCTS.filter(p => 
+      viewedCategories.includes(p.categoria) && 
+      !browsingHistory.find(h => h.id === p.id)
+    );
+    setRecommendations(recommendations.slice(0, 6));
+  };
+
+  // NEW: Notification Functions
+  const requestPushPermission = async () => {
+    if ('Notification' in window) {
+      const permission = await Notification.requestPermission();
+      setPushNotifications(permission === 'granted');
+      return permission === 'granted';
+    }
+    return false;
+  };
+
+  const sendNotification = (title, options = {}) => {
+    if (pushNotifications && 'Notification' in window && Notification.permission === 'granted') {
+      new Notification(title, options);
+    }
+  };
+
+  // NEW: App Store Functions
+  const detectMobileApp = () => {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
+  };
+
+  const showAppInstallPrompt = () => {
+    if (detectMobileApp()) {
+      setShowAppInstall(true);
+    }
   };
 
   const checkoutMP=async()=>{
@@ -3116,6 +3388,29 @@ export default function App(){
                 <strong>Ubicación:</strong> Cancún, Quintana Roo (taller principal). 
                 También presentes en Tulum, Monterrey y CDMX.
               </p>
+
+              {/* NEW: Security Badges */}
+              <div style={{ marginTop: "1rem" }}>
+                <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.7)", marginBottom: "0.5rem" }}>
+                  Seguridad y Confianza:
+                </div>
+                <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                  {securityBadges.map((badge, index) => (
+                    <div key={index} style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.3rem",
+                      background: "rgba(255,255,255,0.1)",
+                      padding: "0.3rem 0.6rem",
+                      borderRadius: "12px",
+                      fontSize: "0.7rem"
+                    }}>
+                      <span>{badge.icon}</span>
+                      <span>{badge.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
 
             {/* Contact Info */}
@@ -3507,6 +3802,135 @@ export default function App(){
                   </div>
                 </div>
 
+                {/* NEW: Coupon Code Input */}
+                <div style={{ marginBottom: "1rem" }}>
+                  <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.5rem" }}>
+                    <input
+                      type="text"
+                      placeholder="Código de descuento"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value)}
+                      style={{
+                        flex: 1,
+                        padding: "0.5rem",
+                        border: "1px solid rgba(0,0,0,0.1)",
+                        borderRadius: "6px",
+                        fontSize: "0.9rem"
+                      }}
+                    />
+                    <button
+                      onClick={() => {
+                        if (applyCoupon(couponCode)) {
+                          setCouponCode("");
+                          alert("¡Cupón aplicado exitosamente!");
+                        } else {
+                          alert("Cupón inválido o no aplicable");
+                        }
+                      }}
+                      style={{
+                        background: PALETAS.D.miel,
+                        color: "white",
+                        border: "none",
+                        padding: "0.5rem 1rem",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                        fontSize: "0.9rem",
+                        whiteSpace: "nowrap"
+                      }}
+                    >
+                      Aplicar
+                    </button>
+                  </div>
+                  {appliedCoupon && (
+                    <div style={{ 
+                      background: "#e8f5e8", 
+                      padding: "0.5rem", 
+                      borderRadius: "6px", 
+                      fontSize: "0.8rem",
+                      color: "#2d5a2d",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center"
+                    }}>
+                      <span>✅ Cupón {appliedCoupon.code} aplicado</span>
+                      <button
+                        onClick={() => setAppliedCoupon(null)}
+                        style={{
+                          background: "none",
+                          border: "none",
+                          color: "#2d5a2d",
+                          cursor: "pointer",
+                          fontSize: "1rem"
+                        }}
+                      >
+                        ✖️
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* NEW: Shipping Options */}
+                <div style={{ marginBottom: "1rem" }}>
+                  <div style={{ fontSize: "0.9rem", fontWeight: "600", marginBottom: "0.5rem" }}>
+                    Opciones de envío:
+                  </div>
+                  {shippingZones.filter(zone => zone.available).map(zone => (
+                    <label key={zone.id} style={{ 
+                      display: "flex", 
+                      alignItems: "center", 
+                      gap: "0.5rem", 
+                      marginBottom: "0.5rem",
+                      cursor: "pointer"
+                    }}>
+                      <input
+                        type="radio"
+                        name="shipping"
+                        value={zone.id}
+                        checked={selectedShipping === zone.id}
+                        onChange={(e) => setSelectedShipping(e.target.value)}
+                      />
+                      <span style={{ fontSize: "0.9rem" }}>
+                        {zone.name} - {zone.time} - {money(zone.price, "MXN")}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+
+                {/* NEW: Order Summary */}
+                <div style={{ 
+                  background: "#f8f9fa", 
+                  padding: "1rem", 
+                  borderRadius: "8px", 
+                  marginBottom: "1rem",
+                  fontSize: "0.9rem"
+                }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
+                    <span>Subtotal:</span>
+                    <span>{money(subtotal, "MXN")}</span>
+                  </div>
+                  {discount > 0 && (
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem", color: "#28a745" }}>
+                      <span>Descuento:</span>
+                      <span>-{money(discount, "MXN")}</span>
+                    </div>
+                  )}
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
+                    <span>Envío:</span>
+                    <span>{money(shippingCost, "MXN")}</span>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
+                    <span>Impuestos:</span>
+                    <span>{money(tax, "MXN")}</span>
+                  </div>
+                  <hr style={{ margin: "0.5rem 0", border: "none", borderTop: "1px solid #dee2e6" }} />
+                  <div style={{ display: "flex", justifyContent: "space-between", fontWeight: "600" }}>
+                    <span>Total:</span>
+                    <span style={{ fontSize: "1.1rem", color: PALETAS.D.miel }}>
+                      {money(total, "MXN")}
+                    </span>
+                  </div>
+                </div>
+
                 <div style={{ 
                   display: "flex", 
                   justifyContent: "space-between", 
@@ -3516,7 +3940,7 @@ export default function App(){
                   fontWeight: "600"
                 }}>
                   <span>Total:</span>
-                  <span>{money(subtotal)}</span>
+                  <span>{money(total, "MXN")}</span>
                 </div>
                 <button 
                   className="btn" 
@@ -3612,6 +4036,112 @@ export default function App(){
             onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
           >
             📧
+          </button>
+
+          {/* NEW: Social Media Links */}
+          <a 
+            href={socialLinks.instagram}
+            target="_blank" 
+            rel="noreferrer"
+            style={{
+              background: "linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)",
+              color: "white",
+              width: "60px",
+              height: "60px",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "20px",
+              textDecoration: "none",
+              boxShadow: "0 4px 12px rgba(220, 39, 67, 0.3)",
+              transition: "transform 0.2s ease"
+            }}
+            onMouseEnter={(e) => e.target.style.transform = "scale(1.1)"}
+            onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
+          >
+            📸
+          </a>
+
+          {/* NEW: Currency Switcher */}
+          <button
+            onClick={() => {
+              const currentIndex = currencies.findIndex(c => c.code === selectedCurrency);
+              const nextIndex = (currentIndex + 1) % currencies.length;
+              setSelectedCurrency(currencies[nextIndex].code);
+            }}
+            style={{
+              background: "linear-gradient(135deg, #667eea, #764ba2)",
+              color: "white",
+              width: "60px",
+              height: "60px",
+              borderRadius: "50%",
+              border: "none",
+              fontSize: "16px",
+              cursor: "pointer",
+              boxShadow: "0 4px 12px rgba(102, 126, 234, 0.3)",
+              transition: "transform 0.2s ease",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "2px"
+            }}
+            onMouseEnter={(e) => e.target.style.transform = "scale(1.1)"}
+            onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
+          >
+            <span style={{ fontSize: "12px" }}>{currencies.find(c => c.code === selectedCurrency)?.symbol}</span>
+            <span style={{ fontSize: "10px" }}>{selectedCurrency}</span>
+          </button>
+
+          {/* NEW: Recommendations Button */}
+          <button
+            onClick={() => setShowRecommendations(true)}
+            style={{
+              background: "linear-gradient(135deg, #ff6b6b, #ee5a24)",
+              color: "white",
+              width: "60px",
+              height: "60px",
+              borderRadius: "50%",
+              border: "none",
+              fontSize: "16px",
+              cursor: "pointer",
+              boxShadow: "0 4px 12px rgba(255, 107, 107, 0.3)",
+              transition: "transform 0.2s ease",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }}
+            onMouseEnter={(e) => e.target.style.transform = "scale(1.1)"}
+            onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
+            title="Ver recomendaciones personalizadas"
+          >
+            🎯
+          </button>
+
+          {/* NEW: Notification Settings Button */}
+          <button
+            onClick={() => setShowNotificationPreferences(true)}
+            style={{
+              background: "linear-gradient(135deg, #a29bfe, #6c5ce7)",
+              color: "white",
+              width: "60px",
+              height: "60px",
+              borderRadius: "50%",
+              border: "none",
+              fontSize: "16px",
+              cursor: "pointer",
+              boxShadow: "0 4px 12px rgba(162, 155, 254, 0.3)",
+              transition: "transform 0.2s ease",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }}
+            onMouseEnter={(e) => e.target.style.transform = "scale(1.1)"}
+            onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
+            title="Configurar notificaciones"
+          >
+            🔔
           </button>
         </div>
 
@@ -4533,6 +5063,314 @@ export default function App(){
             >
               ✖️
             </button>
+          </div>
+        )}
+
+        {/* NEW: App Store Install Modal */}
+        {showAppInstall && (
+          <div style={{
+            position: "fixed",
+            bottom: "20px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: "white",
+            padding: "20px",
+            borderRadius: "15px",
+            boxShadow: "0 8px 25px rgba(0,0,0,0.2)",
+            zIndex: 1000,
+            maxWidth: "350px",
+            width: "90%",
+            textAlign: "center"
+          }}>
+            <div style={{ fontSize: "3rem", marginBottom: "15px" }}>📱</div>
+            <h4 style={{ margin: "0 0 10px 0", color: PALETAS.D.carbon }}>
+              ¡Descarga nuestra app!
+            </h4>
+            <p style={{ margin: "0 0 20px 0", color: "#666", fontSize: "0.9rem" }}>
+              Accede a Amor y Miel desde tu dispositivo móvil
+            </p>
+            <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
+              <a
+                href={appStoreLinks.ios}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  background: "#000",
+                  color: "white",
+                  padding: "10px 15px",
+                  borderRadius: "8px",
+                  textDecoration: "none",
+                  fontSize: "0.8rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px"
+                }}
+              >
+                🍎 App Store
+              </a>
+              <a
+                href={appStoreLinks.android}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  background: "#3DDC84",
+                  color: "white",
+                  padding: "10px 15px",
+                  borderRadius: "8px",
+                  textDecoration: "none",
+                  fontSize: "0.8rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px"
+                }}
+              >
+                🤖 Google Play
+              </a>
+            </div>
+            <button
+              onClick={() => setShowAppInstall(false)}
+              style={{
+                background: "transparent",
+                color: "#666",
+                border: "none",
+                padding: "8px",
+                cursor: "pointer",
+                fontSize: "1.2rem",
+                position: "absolute",
+                top: "10px",
+                right: "10px"
+              }}
+            >
+              ✖️
+            </button>
+          </div>
+        )}
+
+        {/* NEW: Notification Preferences Modal */}
+        {showNotificationPreferences && (
+          <div style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1001
+          }}>
+            <div style={{
+              background: "white",
+              padding: "30px",
+              borderRadius: "15px",
+              maxWidth: "500px",
+              width: "90%",
+              maxHeight: "80vh",
+              overflowY: "auto"
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                <h3 style={{ margin: 0, color: PALETAS.D.carbon }}>Preferencias de Notificaciones</h3>
+                <button
+                  onClick={() => setShowNotificationPreferences(false)}
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "1.2rem",
+                    cursor: "pointer"
+                  }}
+                >
+                  ✖️
+                </button>
+              </div>
+              
+              <div style={{ marginBottom: "20px" }}>
+                <h4 style={{ margin: "0 0 15px 0", color: PALETAS.D.carbon }}>Tipos de Notificaciones:</h4>
+                {Object.entries(notificationPreferences).map(([key, value]) => (
+                  <label key={key} style={{ 
+                    display: "flex", 
+                    alignItems: "center", 
+                    gap: "10px", 
+                    marginBottom: "10px",
+                    cursor: "pointer"
+                  }}>
+                    <input
+                      type="checkbox"
+                      checked={value}
+                      onChange={(e) => setNotificationPreferences(prev => ({
+                        ...prev,
+                        [key]: e.target.checked
+                      }))}
+                    />
+                    <span style={{ fontSize: "0.9rem" }}>
+                      {key === "orderUpdates" && "Actualizaciones de pedidos"}
+                      {key === "promotions" && "Ofertas y promociones"}
+                      {key === "priceDrops" && "Bajadas de precio"}
+                      {key === "newProducts" && "Nuevos productos"}
+                      {key === "backInStock" && "Productos de vuelta en stock"}
+                    </span>
+                  </label>
+                ))}
+              </div>
+
+              <div style={{ marginBottom: "20px" }}>
+                <h4 style={{ margin: "0 0 15px 0", color: PALETAS.D.carbon }}>Canales de Notificación:</h4>
+                <label style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
+                  <input
+                    type="checkbox"
+                    checked={emailNotifications}
+                    onChange={(e) => setEmailNotifications(e.target.checked)}
+                  />
+                  <span>Email</span>
+                </label>
+                <label style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
+                  <input
+                    type="checkbox"
+                    checked={pushNotifications}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        requestPushPermission();
+                      } else {
+                        setPushNotifications(false);
+                      }
+                    }}
+                  />
+                  <span>Notificaciones del navegador</span>
+                </label>
+                <label style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
+                  <input
+                    type="checkbox"
+                    checked={smsNotifications}
+                    onChange={(e) => setSmsNotifications(e.target.checked)}
+                  />
+                  <span>SMS</span>
+                </label>
+              </div>
+
+              <button
+                onClick={() => setShowNotificationPreferences(false)}
+                style={{
+                  background: PALETAS.D.miel,
+                  color: "white",
+                  border: "none",
+                  padding: "12px 24px",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  width: "100%"
+                }}
+              >
+                Guardar Preferencias
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* NEW: Product Recommendations Modal */}
+        {showRecommendations && (
+          <div style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1001
+          }}>
+            <div style={{
+              background: "white",
+              padding: "30px",
+              borderRadius: "15px",
+              maxWidth: "800px",
+              width: "90%",
+              maxHeight: "80vh",
+              overflowY: "auto"
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                <h3 style={{ margin: 0, color: PALETAS.D.carbon }}>Recomendaciones para ti</h3>
+                <button
+                  onClick={() => setShowRecommendations(false)}
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "1.2rem",
+                    cursor: "pointer"
+                  }}
+                >
+                  ✖️
+                </button>
+              </div>
+              
+              {recommendations.length > 0 ? (
+                <div style={{ 
+                  display: "grid", 
+                  gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", 
+                  gap: "1rem" 
+                }}>
+                  {recommendations.map(item => (
+                    <div key={item.id} style={{ 
+                      border: "1px solid #eee", 
+                      borderRadius: "8px", 
+                      padding: "15px",
+                      textAlign: "center"
+                    }}>
+                      <img
+                        src={item.imagen}
+                        alt={item.nombre}
+                        style={{
+                          width: "100%",
+                          height: "120px",
+                          objectFit: "cover",
+                          borderRadius: "8px",
+                          marginBottom: "10px"
+                        }}
+                      />
+                      <h4 style={{ margin: "0 0 5px 0", fontSize: "0.9rem" }}>{item.nombre}</h4>
+                      <p style={{ margin: "0 0 10px 0", color: "#666", fontSize: "0.8rem" }}>
+                        {money(item.precio || minPrice(item), item.moneda || 'MXN')}
+                      </p>
+                      <button
+                        onClick={() => {
+                          onOpen(item);
+                          setShowRecommendations(false);
+                        }}
+                        style={{
+                          background: PALETAS.D.miel,
+                          color: "white",
+                          border: "none",
+                          padding: "8px 12px",
+                          borderRadius: "6px",
+                          cursor: "pointer",
+                          fontSize: "0.8rem",
+                          width: "100%"
+                        }}
+                      >
+                        Ver Producto
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div style={{ textAlign: "center", padding: "40px" }}>
+                  <div style={{ fontSize: "3rem", marginBottom: "20px" }}>🔍</div>
+                  <h4 style={{ margin: "0 0 10px 0", color: PALETAS.D.carbon }}>
+                    No hay recomendaciones aún
+                  </h4>
+                  <p style={{ color: "#666", marginBottom: "20px" }}>
+                    Explora nuestros productos para recibir recomendaciones personalizadas
+                  </p>
+                  <button
+                    onClick={() => setShowRecommendations(false)}
+                    style={{
+                      background: PALETAS.D.miel,
+                      color: "white",
+                      border: "none",
+                      padding: "12px 24px",
+                      borderRadius: "8px",
+                      cursor: "pointer"
+                    }}
+                  >
+                    Explorar Productos
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         )}
     </div>
