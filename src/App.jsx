@@ -1133,8 +1133,34 @@ const [showRecommendations, setShowRecommendations] = useState(false);
   // localStorage effects
   useEffect(()=>{ try{ const raw=localStorage.getItem("amym-cart"); if(raw) setCart(JSON.parse(raw)); }catch(e){} },[]);
   useEffect(()=>{ try{ localStorage.setItem("amym-cart", JSON.stringify(cart)); }catch(e){} },[cart]);
-  useEffect(()=>{ try{ const raw=localStorage.getItem("amym-products"); if(raw) setProducts(JSON.parse(raw)); }catch(e){} },[]);
-  useEffect(()=>{ try{ const raw=localStorage.getItem("amym-services"); if(raw) setServices(JSON.parse(raw)); }catch(e){} },[]);
+  useEffect(()=>{ 
+    try{ 
+      const raw=localStorage.getItem("amym-products"); 
+      if(raw) {
+        setProducts(JSON.parse(raw));
+      } else {
+        // Ensure products is initialized with default value
+        setProducts(DEFAULT_PRODUCTS);
+      }
+    }catch(e){
+      // Fallback to default products if there's an error
+      setProducts(DEFAULT_PRODUCTS);
+    }
+  },[]);
+  useEffect(()=>{ 
+    try{ 
+      const raw=localStorage.getItem("amym-services"); 
+      if(raw) {
+        setServices(JSON.parse(raw));
+      } else {
+        // Ensure services is initialized with default value
+        setServices(DEFAULT_SERVICES);
+      }
+    }catch(e){
+      // Fallback to default services if there's an error
+      setServices(DEFAULT_SERVICES);
+    }
+  },[]);
   useEffect(()=>{ try{ const raw=localStorage.getItem("amym-wishlist"); if(raw) setWishlist(JSON.parse(raw)); }catch(e){} },[]);
   useEffect(()=>{ try{ localStorage.setItem("amym-wishlist", JSON.stringify(wishlist)); }catch(e){} },[wishlist]);
   useEffect(()=>{ try{ const raw=localStorage.getItem("amym-reviews"); if(raw) setReviews(JSON.parse(raw)); }catch(e){} },[]);
@@ -1602,6 +1628,14 @@ const [showRecommendations, setShowRecommendations] = useState(false);
   };
 
   const filteredItems = useMemo(() => {
+    // Safety check to ensure services is properly initialized
+    if (!services || !Array.isArray(services)) {
+      return products.filter(item => 
+        (selectedCategory === "Todos" || item.categoria === selectedCategory) && 
+        (!query || item.nombre.toLowerCase().includes(query.toLowerCase()) || (item.tags || []).some(t => (t || "").toLowerCase().includes(query.toLowerCase())))
+      );
+    }
+    
     const allItems = [...products, ...services];
     const q = (query || "").toLowerCase().trim();
     
