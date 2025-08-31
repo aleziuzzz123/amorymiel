@@ -13,7 +13,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["ch", "Chica", 150], ["gd", "Grande", 200]]), 
     tags: ["artesanal", "abeja", "abundancia", "natural"], 
-    imagen: "/images/placeholders/velas-miel.jpg",
+    imagen: "/images/placeholders/velasdemiel1.JPG",
     descripcion: "Velas artesanales elaboradas con cera natural de abeja, perfectas para rituales de abundancia y prosperidad. Aromas suaves que crean un ambiente cálido y acogedor.",
     beneficios: "Ideal para rituales de abundancia, meditación y crear un ambiente de paz y prosperidad."
   },
@@ -24,7 +24,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["ch", "Chica", 180], ["gd", "Grande", 250]]), 
     tags: ["atracción", "abundancia", "natural"], 
-    imagen: "/images/placeholders/locion-atrayente.jpg",
+    imagen: "/images/placeholders/locion-atraente1.JPG",
     descripcion: "Loción artesanal elaborada con esencias naturales para atraer energías positivas y abundancia a tu vida.",
     beneficios: "Atrae prosperidad, abundancia y energías positivas."
   },
@@ -35,7 +35,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["ch", "Chica", 200], ["gd", "Grande", 280]]), 
     tags: ["protección", "limpieza", "palo santo"], 
-    imagen: "/images/placeholders/locion-palo-santo.jpg",
+    imagen: "/images/placeholders/ticonpalosanto1.JPG",
     descripcion: "Loción elaborada con esencia de Palo Santo, ideal para limpieza energética y protección espiritual.",
     beneficios: "Limpieza energética, protección espiritual y purificación del aura."
   },
@@ -46,7 +46,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["ch", "Chica", 180], ["gd", "Grande", 250]]), 
     tags: ["limpieza", "energética", "florida"], 
-    imagen: "/images/placeholders/agua-florida.jpg",
+    imagen: "/images/placeholders/agua-florida.JPG",
     descripcion: "Agua Florida tradicional para limpieza energética y purificación del ambiente y la persona.",
     beneficios: "Limpieza energética profunda, purificación y renovación espiritual."
   },
@@ -57,7 +57,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["ch", "Chica", 220], ["gd", "Grande", 300]]), 
     tags: ["dinero", "prosperidad", "limpieza energética"], 
-    imagen: "/images/placeholders/brisa-bendicion-dinero.jpg",
+    imagen: "/images/placeholders/brisa-aurica-bendicion-del-dinero.JPG",
     descripcion: "Brisa áurica elaborada artesanalmente con aceites esenciales y plantas energéticas: Vainilla, Laurel, Canela y semillas de abundancia. Vibrada e intencionada para limpiar la energía del dinero.",
     beneficios: "Limpieza energética del dinero, elimina energías negativas y atrae prosperidad financiera.",
     modoUso: "Agitar antes de usar. Aplicar sobre caja registradora, cartera o donde coloques tu dinero en efectivo para eliminar energías negativas."
@@ -69,7 +69,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["ch", "Chica", 220], ["gd", "Grande", 300]]), 
     tags: ["prosperidad", "equilibrio", "limpieza"], 
-    imagen: "/images/placeholders/brisa-prosperidad.jpg",
+    imagen: "/images/placeholders/brisa-aurica-prosperidad.JPG",
     descripcion: "Brisa áurica para limpieza energética que funciona a nivel emocional, liberándonos de malas vibras que se pueden pegar al ir con personas o ciertos lugares.",
     beneficios: "Limpieza energética emocional, liberación de energías negativas y protección áurica.",
     modoUso: "Agitar antes de usar. Aplicar sobre el cuerpo o en el ambiente para limpieza energética."
@@ -81,7 +81,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["ch", "Chica", 220], ["gd", "Grande", 300]]), 
     tags: ["abundancia", "expansión", "energía positiva"], 
-    imagen: "/images/placeholders/brisa-abundancia.jpg",
+    imagen: "/images/placeholders/brisa-aurica-abundancia.JPG",
     descripcion: "Brisa áurica para atraer abundancia y expansión en todas las áreas de tu vida.",
     beneficios: "Atrae abundancia, expansión y energías positivas para el crecimiento personal.",
     modoUso: "Agitar antes de usar. Aplicar sobre el cuerpo o en el ambiente para atraer abundancia."
@@ -93,7 +93,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 180]]), 
     tags: ["renovación", "ritual", "abre caminos"], 
-    imagen: "/images/placeholders/exf-abrecaminos.jpg",
+    imagen: "/images/placeholders/exfoliante abrecaminos.JPG",
     descripcion: "Exfoliante artesanal elaborado con Miel, Canela, Azúcar, Café y otros ingredientes, elegidos especialmente para exfoliar e hidratar tu piel. Consagrado para abrir tus caminos a la Prosperidad y Abundancia.",
     beneficios: "Remueve energías negativas acumuladas en cuerpo y espíritu, abre caminos a la prosperidad y abundancia.",
     modoUso: "Usar como exfoliante corporal 1 a 2 veces por semana (preferiblemente días de descanso). Desde el rostro hacia los pies, exfoliar repitiendo tu oración o decreto."
@@ -105,7 +105,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["ch", "Chica", 200], ["gd", "Grande", 280]]), 
     tags: ["amor-propio", "piel", "venus"], 
-    imagen: "/images/placeholders/exf-venus.jpg",
+    imagen: "/images/placeholders/exfoliane-venus.JPG",
     descripcion: "Exfoliante especial para el amor propio y la belleza interior, elaborado con ingredientes naturales y energéticos.",
     beneficios: "Promueve el amor propio, belleza interior y renovación de la piel.",
     modoUso: "Usar 1 a 2 veces por semana para renovar la piel y conectar con tu belleza interior."
@@ -117,7 +117,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["ch", "Chica", 250], ["gd", "Grande", 350]]), 
     tags: ["atracción", "feromonas", "natural"], 
-    imagen: "/images/placeholders/feromonas-naturales.jpg",
+    imagen: "/images/placeholders/feromanas-naturales.JPG",
     descripcion: "Feromonas naturales para aumentar la atracción y la confianza personal.",
     beneficios: "Aumenta la atracción natural y la confianza personal.",
     modoUso: "Aplicar sobre puntos de pulso para mayor efectividad."
@@ -129,7 +129,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["ch", "Chica", 250], ["gd", "Grande", 350]]), 
     tags: ["atracción", "pareja", "feromonas"], 
-    imagen: "/images/placeholders/feromonas-dyc.jpg",
+    imagen: "/images/placeholders/feromanas-damas-y-caballeros.JPG",
     descripcion: "Feromonas especiales para damas y caballeros, diseñadas para fortalecer la conexión de pareja.",
     beneficios: "Fortalece la conexión de pareja y aumenta la atracción mutua.",
     modoUso: "Aplicar sobre puntos de pulso para mayor efectividad en la conexión de pareja."
@@ -141,7 +141,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 220]]), 
     tags: ["limpieza", "suave", "facial"], 
-    imagen: "/images/placeholders/agua-micelar.jpg",
+    imagen: "/images/placeholders/agua-micelar.JPG",
     descripcion: "Agua micelar elaborada artesanalmente con micelas que atraen y eliminan suciedad, impurezas y sebo, dejando la piel limpia y fresca. Sin colorantes, perfumes o alcoholes agresivos para la epidermis.",
     beneficios: "Limpieza facial suave, remueve maquillaje e impurezas, ideal para pieles sensibles y alérgicas.",
     modoUso: "Usar mañana y noche. Por la mañana: limpiar antes de aplicar suero y crema hidratante. Por la noche: remover maquillaje intensamente, limpiar, tonificar e hidratar la piel."
@@ -153,7 +153,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 180]]), 
     tags: ["suavizante", "antioxidante", "rosas"], 
-    imagen: "/images/placeholders/agua-rosas.jpg",
+    imagen: "/images/placeholders/agua-de-rosas1.JPG",
     descripcion: "Agua de rosas natural para suavizar y nutrir la piel con propiedades antioxidantes.",
     beneficios: "Suaviza la piel, propiedades antioxidantes y efecto hidratante natural.",
     modoUso: "Aplicar sobre el rostro como tónico facial o para refrescar la piel durante el día."
@@ -165,7 +165,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 200]]), 
     tags: ["decretos", "ritual", "abre caminos"], 
-    imagen: "/images/placeholders/aceite-abre.jpg",
+    imagen: "/images/placeholders/aceite-abrecaminos.JPG",
     descripcion: "Aceite artesanal elaborado con extracción de esencias naturales de las plantas. Con feromonas para potenciar su efecto. Ideal para realizar afirmaciones y decretos, ayuda a suavizar situaciones negativas y abrir paso a lo positivo.",
     beneficios: "Excelente para afirmaciones y decretos, suaviza situaciones negativas y abre camino a lo positivo.",
     modoUso: "Con ayuda del gotero, aplicar 2 a 3 gotitas en las manos, frotar y repetir la oración o decreto de tu gusto."
@@ -177,7 +177,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 250]]), 
     tags: ["consagrado", "paz", "ungir"], 
-    imagen: "/images/placeholders/aceite-ungir.jpg",
+    imagen: "/images/placeholders/aceite-para-ungir.JPG",
     descripcion: "Aceite artesanal de grado espiritual. La base es aceite de Oliva, Mirra, Canela entre otras plantas sagradas. La palabra 'Ungido' en hebreo significa Mesías.",
     beneficios: "Usado en eventos de adoración y espirituales, para curar enfermedades y santificar una muerte.",
     modoUso: "La persona debe encontrarse en un momento muy espiritual, ya que requiere mucho respeto. Elaborado para llevar paz y calma a quien lo necesita en momentos muy difíciles."
@@ -189,7 +189,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 120]]), 
     tags: ["natural", "brillo", "artesanal"], 
-    imagen: "/images/placeholders/shampoo-artesanal.jpg",
+    imagen: "/images/placeholders/shampoo-artesanal.JPG",
     descripcion: "Shampoo artesanal elaborado con ingredientes naturales para el cuidado del cabello.",
     beneficios: "Limpieza natural del cabello, sin químicos agresivos, promueve el brillo natural.",
     modoUso: "Usar como shampoo regular, masajear suavemente el cuero cabelludo."
@@ -201,7 +201,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 140]]), 
     tags: ["miel", "suavidad", "natural"], 
-    imagen: "/images/placeholders/shampoo-miel.jpg",
+    imagen: "/images/placeholders/shampoo-miel.JPG",
     descripcion: "Shampoo con extracto de miel natural para suavizar y nutrir el cabello.",
     beneficios: "Suaviza el cabello, nutre con propiedades de la miel y promueve la salud capilar.",
     modoUso: "Usar como shampoo regular, dejar actuar por 2-3 minutos para mayor beneficio."
@@ -213,7 +213,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 140]]), 
     tags: ["romero", "fortaleza", "natural"], 
-    imagen: "/images/placeholders/shampoo-romero.jpg",
+    imagen: "/images/placeholders/shampoo-romero.JPG",
     descripcion: "Shampoo con extracto de romero para fortalecer y dar volumen al cabello.",
     beneficios: "Fortalece el cabello, da volumen y promueve el crecimiento saludable.",
     modoUso: "Usar como shampoo regular, masajear el cuero cabelludo para estimular la circulación."
@@ -225,7 +225,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 80]]), 
     tags: ["hidratación", "brillo", "mascarilla"], 
-    imagen: "/images/placeholders/mascarilla-capilar.jpg",
+    imagen: "/images/placeholders/mascarilla-capilar.JPG",
     descripcion: "Mascarilla capilar natural para hidratar y dar brillo al cabello.",
     beneficios: "Hidratación profunda, brillo natural y reparación del cabello dañado.",
     modoUso: "Aplicar después del shampoo, dejar actuar por 10-15 minutos y enjuagar."
@@ -237,7 +237,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 180]]), 
     tags: ["calma", "limpieza", "luna"], 
-    imagen: "/images/placeholders/agua-luna.jpg",
+    imagen: "/images/placeholders/agua-de-luna.JPG",
     descripcion: "Agua energizada con la energía de la luna para calma y limpieza espiritual.",
     beneficios: "Calma emocional, limpieza espiritual y conexión con la energía lunar.",
     modoUso: "Usar para limpieza energética, rociar en el ambiente o aplicar sobre el cuerpo."
@@ -249,7 +249,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 200]]), 
     tags: ["dulzura", "prosperidad", "consagrada"], 
-    imagen: "/images/placeholders/miel-consagrada.jpg",
+    imagen: "/images/placeholders/miel-consagrada.JPG",
     descripcion: "Miel consagrada para rituales de prosperidad y abundancia.",
     beneficios: "Atrae prosperidad, abundancia y dulzura a la vida.",
     modoUso: "Usar en rituales, ofrendas o consumir para atraer abundancia."
@@ -261,7 +261,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 150]]), 
     tags: ["protección", "limpieza", "sal"], 
-    imagen: "/images/placeholders/sal-negra.jpg",
+    imagen: "/images/placeholders/sal-negra.JPG",
     descripcion: "Sal negra para protección y limpieza energética.",
     beneficios: "Protección energética, limpieza de espacios y eliminación de energías negativas.",
     modoUso: "Colocar en esquinas de la casa, usar en rituales de limpieza o protección."
@@ -273,7 +273,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 180]]), 
     tags: ["abundancia", "manifestación", "oro"], 
-    imagen: "/images/placeholders/polvo-oro.jpg",
+    imagen: "/images/placeholders/polvo-oro.JPG",
     descripcion: "Polvo de oro para rituales de abundancia y manifestación.",
     beneficios: "Atrae abundancia, riqueza y ayuda en la manifestación de deseos.",
     modoUso: "Usar en rituales de abundancia, espolvorear en velas o usar en decretos."
@@ -285,7 +285,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 120]]), 
     tags: ["armonía", "purificar", "palo santo"], 
-    imagen: "/images/placeholders/palo-santo.jpg",
+    imagen: "/images/placeholders/palo-santo.JPG",
     descripcion: "Palo Santo para purificación y armonía del ambiente.",
     beneficios: "Purifica el ambiente, crea armonía y elimina energías negativas.",
     modoUso: "Encender y dejar que el humo purifique el espacio, ideal para limpieza energética."
@@ -297,7 +297,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 100]]), 
     tags: ["salvia", "aromas", "purificación"], 
-    imagen: "/images/placeholders/sahumerios.jpg",
+    imagen: "/images/placeholders/sahumerios.JPG",
     descripcion: "Sahumerios naturales para purificación y limpieza energética.",
     beneficios: "Purificación del ambiente, limpieza energética y aromaterapia natural.",
     modoUso: "Encender y dejar que el humo purifique el espacio, usar en rituales de limpieza."
@@ -321,7 +321,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 120]]), 
     tags: ["autoestima", "rosa", "amor propio"], 
-    imagen: "/images/placeholders/bano-amor-propio.jpg",
+    imagen: "/images/placeholders/bano-amor-propio.JPG",
     descripcion: "Baño energético para aumentar el amor propio y la autoestima.",
     beneficios: "Aumenta el amor propio, autoestima y conexión con la belleza interior.",
     modoUso: "Preparar baño con las hierbas, usar para rituales de amor propio."
@@ -345,24 +345,60 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["ch", "Chica", 220], ["gd", "Grande", 300]]), 
     tags: ["autoestima", "amor-propio", "pareja"], 
-    imagen: "/images/placeholders/locion-ellas-ellos.jpg",
+    imagen: "/images/placeholders/locion-ellas-y-ellos.JPG",
     descripcion: "Loción artesanal elaborada con extracción de flores y esencias naturales, con tonos suaves para Ellas y tonos frescos para Ellos. Ideal para parejas que están distantes o desean reforzar su conexión.",
     beneficios: "Aumenta autoestima, amor propio y seguridad. Recomendada para parejas en situaciones complicadas.",
     modoUso: "Usar como loción de diario para reforzar tu seguridad, aplicar después de bañarse."
+  },
+  { 
+    id: "aceite-abre", 
+    nombre: "Aceite Abre Caminos", 
+    categoria: "Aceites", 
+    moneda: "MXN", 
+    variantes: V([["std", "Único", 200]]), 
+    tags: ["decretos", "ritual", "abre caminos"], 
+    imagen: "/images/placeholders/aceite-abre.JPG",
+    descripcion: "Aceite artesanal elaborado con extracción de esencias naturales de las plantas. Con feromonas para potenciar su efecto. Ideal para realizar afirmaciones y decretos, ayuda a suavizar situaciones negativas y abrir paso a lo positivo.",
+    beneficios: "Excelente para afirmaciones y decretos, suaviza situaciones negativas y abre camino a lo positivo.",
+    modoUso: "Con ayuda del gotero, aplicar 2 a 3 gotitas en las manos, frotar y repetir la oración o decreto de tu gusto."
+  },
+  { 
+    id: "aceite-ungir", 
+    nombre: "Aceite para Ungir", 
+    categoria: "Aceites", 
+    moneda: "MXN", 
+    variantes: V([["std", "Único", 250]]), 
+    tags: ["consagrado", "paz", "ungir"], 
+    imagen: "/images/placeholders/aceite-ungir.JPG",
+    descripcion: "Aceite artesanal de grado espiritual. La base es aceite de Oliva, Mirra, Canela entre otras plantas sagradas. La palabra 'Ungido' en hebreo significa Mesías.",
+    beneficios: "Usado en eventos de adoración y espirituales, para curar enfermedades y santificar una muerte.",
+    modoUso: "La persona debe encontrarse en un momento muy espiritual, ya que requiere mucho respeto. Elaborado para llevar paz y calma a quien lo necesita en momentos muy difíciles."
+  },
+  { 
+    id: "contacto", 
+    nombre: "Información de Contacto", 
+    categoria: "Contacto", 
+    moneda: "MXN", 
+    variantes: V([["std", "Único", 0]]), 
+    tags: ["contacto", "información", "ayuda"], 
+    imagen: "/images/placeholders/contacto.JPG",
+    descripcion: "Información de contacto y ubicación de Amor y Miel.",
+    beneficios: "Acceso directo a información de contacto y ubicación.",
+    modoUso: "Contactar para consultas, pedidos o visitas."
   }
 ];
 
 // Updated services with your prices
 const DEFAULT_SERVICES = [
-  { id:"serv-sonoterapia", nombre:"Sonoterapia", categoria:"Servicios", precio:700, moneda:"MXN", duracion:"60 min", modalidad:"presencial", bookingLink:"https://wa.me/5210000000000?text=Quiero%20agendar%20Sonoterapia", imagen:"/images/placeholders/serv-sonoterapia.jpg" },
-  { id:"serv-ceremonia-cacao", nombre:"Ceremonia de Cacao (10 pax)", categoria:"Servicios", precio:3500, moneda:"MXN", duracion:"—", modalidad:"presencial", bookingLink:"https://wa.me/5210000000000?text=Quiero%20agendar%20Ceremonia%20de%20Cacao%2010%20pax", imagen:"/images/placeholders/serv-ceremonia-cacao.jpg" },
-  { id:"serv-masaje-craneosacral-sonoterapia", nombre:"Masaje Craneosacral con Sonoterapia", categoria:"Servicios", precio:900, moneda:"MXN", duracion:"60 min", modalidad:"presencial", bookingLink:"https://wa.me/5210000000000?text=Quiero%20agendar%20Masaje%20Craneosacral%20con%20Sonoterapia", imagen:"/images/placeholders/serv-masaje-craneosacral-sonoterapia.jpg" },
-  { id:"serv-numerologia", nombre:"Numerología", categoria:"Servicios", precio:450, moneda:"MXN", duracion:"—", modalidad:"online/presencial", bookingLink:"https://wa.me/5210000000000?text=Quiero%20agendar%20Numerologia", imagen:"/images/placeholders/serv-numerologia.jpg" },
-  { id:"serv-tarot-angelical", nombre:"Tarot Angelical", categoria:"Servicios", precio:450, moneda:"MXN", duracion:"—", modalidad:"online/presencial", bookingLink:"https://wa.me/5210000000000?text=Quiero%20agendar%20Tarot%20Angelical", imagen:"/images/placeholders/serv-tarot-angelical.jpg" },
-  { id:"serv-radiestesia", nombre:"Radiestesia", categoria:"Servicios", precio:550, moneda:"MXN", duracion:"—", modalidad:"online/presencial", bookingLink:"https://wa.me/5210000000000?text=Quiero%20agendar%20Radiestesia", imagen:"/images/placeholders/serv-radiestesia.jpg" }
+  { id:"serv-sonoterapia", nombre:"Sonoterapia", categoria:"Servicios", precio:700, moneda:"MXN", duracion:"60 min", modalidad:"presencial", bookingLink:"https://wa.me/5210000000000?text=Quiero%20agendar%20Sonoterapia", imagen:"/images/placeholders/sonoterapia.JPG" },
+  { id:"serv-ceremonia-cacao", nombre:"Ceremonia de Cacao (10 pax)", categoria:"Servicios", precio:3500, moneda:"MXN", duracion:"—", modalidad:"presencial", bookingLink:"https://wa.me/5210000000000?text=Quiero%20agendar%20Ceremonia%20de%20Cacao%2010%20pax", imagen:"/images/placeholders/ceremonia-cacao.JPG" },
+  { id:"serv-masaje-craneosacral-sonoterapia", nombre:"Masaje Craneosacral con Sonoterapia", categoria:"Servicios", precio:900, moneda:"MXN", duracion:"60 min", modalidad:"presencial", bookingLink:"https://wa.me/5210000000000?text=Quiero%20agendar%20Masaje%20Craneosacral%20con%20Sonoterapia", imagen:"/images/placeholders/masaje-craneosacral.JPG" },
+  { id:"serv-numerologia", nombre:"Numerología", categoria:"Servicios", precio:450, moneda:"MXN", duracion:"—", modalidad:"online/presencial", bookingLink:"https://wa.me/5210000000000?text=Quiero%20agendar%20Numerologia", imagen:"/images/placeholders/numerologia.JPG" },
+  { id:"serv-tarot-angelical", nombre:"Tarot Angelical", categoria:"Servicios", precio:450, moneda:"MXN", duracion:"—", modalidad:"online/presencial", bookingLink:"https://wa.me/5210000000000?text=Quiero%20agendar%20Tarot%20Angelical", imagen:"/images/placeholders/tarot-angelical.JPG" },
+  { id:"serv-radiestesia", nombre:"Radiestesia", categoria:"Servicios", precio:550, moneda:"MXN", duracion:"—", modalidad:"online/presencial", bookingLink:"https://wa.me/5210000000000?text=Quiero%20agendar%20Radiestesia", imagen:"/images/placeholders/radiestesia.JPG" }
 ];
 
-const CATEGORIES = ["Todos","Velas","Lociones","Brisas Áuricas","Exfoliantes","Feromonas","Faciales","Aceites","Shampoo","Cabello","Energéticos","Miel","Protección","Rituales","Sahumerios","Baños Energéticos","Servicios"];
+const CATEGORIES = ["Todos","Velas","Lociones","Brisas Áuricas","Exfoliantes","Feromonas","Faciales","Aceites","Shampoo","Cabello","Energéticos","Miel","Protección","Rituales","Sahumerios","Baños Energéticos","Servicios","Contacto"];
 const money = (v,m="MXN") => new Intl.NumberFormat("es-MX",{style:"currency",currency:m}).format(v);
 const hasVariants = it => it.categoria!=='Servicios' && Array.isArray(it.variantes) && it.variantes.length>0;
 const minPrice = it => hasVariants(it) ? Math.min(...it.variantes.map(v=>v.precio||0)) : (it.precio||0);
@@ -424,7 +460,7 @@ function VariationD({ paleta, items, onAdd, onOpen, cart, setOpenCart, category,
 
     <section className="container" style={{ padding:'6px 0 14px' }}>
       <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
-        {["Todos","Velas","Lociones","Brisas Áuricas","Exfoliantes","Feromonas","Faciales","Aceites","Shampoo","Cabello","Energéticos","Miel","Protección","Rituales","Sahumerios","Baños Energéticos","Servicios"].map((c)=> (
+        {["Todos","Velas","Lociones","Brisas Áuricas","Exfoliantes","Feromonas","Faciales","Aceites","Shampoo","Cabello","Energéticos","Miel","Protección","Rituales","Sahumerios","Baños Energéticos","Servicios","Contacto"].map((c)=> (
           <button key={c} onClick={()=>setCategory(c)} className="btn-outline" style={{ background: category===c? paleta.miel : 'transparent', borderColor: paleta.miel }}>{c}</button>
         ))}
       </div>
