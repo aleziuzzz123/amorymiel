@@ -589,15 +589,15 @@ function ProductModal({ item, selectedVariant, setSelectedVariant, onAdd, onClos
     <div style={{ position:"fixed", inset:0, zIndex:70 }}>
       <div onClick={onClose} style={{ position:"absolute", inset:0, background:"rgba(0,0,0,.45)" }} />
       <div style={{ position:"absolute", left:"50%", top:"50%", transform:"translate(-50%, -50%)", width:"min(900px,95vw)", maxHeight:"90vh", background:"#fff", borderRadius:18, overflow:"hidden", boxShadow:"0 20px 50px rgba(0,0,0,.25)" }}>
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0 }}>
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, height:"100%", maxHeight:"90vh" }}>
           {/* Left Side - Image */}
-          <div style={{ position:"relative" }}>
-            <img src={item.imagen} alt={item.nombre} style={{ width:"100%", height:"100%", maxHeight:500, objectFit:"cover" }} />
+          <div style={{ position:"relative", height:"100%" }}>
+            <img src={item.imagen} alt={item.nombre} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
             <div style={{ position:"absolute", top:12, left:12, background: "#E0A73A", color: "#1A1714", borderRadius:999, padding:'4px 10px', fontWeight:600, fontSize:12 }}>{item.categoria}</div>
           </div>
           
           {/* Right Side - Product Details */}
-          <div style={{ padding:20, overflowY:"auto", maxHeight:"90vh" }}>
+          <div style={{ padding:20, overflowY:"auto", height:"100%", display:"flex", flexDirection:"column" }}>
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"start", gap:8, marginBottom:16 }}>
               <h2 style={{ margin:0, fontSize:24, color:"#1A1714" }}>{item.nombre}</h2>
               <button className="btn-outline" onClick={onClose} style={{ borderColor: "#E0A73A", padding:"8px 12px" }}>✖️</button>
@@ -666,7 +666,7 @@ function ProductModal({ item, selectedVariant, setSelectedVariant, onAdd, onClos
             </div>
             
             {/* Action Buttons */}
-            <div style={{ marginTop:24, display:"flex", gap:12 }}>
+            <div style={{ marginTop:"auto", paddingTop:24, display:"flex", gap:12 }}>
               {item.categoria==='Servicios'
                 ? <a href={item.bookingLink} target="_blank" rel="noreferrer" className="btn" style={{ background:"#E0A73A", color:"#1A1714", flex:1, textAlign:"center", textDecoration:"none" }}>📞 Reservar</a>
                 : <button className="btn" style={{ background:"#E0A73A", color:"#1A1714", flex:1 }} onClick={()=>{ onAdd(item, selectedVariant); onClose(); }}>🛒 Añadir al Carrito</button>}
