@@ -1668,7 +1668,7 @@ export default function App(){
                 Para consultas y pedidos
               </p>
               <a 
-                href="https://wa.me/5210000000000" 
+                href="https://wa.me/523317361884" 
                 target="_blank" 
                 rel="noreferrer"
                 className="btn" 
