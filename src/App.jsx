@@ -940,6 +940,9 @@ export default function App(){
   const [showFAQ, setShowFAQ] = useState(false);
   const [showContactForm, setShowContactForm] = useState(false);
   const [contactForm, setContactForm] = useState({ name: "", email: "", message: "" });
+  
+  // Review form
+  const [newReview, setNewReview] = useState({ rating: 0, comment: "" });
 
   // Mobile detection
   useEffect(() => {
@@ -1620,6 +1623,126 @@ export default function App(){
           }}>
             Nuestros Productos
           </h2>
+          
+          {/* Category Filter */}
+          <div style={{ 
+            display: "flex", 
+            flexWrap: "wrap", 
+            gap: "0.5rem", 
+            marginBottom: "1.5rem",
+            justifyContent: "center"
+          }}>
+            {["Todos", "Velas", "Lociones", "Brisas Áuricas", "Exfoliantes", "Feromonas", "Faciales", "Aceites", "Shampoo", "Cabello", "Energéticos", "Miel", "Protección", "Rituales", "Sahumerios", "Baños Energéticos", "Servicios"].map(category => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                style={{
+                  padding: "0.5rem 1rem",
+                  background: selectedCategory === category ? PALETAS.D.miel : "transparent",
+                  color: selectedCategory === category ? "white" : PALETAS.D.carbon,
+                  border: "1px solid rgba(0,0,0,0.1)",
+                  borderRadius: "20px",
+                  cursor: "pointer",
+                  fontSize: "0.8rem",
+                  fontWeight: "500",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+          
+          {/* Advanced Search Filters */}
+          <div style={{ 
+            background: "white", 
+            padding: "1.5rem", 
+            borderRadius: "12px", 
+            marginBottom: "2rem",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+          }}>
+            <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: "1rem", alignItems: "center", justifyContent: "space-between" }}>
+              
+              {/* Search Results Info */}
+              <div style={{ fontSize: "0.9rem", color: "#666" }}>
+                {query ? `Buscando: "${query}"` : selectedCategory !== "Todos" ? `Categoría: ${selectedCategory}` : "Todos los productos"} • {filteredItems.length} resultados
+              </div>
+              
+              {/* Price Range Filter */}
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <span style={{ fontSize: "0.8rem", color: "#666" }}>Precio:</span>
+                <input
+                  type="number"
+                  placeholder="Min"
+                  value={priceRange.min}
+                  onChange={(e) => setPriceRange(prev => ({ ...prev, min: Number(e.target.value) || 0 }))}
+                  style={{
+                    width: "60px",
+                    padding: "0.25rem 0.5rem",
+                    border: "1px solid rgba(0,0,0,0.1)",
+                    borderRadius: "4px",
+                    fontSize: "0.8rem"
+                  }}
+                />
+                <span style={{ fontSize: "0.8rem", color: "#666" }}>-</span>
+                <input
+                  type="number"
+                  placeholder="Max"
+                  value={priceRange.max}
+                  onChange={(e) => setPriceRange(prev => ({ ...prev, max: Number(e.target.value) || 1000 }))}
+                  style={{
+                    width: "60px",
+                    padding: "0.25rem 0.5rem",
+                    border: "1px solid rgba(0,0,0,0.1)",
+                    borderRadius: "4px",
+                    fontSize: "0.8rem"
+                  }}
+                />
+              </div>
+              
+              {/* Sort Options */}
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                style={{
+                  padding: "0.5rem",
+                  border: "1px solid rgba(0,0,0,0.1)",
+                  borderRadius: "6px",
+                  fontSize: "0.8rem",
+                  background: "white"
+                }}
+              >
+                <option value="popularity">Más populares</option>
+                <option value="price-low">Precio: Menor a Mayor</option>
+                <option value="price-high">Precio: Mayor a Menor</option>
+                <option value="name">Nombre A-Z</option>
+              </select>
+              
+              {/* Clear Filters */}
+              {(query || priceRange.min > 0 || priceRange.max < 1000 || selectedCategory !== "Todos") && (
+                <button
+                  onClick={() => {
+                    setQuery("");
+                    setPriceRange({ min: 0, max: 1000 });
+                    setSortBy("popularity");
+                    setSelectedCategory("Todos");
+                  }}
+                  style={{
+                    padding: "0.5rem 1rem",
+                    background: "transparent",
+                    border: "1px solid rgba(0,0,0,0.1)",
+                    borderRadius: "6px",
+                    fontSize: "0.8rem",
+                    cursor: "pointer",
+                    color: "#666"
+                  }}
+                >
+                  Limpiar filtros
+                </button>
+              )}
+            </div>
+          </div>
+          
           <div style={{ 
             display: "grid", 
             gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", 
@@ -1713,6 +1836,58 @@ export default function App(){
                         )
                       }
                     </span>
+                    
+                    {/* Rating Display */}
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                      <span style={{ fontSize: "0.8rem", color: "#666" }}>
+                        {getAverageRating(item.id) > 0 ? "★".repeat(Math.floor(getAverageRating(item.id))) + "☆".repeat(5 - Math.floor(getAverageRating(item.id))) : "☆☆☆☆☆"}
+                      </span>
+                      <span style={{ fontSize: "0.7rem", color: "#666" }}>
+                        ({reviews[item.id]?.length || 0})
+                      </span>
+                    </div>
+                  </div>
+                  
+                  {/* Wishlist and Review Buttons */}
+                  <div style={{ 
+                    display: "flex", 
+                    gap: "0.5rem", 
+                    marginBottom: "1rem" 
+                  }}>
+                    <button
+                      onClick={() => addToWishlist(item)}
+                      style={{
+                        background: wishlist.find(w => w.id === item.id) ? "#ff6b6b" : "transparent",
+                        color: wishlist.find(w => w.id === item.id) ? "white" : "#666",
+                        border: "1px solid rgba(0,0,0,0.1)",
+                        borderRadius: "6px",
+                        padding: "0.5rem",
+                        cursor: "pointer",
+                        fontSize: "0.8rem",
+                        transition: "all 0.2s ease"
+                      }}
+                      title={wishlist.find(w => w.id === item.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
+                    >
+                      {wishlist.find(w => w.id === item.id) ? "❤️" : "🤍"}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowReviews(true);
+                        setOpenProduct(item);
+                      }}
+                      style={{
+                        background: "transparent",
+                        color: "#666",
+                        border: "1px solid rgba(0,0,0,0.1)",
+                        borderRadius: "6px",
+                        padding: "0.5rem",
+                        cursor: "pointer",
+                        fontSize: "0.8rem"
+                      }}
+                      title="Ver reseñas"
+                    >
+                      💬
+                    </button>
                   </div>
                   <div style={{ display: "flex", gap: "0.75rem" }}>
                     {item.categoria === 'Servicios' ? (
@@ -3019,6 +3194,421 @@ export default function App(){
                   Cancelar
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* FAQ Modal */}
+        {showFAQ && (
+          <div style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1001
+          }}>
+            <div style={{
+              background: "white",
+              padding: "30px",
+              borderRadius: "15px",
+              maxWidth: "600px",
+              width: "90%",
+              maxHeight: "80vh",
+              overflowY: "auto"
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                <h3 style={{ margin: 0, color: PALETAS.D.carbon }}>Preguntas Frecuentes</h3>
+                <button
+                  onClick={() => setShowFAQ(false)}
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "1.2rem",
+                    cursor: "pointer"
+                  }}
+                >
+                  ✖️
+                </button>
+              </div>
+              
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                <div style={{ border: "1px solid #eee", borderRadius: "8px", padding: "15px" }}>
+                  <h4 style={{ margin: "0 0 10px 0", color: PALETAS.D.carbon }}>¿Cómo funcionan los productos holísticos?</h4>
+                  <p style={{ margin: 0, color: "#666", fontSize: "0.9rem" }}>
+                    Nuestros productos están elaborados con ingredientes naturales y consagrados con intenciones específicas. 
+                    Funcionan a través de la energía y la intención que ponemos en su elaboración.
+                  </p>
+                </div>
+                
+                <div style={{ border: "1px solid #eee", borderRadius: "8px", padding: "15px" }}>
+                  <h4 style={{ margin: "0 0 10px 0", color: PALETAS.D.carbon }}>¿Cuánto tiempo tardan en llegar los productos?</h4>
+                  <p style={{ margin: 0, color: "#666", fontSize: "0.9rem" }}>
+                    El tiempo de entrega varía según tu ubicación. Generalmente entre 3-7 días hábiles dentro de México.
+                  </p>
+                </div>
+                
+                <div style={{ border: "1px solid #eee", borderRadius: "8px", padding: "15px" }}>
+                  <h4 style={{ margin: "0 0 10px 0", color: PALETAS.D.carbon }}>¿Los productos son 100% naturales?</h4>
+                  <p style={{ margin: 0, color: "#666", fontSize: "0.9rem" }}>
+                    Sí, todos nuestros productos están elaborados con ingredientes naturales y orgánicos, 
+                    sin conservadores artificiales ni químicos dañinos.
+                  </p>
+                </div>
+                
+                <div style={{ border: "1px solid #eee", borderRadius: "8px", padding: "15px" }}>
+                  <h4 style={{ margin: "0 0 10px 0", color: PALETAS.D.carbon }}>¿Cómo puedo contactar para servicios?</h4>
+                  <p style={{ margin: 0, color: "#666", fontSize: "0.9rem" }}>
+                    Puedes contactarnos a través de WhatsApp, email o agendar directamente desde la sección de servicios.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Contact Form Modal */}
+        {showContactForm && (
+          <div style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1001
+          }}>
+            <div style={{
+              background: "white",
+              padding: "30px",
+              borderRadius: "15px",
+              maxWidth: "500px",
+              width: "90%"
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                <h3 style={{ margin: 0, color: PALETAS.D.carbon }}>Contáctanos</h3>
+                <button
+                  onClick={() => setShowContactForm(false)}
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "1.2rem",
+                    cursor: "pointer"
+                  }}
+                >
+                  ✖️
+                </button>
+              </div>
+              
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                <input
+                  type="text"
+                  placeholder="Tu nombre"
+                  value={contactForm.name}
+                  onChange={(e) => setContactForm(prev => ({ ...prev, name: e.target.value }))}
+                  style={{
+                    padding: "12px",
+                    border: "1px solid #ddd",
+                    borderRadius: "8px",
+                    fontSize: "0.9rem"
+                  }}
+                />
+                <input
+                  type="email"
+                  placeholder="Tu email"
+                  value={contactForm.email}
+                  onChange={(e) => setContactForm(prev => ({ ...prev, email: e.target.value }))}
+                  style={{
+                    padding: "12px",
+                    border: "1px solid #ddd",
+                    borderRadius: "8px",
+                    fontSize: "0.9rem"
+                  }}
+                />
+                <textarea
+                  placeholder="Tu mensaje"
+                  value={contactForm.message}
+                  onChange={(e) => setContactForm(prev => ({ ...prev, message: e.target.value }))}
+                  style={{
+                    padding: "12px",
+                    border: "1px solid #ddd",
+                    borderRadius: "8px",
+                    minHeight: "100px",
+                    fontSize: "0.9rem"
+                  }}
+                />
+                <button
+                  onClick={() => {
+                    if (contactForm.name && contactForm.email && contactForm.message) {
+                      alert("¡Gracias por tu mensaje! Te contactaremos pronto.");
+                      setContactForm({ name: "", email: "", message: "" });
+                      setShowContactForm(false);
+                    }
+                  }}
+                  style={{
+                    background: PALETAS.D.miel,
+                    color: "white",
+                    border: "none",
+                    padding: "12px 24px",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    fontWeight: "600"
+                  }}
+                >
+                  Enviar mensaje
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Reviews Modal */}
+        {showReviews && openProduct && (
+          <div style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1001
+          }}>
+            <div style={{
+              background: "white",
+              padding: "30px",
+              borderRadius: "15px",
+              maxWidth: "600px",
+              width: "90%",
+              maxHeight: "80vh",
+              overflowY: "auto"
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                <h3 style={{ margin: 0, color: PALETAS.D.carbon }}>Reseñas - {openProduct.nombre}</h3>
+                <button
+                  onClick={() => setShowReviews(false)}
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "1.2rem",
+                    cursor: "pointer"
+                  }}
+                >
+                  ✖️
+                </button>
+              </div>
+              
+              {/* Add Review Form */}
+              <div style={{ 
+                background: "#F8F9FA", 
+                padding: "20px", 
+                borderRadius: "12px", 
+                marginBottom: "20px" 
+              }}>
+                <h4 style={{ margin: "0 0 15px 0", color: PALETAS.D.carbon }}>Agregar reseña</h4>
+                <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <button
+                      key={star}
+                      onClick={() => setNewReview(prev => ({ ...prev, rating: star }))}
+                      style={{
+                        background: "transparent",
+                        border: "none",
+                        fontSize: "1.5rem",
+                        cursor: "pointer",
+                        color: newReview.rating >= star ? "#FFD700" : "#ccc"
+                      }}
+                    >
+                      ★
+                    </button>
+                  ))}
+                </div>
+                <textarea
+                  placeholder="Escribe tu reseña..."
+                  value={newReview.comment}
+                  onChange={(e) => setNewReview(prev => ({ ...prev, comment: e.target.value }))}
+                  style={{
+                    width: "100%",
+                    padding: "10px",
+                    border: "1px solid #ddd",
+                    borderRadius: "8px",
+                    minHeight: "80px",
+                    marginBottom: "10px"
+                  }}
+                />
+                <button
+                  onClick={() => {
+                    if (newReview.rating > 0 && newReview.comment.trim()) {
+                      addReview(openProduct.id, newReview);
+                      setNewReview({ rating: 0, comment: "" });
+                    }
+                  }}
+                  style={{
+                    background: PALETAS.D.miel,
+                    color: "white",
+                    border: "none",
+                    padding: "10px 20px",
+                    borderRadius: "8px",
+                    cursor: "pointer"
+                  }}
+                >
+                  Publicar reseña
+                </button>
+              </div>
+              
+              {/* Reviews List */}
+              <div>
+                <h4 style={{ margin: "0 0 15px 0", color: PALETAS.D.carbon }}>
+                  Reseñas ({reviews[openProduct.id]?.length || 0})
+                </h4>
+                {reviews[openProduct.id]?.length > 0 ? (
+                  reviews[openProduct.id].map((review, index) => (
+                    <div key={review.id} style={{ 
+                      border: "1px solid #eee", 
+                      borderRadius: "8px", 
+                      padding: "15px", 
+                      marginBottom: "10px" 
+                    }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+                        <div style={{ display: "flex", gap: "5px" }}>
+                          {[1, 2, 3, 4, 5].map(star => (
+                            <span key={star} style={{ color: review.rating >= star ? "#FFD700" : "#ccc" }}>
+                              ★
+                            </span>
+                          ))}
+                        </div>
+                        <span style={{ fontSize: "0.8rem", color: "#666" }}>
+                          {new Date(review.date).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <p style={{ margin: 0, color: "#333" }}>{review.comment}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p style={{ color: "#666", textAlign: "center" }}>No hay reseñas aún. ¡Sé el primero en opinar!</p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Wishlist Modal */}
+        {showWishlist && (
+          <div style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1001
+          }}>
+            <div style={{
+              background: "white",
+              padding: "30px",
+              borderRadius: "15px",
+              maxWidth: "800px",
+              width: "90%",
+              maxHeight: "80vh",
+              overflowY: "auto"
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                <h3 style={{ margin: 0, color: PALETAS.D.carbon }}>Mis Favoritos ({wishlist.length})</h3>
+                <button
+                  onClick={() => setShowWishlist(false)}
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "1.2rem",
+                    cursor: "pointer"
+                  }}
+                >
+                  ✖️
+                </button>
+              </div>
+              
+              {wishlist.length > 0 ? (
+                <div style={{ 
+                  display: "grid", 
+                  gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", 
+                  gap: "1rem" 
+                }}>
+                  {wishlist.map(item => (
+                    <div key={item.id} style={{ 
+                      border: "1px solid #eee", 
+                      borderRadius: "8px", 
+                      padding: "15px" 
+                    }}>
+                      <img
+                        src={item.imagen}
+                        alt={item.nombre}
+                        style={{
+                          width: "100%",
+                          height: "150px",
+                          objectFit: "cover",
+                          borderRadius: "8px",
+                          marginBottom: "10px"
+                        }}
+                      />
+                      <h4 style={{ margin: "0 0 5px 0", fontSize: "1rem" }}>{item.nombre}</h4>
+                      <p style={{ margin: "0 0 10px 0", color: "#666", fontSize: "0.8rem" }}>
+                        {money(item.precio || minPrice(item), item.moneda || 'MXN')}
+                      </p>
+                      <div style={{ display: "flex", gap: "0.5rem" }}>
+                        <button
+                          onClick={() => onOpen(item)}
+                          style={{
+                            background: PALETAS.D.miel,
+                            color: "white",
+                            border: "none",
+                            padding: "8px 12px",
+                            borderRadius: "6px",
+                            cursor: "pointer",
+                            fontSize: "0.8rem"
+                          }}
+                        >
+                          Ver
+                        </button>
+                        <button
+                          onClick={() => addToWishlist(item)}
+                          style={{
+                            background: "#ff6b6b",
+                            color: "white",
+                            border: "none",
+                            padding: "8px 12px",
+                            borderRadius: "6px",
+                            cursor: "pointer",
+                            fontSize: "0.8rem"
+                          }}
+                        >
+                          Quitar
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div style={{ textAlign: "center", padding: "40px" }}>
+                  <div style={{ fontSize: "3rem", marginBottom: "20px" }}>🤍</div>
+                  <h4 style={{ margin: "0 0 10px 0", color: PALETAS.D.carbon }}>Tu lista de favoritos está vacía</h4>
+                  <p style={{ color: "#666", marginBottom: "20px" }}>
+                    Agrega productos a tus favoritos para verlos aquí
+                  </p>
+                  <button
+                    onClick={() => setShowWishlist(false)}
+                    style={{
+                      background: PALETAS.D.miel,
+                      color: "white",
+                      border: "none",
+                      padding: "12px 24px",
+                      borderRadius: "8px",
+                      cursor: "pointer"
+                    }}
+                  >
+                    Explorar productos
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
