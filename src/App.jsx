@@ -3,6 +3,38 @@ import React, { useMemo, useState, useEffect } from "react";
 function Icon({ label, symbol, size = 18 }) { return <span role="img" aria-label={label} style={{ fontSize:size }}>{symbol}</span>; }
 const PALETAS = { D: { nombre:"Boutique Mosaico", miel:"#E0A73A", crema:"#FBF2DE", verde:"#628D6A", carbon:"#1A1714", blanco:"#FFFFFF", fondo:"linear-gradient(135deg, #FBF2DE 0%, #FFFFFF 65%)" } };
 
+// Catalog Images Mapping
+const CATALOG_IMAGES = {
+  "Velas De Miel": "/public/images/placeholders/velas-de-miel-product.png",
+  "Aceite Abre Caminos": "/public/images/placeholders/aceite-abrecaminos.JPG",
+  "Agua Florida": "/public/images/placeholders/agua-florida-product.png",
+  "Agua de Luna": "/public/images/placeholders/agua-de-luna-product.png",
+  "Aceite para Ungir": "/public/images/placeholders/aceite-para-ungir-product.png",
+  "Agua Micelar": "/public/images/placeholders/agua-micelar-product.png",
+  "Baño Energético Abre Caminos": "/public/images/placeholders/bano-energetico-abre-caminos.JPG",
+  "Baño Energético Amor Propio": "/public/images/placeholders/bano-energetico-amor-propio.JPG",
+  "Baño Energético Amargo": "/public/images/placeholders/bano-amargo-product.png",
+  "Brisa Áurica Prosperidad": "/public/images/placeholders/brisa-prosperidad-product.png",
+  "Brisa Áurica Abundancia": "/public/images/placeholders/brisa-abundancia-product.png",
+  "Brisa Áurica Bendición del Dinero": "/public/images/placeholders/brisa-bendicion-dinero-product.png",
+  "Agua de Rosas": "/public/images/placeholders/agua-de-rosas-product.png",
+  "Exfoliante Abre Caminos": "/public/images/placeholders/exfoliante-abrecaminos-product.png",
+  "Exfoliante Venus": "/public/images/placeholders/exfoliante-venus-product.png",
+  "Mascarilla Capilar": "/public/images/placeholders/mascarilla-capilar-product.png",
+  "Miel Consagrada": "/public/images/placeholders/miel-consagrada-product.png",
+  "Palo Santo": "/public/images/placeholders/palo-santo-product.png",
+  "Polvo de Oro": "/public/images/placeholders/polvo-de-oro-product.png",
+  "Sahumerios": "/public/images/placeholders/sahumerios-product.png",
+  "Sal Negra": "/public/images/placeholders/sal-negra-product.png",
+  "Shampoo Artesanal": "/public/images/placeholders/shampoo-artesanal-product.png",
+  "Shampoo con Extracto de Miel": "/public/images/placeholders/shampoo-miel-product.png",
+  "Shampoo con Extracto de Romero": "/public/images/placeholders/shampoo-romero-product.png",
+  "Feromonas Naturales": "/public/images/placeholders/feromonas-naturales-product.png",
+  "Feromonas Damas y Caballeros": "/public/images/placeholders/feromonas-damas-caballeros-product.png",
+  "Loción Atrayente": "/public/images/placeholders/locion-atrayente-product.png",
+  "Loción Palo Santo": "/public/images/placeholders/locion-palo-santo-product.png"
+};
+
 const V = (arr) => arr.map(([sku, titulo, precio]) => ({ sku, titulo, precio }));
 
 const DEFAULT_PRODUCTS = [
@@ -18,7 +50,7 @@ const DEFAULT_PRODUCTS = [
     beneficios: "Purifica espacios, atrae abundancia, ideal para meditación y rituales de manifestación.",
     elaboracion: "Elaboradas artesanalmente con cera natural de abeja 100% pura, consagradas bajo la luna llena con intenciones de abundancia y prosperidad. Cada vela es bendecida individualmente para potenciar su energía sagrada.",
     proposito: "Purificar espacios, atraer abundancia y prosperidad, facilitar la conexión espiritual durante meditaciones y rituales de manifestación. Su llama dorada activa la ley de la atracción y abre caminos hacia la riqueza material y espiritual.",
-    modoUso: "Encender en un lugar seguro y tranquilo. Antes de encender, establecer la intención de abundancia. Dejar que se consuma completamente o apagar con cuidado. Ideal usar durante la luna llena para potenciar efectos."
+    modoUso: "Encender en un lugar seguro y tranquilo. Antes de encender, establecer la intención de abundancia. Dejar que se consuma completamente o apagar con cuidado. Ideal usar durante la luna llena para potenciar efectos." 
   },
   { 
     id: "locion-atrayente", 
@@ -633,7 +665,7 @@ function ProductModal({ item, selectedVariant, setSelectedVariant, onAdd, onClos
 
         {/* Content */}
         <div style={{ display:"flex", flex:1, overflow:"hidden" }}>
-          {/* Left Side - Image */}
+          {/* Left Side - Catalog Image */}
           <div style={{ 
             flex:"0 0 45%", 
             position:"relative", 
@@ -643,12 +675,12 @@ function ProductModal({ item, selectedVariant, setSelectedVariant, onAdd, onClos
             justifyContent:"center"
           }}>
             <img 
-              src={item.imagen} 
+              src={CATALOG_IMAGES[item.nombre] || item.imagen} 
               alt={item.nombre} 
               style={{ 
                 width:"100%", 
                 height:"100%", 
-                objectFit:"cover",
+                objectFit:"contain",
                 objectPosition:"center"
               }} 
               onError={(e) => {
@@ -668,6 +700,25 @@ function ProductModal({ item, selectedVariant, setSelectedVariant, onAdd, onClos
             }}>
               🖼️
             </div>
+            
+            {/* Catalog Image Indicator */}
+            {CATALOG_IMAGES[item.nombre] && (
+              <div style={{ 
+                position:"absolute", 
+                top:16, 
+                right:16, 
+                background: "#28a745", 
+                color: "white", 
+                borderRadius:999, 
+                padding:'4px 8px', 
+                fontWeight:600, 
+                fontSize:10,
+                boxShadow:"0 2px 8px rgba(40, 167, 69, 0.3)"
+              }}>
+                📋 Catálogo
+              </div>
+            )}
+            
             <div style={{ 
               position:"absolute", 
               top:16, 
@@ -1331,24 +1382,38 @@ export default function App(){
         boxShadow: "0 2px 20px rgba(0,0,0,0.08)", 
         position: "sticky", 
         top: 0, 
-        zIndex: 100 
+        zIndex: 100,
+        padding: isMobile ? "0.5rem 0" : "0"
       }}>
         <div className="container" style={{ 
           display: "flex", 
           alignItems: "center", 
           justifyContent: "space-between", 
-          padding: "1rem", 
-          gap: "2rem" 
+          padding: isMobile ? "0.5rem 1rem" : "1rem 2rem", 
+          gap: isMobile ? "0.5rem" : "2rem",
+          flexWrap: isMobile ? "wrap" : "nowrap"
         }}>
           {/* Logo */}
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <span style={{ fontSize: "1.1rem" }}>🐝</span>
+          <div style={{ 
+            display: "flex", 
+            alignItems: "center", 
+            gap: isMobile ? "0.3rem" : "0.5rem",
+            flex: isMobile ? "1 1 auto" : "auto",
+            minWidth: isMobile ? "auto" : "auto"
+          }}>
+            <span style={{ 
+              fontSize: isMobile ? "1rem" : "1.1rem",
+              flexShrink: 0
+            }}>
+              🐝
+            </span>
             <h1 style={{ 
               margin: 0, 
-              fontSize: "1.1rem", 
+              fontSize: isMobile ? "1rem" : "1.1rem", 
               fontWeight: "600", 
               color: PALETAS.D.carbon, 
-              whiteSpace: "nowrap"
+              whiteSpace: "nowrap",
+              flexShrink: 0
             }}>
               Amor y Miel
             </h1>
@@ -1386,9 +1451,18 @@ export default function App(){
           )}
 
           {/* Search and Cart */}
-          <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
+          <div style={{ 
+            display: "flex", 
+            alignItems: "center", 
+            gap: isMobile ? "0.4rem" : "0.8rem",
+            flex: isMobile ? "1 1 auto" : "auto",
+            justifyContent: isMobile ? "flex-end" : "flex-start"
+          }}>
             {/* Advanced Search */}
-            <div style={{ position: "relative" }}>
+            <div style={{ 
+              position: "relative",
+              flex: isMobile ? "1" : "auto"
+            }}>
               <input 
                 value={query} 
                 onChange={e => handleSearchChange(e.target.value)} 
@@ -1396,12 +1470,13 @@ export default function App(){
                 onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
                 placeholder="Buscar productos..." 
                 style={{ 
-                  padding: "0.35rem 1rem 0.35rem 2rem", 
-                  borderRadius: "20px", 
+                  padding: isMobile ? "0.25rem 0.8rem 0.25rem 1.8rem" : "0.35rem 1rem 0.35rem 2rem", 
+                  borderRadius: isMobile ? "16px" : "20px", 
                   border: "1px solid rgba(0,0,0,0.1)", 
-                  width: isMobile ? "120px" : "160px",
-                  fontSize: "0.75rem",
-                  background: "white"
+                  width: isMobile ? "100%" : "160px",
+                  fontSize: isMobile ? "0.7rem" : "0.75rem",
+                  background: "white",
+                  minWidth: isMobile ? "80px" : "auto"
                 }} 
               />
               <span style={{ 
@@ -1458,22 +1533,33 @@ export default function App(){
               style={{ 
                 background: "rgba(255,255,255,0.95)", 
                 border: "1px solid rgba(0,0,0,0.1)", 
-                borderRadius: "18px", 
-                padding: "0.35rem 0.7rem", 
+                borderRadius: isMobile ? "14px" : "18px", 
+                padding: isMobile ? "0.25rem 0.5rem" : "0.35rem 0.7rem", 
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
-                gap: "0.3rem",
-                fontSize: "0.75rem",
+                gap: isMobile ? "0.2rem" : "0.3rem",
+                fontSize: isMobile ? "0.65rem" : "0.75rem",
                 color: PALETAS.D.carbon,
-                fontWeight: "500"
+                fontWeight: "500",
+                whiteSpace: "nowrap",
+                flexShrink: 0
               }}
             >
-              🛍️ Carrito ({cart.length})
+              🛍️ {isMobile ? `(${cart.length})` : `Carrito (${cart.length})`}
             </button>
             {user ? (
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                <span style={{ fontSize: "0.7rem", color: "#666" }}>
+              <div style={{ 
+                display: "flex", 
+                alignItems: "center", 
+                gap: isMobile ? "0.3rem" : "0.5rem",
+                flexShrink: 0
+              }}>
+                <span style={{ 
+                  fontSize: isMobile ? "0.6rem" : "0.7rem", 
+                  color: "#666",
+                  display: isMobile ? "none" : "block"
+                }}>
                   👤 {user.name} ({loyaltyPoints} pts)
                 </span>
                 <button 
@@ -1481,14 +1567,15 @@ export default function App(){
                   style={{ 
                     background: "transparent", 
                     border: "1px solid rgba(0,0,0,0.1)", 
-                    borderRadius: "18px", 
-                    padding: "0.35rem 0.7rem", 
+                    borderRadius: isMobile ? "14px" : "18px", 
+                    padding: isMobile ? "0.25rem 0.5rem" : "0.35rem 0.7rem", 
                     cursor: "pointer",
-                    fontSize: "0.75rem",
-                    color: PALETAS.D.carbon
+                    fontSize: isMobile ? "0.65rem" : "0.75rem",
+                    color: PALETAS.D.carbon,
+                    whiteSpace: "nowrap"
                   }}
                 >
-                  🚪 Salir
+                  {isMobile ? "🚪" : "🚪 Salir"}
                 </button>
               </div>
             ) : (
@@ -1497,14 +1584,15 @@ export default function App(){
                 style={{ 
                   background: "transparent", 
                   border: "1px solid rgba(0,0,0,0.1)", 
-                  borderRadius: "18px", 
-                  padding: "0.35rem 0.7rem", 
+                  borderRadius: isMobile ? "14px" : "18px", 
+                  padding: isMobile ? "0.25rem 0.5rem" : "0.35rem 0.7rem", 
                   cursor: "pointer",
-                  fontSize: "0.75rem",
-                  color: PALETAS.D.carbon
+                  fontSize: isMobile ? "0.65rem" : "0.75rem",
+                  color: PALETAS.D.carbon,
+                  whiteSpace: "nowrap"
                 }}
               >
-                👤 Iniciar sesión
+                {isMobile ? "👤" : "👤 Iniciar sesión"}
               </button>
             )}
             <button 
