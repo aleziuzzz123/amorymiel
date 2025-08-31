@@ -1,4 +1,3 @@
-
 import React, { useMemo, useState, useEffect } from "react";
 
 function Icon({ label, symbol, size = 18 }) { return <span role="img" aria-label={label} style={{ fontSize:size }}>{symbol}</span>; }
@@ -7,35 +6,350 @@ const PALETAS = { D: { nombre:"Boutique Mosaico", miel:"#E0A73A", crema:"#FBF2DE
 const V = (arr) => arr.map(([sku, titulo, precio]) => ({ sku, titulo, precio }));
 
 const DEFAULT_PRODUCTS = [
-  { id:"velas-miel", nombre:"Velas de Miel", categoria:"Velas", moneda:"MXN", variantes:V([["ch","Ch",150],["gd","Gd",150]]), tags:["artesanal","abeja","abundancia"], imagen:"/images/placeholders/velas-miel.jpg" },
-  { id:"locion-atrayente", nombre:"Loción Atrayente", categoria:"Lociones", moneda:"MXN", variantes:V([["ch","Ch",40],["gd","Gd",90]]), tags:["atracción","abundancia"], imagen:"/images/placeholders/locion-atrayente.jpg" },
-  { id:"locion-palo-santo", nombre:"Loción Palo Santo", categoria:"Lociones", moneda:"MXN", variantes:V([["ch","Ch",200],["gd","Gd",150]]), tags:["protección","limpieza"], imagen:"/images/placeholders/locion-palo-santo.jpg" },
-  { id:"agua-florida", nombre:"Agua Florida", categoria:"Lociones", moneda:"MXN", variantes:V([["ch","Ch",200],["gd","Gd",150]]), tags:["limpieza","energética"], imagen:"/images/placeholders/agua-florida.jpg" },
-  { id:"locion-ellas-ellos", nombre:"Loción Ellas y Ellos", categoria:"Lociones", moneda:"MXN", variantes:V([["ch","Ch",200],["gd","Gd",150]]), tags:["autoestima","amor-propio"], imagen:"/images/placeholders/locion-ellas-ellos.jpg" },
-  { id:"brisa-bendicion-dinero", nombre:"Brisa Áurica Bendición del Dinero", categoria:"Brisas Áuricas", moneda:"MXN", variantes:V([["ch","Ch",200],["gd","Gd",150]]), tags:["dinero","prosperidad"], imagen:"/images/placeholders/brisa-bendicion-dinero.jpg" },
-  { id:"brisa-prosperidad", nombre:"Brisa Áurica Prosperidad", categoria:"Brisas Áuricas", moneda:"MXN", variantes:V([["ch","Ch",200],["gd","Gd",150]]), tags:["prosperidad","equilibrio"], imagen:"/images/placeholders/brisa-prosperidad.jpg" },
-  { id:"brisa-abundancia", nombre:"Brisa Áurica Abundancia", categoria:"Brisas Áuricas", moneda:"MXN", variantes:V([["ch","Ch",200],["gd","Gd",150]]), tags:["abundancia","expansión"], imagen:"/images/placeholders/brisa-abundancia.jpg" },
-  { id:"exf-abrecaminos", nombre:"Exfoliante Abre Caminos", categoria:"Exfoliantes", moneda:"MXN", variantes:V([["std","Único",150]]), tags:["renovación","ritual"], imagen:"/images/placeholders/exf-abrecaminos.jpg" },
-  { id:"exf-venus", nombre:"Exfoliante Venus", categoria:"Exfoliantes", moneda:"MXN", variantes:V([["ch","Ch",250],["gd","Gd",150]]), tags:["amor-propio","piel"], imagen:"/images/placeholders/exf-venus.jpg" },
-  { id:"feromonas-naturales", nombre:"Feromonas Naturales", categoria:"Feromonas", moneda:"MXN", variantes:V([["ch","Ch",250],["gd","Gd",150]]), tags:["atracción"], imagen:"/images/placeholders/feromonas-naturales.jpg" },
-  { id:"feromonas-dyc", nombre:"Feromonas Damas y Caballeros", categoria:"Feromonas", moneda:"MXN", variantes:V([["ch","Ch",250],["gd","Gd",150]]), tags:["atracción","pareja"], imagen:"/images/placeholders/feromonas-dyc.jpg" },
-  { id:"agua-micelar", nombre:"Agua Micelar", categoria:"Faciales", moneda:"MXN", variantes:V([["std","Único",200]]), tags:["limpieza","suave"], imagen:"/images/placeholders/agua-micelar.jpg" },
-  { id:"agua-rosas", nombre:"Agua de Rosas", categoria:"Faciales", moneda:"MXN", variantes:V([["std","Único",150]]), tags:["suavizante","antioxidante"], imagen:"/images/placeholders/agua-rosas.jpg" },
-  { id:"aceite-abre", nombre:"Aceite Abre Caminos", categoria:"Aceites", moneda:"MXN", variantes:V([["std","Único",150]]), tags:["decretos","ritual"], imagen:"/images/placeholders/aceite-abre.jpg" },
-  { id:"aceite-ungir", nombre:"Aceite para Ungir", categoria:"Aceites", moneda:"MXN", variantes:V([["std","Único",100]]), tags:["consagrado","paz"], imagen:"/images/placeholders/aceite-ungir.jpg" },
-  { id:"shampoo-artesanal", nombre:"Shampoo Artesanal", categoria:"Shampoo", moneda:"MXN", variantes:V([["std","Único",100]]), tags:["natural","brillo"], imagen:"/images/placeholders/shampoo-artesanal.jpg" },
-  { id:"shampoo-miel", nombre:"Shampoo Extracto de Miel", categoria:"Shampoo", moneda:"MXN", variantes:V([["std","Único",100]]), tags:["miel","suavidad"], imagen:"/images/placeholders/shampoo-miel.jpg" },
-  { id:"shampoo-romero", nombre:"Shampoo Extracto de Romero", categoria:"Shampoo", moneda:"MXN", variantes:V([["std","Único",100]]), tags:["romero","fortaleza"], imagen:"/images/placeholders/shampoo-romero.jpg" },
-  { id:"mascarilla-capilar", nombre:"Mascarilla Capilar", categoria:"Cabello", moneda:"MXN", variantes:V([["std","Único",50]]), tags:["hidratación","brillo"], imagen:"/images/placeholders/mascarilla-capilar.jpg" },
-  { id:"agua-luna", nombre:"Agua de Luna", categoria:"Energéticos", moneda:"MXN", variantes:V([["std","Único",150]]), tags:["calma","limpieza"], imagen:"/images/placeholders/agua-luna.jpg" },
-  { id:"miel-consagrada", nombre:"Miel Consagrada", categoria:"Miel", moneda:"MXN", variantes:V([["std","Único",150]]), tags:["dulzura","prosperidad"], imagen:"/images/placeholders/miel-consagrada.jpg" },
-  { id:"sal-negra", nombre:"Sal Negra", categoria:"Protección", moneda:"MXN", variantes:V([["std","Único",150]]), tags:["protección","limpieza"], imagen:"/images/placeholders/sal-negra.jpg" },
-  { id:"polvo-oro", nombre:"Polvo de Oro", categoria:"Rituales", moneda:"MXN", variantes:V([["std","Único",150]]), tags:["abundancia","manifestación"], imagen:"/images/placeholders/polvo-oro.jpg" },
-  { id:"palo-santo", nombre:"Palo Santo", categoria:"Sahumerios", moneda:"MXN", variantes:V([["std","Único",150]]), tags:["armonía","purificar"], imagen:"/images/placeholders/palo-santo.jpg" },
-  { id:"sahumerios", nombre:"Sahumerios", categoria:"Sahumerios", moneda:"MXN", variantes:V([["std","Único",200]]), tags:["salvia","aromas"], imagen:"/images/placeholders/sahumerios.jpg" },
-  { id:"bano-amargo", nombre:"Baño Energético Amargo", categoria:"Baños Energéticos", moneda:"MXN", variantes:V([["std","Único",100]]), tags:["descarga","limpieza"], imagen:"/images/placeholders/bano-amargo.jpg" },
-  { id:"bano-amor-propio", nombre:"Baño Energético Amor Propio", categoria:"Baños Energéticos", moneda:"MXN", variantes:V([["std","Único",100]]), tags:["autoestima","rosa"], imagen:"/images/placeholders/bano-amor-propio.jpg" },
-  { id:"bano-abre-caminos", nombre:"Baño Energético Abre Caminos", categoria:"Baños Energéticos", moneda:"MXN", variantes:V([["std","Único",100]]), tags:["expansión","canela"], imagen:"/images/placeholders/bano-abre-caminos.jpg" }
+  { 
+    id: "velas-miel", 
+    nombre: "Velas De Miel", 
+    categoria: "Velas", 
+    moneda: "MXN", 
+    variantes: V([["ch", "Chica", 150], ["gd", "Grande", 200]]), 
+    tags: ["artesanal", "abeja", "abundancia", "natural"], 
+    imagen: "/images/placeholders/velas-miel.jpg",
+    descripcion: "Velas artesanales elaboradas con cera natural de abeja, perfectas para rituales de abundancia y prosperidad. Aromas suaves que crean un ambiente cálido y acogedor.",
+    beneficios: "Ideal para rituales de abundancia, meditación y crear un ambiente de paz y prosperidad."
+  },
+  { 
+    id: "locion-atrayente", 
+    nombre: "Loción Atrayente", 
+    categoria: "Lociones", 
+    moneda: "MXN", 
+    variantes: V([["ch", "Chica", 180], ["gd", "Grande", 250]]), 
+    tags: ["atracción", "abundancia", "natural"], 
+    imagen: "/images/placeholders/locion-atrayente.jpg",
+    descripcion: "Loción artesanal elaborada con esencias naturales para atraer energías positivas y abundancia a tu vida.",
+    beneficios: "Atrae prosperidad, abundancia y energías positivas."
+  },
+  { 
+    id: "locion-palo-santo", 
+    nombre: "Loción Palo Santo", 
+    categoria: "Lociones", 
+    moneda: "MXN", 
+    variantes: V([["ch", "Chica", 200], ["gd", "Grande", 280]]), 
+    tags: ["protección", "limpieza", "palo santo"], 
+    imagen: "/images/placeholders/locion-palo-santo.jpg",
+    descripcion: "Loción elaborada con esencia de Palo Santo, ideal para limpieza energética y protección espiritual.",
+    beneficios: "Limpieza energética, protección espiritual y purificación del aura."
+  },
+  { 
+    id: "agua-florida", 
+    nombre: "Agua Florida", 
+    categoria: "Lociones", 
+    moneda: "MXN", 
+    variantes: V([["ch", "Chica", 180], ["gd", "Grande", 250]]), 
+    tags: ["limpieza", "energética", "florida"], 
+    imagen: "/images/placeholders/agua-florida.jpg",
+    descripcion: "Agua Florida tradicional para limpieza energética y purificación del ambiente y la persona.",
+    beneficios: "Limpieza energética profunda, purificación y renovación espiritual."
+  },
+  { 
+    id: "brisa-bendicion-dinero", 
+    nombre: "Brisa Áurica Bendición del Dinero", 
+    categoria: "Brisas Áuricas", 
+    moneda: "MXN", 
+    variantes: V([["ch", "Chica", 220], ["gd", "Grande", 300]]), 
+    tags: ["dinero", "prosperidad", "limpieza energética"], 
+    imagen: "/images/placeholders/brisa-bendicion-dinero.jpg",
+    descripcion: "Brisa áurica elaborada artesanalmente con aceites esenciales y plantas energéticas: Vainilla, Laurel, Canela y semillas de abundancia. Vibrada e intencionada para limpiar la energía del dinero.",
+    beneficios: "Limpieza energética del dinero, elimina energías negativas y atrae prosperidad financiera.",
+    modoUso: "Agitar antes de usar. Aplicar sobre caja registradora, cartera o donde coloques tu dinero en efectivo para eliminar energías negativas."
+  },
+  { 
+    id: "brisa-prosperidad", 
+    nombre: "Brisa Áurica Prosperidad", 
+    categoria: "Brisas Áuricas", 
+    moneda: "MXN", 
+    variantes: V([["ch", "Chica", 220], ["gd", "Grande", 300]]), 
+    tags: ["prosperidad", "equilibrio", "limpieza"], 
+    imagen: "/images/placeholders/brisa-prosperidad.jpg",
+    descripcion: "Brisa áurica para limpieza energética que funciona a nivel emocional, liberándonos de malas vibras que se pueden pegar al ir con personas o ciertos lugares.",
+    beneficios: "Limpieza energética emocional, liberación de energías negativas y protección áurica.",
+    modoUso: "Agitar antes de usar. Aplicar sobre el cuerpo o en el ambiente para limpieza energética."
+  },
+  { 
+    id: "brisa-abundancia", 
+    nombre: "Brisa Áurica Abundancia", 
+    categoria: "Brisas Áuricas", 
+    moneda: "MXN", 
+    variantes: V([["ch", "Chica", 220], ["gd", "Grande", 300]]), 
+    tags: ["abundancia", "expansión", "energía positiva"], 
+    imagen: "/images/placeholders/brisa-abundancia.jpg",
+    descripcion: "Brisa áurica para atraer abundancia y expansión en todas las áreas de tu vida.",
+    beneficios: "Atrae abundancia, expansión y energías positivas para el crecimiento personal.",
+    modoUso: "Agitar antes de usar. Aplicar sobre el cuerpo o en el ambiente para atraer abundancia."
+  },
+  { 
+    id: "exf-abrecaminos", 
+    nombre: "Exfoliante Abre Caminos", 
+    categoria: "Exfoliantes", 
+    moneda: "MXN", 
+    variantes: V([["std", "Único", 180]]), 
+    tags: ["renovación", "ritual", "abre caminos"], 
+    imagen: "/images/placeholders/exf-abrecaminos.jpg",
+    descripcion: "Exfoliante artesanal elaborado con Miel, Canela, Azúcar, Café y otros ingredientes, elegidos especialmente para exfoliar e hidratar tu piel. Consagrado para abrir tus caminos a la Prosperidad y Abundancia.",
+    beneficios: "Remueve energías negativas acumuladas en cuerpo y espíritu, abre caminos a la prosperidad y abundancia.",
+    modoUso: "Usar como exfoliante corporal 1 a 2 veces por semana (preferiblemente días de descanso). Desde el rostro hacia los pies, exfoliar repitiendo tu oración o decreto."
+  },
+  { 
+    id: "exf-venus", 
+    nombre: "Exfoliante Venus", 
+    categoria: "Exfoliantes", 
+    moneda: "MXN", 
+    variantes: V([["ch", "Chica", 200], ["gd", "Grande", 280]]), 
+    tags: ["amor-propio", "piel", "venus"], 
+    imagen: "/images/placeholders/exf-venus.jpg",
+    descripcion: "Exfoliante especial para el amor propio y la belleza interior, elaborado con ingredientes naturales y energéticos.",
+    beneficios: "Promueve el amor propio, belleza interior y renovación de la piel.",
+    modoUso: "Usar 1 a 2 veces por semana para renovar la piel y conectar con tu belleza interior."
+  },
+  { 
+    id: "feromonas-naturales", 
+    nombre: "Feromonas Naturales", 
+    categoria: "Feromonas", 
+    moneda: "MXN", 
+    variantes: V([["ch", "Chica", 250], ["gd", "Grande", 350]]), 
+    tags: ["atracción", "feromonas", "natural"], 
+    imagen: "/images/placeholders/feromonas-naturales.jpg",
+    descripcion: "Feromonas naturales para aumentar la atracción y la confianza personal.",
+    beneficios: "Aumenta la atracción natural y la confianza personal.",
+    modoUso: "Aplicar sobre puntos de pulso para mayor efectividad."
+  },
+  { 
+    id: "feromonas-dyc", 
+    nombre: "Feromonas Damas y Caballeros", 
+    categoria: "Feromonas", 
+    moneda: "MXN", 
+    variantes: V([["ch", "Chica", 250], ["gd", "Grande", 350]]), 
+    tags: ["atracción", "pareja", "feromonas"], 
+    imagen: "/images/placeholders/feromonas-dyc.jpg",
+    descripcion: "Feromonas especiales para damas y caballeros, diseñadas para fortalecer la conexión de pareja.",
+    beneficios: "Fortalece la conexión de pareja y aumenta la atracción mutua.",
+    modoUso: "Aplicar sobre puntos de pulso para mayor efectividad en la conexión de pareja."
+  },
+  { 
+    id: "agua-micelar", 
+    nombre: "Agua Micelar", 
+    categoria: "Faciales", 
+    moneda: "MXN", 
+    variantes: V([["std", "Único", 220]]), 
+    tags: ["limpieza", "suave", "facial"], 
+    imagen: "/images/placeholders/agua-micelar.jpg",
+    descripcion: "Agua micelar elaborada artesanalmente con micelas que atraen y eliminan suciedad, impurezas y sebo, dejando la piel limpia y fresca. Sin colorantes, perfumes o alcoholes agresivos para la epidermis.",
+    beneficios: "Limpieza facial suave, remueve maquillaje e impurezas, ideal para pieles sensibles y alérgicas.",
+    modoUso: "Usar mañana y noche. Por la mañana: limpiar antes de aplicar suero y crema hidratante. Por la noche: remover maquillaje intensamente, limpiar, tonificar e hidratar la piel."
+  },
+  { 
+    id: "agua-rosas", 
+    nombre: "Agua de Rosas", 
+    categoria: "Faciales", 
+    moneda: "MXN", 
+    variantes: V([["std", "Único", 180]]), 
+    tags: ["suavizante", "antioxidante", "rosas"], 
+    imagen: "/images/placeholders/agua-rosas.jpg",
+    descripcion: "Agua de rosas natural para suavizar y nutrir la piel con propiedades antioxidantes.",
+    beneficios: "Suaviza la piel, propiedades antioxidantes y efecto hidratante natural.",
+    modoUso: "Aplicar sobre el rostro como tónico facial o para refrescar la piel durante el día."
+  },
+  { 
+    id: "aceite-abre", 
+    nombre: "Aceite Abre Caminos", 
+    categoria: "Aceites", 
+    moneda: "MXN", 
+    variantes: V([["std", "Único", 200]]), 
+    tags: ["decretos", "ritual", "abre caminos"], 
+    imagen: "/images/placeholders/aceite-abre.jpg",
+    descripcion: "Aceite artesanal elaborado con extracción de esencias naturales de las plantas. Con feromonas para potenciar su efecto. Ideal para realizar afirmaciones y decretos, ayuda a suavizar situaciones negativas y abrir paso a lo positivo.",
+    beneficios: "Excelente para afirmaciones y decretos, suaviza situaciones negativas y abre camino a lo positivo.",
+    modoUso: "Con ayuda del gotero, aplicar 2 a 3 gotitas en las manos, frotar y repetir la oración o decreto de tu gusto."
+  },
+  { 
+    id: "aceite-ungir", 
+    nombre: "Aceite para Ungir", 
+    categoria: "Aceites", 
+    moneda: "MXN", 
+    variantes: V([["std", "Único", 250]]), 
+    tags: ["consagrado", "paz", "ungir"], 
+    imagen: "/images/placeholders/aceite-ungir.jpg",
+    descripcion: "Aceite artesanal de grado espiritual. La base es aceite de Oliva, Mirra, Canela entre otras plantas sagradas. La palabra 'Ungido' en hebreo significa Mesías.",
+    beneficios: "Usado en eventos de adoración y espirituales, para curar enfermedades y santificar una muerte.",
+    modoUso: "La persona debe encontrarse en un momento muy espiritual, ya que requiere mucho respeto. Elaborado para llevar paz y calma a quien lo necesita en momentos muy difíciles."
+  },
+  { 
+    id: "shampoo-artesanal", 
+    nombre: "Shampoo Artesanal", 
+    categoria: "Shampoo", 
+    moneda: "MXN", 
+    variantes: V([["std", "Único", 120]]), 
+    tags: ["natural", "brillo", "artesanal"], 
+    imagen: "/images/placeholders/shampoo-artesanal.jpg",
+    descripcion: "Shampoo artesanal elaborado con ingredientes naturales para el cuidado del cabello.",
+    beneficios: "Limpieza natural del cabello, sin químicos agresivos, promueve el brillo natural.",
+    modoUso: "Usar como shampoo regular, masajear suavemente el cuero cabelludo."
+  },
+  { 
+    id: "shampoo-miel", 
+    nombre: "Shampoo Extracto de Miel", 
+    categoria: "Shampoo", 
+    moneda: "MXN", 
+    variantes: V([["std", "Único", 140]]), 
+    tags: ["miel", "suavidad", "natural"], 
+    imagen: "/images/placeholders/shampoo-miel.jpg",
+    descripcion: "Shampoo con extracto de miel natural para suavizar y nutrir el cabello.",
+    beneficios: "Suaviza el cabello, nutre con propiedades de la miel y promueve la salud capilar.",
+    modoUso: "Usar como shampoo regular, dejar actuar por 2-3 minutos para mayor beneficio."
+  },
+  { 
+    id: "shampoo-romero", 
+    nombre: "Shampoo Extracto de Romero", 
+    categoria: "Shampoo", 
+    moneda: "MXN", 
+    variantes: V([["std", "Único", 140]]), 
+    tags: ["romero", "fortaleza", "natural"], 
+    imagen: "/images/placeholders/shampoo-romero.jpg",
+    descripcion: "Shampoo con extracto de romero para fortalecer y dar volumen al cabello.",
+    beneficios: "Fortalece el cabello, da volumen y promueve el crecimiento saludable.",
+    modoUso: "Usar como shampoo regular, masajear el cuero cabelludo para estimular la circulación."
+  },
+  { 
+    id: "mascarilla-capilar", 
+    nombre: "Mascarilla Capilar", 
+    categoria: "Cabello", 
+    moneda: "MXN", 
+    variantes: V([["std", "Único", 80]]), 
+    tags: ["hidratación", "brillo", "mascarilla"], 
+    imagen: "/images/placeholders/mascarilla-capilar.jpg",
+    descripcion: "Mascarilla capilar natural para hidratar y dar brillo al cabello.",
+    beneficios: "Hidratación profunda, brillo natural y reparación del cabello dañado.",
+    modoUso: "Aplicar después del shampoo, dejar actuar por 10-15 minutos y enjuagar."
+  },
+  { 
+    id: "agua-luna", 
+    nombre: "Agua de Luna", 
+    categoria: "Energéticos", 
+    moneda: "MXN", 
+    variantes: V([["std", "Único", 180]]), 
+    tags: ["calma", "limpieza", "luna"], 
+    imagen: "/images/placeholders/agua-luna.jpg",
+    descripcion: "Agua energizada con la energía de la luna para calma y limpieza espiritual.",
+    beneficios: "Calma emocional, limpieza espiritual y conexión con la energía lunar.",
+    modoUso: "Usar para limpieza energética, rociar en el ambiente o aplicar sobre el cuerpo."
+  },
+  { 
+    id: "miel-consagrada", 
+    nombre: "Miel Consagrada", 
+    categoria: "Miel", 
+    moneda: "MXN", 
+    variantes: V([["std", "Único", 200]]), 
+    tags: ["dulzura", "prosperidad", "consagrada"], 
+    imagen: "/images/placeholders/miel-consagrada.jpg",
+    descripcion: "Miel consagrada para rituales de prosperidad y abundancia.",
+    beneficios: "Atrae prosperidad, abundancia y dulzura a la vida.",
+    modoUso: "Usar en rituales, ofrendas o consumir para atraer abundancia."
+  },
+  { 
+    id: "sal-negra", 
+    nombre: "Sal Negra", 
+    categoria: "Protección", 
+    moneda: "MXN", 
+    variantes: V([["std", "Único", 150]]), 
+    tags: ["protección", "limpieza", "sal"], 
+    imagen: "/images/placeholders/sal-negra.jpg",
+    descripcion: "Sal negra para protección y limpieza energética.",
+    beneficios: "Protección energética, limpieza de espacios y eliminación de energías negativas.",
+    modoUso: "Colocar en esquinas de la casa, usar en rituales de limpieza o protección."
+  },
+  { 
+    id: "polvo-oro", 
+    nombre: "Polvo de Oro", 
+    categoria: "Rituales", 
+    moneda: "MXN", 
+    variantes: V([["std", "Único", 180]]), 
+    tags: ["abundancia", "manifestación", "oro"], 
+    imagen: "/images/placeholders/polvo-oro.jpg",
+    descripcion: "Polvo de oro para rituales de abundancia y manifestación.",
+    beneficios: "Atrae abundancia, riqueza y ayuda en la manifestación de deseos.",
+    modoUso: "Usar en rituales de abundancia, espolvorear en velas o usar en decretos."
+  },
+  { 
+    id: "palo-santo", 
+    nombre: "Palo Santo", 
+    categoria: "Sahumerios", 
+    moneda: "MXN", 
+    variantes: V([["std", "Único", 120]]), 
+    tags: ["armonía", "purificar", "palo santo"], 
+    imagen: "/images/placeholders/palo-santo.jpg",
+    descripcion: "Palo Santo para purificación y armonía del ambiente.",
+    beneficios: "Purifica el ambiente, crea armonía y elimina energías negativas.",
+    modoUso: "Encender y dejar que el humo purifique el espacio, ideal para limpieza energética."
+  },
+  { 
+    id: "sahumerios", 
+    nombre: "Sahumerios", 
+    categoria: "Sahumerios", 
+    moneda: "MXN", 
+    variantes: V([["std", "Único", 100]]), 
+    tags: ["salvia", "aromas", "purificación"], 
+    imagen: "/images/placeholders/sahumerios.jpg",
+    descripcion: "Sahumerios naturales para purificación y limpieza energética.",
+    beneficios: "Purificación del ambiente, limpieza energética y aromaterapia natural.",
+    modoUso: "Encender y dejar que el humo purifique el espacio, usar en rituales de limpieza."
+  },
+  { 
+    id: "bano-amargo", 
+    nombre: "Baño Energético Amargo", 
+    categoria: "Baños Energéticos", 
+    moneda: "MXN", 
+    variantes: V([["std", "Único", 120]]), 
+    tags: ["descarga", "limpieza", "amargo"], 
+    imagen: "/images/placeholders/bano-amargo.jpg",
+    descripcion: "Baño energético amargo para descarga y limpieza profunda.",
+    beneficios: "Descarga energética, limpieza profunda y renovación espiritual.",
+    modoUso: "Preparar baño con las hierbas, usar para limpieza energética profunda."
+  },
+  { 
+    id: "bano-amor-propio", 
+    nombre: "Baño Energético Amor Propio", 
+    categoria: "Baños Energéticos", 
+    moneda: "MXN", 
+    variantes: V([["std", "Único", 120]]), 
+    tags: ["autoestima", "rosa", "amor propio"], 
+    imagen: "/images/placeholders/bano-amor-propio.jpg",
+    descripcion: "Baño energético para aumentar el amor propio y la autoestima.",
+    beneficios: "Aumenta el amor propio, autoestima y conexión con la belleza interior.",
+    modoUso: "Preparar baño con las hierbas, usar para rituales de amor propio."
+  },
+  { 
+    id: "bano-abre-caminos", 
+    nombre: "Baño Energético Abre Caminos", 
+    categoria: "Baños Energéticos", 
+    moneda: "MXN", 
+    variantes: V([["std", "Único", 120]]), 
+    tags: ["expansión", "canela", "abre caminos"], 
+    imagen: "/images/placeholders/bano-abre-caminos.jpg",
+    descripcion: "Mezcla de plantas sanadoras entre ellas Canela, Naranja y Laureles. Ayuda a conectar nuevamente con la energía cuando sentimos estancamiento en economía, trabajo o crecimiento laboral.",
+    beneficios: "Abre caminos, elimina estancamientos y conecta con energías de expansión y crecimiento.",
+    modoUso: "Poner a hervir las hierbas en aproximadamente 1Lt de agua, mezclar con la tina de baño. El resto de hierbas se pueden colocar en jardín o macetas."
+  },
+  { 
+    id: "locion-ellas-ellos", 
+    nombre: "Loción Ellas y Ellos", 
+    categoria: "Lociones", 
+    moneda: "MXN", 
+    variantes: V([["ch", "Chica", 220], ["gd", "Grande", 300]]), 
+    tags: ["autoestima", "amor-propio", "pareja"], 
+    imagen: "/images/placeholders/locion-ellas-ellos.jpg",
+    descripcion: "Loción artesanal elaborada con extracción de flores y esencias naturales, con tonos suaves para Ellas y tonos frescos para Ellos. Ideal para parejas que están distantes o desean reforzar su conexión.",
+    beneficios: "Aumenta autoestima, amor propio y seguridad. Recomendada para parejas en situaciones complicadas.",
+    modoUso: "Usar como loción de diario para reforzar tu seguridad, aplicar después de bañarse."
+  }
 ];
 
 // Updated services with your prices
@@ -294,18 +608,7 @@ export default function App(){
         }}>
           {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <div style={{ 
-              width: "32px", 
-              height: "32px", 
-              borderRadius: "50%", 
-              background: "#8B4513", 
-              display: "flex", 
-              alignItems: "center", 
-              justifyContent: "center",
-              boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
-            }}>
-              <span style={{ fontSize: "1rem", color: "white" }}>🐝</span>
-            </div>
+            <span style={{ fontSize: "1.1rem" }}>🐝</span>
             <h1 style={{ margin: 0, fontSize: "1.1rem", fontWeight: "600", color: paleta.carbon, whiteSpace: "nowrap" }}>
               Amor y Miel
             </h1>
@@ -313,13 +616,13 @@ export default function App(){
 
           {/* Navigation */}
           <nav style={{ display: "flex", gap: "1.2rem", alignItems: "center" }}>
-            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Inicio</a>
+            <a href="#inicio" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Inicio</a>
             <a href="#productos" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Productos</a>
             <a href="#servicios" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Servicios</a>
-            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Kits</a>
-            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Blog</a>
-            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Quiénes somos</a>
-            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Contacto</a>
+            <a href="#kits" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Kits</a>
+            <a href="#blog" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Blog</a>
+            <a href="#quienes-somos" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Quiénes somos</a>
+            <a href="#contacto" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Contacto</a>
           </nav>
 
           {/* Search and Cart */}
@@ -750,6 +1053,697 @@ export default function App(){
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Kits Section */}
+      <section id="kits" style={{ padding: "4rem 0", background: "white" }}>
+        <div className="container">
+          <h2 style={{ 
+            textAlign: "center", 
+            margin: "0 0 3rem 0", 
+            fontSize: "2.5rem", 
+            fontWeight: "700",
+            color: paleta.carbon
+          }}>
+            Kits Especiales
+          </h2>
+          <div style={{ 
+            display: "grid", 
+            gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", 
+            gap: "2rem" 
+          }}>
+            <div className="card" style={{ 
+              border: "1px solid rgba(0,0,0,0.08)", 
+              background: "white",
+              borderRadius: "18px",
+              overflow: "hidden"
+            }}>
+              <div style={{ 
+                background: "linear-gradient(135deg, #E0A73A, #FFD700)", 
+                padding: "2rem", 
+                textAlign: "center",
+                color: "white"
+              }}>
+                <h3 style={{ margin: "0 0 1rem 0", fontSize: "1.8rem", fontWeight: "700" }}>
+                  🧘 Kit de Bienestar
+                </h3>
+                <p style={{ margin: "0", fontSize: "1.1rem", opacity: "0.9" }}>
+                  Todo lo que necesitas para tu ritual de autocuidado
+                </p>
+              </div>
+              <div style={{ padding: "2rem" }}>
+                <ul style={{ margin: "0 0 2rem 0", padding: "0", listStyle: "none" }}>
+                  <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <span style={{ color: paleta.miel }}>✓</span>
+                    Vela de cera de abeja
+                  </li>
+                  <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <span style={{ color: paleta.miel }}>✓</span>
+                    Loción Aqua Florida
+                  </li>
+                  <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <span style={{ color: paleta.miel }}>✓</span>
+                    Palo Santo
+                  </li>
+                  <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <span style={{ color: paleta.miel }}>✓</span>
+                    Guía de ritual incluida
+                  </li>
+                </ul>
+                <div style={{ 
+                  display: "flex", 
+                  justifyContent: "space-between", 
+                  alignItems: "center",
+                  marginBottom: "1rem"
+                }}>
+                  <span style={{ fontSize: "1.5rem", fontWeight: "700", color: paleta.miel }}>
+                    $450 MXN
+                  </span>
+                  <span style={{ fontSize: "0.9rem", color: "rgba(0,0,0,0.6)" }}>
+                    Ahorras $150
+                  </span>
+                </div>
+                <button 
+                  className="btn" 
+                  style={{ 
+                    background: paleta.miel, 
+                    color: "white",
+                    width: "100%",
+                    borderRadius: "8px",
+                    padding: "1rem",
+                    fontWeight: "600"
+                  }}
+                >
+                  Comprar Kit
+                </button>
+              </div>
+            </div>
+
+            <div className="card" style={{ 
+              border: "1px solid rgba(0,0,0,0.08)", 
+              background: "white",
+              borderRadius: "18px",
+              overflow: "hidden"
+            }}>
+              <div style={{ 
+                background: "linear-gradient(135deg, #628D6A, #90EE90)", 
+                padding: "2rem", 
+                textAlign: "center",
+                color: "white"
+              }}>
+                <h3 style={{ margin: "0 0 1rem 0", fontSize: "1.8rem", fontWeight: "700" }}>
+                  💕 Kit de Amor Propio
+                </h3>
+                <p style={{ margin: "0", fontSize: "1.1rem", opacity: "0.9" }}>
+                  Para celebrar y honrar tu belleza interior
+                </p>
+              </div>
+              <div style={{ padding: "2rem" }}>
+                <ul style={{ margin: "0 0 2rem 0", padding: "0", listStyle: "none" }}>
+                  <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <span style={{ color: paleta.miel }}>✓</span>
+                    Exfoliante Venus
+                  </li>
+                  <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <span style={{ color: paleta.miel }}>✓</span>
+                    Loción Ellas y Ellos
+                  </li>
+                  <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <span style={{ color: paleta.miel }}>✓</span>
+                    Baño Energético Amor Propio
+                  </li>
+                  <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <span style={{ color: paleta.miel }}>✓</span>
+                    Mascarilla facial natural
+                  </li>
+                </ul>
+                <div style={{ 
+                  display: "flex", 
+                  justifyContent: "space-between", 
+                  alignItems: "center",
+                  marginBottom: "1rem"
+                }}>
+                  <span style={{ fontSize: "1.5rem", fontWeight: "700", color: paleta.miel }}>
+                    $580 MXN
+                  </span>
+                  <span style={{ fontSize: "0.9rem", color: "rgba(0,0,0,0.6)" }}>
+                    Ahorras $200
+                  </span>
+                </div>
+                <button 
+                  className="btn" 
+                  style={{ 
+                    background: paleta.miel, 
+                    color: "white",
+                    width: "100%",
+                    borderRadius: "8px",
+                    padding: "1rem",
+                    fontWeight: "600"
+                  }}
+                >
+                  Comprar Kit
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <section id="servicios" style={{ padding: "4rem 0", background: "#FBF2DE" }}>
+        <div className="container">
+          <h2 style={{ 
+            textAlign: "center", 
+            margin: "0 0 3rem 0", 
+            fontSize: "2.5rem", 
+            fontWeight: "700",
+            color: paleta.carbon
+          }}>
+            Servicios Holísticos
+          </h2>
+          <div style={{ 
+            display: "grid", 
+            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", 
+            gap: "2rem" 
+          }}>
+            {services.map(service => (
+              <div key={service.id} className="card" style={{ 
+                border: "1px solid rgba(0,0,0,0.08)", 
+                background: "white",
+                borderRadius: "18px",
+                overflow: "hidden"
+              }}>
+                <div style={{ 
+                  background: "linear-gradient(135deg, #E0A73A, #FFD700)", 
+                  height: "200px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "3rem"
+                }}>
+                  ✨
+                </div>
+                <div style={{ padding: "1.5rem" }}>
+                  <h3 style={{ 
+                    margin: "0 0 0.5rem 0", 
+                    fontSize: "1.3rem", 
+                    fontWeight: "600",
+                    color: paleta.carbon
+                  }}>
+                    {service.nombre}
+                  </h3>
+                  <div style={{ 
+                    display: "flex", 
+                    justifyContent: "space-between", 
+                    alignItems: "center", 
+                    marginBottom: "1rem" 
+                  }}>
+                    <span style={{ 
+                      fontSize: "1.2rem", 
+                      fontWeight: "700", 
+                      color: paleta.miel 
+                    }}>
+                      {money(service.precio, service.moneda)}
+                    </span>
+                    <span style={{ 
+                      fontSize: "0.9rem", 
+                      color: "rgba(0,0,0,0.6)" 
+                    }}>
+                      {service.duracion}
+                    </span>
+                  </div>
+                  <p style={{ 
+                    margin: "0 0 1rem 0", 
+                    color: "rgba(0,0,0,0.6)", 
+                    fontSize: "0.9rem" 
+                  }}>
+                    Modalidad: {service.modalidad}
+                  </p>
+                  <a 
+                    href={service.bookingLink} 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="btn" 
+                    style={{ 
+                      background: paleta.miel, 
+                      color: "white",
+                      textDecoration: "none",
+                      borderRadius: "8px",
+                      padding: "0.75rem 1rem",
+                      fontWeight: "600",
+                      display: "block",
+                      textAlign: "center"
+                    }}
+                  >
+                    📞 Reservar
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Blog Section */}
+      <section id="blog" style={{ padding: "4rem 0", background: "#FBF2DE" }}>
+        <div className="container">
+          <h2 style={{ 
+            textAlign: "center", 
+            margin: "0 0 3rem 0", 
+            fontSize: "2.5rem", 
+            fontWeight: "700",
+            color: paleta.carbon
+          }}>
+            Blog Holístico
+          </h2>
+          <div style={{ 
+            display: "grid", 
+            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", 
+            gap: "2rem" 
+          }}>
+            <article className="card" style={{ 
+              border: "1px solid rgba(0,0,0,0.08)", 
+              background: "white",
+              borderRadius: "18px",
+              overflow: "hidden"
+            }}>
+              <div style={{ 
+                background: "linear-gradient(135deg, #E0A73A, #FFD700)", 
+                height: "200px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "3rem"
+              }}>
+                🕯️
+              </div>
+              <div style={{ padding: "1.5rem" }}>
+                <h3 style={{ 
+                  margin: "0 0 1rem 0", 
+                  fontSize: "1.3rem", 
+                  fontWeight: "600",
+                  color: paleta.carbon
+                }}>
+                  Rituales de Luna Llena
+                </h3>
+                <p style={{ 
+                  margin: "0 0 1rem 0", 
+                  color: "rgba(0,0,0,0.6)", 
+                  fontSize: "0.9rem",
+                  lineHeight: "1.6"
+                }}>
+                  Descubre cómo aprovechar la energía de la luna llena para manifestar tus deseos y limpiar tu aura.
+                </p>
+                <button 
+                  className="btn-outline" 
+                  style={{ 
+                    borderColor: paleta.miel,
+                    color: paleta.miel,
+                    borderRadius: "8px",
+                    padding: "0.75rem 1rem",
+                    fontWeight: "600"
+                  }}
+                >
+                  Leer más
+                </button>
+              </div>
+            </article>
+
+            <article className="card" style={{ 
+              border: "1px solid rgba(0,0,0,0.08)", 
+              background: "white",
+              borderRadius: "18px",
+              overflow: "hidden"
+            }}>
+              <div style={{ 
+                background: "linear-gradient(135deg, #628D6A, #90EE90)", 
+                height: "200px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "3rem"
+              }}>
+                🌿
+              </div>
+              <div style={{ padding: "1.5rem" }}>
+                <h3 style={{ 
+                  margin: "0 0 1rem 0", 
+                  fontSize: "1.3rem", 
+                  fontWeight: "600",
+                  color: paleta.carbon
+                }}>
+                  Beneficios de la Miel Natural
+                </h3>
+                <p style={{ 
+                  margin: "0 0 1rem 0", 
+                  color: "rgba(0,0,0,0.6)", 
+                  fontSize: "0.9rem",
+                  lineHeight: "1.6"
+                }}>
+                  Conoce las propiedades curativas y energéticas de la miel pura en tus rituales de belleza.
+                </p>
+                <button 
+                  className="btn-outline" 
+                  style={{ 
+                    borderColor: paleta.miel,
+                    color: paleta.miel,
+                    borderRadius: "8px",
+                    padding: "0.75rem 1rem",
+                    fontWeight: "600"
+                  }}
+                >
+                  Leer más
+                </button>
+              </div>
+            </article>
+
+            <article className="card" style={{ 
+              border: "1px solid rgba(0,0,0,0.08)", 
+              background: "white",
+              borderRadius: "18px",
+              overflow: "hidden"
+            }}>
+              <div style={{ 
+                background: "linear-gradient(135deg, #FF6B6B, #FF8E8E)", 
+                height: "200px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "3rem"
+              }}>
+                💝
+              </div>
+              <div style={{ padding: "1.5rem" }}>
+                <h3 style={{ 
+                  margin: "0 0 1rem 0", 
+                  fontSize: "1.3rem", 
+                  fontWeight: "600",
+                  color: paleta.carbon
+                }}>
+                  Autocuidado Diario
+                </h3>
+                <p style={{ 
+                  margin: "0 0 1rem 0", 
+                  color: "rgba(0,0,0,0.6)", 
+                  fontSize: "0.9rem",
+                  lineHeight: "1.6"
+                }}>
+                  Rutinas simples de 5 minutos para conectar contigo misma y mantener tu energía positiva.
+                </p>
+                <button 
+                  className="btn-outline" 
+                  style={{ 
+                    borderColor: paleta.miel,
+                    color: paleta.miel,
+                    borderRadius: "8px",
+                    padding: "0.75rem 1rem",
+                    fontWeight: "600"
+                  }}
+                >
+                  Leer más
+                </button>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      {/* Quiénes Somos Section */}
+      <section id="quienes-somos" style={{ padding: "4rem 0", background: "white" }}>
+        <div className="container">
+          <div style={{ 
+            display: "grid", 
+            gridTemplateColumns: "1fr 1fr", 
+            gap: "4rem", 
+            alignItems: "center" 
+          }}>
+            <div>
+              <h2 style={{ 
+                margin: "0 0 2rem 0", 
+                fontSize: "2.5rem", 
+                fontWeight: "700",
+                color: paleta.carbon
+              }}>
+                Nuestra Historia
+              </h2>
+              <p style={{ 
+                fontSize: "1.1rem", 
+                color: "rgba(0,0,0,0.7)", 
+                margin: "0 0 1.5rem 0", 
+                lineHeight: "1.6"
+              }}>
+                Amor y Miel nació de la pasión por crear productos naturales que nutran tanto el cuerpo como el espíritu. 
+                Cada producto está elaborado con ingredientes cuidadosamente seleccionados y mucha intención amorosa.
+              </p>
+              <p style={{ 
+                fontSize: "1.1rem", 
+                color: "rgba(0,0,0,0.7)", 
+                margin: "0 0 2rem 0", 
+                lineHeight: "1.6"
+              }}>
+                Nuestros rituales y productos están diseñados para ayudarte a conectar con tu esencia más auténtica, 
+                promoviendo el bienestar holístico y el amor propio.
+              </p>
+              <div style={{ display: "flex", gap: "1rem" }}>
+                <div style={{ 
+                  textAlign: "center",
+                  padding: "1rem",
+                  background: "rgba(224, 167, 58, 0.1)",
+                  borderRadius: "12px",
+                  flex: 1
+                }}>
+                  <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>🌿</div>
+                  <div style={{ fontWeight: "600", fontSize: "0.9rem" }}>100% Natural</div>
+                </div>
+                <div style={{ 
+                  textAlign: "center",
+                  padding: "1rem",
+                  background: "rgba(98, 141, 106, 0.1)",
+                  borderRadius: "12px",
+                  flex: 1
+                }}>
+                  <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>💝</div>
+                  <div style={{ fontWeight: "600", fontSize: "0.9rem" }}>Hecho con Amor</div>
+                </div>
+                <div style={{ 
+                  textAlign: "center",
+                  padding: "1rem",
+                  background: "rgba(224, 167, 58, 0.1)",
+                  borderRadius: "12px",
+                  flex: 1
+                }}>
+                  <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>✨</div>
+                  <div style={{ fontWeight: "600", fontSize: "0.9rem" }}>Energía Positiva</div>
+                </div>
+              </div>
+            </div>
+            <div style={{ 
+              background: "linear-gradient(135deg, #FBF2DE, #FFFFFF)", 
+              padding: "3rem", 
+              borderRadius: "20px",
+              textAlign: "center"
+            }}>
+              <div style={{ 
+                width: "200px", 
+                height: "200px", 
+                background: "linear-gradient(135deg, #E0A73A, #FFD700)", 
+                borderRadius: "50%", 
+                margin: "0 auto 2rem auto",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "4rem"
+              }}>
+                🐝
+              </div>
+              <h3 style={{ 
+                margin: "0 0 1rem 0", 
+                fontSize: "1.5rem", 
+                fontWeight: "600",
+                color: paleta.carbon
+              }}>
+                Misión
+              </h3>
+              <p style={{ 
+                fontSize: "1rem", 
+                color: "rgba(0,0,0,0.7)", 
+                lineHeight: "1.6"
+              }}>
+                Crear productos que nutran el alma y promuevan el bienestar holístico, 
+                conectando a las personas con su esencia más auténtica.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contacto Section */}
+      <section id="contacto" style={{ padding: "4rem 0", background: "#FBF2DE" }}>
+        <div className="container">
+          <h2 style={{ 
+            textAlign: "center", 
+            margin: "0 0 3rem 0", 
+            fontSize: "2.5rem", 
+            fontWeight: "700",
+            color: paleta.carbon
+          }}>
+            Contáctanos
+          </h2>
+          <div style={{ 
+            display: "grid", 
+            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", 
+            gap: "2rem" 
+          }}>
+            <div className="card" style={{ 
+              border: "1px solid rgba(0,0,0,0.08)", 
+              background: "white",
+              borderRadius: "18px",
+              padding: "2rem",
+              textAlign: "center"
+            }}>
+              <div style={{ 
+                width: "80px", 
+                height: "80px", 
+                background: paleta.miel, 
+                borderRadius: "50%", 
+                margin: "0 auto 1.5rem auto",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "2rem"
+              }}>
+                📱
+              </div>
+              <h3 style={{ 
+                margin: "0 0 1rem 0", 
+                fontSize: "1.3rem", 
+                fontWeight: "600",
+                color: paleta.carbon
+              }}>
+                WhatsApp
+              </h3>
+              <p style={{ 
+                margin: "0 0 1.5rem 0", 
+                color: "rgba(0,0,0,0.6)", 
+                fontSize: "0.9rem"
+              }}>
+                Para consultas y pedidos
+              </p>
+              <a 
+                href="https://wa.me/5210000000000" 
+                target="_blank" 
+                rel="noreferrer"
+                className="btn" 
+                style={{ 
+                  background: paleta.miel, 
+                  color: "white",
+                  textDecoration: "none",
+                  borderRadius: "8px",
+                  padding: "0.75rem 1.5rem",
+                  fontWeight: "600"
+                }}
+              >
+                Chatear
+              </a>
+            </div>
+
+            <div className="card" style={{ 
+              border: "1px solid rgba(0,0,0,0.08)", 
+              background: "white",
+              borderRadius: "18px",
+              padding: "2rem",
+              textAlign: "center"
+            }}>
+              <div style={{ 
+                width: "80px", 
+                height: "80px", 
+                background: paleta.miel, 
+                borderRadius: "50%", 
+                margin: "0 auto 1.5rem auto",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "2rem"
+              }}>
+                📧
+              </div>
+              <h3 style={{ 
+                margin: "0 0 1rem 0", 
+                fontSize: "1.3rem", 
+                fontWeight: "600",
+                color: paleta.carbon
+              }}>
+                Email
+              </h3>
+              <p style={{ 
+                margin: "0 0 1.5rem 0", 
+                color: "rgba(0,0,0,0.6)", 
+                fontSize: "0.9rem"
+              }}>
+                Para información general
+              </p>
+              <a 
+                href="mailto:hola@amorymiel.com" 
+                className="btn" 
+                style={{ 
+                  background: paleta.miel, 
+                  color: "white",
+                  textDecoration: "none",
+                  borderRadius: "8px",
+                  padding: "0.75rem 1.5rem",
+                  fontWeight: "600"
+                }}
+              >
+                Enviar Email
+              </a>
+            </div>
+
+            <div className="card" style={{ 
+              border: "1px solid rgba(0,0,0,0.08)", 
+              background: "white",
+              borderRadius: "18px",
+              padding: "2rem",
+              textAlign: "center"
+            }}>
+              <div style={{ 
+                width: "80px", 
+                height: "80px", 
+                background: paleta.miel, 
+                borderRadius: "50%", 
+                margin: "0 auto 1.5rem auto",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "2rem"
+              }}>
+                📍
+              </div>
+              <h3 style={{ 
+                margin: "0 0 1rem 0", 
+                fontSize: "1.3rem", 
+                fontWeight: "600",
+                color: paleta.carbon
+              }}>
+                Ubicación
+              </h3>
+              <p style={{ 
+                margin: "0 0 1.5rem 0", 
+                color: "rgba(0,0,0,0.6)", 
+                fontSize: "0.9rem"
+              }}>
+                Visítanos en nuestro estudio
+              </p>
+              <p style={{ 
+                margin: "0", 
+                color: paleta.carbon, 
+                fontSize: "0.9rem",
+                fontWeight: "500"
+              }}>
+                Ciudad de México, México
+              </p>
+            </div>
           </div>
         </div>
       </section>
