@@ -3,36 +3,41 @@ import React, { useMemo, useState, useEffect } from "react";
 function Icon({ label, symbol, size = 18 }) { return <span role="img" aria-label={label} style={{ fontSize:size }}>{symbol}</span>; }
 const PALETAS = { D: { nombre:"Boutique Mosaico", miel:"#E0A73A", crema:"#FBF2DE", verde:"#628D6A", carbon:"#1A1714", blanco:"#FFFFFF", fondo:"linear-gradient(135deg, #FBF2DE 0%, #FFFFFF 65%)" } };
 
-// Catalog Images Mapping
+// Catalog Images Mapping - Updated to match the actual featured images
 const CATALOG_IMAGES = {
-  "Velas De Miel": "/public/images/placeholders/velas-de-miel-product.png",
-  "Aceite Abre Caminos": "/public/images/placeholders/aceite-abrecaminos.JPG",
-  "Agua Florida": "/public/images/placeholders/agua-florida-product.png",
-  "Agua de Luna": "/public/images/placeholders/agua-de-luna-product.png",
-  "Aceite para Ungir": "/public/images/placeholders/aceite-para-ungir-product.png",
-  "Agua Micelar": "/public/images/placeholders/agua-micelar-product.png",
-  "Baño Energético Abre Caminos": "/public/images/placeholders/bano-energetico-abre-caminos.JPG",
-  "Baño Energético Amor Propio": "/public/images/placeholders/bano-energetico-amor-propio.JPG",
-  "Baño Energético Amargo": "/public/images/placeholders/bano-amargo-product.png",
-  "Brisa Áurica Prosperidad": "/public/images/placeholders/brisa-prosperidad-product.png",
-  "Brisa Áurica Abundancia": "/public/images/placeholders/brisa-abundancia-product.png",
-  "Brisa Áurica Bendición del Dinero": "/public/images/placeholders/brisa-bendicion-dinero-product.png",
-  "Agua de Rosas": "/public/images/placeholders/agua-de-rosas-product.png",
-  "Exfoliante Abre Caminos": "/public/images/placeholders/exfoliante-abrecaminos-product.png",
-  "Exfoliante Venus": "/public/images/placeholders/exfoliante-venus-product.png",
-  "Mascarilla Capilar": "/public/images/placeholders/mascarilla-capilar-product.png",
-  "Miel Consagrada": "/public/images/placeholders/miel-consagrada-product.png",
-  "Palo Santo": "/public/images/placeholders/palo-santo-product.png",
-  "Polvo de Oro": "/public/images/placeholders/polvo-de-oro-product.png",
-  "Sahumerios": "/public/images/placeholders/sahumerios-product.png",
-  "Sal Negra": "/public/images/placeholders/sal-negra-product.png",
-  "Shampoo Artesanal": "/public/images/placeholders/shampoo-artesanal-product.png",
-  "Shampoo con Extracto de Miel": "/public/images/placeholders/shampoo-miel-product.png",
-  "Shampoo con Extracto de Romero": "/public/images/placeholders/shampoo-romero-product.png",
-  "Feromonas Naturales": "/public/images/placeholders/feromonas-naturales-product.png",
-  "Feromonas Damas y Caballeros": "/public/images/placeholders/feromonas-damas-caballeros-product.png",
-  "Loción Atrayente": "/public/images/placeholders/locion-atrayente-product.png",
-  "Loción Palo Santo": "/public/images/placeholders/locion-palo-santo-product.png"
+  "Velas De Miel": "/images/placeholders/velas-de-miel-product.png",
+  "Aceite Abre Caminos": "/images/placeholders/aceite-abrecaminos.JPG", // Golden dropper bottle with spiritual symbols 
+  "Agua Florida": "/images/placeholders/agua-florida-product.png",
+  "Agua de Luna": "/images/placeholders/agua-de-luna-product.png",
+  "Aceite para Ungir": "/images/placeholders/aceite-para-ungir-product.png",
+  "Agua Micelar": "/images/placeholders/agua-micelar-product.png",
+  "Baño Energético Abre Caminos": "/images/placeholders/bano-energetico-abre-caminos.JPG",
+  "Baño Energético Amor Propio": "/images/placeholders/bano-energetico-amor-propio.JPG",
+  "Baño Energético Amargo": "/images/placeholders/bano-amargo-product.png",
+  "Brisa Áurica Prosperidad": "/images/placeholders/brisa-prosperidad-product.png",
+  "Brisa Áurica Abundancia": "/images/placeholders/brisa-abundancia-product.png",
+  "Brisa Áurica Bendición del Dinero": "/images/placeholders/brisa-bendicion-dinero-product.png",
+  "Agua de Rosas": "/images/placeholders/agua-de-rosas-product.png",
+  "Exfoliante Abre Caminos": "/images/placeholders/exfoliante-abrecaminos-product.png",
+  "Exfoliante Venus": "/images/placeholders/exfoliante-venus-product.png",
+  "Mascarilla Capilar": "/images/placeholders/mascarilla-capilar-product.png",
+  "Miel Consagrada": "/images/placeholders/miel-consagrada-product.png",
+  "Palo Santo": "/images/placeholders/palo-santo-product.png",
+  "Polvo de Oro": "/images/placeholders/polvo-de-oro-product.png",
+  "Sahumerios": "/images/placeholders/sahumerios-product.png",
+  "Sal Negra": "/images/placeholders/sal-negra-product.png",
+  "Shampoo Artesanal": "/images/placeholders/shampoo-artesanal-product.png",
+  "Shampoo con Extracto de Miel": "/images/placeholders/shampoo-miel-product.png",
+  "Shampoo con Extracto de Romero": "/images/placeholders/shampoo-romero-product.png",
+  "Feromonas Naturales": "/images/placeholders/feromonas-naturales-product.png",
+  "Feromonas Damas y Caballeros": "/images/placeholders/feromonas-damas-caballeros-product.png",
+  "Loción Atrayente": "/images/placeholders/locion-atrayente-product.png",
+  "Loción Palo Santo": "/images/placeholders/locion-palo-santo-product.png",
+  "Loción Ellas y Ellos": "/images/placeholders/locion-ellas-y-ellos.JPG",
+  "Kit de Bienestar": "/images/placeholders/velas-de-miel-product.png",
+  "Kit de Amor Propio": "/images/placeholders/exfoliante-venus-product.png",
+  "Mascarilla Capilar Amor": "/images/placeholders/mascarilla-capilar-product.png",
+  "Miel Sagrada": "/images/placeholders/miel-consagrada-product.png"
 };
 
 const V = (arr) => arr.map(([sku, titulo, precio]) => ({ sku, titulo, precio }));
@@ -440,6 +445,32 @@ const DEFAULT_PRODUCTS = [
     elaboracion: "Kit especializado que incluye: Exfoliante Venus, Loción Ellas y Ellos, Baño Energético Amor Propio y mascarilla facial natural. Cada producto está consagrado bajo la energía de Venus para potenciar el amor propio y la belleza interior.",
     proposito: "Facilitar el proceso de reconexión con el amor propio, aumentar la autoestima y celebrar la belleza interior. El kit está diseñado para crear una experiencia holística de autocuidado que nutra tanto el cuerpo como el espíritu.",
     modoUso: "Usar el Baño Energético Amor Propio primero para limpiar energías, luego el Exfoliante Venus para renovar la piel, aplicar la mascarilla facial natural, y finalmente usar la Loción Ellas y Ellos para sellar el ritual de amor propio."
+  },
+  { 
+    id: "mascarilla-amor", 
+    nombre: "Mascarilla Capilar Amor", 
+    categoria: "Cabello", 
+    precio: 180,
+    moneda: "MXN", 
+    imagen: "/images/placeholders/mascarilla-capilar-product.png",
+    descripcion: "Mascarilla capilar artesanal con miel consagrada y aceites esenciales para nutrir y dar brillo al cabello.",
+    beneficios: "Nutrición profunda del cabello, brillo natural, reparación de daños y fortalecimiento capilar.",
+    elaboracion: "Elaborada con miel consagrada 100% pura, aceite de argán, aceite de coco y extractos botánicos naturales. Cada lote es consagrado bajo la luna llena para potenciar sus propiedades nutritivas y reparadoras.",
+    proposito: "Proporcionar nutrición profunda al cabello, restaurar su brillo natural, reparar daños causados por factores externos y fortalecer la estructura capilar desde la raíz hasta las puntas.",
+    modoUso: "Aplicar después del shampoo, masajear suavemente desde la raíz hasta las puntas, dejar actuar por 15-20 minutos y enjuagar abundantemente con agua tibia."
+  },
+  { 
+    id: "miel-sagrada", 
+    nombre: "Miel Sagrada", 
+    categoria: "Miel", 
+    precio: 250,
+    moneda: "MXN", 
+    imagen: "/images/placeholders/miel-consagrada-product.png",
+    descripcion: "Miel sagrada consagrada bajo la luna llena con intenciones de amor, abundancia y protección espiritual.",
+    beneficios: "Su dulzura sagrada activa la ley de la abundancia universal, atrae amor, prosperidad y protección espiritual.",
+    elaboracion: "Miel natural 100% pura consagrada bajo la luna llena con intenciones específicas de amor, abundancia y protección. Cada lote es bendecido individualmente y energizado con la energía sagrada de la miel.",
+    proposito: "Activar la ley de la abundancia universal, atraer amor y prosperidad, crear un escudo de protección espiritual y endulzar la vida con bendiciones divinas.",
+    modoUso: "Usar en rituales sagrados, ofrendas espirituales, consumir para atraer abundancia y amor, o aplicar en rituales de protección."
   }
 ];
 
