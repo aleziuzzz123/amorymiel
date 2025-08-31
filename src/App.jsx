@@ -105,7 +105,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["ch", "Chica", 200], ["gd", "Grande", 280]]), 
     tags: ["amor-propio", "piel", "venus"], 
-    imagen: "/images/placeholders/exfoliane-venus.JPG",
+    imagen: "/images/placeholders/exfoliante-venus-product.png",
     descripcion: "Exfoliante especial consagrado para el amor propio y la belleza interior, elaborado con ingredientes naturales y energéticos que conectan con la energía de Venus.",
     beneficios: "Promueve el amor propio, belleza interior y renovación de la piel.",
     modoUso: "Usar 1-2 veces por semana para renovar la piel y conectar con tu belleza interior."
@@ -117,7 +117,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["ch", "Chica", 250], ["gd", "Grande", 350]]), 
     tags: ["atracción", "feromonas", "natural"], 
-    imagen: "/images/placeholders/feromanas-naturales.JPG",
+    imagen: "/images/placeholders/feromonas-naturales-product.png",
     descripcion: "Feromonas naturales de la más alta pureza para aumentar la atracción y la confianza personal. Su esencia activa tu magnetismo natural.",
     beneficios: "Aumenta la atracción natural y la confianza personal.",
     modoUso: "Aplicar sobre puntos de pulso para mayor efectividad."
@@ -129,7 +129,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["ch", "Chica", 250], ["gd", "Grande", 350]]), 
     tags: ["atracción", "pareja", "feromonas"], 
-    imagen: "/images/placeholders/feromanas-damas-y-caballeros.JPG",
+    imagen: "/images/placeholders/feromonas-damas-caballeros-product.png",
     descripcion: "Feromonas especiales diseñadas para damas y caballeros, fortalecen la conexión de pareja y aumentan la atracción mutua de forma natural.",
     beneficios: "Fortalece la conexión de pareja y aumenta la atracción mutua.",
     modoUso: "Aplicar sobre puntos de pulso para mayor efectividad en la conexión de pareja."
@@ -141,7 +141,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 220]]), 
     tags: ["limpieza", "suave", "facial"], 
-    imagen: "/images/placeholders/agua-micelar.JPG",
+    imagen: "/images/placeholders/agua-micelar-product.png",
     descripcion: "Agua micelar artesanal con micelas que atraen y eliminan suciedad, impurezas y sebo. Sin colorantes, perfumes o alcoholes agresivos, ideal para pieles sensibles.",
     beneficios: "Limpieza facial suave, remueve maquillaje e impurezas, ideal para pieles sensibles.",
     modoUso: "Usar mañana y noche. Limpiar antes de aplicar suero y crema hidratante."
@@ -153,7 +153,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 180]]), 
     tags: ["suavizante", "antioxidante", "rosas"], 
-    imagen: "/images/placeholders/agua-de-rosas1.JPG",
+    imagen: "/images/placeholders/agua-de-rosas-product.png",
     descripcion: "Agua de rosas natural de la más alta pureza para suavizar y nutrir la piel. Sus propiedades antioxidantes protegen y hidratan la piel de forma natural.",
     beneficios: "Suaviza la piel, propiedades antioxidantes y efecto hidratante natural.",
     modoUso: "Aplicar sobre el rostro como tónico facial o para refrescar la piel durante el día."
@@ -165,7 +165,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 200]]), 
     tags: ["decretos", "ritual", "abre caminos"], 
-    imagen: "/images/placeholders/aceite-abrecaminos.JPG",
+    imagen: "/images/placeholders/aceite-abrecaminos-product.png",
     descripcion: "Aceite artesanal con extracción de esencias naturales de plantas sagradas. Con feromonas para potenciar su efecto. Ideal para afirmaciones y decretos, suaviza situaciones negativas y abre paso a lo positivo.",
     beneficios: "Excelente para afirmaciones y decretos, suaviza situaciones negativas y abre camino a lo positivo.",
     modoUso: "Con ayuda del gotero, aplicar 2-3 gotitas en las manos, frotar y repetir tu oración o decreto."
@@ -177,7 +177,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 250]]), 
     tags: ["consagrado", "paz", "ungir"], 
-    imagen: "/images/placeholders/aceite-para-ungir.JPG",
+    imagen: "/images/placeholders/aceite-para-ungir-product.png",
     descripcion: "Aceite artesanal de grado espiritual con base de aceite de Oliva, Mirra y Canela. La palabra 'Ungido' en hebreo significa Mesías. Consagrado para momentos espirituales sagrados.",
     beneficios: "Usado en eventos de adoración y espirituales, para curar enfermedades y santificar momentos sagrados.",
     modoUso: "Usar en momentos muy espirituales, con respeto. Elaborado para llevar paz y calma en momentos difíciles."
@@ -189,7 +189,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 120]]), 
     tags: ["natural", "brillo", "artesanal"], 
-    imagen: "/images/placeholders/shampoo-artesanal.JPG",
+    imagen: "/images/placeholders/shampoo-artesanal-product.png",
     descripcion: "Shampoo artesanal elaborado con ingredientes naturales de la más alta calidad para el cuidado del cabello. Sin químicos agresivos, promueve el brillo natural.",
     beneficios: "Limpieza natural del cabello, sin químicos agresivos, promueve el brillo natural.",
     modoUso: "Usar como shampoo regular, masajear suavemente el cuero cabelludo."
@@ -201,7 +201,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 140]]), 
     tags: ["miel", "suavidad", "natural"], 
-    imagen: "/images/placeholders/shampoo-miel.JPG",
+    imagen: "/images/placeholders/shampoo-miel-product.png",
     descripcion: "Shampoo con extracto de miel natural de la más alta pureza para suavizar y nutrir el cabello. Las propiedades naturales de la miel promueven la salud capilar.",
     beneficios: "Suaviza el cabello, nutre con propiedades de la miel y promueve la salud capilar.",
     modoUso: "Usar como shampoo regular, dejar actuar por 2-3 minutos para mayor beneficio."
@@ -213,7 +213,7 @@ const DEFAULT_PRODUCTS = [
     moneda: "MXN", 
     variantes: V([["std", "Único", 140]]), 
     tags: ["romero", "fortaleza", "natural"], 
-    imagen: "/images/placeholders/shampoo-romero.JPG",
+    imagen: "/images/placeholders/shampoo-romero-product.png",
     descripcion: "Shampoo con extracto de romero natural para fortalecer y dar volumen al cabello. Sus propiedades naturales estimulan el crecimiento saludable del cabello.",
     beneficios: "Fortalece el cabello, da volumen y promueve el crecimiento saludable.",
     modoUso: "Usar como shampoo regular, masajear el cuero cabelludo para estimular la circulación."
