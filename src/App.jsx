@@ -15,7 +15,10 @@ const DEFAULT_PRODUCTS = [
     tags: ["artesanal", "abeja", "abundancia", "natural"], 
     imagen: "/images/placeholders/velas-de-miel-product.png",
     descripcion: "Velas artesanales de cera natural de abeja, elaboradas con amor y consagradas para rituales de abundancia. Su llama dorada purifica el ambiente y atrae energías de prosperidad y abundancia.",
-    beneficios: "Purifica espacios, atrae abundancia, ideal para meditación y rituales de manifestación."
+    beneficios: "Purifica espacios, atrae abundancia, ideal para meditación y rituales de manifestación.",
+    elaboracion: "Elaboradas artesanalmente con cera natural de abeja 100% pura, consagradas bajo la luna llena con intenciones de abundancia y prosperidad. Cada vela es bendecida individualmente para potenciar su energía sagrada.",
+    proposito: "Purificar espacios, atraer abundancia y prosperidad, facilitar la conexión espiritual durante meditaciones y rituales de manifestación. Su llama dorada activa la ley de la atracción y abre caminos hacia la riqueza material y espiritual.",
+    modoUso: "Encender en un lugar seguro y tranquilo. Antes de encender, establecer la intención de abundancia. Dejar que se consuma completamente o apagar con cuidado. Ideal usar durante la luna llena para potenciar efectos."
   },
   { 
     id: "locion-atrayente", 
@@ -26,7 +29,10 @@ const DEFAULT_PRODUCTS = [
     tags: ["atracción", "abundancia", "natural"], 
     imagen: "/images/placeholders/locion-atrayente-product.png",
     descripcion: "Loción artesanal con esencias naturales seleccionadas para atraer energías positivas y abundancia. Su aroma dulce y envolvente activa la ley de atracción en tu vida.",
-    beneficios: "Activa la ley de atracción, atrae prosperidad y energías positivas."
+    beneficios: "Activa la ley de atracción, atrae prosperidad y energías positivas.",
+    elaboracion: "Elaborada con aceites esenciales puros de Vainilla, Canela, Bergamota y Rosa, diluidos en aceite base de almendras dulces. Cada lote es consagrado bajo la luna creciente para potenciar la atracción de energías positivas.",
+    proposito: "Activar la ley de atracción universal, atraer prosperidad, abundancia y energías positivas. Fortalecer el magnetismo personal y crear un campo energético que atraiga oportunidades y bendiciones.",
+    modoUso: "Aplicar sobre puntos de pulso (muñecas, cuello, sienes) después del baño. Usar preferentemente por la mañana para activar la energía del día. Agitar suavemente antes de cada uso."
   },
   { 
     id: "locion-palo-santo", 
@@ -37,7 +43,10 @@ const DEFAULT_PRODUCTS = [
     tags: ["protección", "limpieza", "palo santo"], 
     imagen: "/images/placeholders/locion-palo-santo-product.png",
     descripcion: "Loción sagrada con esencia pura de Palo Santo, consagrada para limpieza energética profunda y protección espiritual. Su aroma sagrado purifica el aura y crea un escudo de protección.",
-    beneficios: "Limpieza energética profunda, protección espiritual y purificación del aura."
+    beneficios: "Limpieza energética profunda, protección espiritual y purificación del aura.",
+    elaboracion: "Elaborada con esencia pura de Palo Santo (Bursera graveolens) recolectado de manera sostenible, macerado en alcohol de caña y aceites esenciales protectores. Consagrada durante el solsticio para máxima potencia protectora.",
+    proposito: "Proteger contra energías negativas, limpiar el aura de contaminación energética, crear un escudo protector espiritual y restaurar la armonía energética del cuerpo y el ambiente.",
+    modoUso: "Aplicar sobre el cuerpo después del baño, especialmente en la nuca y hombros. Usar antes de salir de casa para protección. Rociar en el ambiente para limpieza energética de espacios."
   },
   { 
     id: "agua-florida", 
@@ -48,7 +57,10 @@ const DEFAULT_PRODUCTS = [
     tags: ["limpieza", "energética", "florida"], 
     imagen: "/images/placeholders/agua-florida-product.png",
     descripcion: "Agua Florida tradicional de la más alta pureza, consagrada para limpieza energética y purificación del ambiente y la persona. Su esencia floral purifica y renueva las energías.",
-    beneficios: "Limpieza energética profunda, purificación del ambiente y renovación espiritual."
+    beneficios: "Limpieza energética profunda, purificación del ambiente y renovación espiritual.",
+    elaboracion: "Elaborada siguiendo la receta tradicional de la Abuela, con alcohol de caña puro, esencias florales naturales de Bergamota, Lavanda, Rosa y Neroli. Cada lote es bendecido y consagrado para purificación energética.",
+    proposito: "Purificar energías negativas, limpiar el aura de contaminación energética, renovar la energía personal y crear un ambiente de paz y armonía espiritual. Ideal para limpieza diaria y rituales de purificación.",
+    modoUso: "Aplicar sobre el cuerpo después del baño, rociar en el ambiente para limpieza energética, usar en rituales de purificación. Aplicar en la nuca y hombros para protección diaria."
   },
   { 
     id: "brisa-bendicion-dinero", 
@@ -60,7 +72,9 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/brisa-bendicion-dinero-product.png",
     descripcion: "Brisa áurica artesanal con aceites esenciales de Vainilla, Laurel, Canela y semillas de abundancia. Consagrada e intencionada para limpiar la energía del dinero y atraer prosperidad financiera.",
     beneficios: "Limpieza energética del dinero, elimina energías negativas y atrae prosperidad financiera.",
-    modoUso: "Agitar antes de usar. Aplicar sobre caja registradora, cartera o donde coloques tu dinero para eliminar energías negativas."
+    modoUso: "Agitar antes de usar. Aplicar sobre caja registradora, cartera o donde coloques tu dinero para eliminar energías negativas.",
+    elaboracion: "Elaborada con aceites esenciales puros de Vainilla, Laurel, Canela y semillas de Abundancia, diluidos en alcohol de caña y agua destilada. Consagrada durante la luna llena para potenciar la atracción de prosperidad financiera.",
+    proposito: "Limpiar la energía del dinero de energías negativas, atraer prosperidad financiera, activar la ley de la abundancia en asuntos económicos y crear un flujo constante de riqueza material y espiritual."
   },
   { 
     id: "brisa-prosperidad", 
@@ -72,7 +86,9 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/brisa-prosperidad-product.png",
     descripcion: "Brisa áurica especializada en limpieza energética emocional, liberando malas vibras que se adhieren al interactuar con personas o visitar ciertos lugares. Restaura tu energía natural.",
     beneficios: "Limpieza energética emocional, liberación de energías negativas y protección áurica.",
-    modoUso: "Agitar antes de usar. Aplicar sobre el cuerpo o en el ambiente para limpieza energética."
+    modoUso: "Agitar antes de usar. Aplicar sobre el cuerpo o en el ambiente para limpieza energética.",
+    elaboracion: "Elaborada con aceites esenciales de Sándalo, Incienso, Mirra y Salvia, diluidos en alcohol de caña y agua destilada. Cada lote es consagrado bajo la luna menguante para potenciar la limpieza y liberación energética.",
+    proposito: "Limpiar energías negativas acumuladas, liberar malas vibras del cuerpo y aura, restaurar la energía natural personal y crear un escudo protector contra contaminación energética externa."
   },
   { 
     id: "brisa-abundancia", 
@@ -84,7 +100,9 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/brisa-abundancia-product.png",
     descripcion: "Brisa áurica consagrada para atraer abundancia y expansión en todas las áreas de tu vida. Su energía activa la ley de la abundancia universal.",
     beneficios: "Atrae abundancia, expansión y energías positivas para el crecimiento personal.",
-    modoUso: "Agitar antes de usar. Aplicar sobre el cuerpo o en el ambiente para atraer abundancia."
+    modoUso: "Agitar antes de usar. Aplicar sobre el cuerpo o en el ambiente para atraer abundancia.",
+    elaboracion: "Elaborada con aceites esenciales de Bergamota, Naranja, Limón y Pachulí, diluidos en alcohol de caña y agua destilada. Consagrada durante la luna creciente para potenciar la expansión y atracción de abundancia.",
+    proposito: "Activar la ley de la abundancia universal, atraer prosperidad en todas las áreas de la vida, expandir oportunidades y crear un flujo constante de bendiciones y riqueza material y espiritual."
   },
   { 
     id: "exf-abrecaminos", 
@@ -96,7 +114,9 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/exfoliante-abrecaminos-product.png",
     descripcion: "Exfoliante artesanal con Miel, Canela, Azúcar y Café, ingredientes seleccionados para exfoliar e hidratar tu piel. Consagrado para abrir caminos a la prosperidad y abundancia.",
     beneficios: "Remueve energías negativas, exfolia la piel y abre caminos a la prosperidad.",
-    modoUso: "Usar 1-2 veces por semana. Exfoliar desde rostro hacia pies, repitiendo tu oración o decreto."
+    modoUso: "Usar 1-2 veces por semana. Exfoliar desde rostro hacia pies, repitiendo tu oración o decreto.",
+    elaboracion: "Elaborado con ingredientes naturales 100% puros: Miel de abeja orgánica, Canela de Ceilán, Azúcar morena y Café arábica molido. Cada lote es consagrado durante la luna nueva para potenciar la apertura de caminos.",
+    proposito: "Exfoliar la piel removiendo células muertas, limpiar energías negativas del cuerpo, abrir caminos hacia la prosperidad y abundancia, y activar la renovación personal en todos los niveles."
   },
   { 
     id: "exf-venus", 
@@ -108,7 +128,9 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/exfoliante-venus-product.png",
     descripcion: "Exfoliante especial consagrado para el amor propio y la belleza interior, elaborado con ingredientes naturales y energéticos que conectan con la energía de Venus.",
     beneficios: "Promueve el amor propio, belleza interior y renovación de la piel.",
-    modoUso: "Usar 1-2 veces por semana para renovar la piel y conectar con tu belleza interior."
+    modoUso: "Usar 1-2 veces por semana para renovar la piel y conectar con tu belleza interior.",
+    elaboracion: "Elaborado con ingredientes sagrados que conectan con la energía de Venus: Rosa, Lavanda, Sal marina y Aceite de Almendras dulces. Consagrado durante el tránsito de Venus para potenciar la conexión con el amor propio.",
+    proposito: "Promover el amor propio y la autoestima, conectar con la belleza interior, renovar la piel física y energética, y activar la energía de Venus para atraer amor y armonía personal."
   },
   { 
     id: "feromonas-naturales", 
@@ -120,7 +142,9 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/feromonas-naturales-product.png",
     descripcion: "Feromonas naturales de la más alta pureza para aumentar la atracción y la confianza personal. Su esencia activa tu magnetismo natural.",
     beneficios: "Aumenta la atracción natural y la confianza personal.",
-    modoUso: "Aplicar sobre puntos de pulso para mayor efectividad."
+    modoUso: "Aplicar sobre puntos de pulso para mayor efectividad.",
+    elaboracion: "Elaboradas con feromonas naturales extraídas de plantas y flores específicas, diluidas en aceite base de jojoba. Cada lote es procesado bajo condiciones estériles y consagrado para potenciar el magnetismo personal.",
+    proposito: "Aumentar el magnetismo personal natural, potenciar la atracción hacia los demás, mejorar la confianza personal y crear un aura de carisma y encanto natural."
   },
   { 
     id: "feromonas-dyc", 
@@ -564,28 +588,89 @@ function ProductModal({ item, selectedVariant, setSelectedVariant, onAdd, onClos
   return (
     <div style={{ position:"fixed", inset:0, zIndex:70 }}>
       <div onClick={onClose} style={{ position:"absolute", inset:0, background:"rgba(0,0,0,.45)" }} />
-      <div style={{ position:"absolute", left:"50%", top:"50%", transform:"translate(-50%, -50%)", width:"min(760px,92vw)", background:"#fff", borderRadius:18, overflow:"hidden", boxShadow:"0 20px 50px rgba(0,0,0,.25)" }}>
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr" }}>
-          <img src={item.imagen} alt={item.nombre} style={{ width:"100%", height:"100%", maxHeight:380, objectFit:"cover" }} />
-          <div style={{ padding:16 }}>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"start", gap:8 }}>
-              <h3 style={{ margin:0, fontSize:22 }}>{item.nombre}</h3>
-              <button className="btn-outline" onClick={onClose}>✖️</button>
+      <div style={{ position:"absolute", left:"50%", top:"50%", transform:"translate(-50%, -50%)", width:"min(900px,95vw)", maxHeight:"90vh", background:"#fff", borderRadius:18, overflow:"hidden", boxShadow:"0 20px 50px rgba(0,0,0,.25)" }}>
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0 }}>
+          {/* Left Side - Image */}
+          <div style={{ position:"relative" }}>
+            <img src={item.imagen} alt={item.nombre} style={{ width:"100%", height:"100%", maxHeight:500, objectFit:"cover" }} />
+            <div style={{ position:"absolute", top:12, left:12, background: "#E0A73A", color: "#1A1714", borderRadius:999, padding:'4px 10px', fontWeight:600, fontSize:12 }}>{item.categoria}</div>
+          </div>
+          
+          {/* Right Side - Product Details */}
+          <div style={{ padding:20, overflowY:"auto", maxHeight:"90vh" }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"start", gap:8, marginBottom:16 }}>
+              <h2 style={{ margin:0, fontSize:24, color:"#1A1714" }}>{item.nombre}</h2>
+              <button className="btn-outline" onClick={onClose} style={{ borderColor: "#E0A73A", padding:"8px 12px" }}>✖️</button>
             </div>
+            
+            {/* Variants Selection */}
             {Array.isArray(item.variantes)&&item.variantes.length ? (
-              <div style={{ marginTop:10 }}>
-                <label style={{ fontSize:12, opacity:.75 }}>Variante</label>
-                <select value={selectedVariant?.sku||""} onChange={(e)=>{ const v=(item.variantes||[]).find(v=>v.sku===e.target.value)||null; setSelectedVariant(v); }} style={{ width:'100%', marginTop:6, padding:'10px 12px', borderRadius:12, border:'1px solid rgba(0,0,0,.12)' }}>
+              <div style={{ marginBottom:16 }}>
+                <label style={{ fontSize:14, fontWeight:600, color:"#666", marginBottom:8, display:"block" }}>Variante</label>
+                <select value={selectedVariant?.sku||""} onChange={(e)=>{ const v=(item.variantes||[]).find(v=>v.sku===e.target.value)||null; setSelectedVariant(v); }} style={{ width:'100%', padding:'12px 16px', borderRadius:12, border:'1px solid rgba(0,0,0,.12)', fontSize:14 }}>
                   {(item.variantes||[]).map(v=> <option key={v.sku} value={v.sku}>{v.titulo} — {money(v.precio, item.moneda||'MXN')}</option>)}
                 </select>
               </div>
             ) : null}
-            <div style={{ marginTop:12, fontWeight:700, fontSize:18 }}>{money(selectedVariant?.precio ?? (item.precio || minPrice(item)), item.moneda||'MXN')}</div>
-            <div style={{ marginTop:12, display:"flex", gap:8 }}>
+            
+            {/* Price */}
+            <div style={{ marginBottom:20, padding:"16px", background:"#FBF2DE", borderRadius:12, border:"1px solid #E0A73A" }}>
+              <div style={{ fontSize:14, color:"#666", marginBottom:4 }}>Precio</div>
+              <div style={{ fontSize:28, fontWeight:700, color:"#E0A73A" }}>
+                {money(selectedVariant?.precio ?? (item.precio || minPrice(item)), item.moneda||'MXN')}
+              </div>
+            </div>
+            
+            {/* Product Information Sections */}
+            <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+              
+              {/* Descripción */}
+              {item.descripcion && (
+                <div style={{ padding:"16px", background:"#F8F9FA", borderRadius:12, border:"1px solid rgba(0,0,0,.08)" }}>
+                  <h4 style={{ margin:"0 0 8px 0", fontSize:16, color:"#E0A73A", fontWeight:600 }}>Descripción</h4>
+                  <p style={{ margin:0, fontSize:14, lineHeight:1.5, color:"#333" }}>{item.descripcion}</p>
+                </div>
+              )}
+              
+              {/* Beneficios */}
+              {item.beneficios && (
+                <div style={{ padding:"16px", background:"#F0F8FF", borderRadius:12, border:"1px solid rgba(0,0,0,.08)" }}>
+                  <h4 style={{ margin:"0 0 8px 0", fontSize:16, color:"#E0A73A", fontWeight:600 }}>Beneficios</h4>
+                  <p style={{ margin:0, fontSize:14, lineHeight:1.5, color:"#333" }}>{item.beneficios}</p>
+                </div>
+              )}
+              
+              {/* Elaboración */}
+              {item.elaboracion && (
+                <div style={{ padding:"16px", background:"#FFF8E1", borderRadius:12, border:"1px solid rgba(0,0,0,.08)" }}>
+                  <h4 style={{ margin:"0 0 8px 0", fontSize:16, color:"#E0A73A", fontWeight:600 }}>Elaboración</h4>
+                  <p style={{ margin:0, fontSize:14, lineHeight:1.5, color:"#333" }}>{item.elaboracion}</p>
+                </div>
+              )}
+              
+              {/* Propósito */}
+              {item.proposito && (
+                <div style={{ padding:"16px", background:"#F3E5F5", borderRadius:12, border:"1px solid rgba(0,0,0,.08)" }}>
+                  <h4 style={{ margin:"0 0 8px 0", fontSize:16, color:"#E0A73A", fontWeight:600 }}>Propósito</h4>
+                  <p style={{ margin:0, fontSize:14, lineHeight:1.5, color:"#333" }}>{item.proposito}</p>
+                </div>
+              )}
+              
+              {/* Modo de Uso */}
+              {item.modoUso && (
+                <div style={{ padding:"16px", background:"#E8F5E8", borderRadius:12, border:"1px solid rgba(0,0,0,.08)" }}>
+                  <h4 style={{ margin:"0 0 8px 0", fontSize:16, color:"#E0A73A", fontWeight:600 }}>Modo de Uso</h4>
+                  <p style={{ margin:0, fontSize:14, lineHeight:1.5, color:"#333" }}>{item.modoUso}</p>
+                </div>
+              )}
+            </div>
+            
+            {/* Action Buttons */}
+            <div style={{ marginTop:24, display:"flex", gap:12 }}>
               {item.categoria==='Servicios'
-                ? <a href={item.bookingLink} target="_blank" rel="noreferrer" className="btn" style={{ background:"#E0A73A", color:"#1A1714" }}>📞 Reservar</a>
-                : <button className="btn" style={{ background:"#E0A73A", color:"#1A1714" }} onClick={()=>{ onAdd(item, selectedVariant); onClose(); }}>🛒 Añadir</button>}
-              <button className="btn-outline" onClick={onClose}>Cerrar</button>
+                ? <a href={item.bookingLink} target="_blank" rel="noreferrer" className="btn" style={{ background:"#E0A73A", color:"#1A1714", flex:1, textAlign:"center", textDecoration:"none" }}>📞 Reservar</a>
+                : <button className="btn" style={{ background:"#E0A73A", color:"#1A1714", flex:1 }} onClick={()=>{ onAdd(item, selectedVariant); onClose(); }}>🛒 Añadir al Carrito</button>}
+              <button className="btn-outline" onClick={onClose} style={{ borderColor: "#E0A73A", padding:"12px 24px" }}>Cerrar</button>
             </div>
           </div>
         </div>
@@ -595,13 +680,25 @@ function ProductModal({ item, selectedVariant, setSelectedVariant, onAdd, onClos
 }
 
 export default function App(){
-  const [query,setQuery]=useState(""); const [category,setCategory]=useState("Todos");
-  const [cart,setCart]=useState([]); const [openCart,setOpenCart]=useState(false);
-  const [modal,setModal]=useState(null); const [selectedVariant,setSelectedVariant]=useState(null);
-  const [showAdmin,setShowAdmin]=useState(false);
-  const [products,setProducts]=useState(()=>{ try{ const raw=localStorage.getItem('amym-products'); return raw?JSON.parse(raw):DEFAULT_PRODUCTS; }catch{return DEFAULT_PRODUCTS;} });
-  const [services,setServices]=useState(()=>{ try{ const raw=localStorage.getItem('amym-services'); return raw?JSON.parse(raw):DEFAULT_SERVICES; }catch{return DEFAULT_SERVICES;} });
-  const paleta=PALETAS.D;
+  const [cart, setCart] = useState([]);
+  const [openCart, setOpenCart] = useState(false);
+  const [query, setQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Todos");
+  const [showAdmin, setShowAdmin] = useState(false);
+  const [products, setProducts] = useState(DEFAULT_PRODUCTS);
+  const [openProduct, setOpenProduct] = useState(null);
+  const [selectedVariant, setSelectedVariant] = useState(null);
+  
+  // New enhanced features state
+  const [showReviews, setShowReviews] = useState(false);
+  const [wishlist, setWishlist] = useState([]);
+  const [customerAccount, setCustomerAccount] = useState(null);
+  const [showLogin, setShowLogin] = useState(false);
+  const [showNewsletter, setShowNewsletter] = useState(false);
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [showLiveChat, setShowLiveChat] = useState(false);
+  const [reviews, setReviews] = useState({});
+  const [showWishlist, setShowWishlist] = useState(false);
 
   useEffect(()=>{ try{ const raw=localStorage.getItem("amym-cart"); if(raw) setCart(JSON.parse(raw)); }catch(e){} },[]);
   useEffect(()=>{ try{ localStorage.setItem("amym-cart", JSON.stringify(cart)); }catch(e){} },[cart]);
@@ -616,8 +713,8 @@ export default function App(){
     setCart(prev=>{ const ex=prev.find(p=>p.id===idComp); if(ex) return prev.map(p=>p.id===idComp?{...p,cantidad:p.cantidad+1}:p); return [...prev,{id:idComp,nombre:nombreComp,precio:precioUnit,imagen:item.imagen,cantidad:1}]; });
     setOpenCart(true);
   };
-  const onOpen=(item)=>{ setModal(item); setSelectedVariant(hasVariants(item)? item.variantes[0] : null); };
-  const close=()=>{ setModal(null); setSelectedVariant(null); };
+  const onOpen=(item)=>{ setOpenProduct(item); setSelectedVariant(hasVariants(item)? item.variantes[0] : null); };
+  const close=()=>{ setOpenProduct(null); setSelectedVariant(null); };
   const subtotal = cart.reduce((s,i)=> s+i.precio*i.cantidad, 0);
 
   const checkoutMP=async()=>{
@@ -633,13 +730,13 @@ export default function App(){
     const allItems = [...products, ...services];
     const q = (query || "").toLowerCase().trim();
     return allItems.filter(item => 
-      (category === "Todos" || item.categoria === category) && 
+      (selectedCategory === "Todos" || item.categoria === selectedCategory) && 
       (!q || item.nombre.toLowerCase().includes(q) || (item.tags || []).some(t => (t || "").toLowerCase().includes(q)))
     );
-  }, [products, services, category, query]);
+  }, [products, services, selectedCategory, query]);
 
   return (
-    <div style={{ background: paleta.fondo, minHeight: "100vh" }}>
+    <div style={{ background: PALETAS.D.fondo, minHeight: "100vh" }}>
       <UIStyles />
       
       {/* Header */}
@@ -659,21 +756,42 @@ export default function App(){
         }}>
           {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <span style={{ fontSize: "1.1rem" }}>🐝</span>
-            <h1 style={{ margin: 0, fontSize: "1.1rem", fontWeight: "600", color: paleta.carbon, whiteSpace: "nowrap" }}>
-              Amor y Miel
+            <img 
+              src="/images/placeholders/amorymiellogo2.JPG" 
+              alt="Amor y Miel Logo" 
+              style={{ 
+                height: "45px", 
+                width: "auto",
+                objectFit: "contain",
+                borderRadius: "8px"
+              }}
+              onError={(e) => {
+                // Fallback to text if image fails to load
+                e.target.style.display = "none";
+                e.target.nextSibling.style.display = "block";
+              }}
+            />
+            <h1 style={{ 
+              margin: 0, 
+              fontSize: "1.1rem", 
+              fontWeight: "600", 
+              color: PALETAS.D.carbon, 
+              whiteSpace: "nowrap",
+              display: "none" // Hidden by default, shows if logo fails
+            }}>
+              🐝 Amor y Miel
             </h1>
           </div>
 
           {/* Navigation */}
           <nav style={{ display: "flex", gap: "1.2rem", alignItems: "center" }}>
-            <a href="#inicio" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Inicio</a>
-            <a href="#productos" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Productos</a>
-            <a href="#servicios" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Servicios</a>
-            <a href="#kits" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Kits</a>
-            <a href="#blog" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Blog</a>
-            <a href="#quienes-somos" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Quiénes somos</a>
-            <a href="#contacto" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Contacto</a>
+            <a href="#inicio" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Inicio</a>
+            <a href="#productos" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Productos</a>
+            <a href="#servicios" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Servicios</a>
+            <a href="#kits" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Kits</a>
+            <a href="#blog" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Blog</a>
+            <a href="#quienes-somos" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Quiénes somos</a>
+            <a href="#contacto" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Contacto</a>
           </nav>
 
           {/* Search and Cart */}
@@ -715,7 +833,7 @@ export default function App(){
                 alignItems: "center",
                 gap: "0.3rem",
                 fontSize: "0.75rem",
-                color: paleta.carbon,
+                color: PALETAS.D.carbon,
                 fontWeight: "500"
               }}
             >
@@ -730,7 +848,7 @@ export default function App(){
                 padding: "0.35rem 0.7rem", 
                 cursor: "pointer",
                 fontSize: "0.75rem",
-                color: paleta.carbon
+                color: PALETAS.D.carbon
               }}
             >
               ⚙️ Admin
@@ -758,11 +876,11 @@ export default function App(){
                 fontSize: "3rem", 
                 fontWeight: "700", 
                 margin: "0 0 1.5rem 0", 
-                color: paleta.carbon,
+                color: PALETAS.D.carbon,
                 lineHeight: "1.1"
               }}>
                 Cuidado natural, artesanal y{" "}
-                <span style={{ color: paleta.miel }}>con amor.</span>
+                <span style={{ color: PALETAS.D.miel }}>con amor.</span>
               </h2>
               <p style={{ 
                 fontSize: "1.1rem", 
@@ -776,7 +894,7 @@ export default function App(){
                 <button 
                   onClick={() => document.getElementById('productos').scrollIntoView({ behavior: 'smooth' })}
                   style={{ 
-                    background: paleta.miel, 
+                    background: PALETAS.D.miel, 
                     color: "white", 
                     border: "none", 
                     borderRadius: "6px", 
@@ -796,8 +914,8 @@ export default function App(){
                   onClick={() => document.getElementById('servicios').scrollIntoView({ behavior: 'smooth' })}
                   style={{ 
                     background: "white", 
-                    color: paleta.miel, 
-                    border: `2px solid ${paleta.miel}`, 
+                    color: PALETAS.D.miel, 
+                    border: `2px solid ${PALETAS.D.miel}`, 
                     borderRadius: "6px", 
                     padding: "0.8rem 1.5rem", 
                     fontSize: "0.95rem", 
@@ -918,11 +1036,11 @@ export default function App(){
             {CATEGORIES.map(cat => (
               <button
                 key={cat}
-                onClick={() => setCategory(cat)}
+                onClick={() => setSelectedCategory(cat)}
                 style={{
-                  background: category === cat ? paleta.miel : "transparent",
-                  color: category === cat ? "white" : paleta.carbon,
-                  border: `2px solid ${paleta.miel}`,
+                  background: selectedCategory === cat ? PALETAS.D.miel : "transparent",
+                  color: selectedCategory === cat ? "white" : PALETAS.D.carbon,
+                  border: `2px solid ${PALETAS.D.miel}`,
                   borderRadius: "25px",
                   padding: "0.75rem 1.5rem",
                   cursor: "pointer",
@@ -945,7 +1063,7 @@ export default function App(){
             margin: "0 0 3rem 0", 
             fontSize: "2.5rem", 
             fontWeight: "700",
-            color: paleta.carbon
+            color: PALETAS.D.carbon
           }}>
             Nuestros Productos
           </h2>
@@ -997,7 +1115,7 @@ export default function App(){
                     position: "absolute", 
                     top: "1rem", 
                     left: "1rem", 
-                    background: paleta.miel, 
+                    background: PALETAS.D.miel, 
                     color: "white", 
                     borderRadius: "20px", 
                     padding: "0.5rem 1rem", 
@@ -1012,7 +1130,7 @@ export default function App(){
                     margin: "0 0 0.5rem 0", 
                     fontSize: "1.3rem", 
                     fontWeight: "600",
-                    color: paleta.carbon
+                    color: PALETAS.D.carbon
                   }}>
                     {item.nombre}
                   </h3>
@@ -1032,7 +1150,7 @@ export default function App(){
                     <span style={{ 
                       fontSize: "1.2rem", 
                       fontWeight: "700", 
-                      color: paleta.miel 
+                      color: PALETAS.D.miel 
                     }}>
                       {hasVariants(item) 
                         ? `Desde ${money(minPrice(item), item.moneda || 'MXN')}` 
@@ -1051,7 +1169,7 @@ export default function App(){
                         target="_blank" 
                         rel="noreferrer" 
                         style={{ 
-                          background: paleta.miel, 
+                          background: PALETAS.D.miel, 
                           color: "white",
                           flex: 1,
                           textAlign: "center",
@@ -1068,7 +1186,7 @@ export default function App(){
                         className="btn" 
                         onClick={() => onOpen(item)} 
                         style={{ 
-                          background: paleta.miel, 
+                          background: PALETAS.D.miel, 
                           color: "white",
                           flex: 1,
                           borderRadius: "8px",
@@ -1083,7 +1201,7 @@ export default function App(){
                         className="btn" 
                         onClick={() => onAdd(item)} 
                         style={{ 
-                          background: paleta.miel, 
+                          background: PALETAS.D.miel, 
                           color: "white",
                           flex: 1,
                           borderRadius: "8px",
@@ -1098,8 +1216,8 @@ export default function App(){
                       className="btn-outline" 
                       onClick={() => onOpen(item)} 
                       style={{ 
-                        borderColor: paleta.miel,
-                        color: paleta.miel,
+                        borderColor: PALETAS.D.miel,
+                        color: PALETAS.D.miel,
                         flex: 1,
                         borderRadius: "8px",
                         padding: "0.75rem 1rem",
@@ -1124,7 +1242,7 @@ export default function App(){
             margin: "0 0 3rem 0", 
             fontSize: "2.5rem", 
             fontWeight: "700",
-            color: paleta.carbon
+            color: PALETAS.D.carbon
           }}>
             Kits Especiales
           </h2>
@@ -1155,19 +1273,19 @@ export default function App(){
               <div style={{ padding: "2rem" }}>
                 <ul style={{ margin: "0 0 2rem 0", padding: "0", listStyle: "none" }}>
                   <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span style={{ color: paleta.miel }}>✓</span>
+                    <span style={{ color: PALETAS.D.miel }}>✓</span>
                     Vela de cera de abeja
                   </li>
                   <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span style={{ color: paleta.miel }}>✓</span>
+                    <span style={{ color: PALETAS.D.miel }}>✓</span>
                     Loción Aqua Florida
                   </li>
                   <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span style={{ color: paleta.miel }}>✓</span>
+                    <span style={{ color: PALETAS.D.miel }}>✓</span>
                     Palo Santo
                   </li>
                   <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span style={{ color: paleta.miel }}>✓</span>
+                    <span style={{ color: PALETAS.D.miel }}>✓</span>
                     Guía de ritual incluida
                   </li>
                 </ul>
@@ -1177,7 +1295,7 @@ export default function App(){
                   alignItems: "center",
                   marginBottom: "1rem"
                 }}>
-                  <span style={{ fontSize: "1.5rem", fontWeight: "700", color: paleta.miel }}>
+                  <span style={{ fontSize: "1.5rem", fontWeight: "700", color: PALETAS.D.miel }}>
                     $450 MXN
                   </span>
                   <span style={{ fontSize: "0.9rem", color: "rgba(0,0,0,0.6)" }}>
@@ -1187,7 +1305,7 @@ export default function App(){
                 <button 
                   className="btn" 
                   style={{ 
-                    background: paleta.miel, 
+                    background: PALETAS.D.miel, 
                     color: "white",
                     width: "100%",
                     borderRadius: "8px",
@@ -1222,19 +1340,19 @@ export default function App(){
               <div style={{ padding: "2rem" }}>
                 <ul style={{ margin: "0 0 2rem 0", padding: "0", listStyle: "none" }}>
                   <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span style={{ color: paleta.miel }}>✓</span>
+                    <span style={{ color: PALETAS.D.miel }}>✓</span>
                     Exfoliante Venus
                   </li>
                   <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span style={{ color: paleta.miel }}>✓</span>
+                    <span style={{ color: PALETAS.D.miel }}>✓</span>
                     Loción Ellas y Ellos
                   </li>
                   <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span style={{ color: paleta.miel }}>✓</span>
+                    <span style={{ color: PALETAS.D.miel }}>✓</span>
                     Baño Energético Amor Propio
                   </li>
                   <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span style={{ color: paleta.miel }}>✓</span>
+                    <span style={{ color: PALETAS.D.miel }}>✓</span>
                     Mascarilla facial natural
                   </li>
                 </ul>
@@ -1244,7 +1362,7 @@ export default function App(){
                   alignItems: "center",
                   marginBottom: "1rem"
                 }}>
-                  <span style={{ fontSize: "1.5rem", fontWeight: "700", color: paleta.miel }}>
+                  <span style={{ fontSize: "1.5rem", fontWeight: "700", color: PALETAS.D.miel }}>
                     $580 MXN
                   </span>
                   <span style={{ fontSize: "0.9rem", color: "rgba(0,0,0,0.6)" }}>
@@ -1254,7 +1372,7 @@ export default function App(){
                 <button 
                   className="btn" 
                   style={{ 
-                    background: paleta.miel, 
+                    background: PALETAS.D.miel, 
                     color: "white",
                     width: "100%",
                     borderRadius: "8px",
@@ -1278,7 +1396,7 @@ export default function App(){
             margin: "0 0 3rem 0", 
             fontSize: "2.5rem", 
             fontWeight: "700",
-            color: paleta.carbon
+            color: PALETAS.D.carbon
           }}>
             Servicios Holísticos
           </h2>
@@ -1326,7 +1444,7 @@ export default function App(){
                     margin: "0 0 0.5rem 0", 
                     fontSize: "1.3rem", 
                     fontWeight: "600",
-                    color: paleta.carbon
+                    color: PALETAS.D.carbon
                   }}>
                     {service.nombre}
                   </h3>
@@ -1339,7 +1457,7 @@ export default function App(){
                     <span style={{ 
                       fontSize: "1.2rem", 
                       fontWeight: "700", 
-                      color: paleta.miel 
+                      color: PALETAS.D.miel 
                     }}>
                       {money(service.precio, service.moneda)}
                     </span>
@@ -1363,7 +1481,7 @@ export default function App(){
                     rel="noreferrer"
                     className="btn" 
                     style={{ 
-                      background: paleta.miel, 
+                      background: PALETAS.D.miel, 
                       color: "white",
                       textDecoration: "none",
                       borderRadius: "8px",
@@ -1390,7 +1508,7 @@ export default function App(){
             margin: "0 0 3rem 0", 
             fontSize: "2.5rem", 
             fontWeight: "700",
-            color: paleta.carbon
+            color: PALETAS.D.carbon
           }}>
             Blog Holístico
           </h2>
@@ -1420,7 +1538,7 @@ export default function App(){
                   margin: "0 0 1rem 0", 
                   fontSize: "1.3rem", 
                   fontWeight: "600",
-                  color: paleta.carbon
+                  color: PALETAS.D.carbon
                 }}>
                   Rituales de Luna Llena
                 </h3>
@@ -1435,8 +1553,8 @@ export default function App(){
                 <button 
                   className="btn-outline" 
                   style={{ 
-                    borderColor: paleta.miel,
-                    color: paleta.miel,
+                    borderColor: PALETAS.D.miel,
+                    color: PALETAS.D.miel,
                     borderRadius: "8px",
                     padding: "0.75rem 1rem",
                     fontWeight: "600"
@@ -1468,7 +1586,7 @@ export default function App(){
                   margin: "0 0 1rem 0", 
                   fontSize: "1.3rem", 
                   fontWeight: "600",
-                  color: paleta.carbon
+                  color: PALETAS.D.carbon
                 }}>
                   Beneficios de la Miel Natural
                 </h3>
@@ -1483,8 +1601,8 @@ export default function App(){
                 <button 
                   className="btn-outline" 
                   style={{ 
-                    borderColor: paleta.miel,
-                    color: paleta.miel,
+                    borderColor: PALETAS.D.miel,
+                    color: PALETAS.D.miel,
                     borderRadius: "8px",
                     padding: "0.75rem 1rem",
                     fontWeight: "600"
@@ -1516,7 +1634,7 @@ export default function App(){
                   margin: "0 0 1rem 0", 
                   fontSize: "1.3rem", 
                   fontWeight: "600",
-                  color: paleta.carbon
+                  color: PALETAS.D.carbon
                 }}>
                   Autocuidado Diario
                 </h3>
@@ -1531,8 +1649,8 @@ export default function App(){
                 <button 
                   className="btn-outline" 
                   style={{ 
-                    borderColor: paleta.miel,
-                    color: paleta.miel,
+                    borderColor: PALETAS.D.miel,
+                    color: PALETAS.D.miel,
                     borderRadius: "8px",
                     padding: "0.75rem 1rem",
                     fontWeight: "600"
@@ -1560,7 +1678,7 @@ export default function App(){
                 margin: "0 0 2rem 0", 
                 fontSize: "2.5rem", 
                 fontWeight: "700",
-                color: paleta.carbon
+                color: PALETAS.D.carbon
               }}>
                 Nuestra Historia
               </h2>
@@ -1638,7 +1756,7 @@ export default function App(){
                 margin: "0 0 1rem 0", 
                 fontSize: "1.5rem", 
                 fontWeight: "600",
-                color: paleta.carbon
+                color: PALETAS.D.carbon
               }}>
                 Misión
               </h3>
@@ -1663,7 +1781,7 @@ export default function App(){
             margin: "0 0 3rem 0", 
             fontSize: "2.5rem", 
             fontWeight: "700",
-            color: paleta.carbon
+            color: PALETAS.D.carbon
           }}>
             Contáctanos
           </h2>
@@ -1682,7 +1800,7 @@ export default function App(){
               <div style={{ 
                 width: "80px", 
                 height: "80px", 
-                background: paleta.miel, 
+                background: PALETAS.D.miel, 
                 borderRadius: "50%", 
                 margin: "0 auto 1.5rem auto",
                 display: "flex",
@@ -1696,7 +1814,7 @@ export default function App(){
                 margin: "0 0 1rem 0", 
                 fontSize: "1.3rem", 
                 fontWeight: "600",
-                color: paleta.carbon
+                color: PALETAS.D.carbon
               }}>
                 WhatsApp
               </h3>
@@ -1713,7 +1831,7 @@ export default function App(){
                 rel="noreferrer"
                 className="btn" 
                 style={{ 
-                  background: paleta.miel, 
+                  background: PALETAS.D.miel, 
                   color: "white",
                   textDecoration: "none",
                   borderRadius: "8px",
@@ -1735,7 +1853,7 @@ export default function App(){
               <div style={{ 
                 width: "80px", 
                 height: "80px", 
-                background: paleta.miel, 
+                background: PALETAS.D.miel, 
                 borderRadius: "50%", 
                 margin: "0 auto 1.5rem auto",
                 display: "flex",
@@ -1749,7 +1867,7 @@ export default function App(){
                 margin: "0 0 1rem 0", 
                 fontSize: "1.3rem", 
                 fontWeight: "600",
-                color: paleta.carbon
+                color: PALETAS.D.carbon
               }}>
                 Email
               </h3>
@@ -1764,7 +1882,7 @@ export default function App(){
                 href="mailto:hola@amorymiel.com" 
                 className="btn" 
                 style={{ 
-                  background: paleta.miel, 
+                  background: PALETAS.D.miel, 
                   color: "white",
                   textDecoration: "none",
                   borderRadius: "8px",
@@ -1786,7 +1904,7 @@ export default function App(){
               <div style={{ 
                 width: "80px", 
                 height: "80px", 
-                background: paleta.miel, 
+                background: PALETAS.D.miel, 
                 borderRadius: "50%", 
                 margin: "0 auto 1.5rem auto",
                 display: "flex",
@@ -1800,7 +1918,7 @@ export default function App(){
                 margin: "0 0 1rem 0", 
                 fontSize: "1.3rem", 
                 fontWeight: "600",
-                color: paleta.carbon
+                color: PALETAS.D.carbon
               }}>
                 Ubicación
               </h3>
@@ -1813,7 +1931,7 @@ export default function App(){
               </p>
               <p style={{ 
                 margin: "0", 
-                color: paleta.carbon, 
+                color: PALETAS.D.carbon, 
                 fontSize: "0.9rem",
                 fontWeight: "500"
               }}>
@@ -2117,8 +2235,8 @@ export default function App(){
                             )
                           )}
                           style={{ 
-                            borderColor: paleta.miel, 
-                            color: paleta.miel,
+                            borderColor: PALETAS.D.miel, 
+                            color: PALETAS.D.miel,
                             padding: "0.25rem 0.5rem",
                             minWidth: "30px"
                           }}
@@ -2137,8 +2255,8 @@ export default function App(){
                             )
                           )}
                           style={{ 
-                            borderColor: paleta.miel, 
-                            color: paleta.miel,
+                            borderColor: PALETAS.D.miel, 
+                            color: PALETAS.D.miel,
                             padding: "0.25rem 0.5rem",
                             minWidth: "30px"
                           }}
@@ -2184,7 +2302,7 @@ export default function App(){
                   className="btn" 
                   onClick={checkoutMP} 
                   style={{ 
-                    background: paleta.miel, 
+                    background: PALETAS.D.miel, 
                     color: "white", 
                     width: "100%",
                     padding: "1rem"
@@ -2209,16 +2327,148 @@ export default function App(){
         />
       )}
 
-      {/* Product Modal */}
-      {modal && (
-        <ProductModal 
-          item={modal} 
-          selectedVariant={selectedVariant} 
-          setSelectedVariant={setSelectedVariant} 
-          onAdd={onAdd} 
-          onClose={close} 
-        />
-      )}
+              {/* Product Modal */}
+        {openProduct && (
+          <ProductModal 
+            item={openProduct} 
+            selectedVariant={selectedVariant} 
+            setSelectedVariant={setSelectedVariant} 
+            onAdd={onAdd} 
+            onClose={close} 
+          />
+        )}
+
+        {/* Live Chat Widget */}
+        <div style={{
+          position: "fixed",
+          bottom: "20px",
+          right: "20px",
+          zIndex: 1000,
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px"
+        }}>
+          {/* WhatsApp Chat Button */}
+          <a 
+            href="https://wa.me/5255123456789?text=Hola! Me interesan los productos de Amor y Miel" 
+            target="_blank" 
+            rel="noreferrer"
+            style={{
+              background: "#25D366",
+              color: "white",
+              width: "60px",
+              height: "60px",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "24px",
+              textDecoration: "none",
+              boxShadow: "0 4px 12px rgba(37, 211, 102, 0.3)",
+              transition: "transform 0.2s ease"
+            }}
+            onMouseEnter={(e) => e.target.style.transform = "scale(1.1)"}
+            onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
+          >
+            💬
+          </a>
+          
+          {/* Newsletter Signup Button */}
+          <button
+            onClick={() => setShowNewsletter(true)}
+            style={{
+              background: PALETAS.D.miel,
+              color: "white",
+              width: "60px",
+              height: "60px",
+              borderRadius: "50%",
+              border: "none",
+              fontSize: "20px",
+              cursor: "pointer",
+              boxShadow: "0 4px 12px rgba(224, 167, 58, 0.3)",
+              transition: "transform 0.2s ease"
+            }}
+            onMouseEnter={(e) => e.target.style.transform = "scale(1.1)"}
+            onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
+          >
+            📧
+          </button>
+        </div>
+
+        {/* Newsletter Modal */}
+        {showNewsletter && (
+          <div style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1001
+          }}>
+            <div style={{
+              background: "white",
+              padding: "30px",
+              borderRadius: "15px",
+              maxWidth: "400px",
+              width: "90%",
+              textAlign: "center"
+            }}>
+              <h3 style={{ margin: "0 0 15px 0", color: PALETAS.D.carbon }}>¡Únete a nuestra comunidad!</h3>
+              <p style={{ margin: "0 0 20px 0", color: "#666" }}>
+                Recibe ofertas especiales, rituales y consejos de autocuidado
+              </p>
+              <input
+                type="email"
+                placeholder="Tu email"
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "12px",
+                  border: "1px solid #ddd",
+                  borderRadius: "8px",
+                  marginBottom: "15px"
+                }}
+              />
+              <div style={{ display: "flex", gap: "10px" }}>
+                <button
+                  onClick={() => {
+                    if (newsletterEmail) {
+                      alert("¡Gracias por suscribirte! Te enviaremos contenido especial pronto.");
+                      setNewsletterEmail("");
+                      setShowNewsletter(false);
+                    }
+                  }}
+                  style={{
+                    background: PALETAS.D.miel,
+                    color: "white",
+                    border: "none",
+                    padding: "12px 24px",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    flex: 1
+                  }}
+                >
+                  Suscribirse
+                </button>
+                <button
+                  onClick={() => setShowNewsletter(false)}
+                  style={{
+                    background: "transparent",
+                    color: "#666",
+                    border: "1px solid #ddd",
+                    padding: "12px 24px",
+                    borderRadius: "8px",
+                    cursor: "pointer"
+                  }}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
     </div>
   );
 }
