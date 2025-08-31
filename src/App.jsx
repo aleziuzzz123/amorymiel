@@ -47,9 +47,9 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/velas-de-miel-product.png",
     descripcion: "Velas artesanales de cera natural de abeja, elaboradas con amor y consagradas para rituales de abundancia. Su llama dorada purifica el ambiente y atrae energías de prosperidad y abundancia.",
     beneficios: "Purifica espacios, atrae abundancia, ideal para meditación y rituales de manifestación.",
-    elaboracion: "Elaboradas artesanalmente con cera natural de abeja 100% pura, consagradas bajo la luna llena con intenciones de abundancia y prosperidad. Cada vela es bendecida individualmente para potenciar su energía sagrada.",
-    proposito: "Purificar espacios, atraer abundancia y prosperidad, facilitar la conexión espiritual durante meditaciones y rituales de manifestación. Su llama dorada activa la ley de la atracción y abre caminos hacia la riqueza material y espiritual.",
-    modoUso: "Encender en un lugar seguro y tranquilo. Antes de encender, establecer la intención de abundancia. Dejar que se consuma completamente o apagar con cuidado. Ideal usar durante la luna llena para potenciar efectos." 
+    elaboracion: "La cera de Miel es un material natural que las abejas producen para construir sus panales, y es conocida por su fragancia cálida y suave tono dorado.",
+    proposito: "En muchas culturas a la Miel se le considera un símbolo de Abundancia y Prosperidad. Al encender una velita de miel cambiamos de manera energética estados de animo, espacios y podemos atraer a nuestras vidas cosas positivas.",
+    modoUso: "Un bonito ritual que te podemos compartir con la vela de miel: puedes escribir tu nombre completo y fecha de nacimiento, agregando un deseo que quieras que suceda, cuidando escribir desde la mecha hacía la base de la vela." 
   },
   { 
     id: "locion-atrayente", 
@@ -86,9 +86,9 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/agua-florida-product.png",
     descripcion: "Agua Florida tradicional de la más alta pureza, consagrada para limpieza energética y purificación del ambiente y la persona. Su esencia floral purifica y renueva las energías.",
     beneficios: "Limpieza energética profunda, purificación del ambiente y renovación espiritual.",
-    elaboracion: "Elaborada siguiendo la receta tradicional de la Abuela, con alcohol de caña puro, esencias florales naturales de Bergamota, Lavanda, Rosa y Neroli. Cada lote es bendecido y consagrado para purificación energética.",
-    proposito: "Purificar energías negativas, limpiar el aura de contaminación energética, renovar la energía personal y crear un ambiente de paz y armonía espiritual. Ideal para limpieza diaria y rituales de purificación.",
-    modoUso: "Aplicar sobre el cuerpo después del baño, rociar en el ambiente para limpieza energética, usar en rituales de purificación. Aplicar en la nuca y hombros para protección diaria."
+    elaboracion: "Elaborado artesanalmente a base de cítricos, lavanda y romero. Esta colonia es una deliciosa fragancia refrescante y revitalizante que aporta un toque de frescura y vitalidad a tu día a día. Además, gracias a sus propiedades limpiadoras, puedes disfrutar de sus beneficios en todos tus espacios.",
+    proposito: "El Agua Florida es perfecta para su uso diario y para actividades como la meditación o el yoga, ya que su fragancia natural ayuda a elevar tu nivel de energía y aporta un toque de frescura y vitalidad a tu día a día. Además, es muy versátil y puede utilizarse para limpiar el ambiente, como ingrediente en rituales espirituales o para aliviar dolores de cabeza o tensiones musculares.",
+    modoUso: "Se puede utilizar de diversas maneras. Algunos usos comunes incluyen: Aplicar el agua florida directamente en la piel como una colonia, rociándola sobre el cuerpo o utilizando un pañuelo impregnado con el líquido. Rocía el agua florida en habitaciones, muebles o áreas que desees purificar y limpiar energéticamente. Puedes utilizarla al inicio y cierre de la limpieza energética, o simplemente para refrescar el ambiente. En algunas tradiciones espirituales, el agua florida se utiliza en rituales, como ofrenda a los ancestros, para bendiciones o para marcar el inicio de una nueva etapa."
   },
   { 
     id: "aceite-abre-caminos", 
@@ -125,9 +125,9 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/brisa-bendicion-dinero-product.png",
     descripcion: "Brisa áurica artesanal con aceites esenciales de Vainilla, Laurel, Canela y semillas de abundancia. Consagrada e intencionada para limpiar la energía del dinero y atraer prosperidad financiera.",
     beneficios: "Limpieza energética del dinero, elimina energías negativas y atrae prosperidad financiera.",
-    modoUso: "Agitar antes de usar. Aplicar sobre caja registradora, cartera o donde coloques tu dinero para eliminar energías negativas.",
-    elaboracion: "Elaborada con aceites esenciales puros de Vainilla, Laurel, Canela y semillas de Abundancia, diluidos en alcohol de caña y agua destilada. Consagrada durante la luna llena para potenciar la atracción de prosperidad financiera.",
-    proposito: "Limpiar la energía del dinero de energías negativas, atraer prosperidad financiera, activar la ley de la abundancia en asuntos económicos y crear un flujo constante de riqueza material y espiritual."
+    elaboracion: "Elaborado artesanalmente a base aceites esenciales y plantas energéticas; Vainilla, Laurel, Canela, semillas de abundancia. Vibrada e intencionada para limpiar la energía del dinero.",
+    proposito: "Una Brisa Áurica es una herramienta de limpieza energética que principalmente funciona a nivel emocional, y para liberarnos de las malas vibras que se nos puedan 'pegar' al ir con personas o ciertos lugares.",
+    modoUso: "Agitar antes de usar. Lo puedes aplicar sobre tu caja registradora, tu cartera o donde coloques tu dinero en efectivo. Esto con el motivo de eliminar energías negativas que pueda tener el dinero que se recibe."
   },
   { 
     id: "brisa-prosperidad", 
@@ -138,9 +138,9 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/brisa-prosperidad-product.png",
     descripcion: "Brisa áurica especializada en limpieza energética emocional, liberando malas vibras que se adhieren al interactuar con personas o visitar ciertos lugares. Restaura tu energía natural.",
     beneficios: "Limpieza energética emocional, liberación de energías negativas y protección áurica.",
-    modoUso: "Agitar antes de usar. Aplicar sobre el cuerpo o en el ambiente para limpieza energética.",
-    elaboracion: "Elaborada con aceites esenciales de Sándalo, Incienso, Mirra y Salvia, diluidos en alcohol de caña y agua destilada. Cada lote es consagrado bajo la luna menguante para potenciar la limpieza y liberación energética.",
-    proposito: "Limpiar energías negativas acumuladas, liberar malas vibras del cuerpo y aura, restaurar la energía natural personal y crear un escudo protector contra contaminación energética externa."
+    elaboracion: "Elaborado artesanalmente a base aceites esenciales y plantas energéticas; Laurel, Sándalo, Canela. Vibrada e intencionada para armonizar y equilibrar la energía de la Prosperidad en todos los aspectos positivos de tu vida.",
+    proposito: "Una Brisa Aurica es una herramienta de limpieza energética que principalmente funciona a nivel emocional, y para liberarnos de las malas vibras que se nos puedan 'pegar' al ir con personas o ciertos lugares.",
+    modoUso: "Agitar antes de usar. En tu área de trabajo, tu negocio u oficina, puedes rociar moderadamente con esta brisa, con la intención de equilibrar la energía de la prosperidad en todos los aspectos; Salud, Amor, Dinero, Conciencia etc."
   },
   { 
     id: "brisa-abundancia", 
@@ -151,9 +151,9 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/brisa-abundancia-product.png",
     descripcion: "Brisa áurica consagrada para atraer abundancia y expansión en todas las áreas de tu vida. Su energía activa la ley de la abundancia universal.",
     beneficios: "Atrae abundancia, expansión y energías positivas para el crecimiento personal.",
-    modoUso: "Agitar antes de usar. Aplicar sobre el cuerpo o en el ambiente para atraer abundancia.",
-    elaboracion: "Elaborada con aceites esenciales de Bergamota, Naranja, Limón y Pachulí, diluidos en alcohol de caña y agua destilada. Consagrada durante la luna creciente para potenciar la expansión y atracción de abundancia.",
-    proposito: "Activar la ley de la abundancia universal, atraer prosperidad en todas las áreas de la vida, expandir oportunidades y crear un flujo constante de bendiciones y riqueza material y espiritual."
+    elaboracion: "Elaborado artesanalmente a base aceites esenciales y plantas energéticas; Patchuli, Naranja, Naranja, Mirra y Clavo. Vibrada e intencionada para armonizar y equilibrar la energía de la Abundancia en general.",
+    proposito: "Una Brisa Aurica es una herramienta de limpieza energética que principalmente funciona a nivel emocional, y para liberarnos de las malas vibras que se nos puedan 'pegar' al ir con personas o ciertos lugares.",
+    modoUso: "Agitar antes de usar. Rociar moderadamente en tus espacios de negocios, oficina o en casa, con la intención de remover energías de baja vibración que podrían limitar la expansión de tu Abundancia. La Abundancia a menudo se relaciona con la energía del dinero, pero también podemos intencionarla en otros aspectos de nuestra vida."
   },
   { 
     id: "exf-abrecaminos", 
@@ -227,7 +227,9 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/agua-de-rosas-product.png",
     descripcion: "Agua de rosas natural de la más alta pureza para suavizar y nutrir la piel. Sus propiedades antioxidantes protegen y hidratan la piel de forma natural.",
     beneficios: "Suaviza la piel, propiedades antioxidantes y efecto hidratante natural.",
-    modoUso: "Aplicar sobre el rostro como tónico facial o para refrescar la piel durante el día."
+    elaboracion: "El agua de rosas contiene vitamina B, C y E. Todos estos nutrientes te ayudarán a suavizar la piel, hidratarla y combatir la oxidación. La ausencia de alcohol la hace ideal para las pieles sensibles y reactivas, además de cerrar los poros. Limpia profundamente y arrastra el exceso de grasa.",
+    proposito: "Los pétalos de las Rosas contienen compuestos antioxidantes, antimicrobianos, antinflamatorios, antisépticos, inmunosupresivos y actividad prebiótica, entre otros.",
+    modoUso: "Se aplica con un suave masaje después de la higiene facial y hay que dejarla actuar unos minutos antes de seguir con el resto de los productos."
   },
   { 
     id: "aceite-abre", 
@@ -238,9 +240,9 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/aceite-abrecaminos.JPG",
     descripcion: "Aceite artesanal elaborado con extracción de esencias naturales de plantas medicinales mexicanas, enriquecido con feromonas para potenciar su efecto energético.",
     beneficios: "El aceite Abre Caminos, como su nombre lo indica, es un excelente producto para realizar nuestras afirmaciones y decretos, ayuda a suavizar las situaciones negativas y abrirte paso a lo positivo.",
-    modoUso: "Con ayuda del gotero, aplica de 2 a 3 gotitas del Aceite Abre Caminos en tus manos, frótalo y mientras lo haces puedes repetir la oración o decreto de tu gusto.",
-    elaboracion: "Es un producto artesanal, elaborado con extracción de esencias naturales de las plantas. Con feromonas para potenciar su efecto.",
-    proposito: "Facilitar la apertura de caminos en la vida, suavizar situaciones negativas y potenciar la manifestación de deseos y afirmaciones positivas."
+    elaboracion: "Es un producto artesanal, elaborado con extracción de esencias naturales de las plantas.",
+    proposito: "El aceite Abrecaminos, como su nombre lo indica, es un excelente producto para realizar nuestras afirmaciones y decretos, ayuda a suavizar las situaciones negativas y abrirte paso a lo positivo.",
+    modoUso: "Con ayuda del gotero, aplica de 2 a 3 gotitas del Aceite Abrecaminos en tus manos, frótalo y mientras lo haces puedes repetir la oración o decreto de tu gusto."
   },
   { 
     id: "aceite-ungir", 
@@ -251,7 +253,9 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/aceite-para-ungir-product.png",
     descripcion: "Es un producto artesanal de grado espiritual, elaborado con base de aceite de Oliva, Mirra y Canela. La palabra 'Ungido' en hebreo significa Mesías.",
     beneficios: "Consagrado para momentos espirituales sagrados, usado en eventos de adoración y espirituales, para curar enfermedades y santificar momentos sagrados.",
-    modoUso: "Usar en momentos muy espirituales, con respeto. Elaborado para llevar paz y calma en momentos difíciles."
+    elaboracion: "Es un producto artesanal, de grado espiritual ya que la palabra Ungido en hebreo significa Mesías. la base es el aceite de Oliva, Mirra, Canela entre otras plantas sagradas.",
+    proposito: "Hoy en día, se están volviendo a usar estos aceites de unción en los eventos de adoración y espirituales, para curar enfermedades y para santificar una muerte.",
+    modoUso: "La persona que aplique el Aceite debe encontrarse en un momento muy espiritual, ya que este requiere mucho respeto. Puesto que es un aceite elaborado con el fin de llevar paz y calma a quien lo necesita en momentos muy difíciles."
   },
   { 
     id: "shampoo-artesanal", 
@@ -306,7 +310,9 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/agua-de-luna-product.png",
     descripcion: "Es un producto artesanal elaborado con agua energizada con la energía sagrada de la luna para calma y limpieza espiritual.",
     beneficios: "Calma emocional profunda, limpieza espiritual integral y conexión directa con la energía lunar y cósmica.",
-    modoUso: "Usar para limpieza energética, rociar en el ambiente o aplicar sobre el cuerpo en momentos de meditación."
+    elaboracion: "Recolección durante la Luna llena: en la noche de la Luna llena, se debe buscar un lugar al aire libre donde colocar el recipiente con agua y dejarlo a la luz de la Luna, una opción es el patio o terraza de su casa, lugares perfectos para recolectar el agua cargada de energía.",
+    proposito: "Se trata de agua potable que está magnetizada por la luz de la luna. Su objetivo es ayudar a las personas que la consuman a aliviar el estrés, calmar la ansiedad, limpiar el organismo y equilibrar las emociones.",
+    modoUso: "Se puede utilizar para limpiar y purificar los espacios del hogar. Rociar el agua en las áreas que se desea purificar, visualizando cómo la energía negativa se disipa y da paso a la abundancia y la prosperidad. Agregar unas gotas de agua de Luna a su baño puede ayudarle en una limpieza energética."
   },
   { 
     id: "miel-consagrada", 
@@ -372,7 +378,9 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/bano-amargo-product.png",
     descripcion: "Es un producto artesanal elaborado con baño energético amargo consagrado para descarga y limpieza profunda.",
     beneficios: "Sus hierbas sagradas eliminan energías negativas, renuevan el espíritu y proporcionan descarga energética integral.",
-    modoUso: "Preparar baño con las hierbas sagradas, usar para limpieza energética profunda y renovación espiritual."
+    elaboracion: "Es una mezcla de plantas sanadoras entre ellas Laurel, Romero y Ajo.",
+    proposito: "Nos ayuda a descargar energías densas de nuestro cuerpo físico, mental y espiritual, en muchas ocasiones vamos absorbiendo energía negativa de personas y entornos, éstas plantas tienen la cualidad de desprender esa baja vibración.",
+    modoUso: "Poner a hervir las hierbas en aproximadamente 1Lt de agua, una vez hervida la mediamos con nuestra tina de baño, el resto de hierba podemos colocarlo en nuestro jardín o macetas."
   },
   { 
     id: "bano-amor-propio", 
@@ -383,7 +391,9 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/bano-amor-propio.JPG",
     descripcion: "Es un producto artesanal elaborado con baño energético consagrado para aumentar el amor propio y la autoestima.",
     beneficios: "Sus hierbas rosas conectan con la energía del amor y la belleza interior, aumentando el amor propio y la autoestima.",
-    modoUso: "Preparar baño con las hierbas sagradas, usar para rituales de amor propio y conexión con la belleza interior."
+    elaboracion: "Es una mezcla de plantas sanadoras entre ellas Lavanda, y pétalos de Rosa.",
+    proposito: "Por cuestiones de autoestima, depresión o incluso ansiedad, llegamos a pensar que no estamos hechos para el Amor, cuando el Amor debe venir primero de uno. Los pétalos de rosa tienen esa energía sutil del Amor, que nos ayuda a reencontrarnos nuevamente.",
+    modoUso: "Poner a hervir las hierbas en aproximadamente 1Lt de agua, una vez hervida la mediamos con nuestra tina de baño, el resto de hierba podemos colocarlo en nuestro jardín o macetas."
   },
   { 
     id: "bano-abre-caminos", 
@@ -394,7 +404,9 @@ const DEFAULT_PRODUCTS = [
     imagen: "/images/placeholders/Cinnamon-orange.png",
     descripcion: "Es un producto artesanal elaborado con mezcla de plantas sanadoras sagradas: Canela, Naranja y Laureles.",
     beneficios: "Ayuda a conectar con la energía cuando hay estancamiento en economía, trabajo o crecimiento laboral, abre caminos y elimina estancamientos.",
-    modoUso: "Hervir las hierbas sagradas en 1Lt de agua, mezclar con la tina. El resto se puede colocar en jardín o macetas para continuar la energía."
+    elaboracion: "Es una mezcla de plantas sanadoras entre ellas Canela, Naranja y Laureles.",
+    proposito: "En muchas ocasiones por más que nos esforzamos en buscar buena economía, un buen trabajo o crecimiento laboral, sentimos un estancamiento en esa área, estas plantas nos ayudan a conectar nuevamente con esa energía.",
+    modoUso: "Poner a hervir las hierbas en aproximadamente 1Lt de agua, una vez hervida la mediamos con nuestra tina de baño, el resto de hierba podemos colocarlo en nuestro jardín o macetas."
   },
   { 
     id: "locion-ellas-ellos", 
