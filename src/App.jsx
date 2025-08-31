@@ -915,7 +915,7 @@ export default function App(){
   const [openProduct, setOpenProduct] = useState(null);
   const [selectedVariant, setSelectedVariant] = useState(null);
   
-  // New enhanced features state
+  // Enhanced features state
   const [showReviews, setShowReviews] = useState(false);
   const [wishlist, setWishlist] = useState([]);
   const [customerAccount, setCustomerAccount] = useState(null);
@@ -925,11 +925,41 @@ export default function App(){
   const [showLiveChat, setShowLiveChat] = useState(false);
   const [reviews, setReviews] = useState({});
   const [showWishlist, setShowWishlist] = useState(false);
+  
+  // Mobile optimization
+  const [isMobile, setIsMobile] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  
+  // Advanced search
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
+  const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
+  const [sortBy, setSortBy] = useState("popularity");
+  
+  // Customer support
+  const [showFAQ, setShowFAQ] = useState(false);
+  const [showContactForm, setShowContactForm] = useState(false);
+  const [contactForm, setContactForm] = useState({ name: "", email: "", message: "" });
 
+  // Mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // localStorage effects
   useEffect(()=>{ try{ const raw=localStorage.getItem("amym-cart"); if(raw) setCart(JSON.parse(raw)); }catch(e){} },[]);
   useEffect(()=>{ try{ localStorage.setItem("amym-cart", JSON.stringify(cart)); }catch(e){} },[cart]);
   useEffect(()=>{ try{ const raw=localStorage.getItem("amym-products"); if(raw) setProducts(JSON.parse(raw)); }catch(e){} },[]);
   useEffect(()=>{ try{ const raw=localStorage.getItem("amym-services"); if(raw) setServices(JSON.parse(raw)); }catch(e){} },[]);
+  useEffect(()=>{ try{ const raw=localStorage.getItem("amym-wishlist"); if(raw) setWishlist(JSON.parse(raw)); }catch(e){} },[]);
+  useEffect(()=>{ try{ localStorage.setItem("amym-wishlist", JSON.stringify(wishlist)); }catch(e){} },[wishlist]);
+  useEffect(()=>{ try{ const raw=localStorage.getItem("amym-reviews"); if(raw) setReviews(JSON.parse(raw)); }catch(e){} },[]);
+  useEffect(()=>{ try{ localStorage.setItem("amym-reviews", JSON.stringify(reviews)); }catch(e){} },[reviews]);
 
   const hasVariants = (it)=> Array.isArray(it.variantes)&&it.variantes.length>0;
   const minPrice = (it)=> hasVariants(it)? Math.min(...it.variantes.map(v=>v.precio||0)) : (it.precio||0);
@@ -945,6 +975,50 @@ export default function App(){
   const close=()=>{ setOpenProduct(null); setSelectedVariant(null); };
   const subtotal = cart.reduce((s,i)=> s+i.precio*i.cantidad, 0);
 
+  // Helper functions
+  const addToWishlist = (item) => {
+    setWishlist(prev => {
+      const exists = prev.find(w => w.id === item.id);
+      if (exists) {
+        return prev.filter(w => w.id !== item.id);
+      } else {
+        return [...prev, item];
+      }
+    });
+  };
+
+  const addReview = (productId, review) => {
+    setReviews(prev => ({
+      ...prev,
+      [productId]: [...(prev[productId] || []), { ...review, id: Date.now(), date: new Date().toISOString() }]
+    }));
+  };
+
+  const getAverageRating = (productId) => {
+    const productReviews = reviews[productId] || [];
+    if (productReviews.length === 0) return 0;
+    const total = productReviews.reduce((sum, review) => sum + review.rating, 0);
+    return Math.round((total / productReviews.length) * 10) / 10;
+  };
+
+  const generateSearchSuggestions = (query) => {
+    if (!query.trim()) return [];
+    const allItems = [...products, ...services];
+    return allItems
+      .filter(item => 
+        item.nombre.toLowerCase().includes(query.toLowerCase()) ||
+        item.tags?.some(tag => tag.toLowerCase().includes(query.toLowerCase()))
+      )
+      .slice(0, 5);
+  };
+
+  const handleSearchChange = (value) => {
+    setQuery(value);
+    const suggestions = generateSearchSuggestions(value);
+    setSearchSuggestions(suggestions);
+    setShowSearchSuggestions(suggestions.length > 0 && value.trim().length > 0);
+  };
+
   const checkoutMP=async()=>{
     if(cart.length===0){ alert("Tu carrito está vacío."); return; }
     try{
@@ -957,11 +1031,36 @@ export default function App(){
   const filteredItems = React.useMemo(() => {
     const allItems = [...products, ...services];
     const q = (query || "").toLowerCase().trim();
-    return allItems.filter(item => 
+    
+    // Filter by category and search
+    let filtered = allItems.filter(item => 
       (selectedCategory === "Todos" || item.categoria === selectedCategory) && 
       (!q || item.nombre.toLowerCase().includes(q) || (item.tags || []).some(t => (t || "").toLowerCase().includes(q)))
     );
-  }, [products, services, selectedCategory, query]);
+    
+    // Filter by price range
+    filtered = filtered.filter(item => {
+      const price = item.precio || minPrice(item);
+      return price >= priceRange.min && price <= priceRange.max;
+    });
+    
+    // Sort items
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case "price-low":
+          return (a.precio || minPrice(a)) - (b.precio || minPrice(b));
+        case "price-high":
+          return (b.precio || minPrice(b)) - (a.precio || minPrice(a));
+        case "name":
+          return a.nombre.localeCompare(b.nombre);
+        case "popularity":
+        default:
+          return getAverageRating(b.id) - getAverageRating(a.id);
+      }
+    });
+    
+    return filtered;
+  }, [products, services, selectedCategory, query, priceRange, sortBy]);
 
   return (
     <div style={{ background: PALETAS.D.fondo, minHeight: "100vh" }}>
@@ -996,29 +1095,52 @@ export default function App(){
             </h1>
           </div>
 
-          {/* Navigation */}
-          <nav style={{ display: "flex", gap: "1.2rem", alignItems: "center" }}>
-            <a href="#inicio" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Inicio</a>
-            <a href="#productos" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Productos</a>
-            <a href="#servicios" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Servicios</a>
-            <a href="#kits" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Kits</a>
-            <a href="#blog" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Blog</a>
-            <a href="#quienes-somos" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Quiénes somos</a>
-            <a href="#contacto" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Contacto</a>
-          </nav>
+          {/* Desktop Navigation */}
+          {!isMobile && (
+            <nav style={{ display: "flex", gap: "1.2rem", alignItems: "center" }}>
+              <a href="#inicio" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Inicio</a>
+              <a href="#productos" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Productos</a>
+              <a href="#servicios" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Servicios</a>
+              <a href="#kits" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Kits</a>
+              <a href="#blog" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Blog</a>
+              <a href="#quienes-somos" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Quiénes somos</a>
+              <a href="#contacto" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Contacto</a>
+            </nav>
+          )}
+
+          {/* Mobile Menu Button */}
+          {isMobile && (
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              style={{
+                background: "transparent",
+                border: "none",
+                fontSize: "1.2rem",
+                cursor: "pointer",
+                padding: "0.5rem",
+                borderRadius: "8px",
+                color: PALETAS.D.carbon
+              }}
+            >
+              {showMobileMenu ? "✖️" : "☰"}
+            </button>
+          )}
 
           {/* Search and Cart */}
           <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
+            {/* Advanced Search */}
             <div style={{ position: "relative" }}>
               <input 
                 value={query} 
-                onChange={e => setQuery(e.target.value)} 
+                onChange={e => handleSearchChange(e.target.value)} 
+                onFocus={() => setShowSearchSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
                 placeholder="Buscar productos..." 
                 style={{ 
                   padding: "0.35rem 1rem 0.35rem 2rem", 
                   borderRadius: "20px", 
                   border: "1px solid rgba(0,0,0,0.1)", 
-                  width: "160px",
+                  width: isMobile ? "120px" : "160px",
                   fontSize: "0.75rem",
                   background: "white"
                 }} 
@@ -1033,6 +1155,44 @@ export default function App(){
               }}>
                 🔍
               </span>
+              
+              {/* Search Suggestions */}
+              {showSearchSuggestions && searchSuggestions.length > 0 && (
+                <div style={{
+                  position: "absolute",
+                  top: "100%",
+                  left: 0,
+                  right: 0,
+                  background: "white",
+                  border: "1px solid rgba(0,0,0,0.1)",
+                  borderRadius: "8px",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                  zIndex: 1000,
+                  maxHeight: "200px",
+                  overflowY: "auto",
+                  marginTop: "4px"
+                }}>
+                  {searchSuggestions.map((item, index) => (
+                    <div
+                      key={item.id}
+                      onClick={() => {
+                        setQuery(item.nombre);
+                        setShowSearchSuggestions(false);
+                      }}
+                      style={{
+                        padding: "0.5rem 1rem",
+                        cursor: "pointer",
+                        borderBottom: index < searchSuggestions.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none",
+                        fontSize: "0.8rem"
+                      }}
+                      onMouseEnter={(e) => e.target.style.background = "#FBF2DE"}
+                      onMouseLeave={(e) => e.target.style.background = "white"}
+                    >
+                      {item.nombre}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
             <button 
               onClick={() => setOpenCart(true)} 
@@ -1069,6 +1229,186 @@ export default function App(){
           </div>
         </div>
       </header>
+
+      {/* Mobile Menu Overlay */}
+      {isMobile && showMobileMenu && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "rgba(0,0,0,0.5)",
+          zIndex: 99,
+          display: "flex",
+          justifyContent: "flex-end"
+        }}>
+          <div style={{
+            width: "80%",
+            maxWidth: "300px",
+            background: "white",
+            height: "100%",
+            padding: "2rem 1rem",
+            display: "flex",
+            flexDirection: "column",
+            gap: "1rem"
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+              <h3 style={{ margin: 0, color: PALETAS.D.carbon }}>Menú</h3>
+              <button
+                onClick={() => setShowMobileMenu(false)}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  fontSize: "1.2rem",
+                  cursor: "pointer"
+                }}
+              >
+                ✖️
+              </button>
+            </div>
+            
+            <nav style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              <a 
+                href="#inicio" 
+                onClick={() => setShowMobileMenu(false)}
+                style={{ 
+                  color: PALETAS.D.carbon, 
+                  textDecoration: "none", 
+                  fontWeight: "500", 
+                  fontSize: "1rem",
+                  padding: "0.5rem 0",
+                  borderBottom: "1px solid rgba(0,0,0,0.1)"
+                }}
+              >
+                🏠 Inicio
+              </a>
+              <a 
+                href="#productos" 
+                onClick={() => setShowMobileMenu(false)}
+                style={{ 
+                  color: PALETAS.D.carbon, 
+                  textDecoration: "none", 
+                  fontWeight: "500", 
+                  fontSize: "1rem",
+                  padding: "0.5rem 0",
+                  borderBottom: "1px solid rgba(0,0,0,0.1)"
+                }}
+              >
+                🛍️ Productos
+              </a>
+              <a 
+                href="#servicios" 
+                onClick={() => setShowMobileMenu(false)}
+                style={{ 
+                  color: PALETAS.D.carbon, 
+                  textDecoration: "none", 
+                  fontWeight: "500", 
+                  fontSize: "1rem",
+                  padding: "0.5rem 0",
+                  borderBottom: "1px solid rgba(0,0,0,0.1)"
+                }}
+              >
+                🧘 Servicios
+              </a>
+              <a 
+                href="#kits" 
+                onClick={() => setShowMobileMenu(false)}
+                style={{ 
+                  color: PALETAS.D.carbon, 
+                  textDecoration: "none", 
+                  fontWeight: "500", 
+                  fontSize: "1rem",
+                  padding: "0.5rem 0",
+                  borderBottom: "1px solid rgba(0,0,0,0.1)"
+                }}
+              >
+                📦 Kits
+              </a>
+              <a 
+                href="#blog" 
+                onClick={() => setShowMobileMenu(false)}
+                style={{ 
+                  color: PALETAS.D.carbon, 
+                  textDecoration: "none", 
+                  fontWeight: "500", 
+                  fontSize: "1rem",
+                  padding: "0.5rem 0",
+                  borderBottom: "1px solid rgba(0,0,0,0.1)"
+                }}
+              >
+                📝 Blog
+              </a>
+              <a 
+                href="#quienes-somos" 
+                onClick={() => setShowMobileMenu(false)}
+                style={{ 
+                  color: PALETAS.D.carbon, 
+                  textDecoration: "none", 
+                  fontWeight: "500", 
+                  fontSize: "1rem",
+                  padding: "0.5rem 0",
+                  borderBottom: "1px solid rgba(0,0,0,0.1)"
+                }}
+              >
+                👥 Quiénes somos
+              </a>
+              <a 
+                href="#contacto" 
+                onClick={() => setShowMobileMenu(false)}
+                style={{ 
+                  color: PALETAS.D.carbon, 
+                  textDecoration: "none", 
+                  fontWeight: "500", 
+                  fontSize: "1rem",
+                  padding: "0.5rem 0",
+                  borderBottom: "1px solid rgba(0,0,0,0.1)"
+                }}
+              >
+                📞 Contacto
+              </a>
+            </nav>
+            
+            <div style={{ marginTop: "auto", paddingTop: "1rem", borderTop: "1px solid rgba(0,0,0,0.1)" }}>
+              <button
+                onClick={() => {
+                  setShowWishlist(true);
+                  setShowMobileMenu(false);
+                }}
+                style={{
+                  width: "100%",
+                  padding: "0.75rem",
+                  background: PALETAS.D.miel,
+                  color: PALETAS.D.carbon,
+                  border: "none",
+                  borderRadius: "8px",
+                  fontWeight: "600",
+                  marginBottom: "0.5rem"
+                }}
+              >
+                ❤️ Favoritos ({wishlist.length})
+              </button>
+              <button
+                onClick={() => {
+                  setShowFAQ(true);
+                  setShowMobileMenu(false);
+                }}
+                style={{
+                  width: "100%",
+                  padding: "0.75rem",
+                  background: "transparent",
+                  color: PALETAS.D.carbon,
+                  border: "1px solid rgba(0,0,0,0.1)",
+                  borderRadius: "8px",
+                  fontWeight: "500"
+                }}
+              >
+                ❓ FAQ
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Hero Section */}
       <section style={{ 
