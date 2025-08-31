@@ -1260,14 +1260,20 @@ const [showRecommendations, setShowRecommendations] = useState(false);
     } catch (e) {}
   }, []);
 
-  const hasVariants = (it)=> Array.isArray(it.variantes)&&it.variantes.length>0;
-  const minPrice = (it)=> hasVariants(it)? Math.min(...it.variantes.map(v=>v.precio||0)) : (it.precio||0);
+
+
   const onAdd=(item,variant)=>{
     if(item.categoria==='Servicios'){ window.open(item.bookingLink,"_blank"); return; }
     const precioUnit = variant ? (variant.precio||0) : (hasVariants(item) ? minPrice(item) : item.precio);
     const idComp = variant ? `${item.id}::${variant.sku}` : item.id;
     const nombreComp = variant ? `${item.nombre} (${variant.titulo})` : item.nombre;
-    setCart(prev=>{ const ex=prev.find(p=>p.id===idComp); if(ex) return prev.map(p=>p.id===idComp?{...p,cantidad:p.cantidad+1}:p); return [...prev,{id:idComp,nombre:nombreComp,precio:precioUnit,imagen:item.imagen,cantidad:1}]; });
+    setCart(prev => {
+      const ex = prev.find(p => p.id === idComp);
+      if(ex) {
+        return prev.map(p => p.id === idComp ? {...p, cantidad: p.cantidad + 1} : p);
+      }
+      return [...prev, {id: idComp, nombre: nombreComp, precio: precioUnit, imagen: item.imagen, cantidad: 1}];
+    });
     setOpenCart(true);
   };
   const onOpen=(item)=>{ setOpenProduct(item); setSelectedVariant(hasVariants(item)? item.variantes[0] : null); };
