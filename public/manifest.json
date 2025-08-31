@@ -1,0 +1,45 @@
+{
+  "name": "Amor y Miel - Tienda Holística",
+  "short_name": "Amor y Miel",
+  "description": "Productos holísticos artesanales para el bienestar espiritual y físico",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFF4DA",
+  "theme_color": "#E0A73A",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "32x32",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["lifestyle", "health", "shopping"],
+  "lang": "es-MX",
+  "dir": "ltr",
+  "scope": "/",
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "shortcuts": [
+    {
+      "name": "Productos",
+      "short_name": "Productos",
+      "description": "Ver todos los productos",
+      "url": "/?section=products",
+      "icons": [{ "src": "/favicon.svg", "sizes": "96x96" }]
+    },
+    {
+      "name": "Carrito",
+      "short_name": "Carrito",
+      "description": "Ver carrito de compras",
+      "url": "/?section=cart",
+      "icons": [{ "src": "/favicon.svg", "sizes": "96x96" }]
+    }
+  ]
+}

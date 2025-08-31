@@ -3,8 +3,45 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Amor y Miel — Tienda holística</title>
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<link rel="icon" type="image/x-icon" href="/favicon.ico" />
-<link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#E0A73A" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Amor y Miel" />
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Productos holísticos artesanales para el bienestar espiritual y físico. Velas, lociones, aceites y más." />
+    <meta name="keywords" content="holístico, velas, lociones, aceites, bienestar, espiritual, miel, amor" />
+    <meta name="author" content="Amor y Miel" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Amor y Miel - Tienda Holística" />
+    <meta property="og:description" content="Productos holísticos artesanales para el bienestar espiritual y físico" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://amor-y-miel.vercel.app" />
+    <meta property="og:image" content="/favicon.svg" />
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Amor y Miel - Tienda Holística" />
+    <meta name="twitter:description" content="Productos holísticos artesanales para el bienestar espiritual y físico" />
+    <meta name="twitter:image" content="/favicon.svg" />
 </head><body>
-<div id="root"></div><script type="module" src="/src/main.jsx"></script></body></html>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+  
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'GA_MEASUREMENT_ID');
+  </script>
+</body></html>
