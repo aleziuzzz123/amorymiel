@@ -390,12 +390,12 @@ const DEFAULT_PRODUCTS = [
 
 // Updated services with your prices
 const DEFAULT_SERVICES = [
-  { id:"serv-sonoterapia", nombre:"Sonoterapia", categoria:"Servicios", precio:700, moneda:"MXN", duracion:"60 min", modalidad:"presencial", bookingLink:"https://wa.me/5210000000000?text=Quiero%20agendar%20Sonoterapia", imagen:"/images/placeholders/sonoterapia.JPG" },
-  { id:"serv-ceremonia-cacao", nombre:"Ceremonia de Cacao (10 pax)", categoria:"Servicios", precio:3500, moneda:"MXN", duracion:"—", modalidad:"presencial", bookingLink:"https://wa.me/5210000000000?text=Quiero%20agendar%20Ceremonia%20de%20Cacao%2010%20pax", imagen:"/images/placeholders/ceremonia-cacao.JPG" },
-  { id:"serv-masaje-craneosacral-sonoterapia", nombre:"Masaje Craneosacral con Sonoterapia", categoria:"Servicios", precio:900, moneda:"MXN", duracion:"60 min", modalidad:"presencial", bookingLink:"https://wa.me/5210000000000?text=Quiero%20agendar%20Masaje%20Craneosacral%20con%20Sonoterapia", imagen:"/images/placeholders/masaje-craneosacral.JPG" },
-  { id:"serv-numerologia", nombre:"Numerología", categoria:"Servicios", precio:450, moneda:"MXN", duracion:"—", modalidad:"online/presencial", bookingLink:"https://wa.me/5210000000000?text=Quiero%20agendar%20Numerologia", imagen:"/images/placeholders/numerologia.JPG" },
-  { id:"serv-tarot-angelical", nombre:"Tarot Angelical", categoria:"Servicios", precio:450, moneda:"MXN", duracion:"—", modalidad:"online/presencial", bookingLink:"https://wa.me/5210000000000?text=Quiero%20agendar%20Tarot%20Angelical", imagen:"/images/placeholders/tarot-angelical.JPG" },
-  { id:"serv-radiestesia", nombre:"Radiestesia", categoria:"Servicios", precio:550, moneda:"MXN", duracion:"—", modalidad:"online/presencial", bookingLink:"https://wa.me/5210000000000?text=Quiero%20agendar%20Radiestesia", imagen:"/images/placeholders/radiestesia.JPG" }
+  { id:"serv-sonoterapia", nombre:"Sonoterapia", categoria:"Servicios", precio:700, moneda:"MXN", duracion:"60 min", modalidad:"presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Sonoterapia", imagen:"/images/placeholders/sonoterapia.JPG" },
+  { id:"serv-ceremonia-cacao", nombre:"Ceremonia de Cacao (10 pax)", categoria:"Servicios", precio:3500, moneda:"MXN", duracion:"—", modalidad:"presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Ceremonia%20de%20Cacao%2010%20pax", imagen:"/images/placeholders/ceremonia-cacao.JPG" },
+  { id:"serv-masaje-craneosacral-sonoterapia", nombre:"Masaje Craneosacral con Sonoterapia", categoria:"Servicios", precio:900, moneda:"MXN", duracion:"60 min", modalidad:"presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Masaje%20Craneosacral%20con%20Sonoterapia", imagen:"/images/placeholders/masaje-craneosacral.JPG" },
+  { id:"serv-numerologia", nombre:"Numerología", categoria:"Servicios", precio:450, moneda:"MXN", duracion:"—", modalidad:"online/presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Numerologia", imagen:"/images/placeholders/numerologia.JPG" },
+  { id:"serv-tarot-angelical", nombre:"Tarot Angelical", categoria:"Servicios", precio:450, moneda:"MXN", duracion:"—", modalidad:"online/presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Tarot%20Angelical", imagen:"/images/placeholders/tarot-angelical.JPG" },
+  { id:"serv-radiestesia", nombre:"Radiestesia", categoria:"Servicios", precio:550, moneda:"MXN", duracion:"—", modalidad:"online/presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Radiestesia", imagen:"/images/placeholders/radiestesia.JPG" }
 ];
 
 const CATEGORIES = ["Todos","Velas","Lociones","Brisas Áuricas","Exfoliantes","Feromonas","Faciales","Aceites","Shampoo","Cabello","Energéticos","Miel","Protección","Rituales","Sahumerios","Baños Energéticos","Servicios","Contacto"];
@@ -423,7 +423,32 @@ function MosaicGrid({ paleta, items, category, query, onAdd, onOpen }){
     {cells.map(item=>(
       <div key={item.id} className="card" style={{ gridColumn:item.span===2?'span 2':'span 1' }}>
         <div style={{ position:'relative' }}>
-          <img src={item.imagen} alt={item.nombre} style={{ width:'100%', height:item.span===2?260:200, objectFit:'cover' }} />
+          <img 
+            src={item.imagen} 
+            alt={item.nombre} 
+            style={{ 
+              width:'100%', 
+              height:item.span===2?280:220, 
+              objectFit:'cover',
+              objectPosition: 'center'
+            }} 
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.nextSibling.style.display = 'flex';
+            }}
+          />
+          <div style={{
+            display: 'none',
+            width: '100%',
+            height: item.span===2?280:220,
+            background: "linear-gradient(135deg, #FBF2DE, #E0A73A)",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "2rem",
+            color: "#8B4513"
+          }}>
+            🖼️
+          </div>
           <div style={{ position:'absolute', top:12, left:12, background: PALETAS.D.miel, color: PALETAS.D.carbon, borderRadius:999, padding:'4px 10px', fontWeight:600, fontSize:12 }}>{item.categoria}</div>
         </div>
         <div style={{ padding:14 }}>
@@ -474,13 +499,38 @@ function VariationD({ paleta, items, onAdd, onOpen, cart, setOpenCart, category,
       <div className="card" style={{ padding:16, background:`linear-gradient(90deg, ${paleta.miel}22, transparent)` }}>
         <div style={{ display:'flex', alignItems:'center', gap:10 }}>
           ✨<div><strong>Servicios holísticos</strong><div style={{ fontSize:14, opacity:.75 }}>Agenda por WhatsApp</div></div>
-          <a href="https://wa.me/5210000000000" className="btn" style={{ marginLeft:'auto', background: paleta.miel, color: paleta.carbon }} target="_blank" rel="noreferrer">Consultar</a>
+          <a href="https://wa.me/523317361884" className="btn" style={{ marginLeft:'auto', background: paleta.miel, color: paleta.carbon }} target="_blank" rel="noreferrer">Consultar</a>
         </div>
       </div>
       <div className="grid grid-cols-3" style={{ marginTop:12 }}>
         {services.map((s)=> (
           <div key={s.id} className="card" style={{ overflow:'hidden' }}>
-            <img src={s.imagen} alt={s.nombre} style={{ width:'100%', height:180, objectFit:'cover' }} />
+            <img 
+              src={s.imagen} 
+              alt={s.nombre} 
+              style={{ 
+                width:'100%', 
+                height:200, 
+                objectFit:'cover',
+                objectPosition: 'center'
+              }} 
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'flex';
+              }}
+            />
+            <div style={{
+              display: 'none',
+              width: '100%',
+              height: 200,
+              background: "linear-gradient(135deg, #FBF2DE, #E0A73A)",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "2rem",
+              color: "#8B4513"
+            }}>
+              🖼️
+            </div>
             <div style={{ padding:14 }}>
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'start', gap:8 }}>
                 <h3 style={{ margin:0, fontSize:18 }}>{s.nombre}</h3><b>{money(s.precio, s.moneda)}</b>
@@ -961,15 +1011,32 @@ export default function App(){
               onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}
               >
                 <div style={{ position: "relative" }}>
-                  <img 
-                    src={item.imagen} 
-                    alt={item.nombre} 
-                    style={{ 
-                      width: "100%", 
-                      height: "250px", 
-                      objectFit: "cover"
-                    }} 
-                  />
+                                      <img
+                      src={item.imagen}
+                      alt={item.nombre}
+                      style={{
+                        width: "100%",
+                        height: "280px",
+                        objectFit: "cover",
+                        objectPosition: "center"
+                      }}
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                    <div style={{
+                      display: 'none',
+                      width: "100%",
+                      height: "280px",
+                      background: "linear-gradient(135deg, #FBF2DE, #E0A73A)",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "3rem",
+                      color: "#8B4513"
+                    }}>
+                      🖼️
+                    </div>
                   <div style={{ 
                     position: "absolute", 
                     top: "1rem", 
@@ -1271,15 +1338,32 @@ export default function App(){
                 borderRadius: "18px",
                 overflow: "hidden"
               }}>
-                <div style={{ 
-                  background: "linear-gradient(135deg, #E0A73A, #FFD700)", 
-                  height: "200px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "3rem"
-                }}>
-                  ✨
+                <div style={{ position: "relative", height: "200px" }}>
+                  <img
+                    src={service.imagen}
+                    alt={service.nombre}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      objectPosition: "center"
+                    }}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'flex';
+                    }}
+                  />
+                  <div style={{
+                    display: 'none',
+                    width: "100%",
+                    height: "100%",
+                    background: "linear-gradient(135deg, #E0A73A, #FFD700)",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "3rem"
+                  }}>
+                    ✨
+                  </div>
                 </div>
                 <div style={{ padding: "1.5rem" }}>
                   <h3 style={{ 
@@ -1783,6 +1867,208 @@ export default function App(){
           </div>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer style={{ 
+        background: "linear-gradient(135deg, #1A1714 0%, #2C2C2C 100%)", 
+        color: "white", 
+        padding: "3rem 0 2rem 0",
+        marginTop: "2rem"
+      }}>
+        <div className="container">
+          <div style={{ 
+            display: "grid", 
+            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", 
+            gap: "3rem",
+            marginBottom: "2rem"
+          }}>
+            {/* Company Info */}
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
+                <div style={{ 
+                  width: "40px", 
+                  height: "40px", 
+                  background: "linear-gradient(135deg, #E0A73A, #FFD700)", 
+                  borderRadius: "50%", 
+                  display: "flex", 
+                  alignItems: "center", 
+                  justifyContent: "center",
+                  fontSize: "1.2rem"
+                }}>
+                  🐝
+                </div>
+                <h3 style={{ margin: 0, fontSize: "1.3rem", fontWeight: "600" }}>
+                  Amor y Miel
+                </h3>
+              </div>
+              <p style={{ 
+                margin: "0 0 1rem 0", 
+                color: "rgba(255,255,255,0.8)", 
+                fontSize: "0.9rem",
+                lineHeight: "1.6"
+              }}>
+                Empresa dedicada a la producción y distribución de productos holísticos y servicios. 
+                Formamos una red de apoyo que ofrece seguimiento personal continuo a nuestros miembros, 
+                creando una "Familia Espiritual y Consciente".
+              </p>
+              <p style={{ 
+                margin: "0", 
+                color: "rgba(255,255,255,0.8)", 
+                fontSize: "0.9rem",
+                lineHeight: "1.6"
+              }}>
+                <strong>Ubicación:</strong> Cancún, Quintana Roo (taller principal). 
+                También presentes en Tulum, Monterrey y CDMX.
+              </p>
+            </div>
+
+            {/* Contact Info */}
+            <div>
+              <h4 style={{ 
+                margin: "0 0 1.5rem 0", 
+                fontSize: "1.1rem", 
+                fontWeight: "600",
+                color: "#E0A73A"
+              }}>
+                Nuestros Contactos
+              </h4>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                <a 
+                  href="https://wa.me/523317361884" 
+                  target="_blank" 
+                  rel="noreferrer"
+                  style={{ 
+                    display: "flex", 
+                    alignItems: "center", 
+                    gap: "0.8rem",
+                    color: "white",
+                    textDecoration: "none",
+                    padding: "0.5rem",
+                    borderRadius: "8px",
+                    transition: "background 0.2s"
+                  }}
+                  onMouseEnter={(e) => e.target.style.background = "rgba(255,255,255,0.1)"}
+                  onMouseLeave={(e) => e.target.style.background = "transparent"}
+                >
+                  <div style={{ 
+                    width: "32px", 
+                    height: "32px", 
+                    background: "#25D366", 
+                    borderRadius: "50%", 
+                    display: "flex", 
+                    alignItems: "center", 
+                    justifyContent: "center",
+                    fontSize: "1rem"
+                  }}>
+                    📱
+                  </div>
+                  <span style={{ fontSize: "0.9rem" }}>+52 331 736 1884</span>
+                </a>
+                
+                <a 
+                  href="https://facebook.com/Amor.y.Miel" 
+                  target="_blank" 
+                  rel="noreferrer"
+                  style={{ 
+                    display: "flex", 
+                    alignItems: "center", 
+                    gap: "0.8rem",
+                    color: "white",
+                    textDecoration: "none",
+                    padding: "0.5rem",
+                    borderRadius: "8px",
+                    transition: "background 0.2s"
+                  }}
+                  onMouseEnter={(e) => e.target.style.background = "rgba(255,255,255,0.1)"}
+                  onMouseLeave={(e) => e.target.style.background = "transparent"}
+                >
+                  <div style={{ 
+                    width: "32px", 
+                    height: "32px", 
+                    background: "#1877F2", 
+                    borderRadius: "50%", 
+                    display: "flex", 
+                    alignItems: "center", 
+                    justifyContent: "center",
+                    fontSize: "1rem"
+                  }}>
+                    📘
+                  </div>
+                  <span style={{ fontSize: "0.9rem" }}>Amor y Miel</span>
+                </a>
+                
+                <a 
+                  href="https://instagram.com/Amor_y_Miel" 
+                  target="_blank" 
+                  rel="noreferrer"
+                  style={{ 
+                    display: "flex", 
+                    alignItems: "center", 
+                    gap: "0.8rem",
+                    color: "white",
+                    textDecoration: "none",
+                    padding: "0.5rem",
+                    borderRadius: "8px",
+                    transition: "background 0.2s"
+                  }}
+                  onMouseEnter={(e) => e.target.style.background = "rgba(255,255,255,0.1)"}
+                  onMouseLeave={(e) => e.target.style.background = "transparent"}
+                >
+                  <div style={{ 
+                    width: "32px", 
+                    height: "32px", 
+                    background: "linear-gradient(45deg, #F58529, #DD2A7B, #8134AF, #515BD4)", 
+                    borderRadius: "50%", 
+                    display: "flex", 
+                    alignItems: "center", 
+                    justifyContent: "center",
+                    fontSize: "1rem"
+                  }}>
+                    📷
+                  </div>
+                  <span style={{ fontSize: "0.9rem" }}>@Amor_y_Miel</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h4 style={{ 
+                margin: "0 0 1.5rem 0", 
+                fontSize: "1.1rem", 
+                fontWeight: "600",
+                color: "#E0A73A"
+              }}>
+                Enlaces Rápidos
+              </h4>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
+                <a href="#productos" style={{ color: "rgba(255,255,255,0.8)", textDecoration: "none", fontSize: "0.9rem" }}>Productos</a>
+                <a href="#servicios" style={{ color: "rgba(255,255,255,0.8)", textDecoration: "none", fontSize: "0.9rem" }}>Servicios</a>
+                <a href="#kits" style={{ color: "rgba(255,255,255,0.8)", textDecoration: "none", fontSize: "0.9rem" }}>Kits</a>
+                <a href="#blog" style={{ color: "rgba(255,255,255,0.8)", textDecoration: "none", fontSize: "0.9rem" }}>Blog</a>
+                <a href="#quienes-somos" style={{ color: "rgba(255,255,255,0.8)", textDecoration: "none", fontSize: "0.9rem" }}>Quiénes Somos</a>
+                <a href="#contacto" style={{ color: "rgba(255,255,255,0.8)", textDecoration: "none", fontSize: "0.9rem" }}>Contacto</a>
+              </div>
+            </div>
+          </div>
+          
+          {/* Bottom Bar */}
+          <div style={{ 
+            borderTop: "1px solid rgba(255,255,255,0.1)", 
+            paddingTop: "2rem", 
+            textAlign: "center",
+            color: "rgba(255,255,255,0.6)",
+            fontSize: "0.85rem"
+          }}>
+            <p style={{ margin: "0 0 0.5rem 0" }}>
+              © 2024 Amor y Miel. Todos los derechos reservados.
+            </p>
+            <p style={{ margin: 0 }}>
+              Productos artesanales elaborados con amor y dedicación espiritual.
+            </p>
+          </div>
+        </div>
+      </footer>
 
       {/* Cart Modal */}
       {openCart && (
