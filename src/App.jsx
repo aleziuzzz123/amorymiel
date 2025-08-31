@@ -895,11 +895,11 @@ export default function App(){
               height: "100%"
             }}>
               <div style={{ 
-                width: "400px", 
-                height: "225px", 
+                width: "550px", 
+                height: "350px", 
                 background: "white", 
-                borderRadius: "15px",
-                boxShadow: "0 15px 30px rgba(0,0,0,0.08)",
+                borderRadius: "20px",
+                boxShadow: "0 20px 40px rgba(0,0,0,0.12)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -911,22 +911,22 @@ export default function App(){
                   position: "absolute",
                   top: "20%",
                   left: "15%",
-                  width: "80px",
-                  height: "80px",
+                  width: "120px",
+                  height: "120px",
                   background: "linear-gradient(45deg, #FFE5B4, #FFD700)",
                   borderRadius: "50%",
-                  filter: "blur(15px)",
+                  filter: "blur(20px)",
                   opacity: "0.6"
                 }} />
                 <div style={{ 
                   position: "absolute",
                   bottom: "20%",
                   right: "15%",
-                  width: "60px",
-                  height: "60px",
+                  width: "90px",
+                  height: "90px",
                   background: "linear-gradient(45deg, #98FB98, #90EE90)",
                   borderRadius: "50%",
-                  filter: "blur(12px)",
+                  filter: "blur(18px)",
                   opacity: "0.5"
                 }} />
                 <div style={{ 
@@ -934,7 +934,7 @@ export default function App(){
                   top: "50%",
                   left: "50%",
                   transform: "translate(-50%, -50%)",
-                  fontSize: "1.1rem",
+                  fontSize: "1.4rem",
                   color: "rgba(0,0,0,0.25)",
                   fontWeight: "500"
                 }}>
