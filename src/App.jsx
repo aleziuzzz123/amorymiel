@@ -1161,9 +1161,35 @@ const [showRecommendations, setShowRecommendations] = useState(false);
       setServices(DEFAULT_SERVICES);
     }
   },[]);
-  useEffect(()=>{ try{ const raw=localStorage.getItem("amym-wishlist"); if(raw) setWishlist(JSON.parse(raw)); }catch(e){} },[]);
+  useEffect(()=>{ 
+    try{ 
+      const raw=localStorage.getItem("amym-wishlist"); 
+      if(raw) {
+        setWishlist(JSON.parse(raw));
+      } else {
+        // Ensure wishlist is initialized with default value
+        setWishlist([]);
+      }
+    }catch(e){
+      // Fallback to default wishlist if there's an error
+      setWishlist([]);
+    }
+  },[]);
   useEffect(()=>{ try{ localStorage.setItem("amym-wishlist", JSON.stringify(wishlist)); }catch(e){} },[wishlist]);
-  useEffect(()=>{ try{ const raw=localStorage.getItem("amym-reviews"); if(raw) setReviews(JSON.parse(raw)); }catch(e){} },[]);
+  useEffect(()=>{ 
+    try{ 
+      const raw=localStorage.getItem("amym-reviews"); 
+      if(raw) {
+        setReviews(JSON.parse(raw));
+      } else {
+        // Ensure reviews is initialized with default value
+        setReviews({});
+      }
+    }catch(e){
+      // Fallback to default reviews if there's an error
+      setReviews({});
+    }
+  },[]);
   useEffect(()=>{ try{ localStorage.setItem("amym-reviews", JSON.stringify(reviews)); }catch(e){} },[reviews]);
   
   // Payment & Order System localStorage
@@ -1309,6 +1335,11 @@ const [showRecommendations, setShowRecommendations] = useState(false);
   };
 
   const getAverageRating = (productId) => {
+    // Safety check to ensure reviews is properly initialized
+    if (!reviews || typeof reviews !== 'object') {
+      return 0;
+    }
+    
     const productReviews = reviews[productId] || [];
     if (productReviews.length === 0) return 0;
     const total = productReviews.reduce((sum, review) => sum + review.rating, 0);
@@ -1317,6 +1348,12 @@ const [showRecommendations, setShowRecommendations] = useState(false);
 
   const generateSearchSuggestions = (query) => {
     if (!query.trim()) return [];
+    
+    // Safety check to ensure products and services are properly initialized
+    if (!products || !Array.isArray(products) || !services || !Array.isArray(services)) {
+      return [];
+    }
+    
     const allItems = [...products, ...services];
     return allItems
       .filter(item => 
