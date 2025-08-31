@@ -294,45 +294,45 @@ export default function App(){
         }}>
           {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <span style={{ fontSize: "1.2rem" }}>🐝</span>
-            <h1 style={{ margin: 0, fontSize: "1.2rem", fontWeight: "600", color: paleta.carbon, whiteSpace: "nowrap" }}>
+            <span style={{ fontSize: "1.1rem" }}>🐝</span>
+            <h1 style={{ margin: 0, fontSize: "1.1rem", fontWeight: "600", color: paleta.carbon, whiteSpace: "nowrap" }}>
               Amor y Miel
             </h1>
           </div>
 
           {/* Navigation */}
-          <nav style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
-            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.85rem" }}>Inicio</a>
-            <a href="#productos" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.85rem" }}>Productos</a>
-            <a href="#servicios" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.85rem" }}>Servicios</a>
-            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.85rem" }}>Kits</a>
-            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.85rem" }}>Blog</a>
-            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.85rem" }}>Quiénes somos</a>
-            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.85rem" }}>Contacto</a>
+          <nav style={{ display: "flex", gap: "1.2rem", alignItems: "center" }}>
+            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Inicio</a>
+            <a href="#productos" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Productos</a>
+            <a href="#servicios" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Servicios</a>
+            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Kits</a>
+            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Blog</a>
+            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Quiénes somos</a>
+            <a href="#" style={{ color: paleta.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Contacto</a>
           </nav>
 
           {/* Search and Cart */}
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
             <div style={{ position: "relative" }}>
               <input 
                 value={query} 
                 onChange={e => setQuery(e.target.value)} 
                 placeholder="Buscar productos..." 
                 style={{ 
-                  padding: "0.4rem 1rem 0.4rem 2.2rem", 
-                  borderRadius: "25px", 
+                  padding: "0.35rem 1rem 0.35rem 2rem", 
+                  borderRadius: "20px", 
                   border: "1px solid rgba(0,0,0,0.1)", 
-                  width: "180px",
-                  fontSize: "0.8rem",
+                  width: "160px",
+                  fontSize: "0.75rem",
                   background: "white"
                 }} 
               />
               <span style={{ 
                 position: "absolute", 
-                left: "0.75rem", 
+                left: "0.7rem", 
                 top: "50%", 
                 transform: "translateY(-50%)", 
-                fontSize: "0.9rem",
+                fontSize: "0.8rem",
                 color: "rgba(0,0,0,0.5)"
               }}>
                 🔍
@@ -341,15 +341,15 @@ export default function App(){
             <button 
               onClick={() => setOpenCart(true)} 
               style={{ 
-                background: "rgba(255,255,255,0.9)", 
+                background: "rgba(255,255,255,0.95)", 
                 border: "1px solid rgba(0,0,0,0.1)", 
-                borderRadius: "20px", 
-                padding: "0.4rem 0.8rem", 
+                borderRadius: "18px", 
+                padding: "0.35rem 0.7rem", 
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
-                gap: "0.4rem",
-                fontSize: "0.8rem",
+                gap: "0.3rem",
+                fontSize: "0.75rem",
                 color: paleta.carbon,
                 fontWeight: "500"
               }}
@@ -361,10 +361,10 @@ export default function App(){
               style={{ 
                 background: "transparent", 
                 border: "1px solid rgba(0,0,0,0.1)", 
-                borderRadius: "20px", 
-                padding: "0.4rem 0.8rem", 
+                borderRadius: "18px", 
+                padding: "0.35rem 0.7rem", 
                 cursor: "pointer",
-                fontSize: "0.8rem",
+                fontSize: "0.75rem",
                 color: paleta.carbon
               }}
             >
@@ -414,17 +414,17 @@ export default function App(){
                     background: paleta.miel, 
                     color: "white", 
                     border: "none", 
-                    borderRadius: "8px", 
-                    padding: "0.9rem 1.8rem", 
-                    fontSize: "1rem", 
+                    borderRadius: "6px", 
+                    padding: "0.8rem 1.5rem", 
+                    fontSize: "0.95rem", 
                     fontWeight: "600", 
                     cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
-                    gap: "0.5rem"
+                    gap: "0.4rem"
                   }}
                 >
-                  <span style={{ fontSize: "1.1rem" }}>📋</span>
+                  <span style={{ fontSize: "1rem" }}>📋</span>
                   Ver productos
                 </button>
                 <button 
@@ -433,56 +433,56 @@ export default function App(){
                     background: "white", 
                     color: paleta.miel, 
                     border: `2px solid ${paleta.miel}`, 
-                    borderRadius: "8px", 
-                    padding: "0.9rem 1.8rem", 
-                    fontSize: "1rem", 
+                    borderRadius: "6px", 
+                    padding: "0.8rem 1.5rem", 
+                    fontSize: "0.95rem", 
                     fontWeight: "600", 
                     cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
-                    gap: "0.5rem"
+                    gap: "0.4rem"
                   }}
                 >
-                  <span style={{ fontSize: "1.1rem" }}>➕</span>
+                  <span style={{ fontSize: "1rem" }}>➕</span>
                   Ver servicios
                 </button>
               </div>
-              <div style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
+              <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
                 <div style={{ 
                   display: "flex", 
                   alignItems: "center", 
-                  gap: "0.5rem",
+                  gap: "0.4rem",
                   background: "rgba(255,255,255,0.8)",
-                  padding: "0.4rem 0.8rem",
-                  borderRadius: "20px",
+                  padding: "0.3rem 0.6rem",
+                  borderRadius: "15px",
                   border: "1px solid rgba(0,0,0,0.1)"
                 }}>
-                  <span style={{ fontSize: "1.1rem" }}>🌿</span>
-                  <span style={{ fontWeight: "500", fontSize: "0.85rem" }}>100% natural</span>
+                  <span style={{ fontSize: "1rem" }}>🌿</span>
+                  <span style={{ fontWeight: "500", fontSize: "0.8rem" }}>100% natural</span>
                 </div>
                 <div style={{ 
                   display: "flex", 
                   alignItems: "center", 
-                  gap: "0.5rem",
+                  gap: "0.4rem",
                   background: "rgba(255,255,255,0.8)",
-                  padding: "0.4rem 0.8rem",
-                  borderRadius: "20px",
+                  padding: "0.3rem 0.6rem",
+                  borderRadius: "15px",
                   border: "1px solid rgba(0,0,0,0.1)"
                 }}>
-                  <span style={{ fontSize: "1.1rem" }}>💰</span>
-                  <span style={{ fontWeight: "500", fontSize: "0.85rem" }}>Precios justos</span>
+                  <span style={{ fontSize: "1rem" }}>💰</span>
+                  <span style={{ fontWeight: "500", fontSize: "0.8rem" }}>Precios justos</span>
                 </div>
                 <div style={{ 
                   display: "flex", 
                   alignItems: "center", 
-                  gap: "0.5rem",
+                  gap: "0.4rem",
                   background: "rgba(255,255,255,0.8)",
-                  padding: "0.4rem 0.8rem",
-                  borderRadius: "20px",
+                  padding: "0.3rem 0.6rem",
+                  borderRadius: "15px",
                   border: "1px solid rgba(0,0,0,0.1)"
                 }}>
-                  <span style={{ fontSize: "1.1rem" }}>💝</span>
-                  <span style={{ fontWeight: "500", fontSize: "0.85rem" }}>Hecho con amor</span>
+                  <span style={{ fontSize: "1rem" }}>💝</span>
+                  <span style={{ fontWeight: "500", fontSize: "0.8rem" }}>Hecho con amor</span>
                 </div>
               </div>
             </div>
@@ -495,11 +495,11 @@ export default function App(){
               height: "100%"
             }}>
               <div style={{ 
-                width: "400px", 
-                height: "400px", 
+                width: "350px", 
+                height: "350px", 
                 background: "white", 
-                borderRadius: "20px",
-                boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+                borderRadius: "15px",
+                boxShadow: "0 15px 30px rgba(0,0,0,0.08)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -509,33 +509,33 @@ export default function App(){
                 {/* Blurred circular shapes like in the image */}
                 <div style={{ 
                   position: "absolute",
-                  top: "20%",
-                  left: "20%",
-                  width: "120px",
-                  height: "120px",
-                  background: "linear-gradient(45deg, #FFE5B4, #FFD700)",
-                  borderRadius: "50%",
-                  filter: "blur(20px)",
-                  opacity: "0.7"
-                }} />
-                <div style={{ 
-                  position: "absolute",
-                  bottom: "30%",
-                  right: "25%",
+                  top: "15%",
+                  left: "15%",
                   width: "100px",
                   height: "100px",
-                  background: "linear-gradient(45deg, #98FB98, #90EE90)",
+                  background: "linear-gradient(45deg, #FFE5B4, #FFD700)",
                   borderRadius: "50%",
                   filter: "blur(15px)",
                   opacity: "0.6"
                 }} />
                 <div style={{ 
                   position: "absolute",
+                  bottom: "25%",
+                  right: "20%",
+                  width: "80px",
+                  height: "80px",
+                  background: "linear-gradient(45deg, #98FB98, #90EE90)",
+                  borderRadius: "50%",
+                  filter: "blur(12px)",
+                  opacity: "0.5"
+                }} />
+                <div style={{ 
+                  position: "absolute",
                   top: "50%",
                   left: "50%",
                   transform: "translate(-50%, -50%)",
-                  fontSize: "1.5rem",
-                  color: "rgba(0,0,0,0.3)",
+                  fontSize: "1.2rem",
+                  color: "rgba(0,0,0,0.25)",
                   fontWeight: "500"
                 }}>
                   Imagen del producto
