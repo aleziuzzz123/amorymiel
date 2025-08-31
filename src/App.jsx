@@ -376,74 +376,170 @@ export default function App(){
       {/* Hero Section */}
       <section style={{ 
         padding: "4rem 0", 
-        textAlign: "center", 
         background: "linear-gradient(135deg, #FBF2DE 0%, #FFFFFF 100%)" 
       }}>
         <div className="container">
-          <h2 style={{ 
-            fontSize: "3rem", 
-            fontWeight: "700", 
-            margin: "0 0 1rem 0", 
-            color: paleta.carbon,
-            lineHeight: "1.2"
+          <div style={{ 
+            display: "grid", 
+            gridTemplateColumns: "1fr 1fr", 
+            gap: "4rem", 
+            alignItems: "center",
+            minHeight: "500px"
           }}>
-            Cuidado natural, artesanal y{" "}
-            <span style={{ color: paleta.miel }}>con amor.</span>
-          </h2>
-          <p style={{ 
-            fontSize: "1.2rem", 
-            color: "rgba(0,0,0,0.7)", 
-            margin: "0 0 2rem 0", 
-            maxWidth: "600px", 
-            marginLeft: "auto", 
-            marginRight: "auto" 
-          }}>
-            Productos y rituales holísticos inspirados en la miel, las plantas y la energía del bienestar.
-          </p>
-          <div style={{ display: "flex", gap: "1rem", justifyContent: "center", marginBottom: "3rem" }}>
-            <button 
-              onClick={() => document.getElementById('productos').scrollIntoView({ behavior: 'smooth' })}
-              style={{ 
-                background: paleta.miel, 
-                color: "white", 
-                border: "none", 
-                borderRadius: "25px", 
-                padding: "1rem 2rem", 
-                fontSize: "1.1rem", 
-                fontWeight: "600", 
-                cursor: "pointer" 
-              }}
-            >
-              Ver productos
-            </button>
-            <button 
-              onClick={() => document.getElementById('servicios').scrollIntoView({ behavior: 'smooth' })}
-              style={{ 
-                background: "transparent", 
-                color: paleta.miel, 
-                border: `2px solid ${paleta.miel}`, 
-                borderRadius: "25px", 
-                padding: "1rem 2rem", 
-                fontSize: "1.1rem", 
-                fontWeight: "600", 
-                cursor: "pointer" 
-              }}
-            >
-              Ver servicios
-            </button>
-          </div>
-          <div style={{ display: "flex", gap: "3rem", justifyContent: "center", alignItems: "center" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <span style={{ fontSize: "1.5rem" }}>🌿</span>
-              <span style={{ fontWeight: "500" }}>100% natural</span>
+            {/* Left Side - Text Content */}
+            <div style={{ textAlign: "left" }}>
+              <h2 style={{ 
+                fontSize: "3.5rem", 
+                fontWeight: "700", 
+                margin: "0 0 1.5rem 0", 
+                color: paleta.carbon,
+                lineHeight: "1.1"
+              }}>
+                Cuidado natural, artesanal y{" "}
+                <span style={{ color: paleta.miel }}>con amor.</span>
+              </h2>
+              <p style={{ 
+                fontSize: "1.3rem", 
+                color: "rgba(0,0,0,0.7)", 
+                margin: "0 0 2.5rem 0", 
+                lineHeight: "1.6"
+              }}>
+                Productos y rituales holísticos inspirados en la miel, las plantas y la energía del bienestar.
+              </p>
+              <div style={{ display: "flex", gap: "1rem", marginBottom: "3rem" }}>
+                <button 
+                  onClick={() => document.getElementById('productos').scrollIntoView({ behavior: 'smooth' })}
+                  style={{ 
+                    background: paleta.miel, 
+                    color: "white", 
+                    border: "none", 
+                    borderRadius: "8px", 
+                    padding: "1rem 2rem", 
+                    fontSize: "1.1rem", 
+                    fontWeight: "600", 
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem"
+                  }}
+                >
+                  <span style={{ fontSize: "1.2rem" }}>📋</span>
+                  Ver productos
+                </button>
+                <button 
+                  onClick={() => document.getElementById('servicios').scrollIntoView({ behavior: 'smooth' })}
+                  style={{ 
+                    background: "white", 
+                    color: paleta.miel, 
+                    border: `2px solid ${paleta.miel}`, 
+                    borderRadius: "8px", 
+                    padding: "1rem 2rem", 
+                    fontSize: "1.1rem", 
+                    fontWeight: "600", 
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem"
+                  }}
+                >
+                  <span style={{ fontSize: "1.2rem" }}>➕</span>
+                  Ver servicios
+                </button>
+              </div>
+              <div style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
+                <div style={{ 
+                  display: "flex", 
+                  alignItems: "center", 
+                  gap: "0.5rem",
+                  background: "rgba(255,255,255,0.8)",
+                  padding: "0.5rem 1rem",
+                  borderRadius: "20px",
+                  border: "1px solid rgba(0,0,0,0.1)"
+                }}>
+                  <span style={{ fontSize: "1.2rem" }}>🌿</span>
+                  <span style={{ fontWeight: "500", fontSize: "0.9rem" }}>100% natural</span>
+                </div>
+                <div style={{ 
+                  display: "flex", 
+                  alignItems: "center", 
+                  gap: "0.5rem",
+                  background: "rgba(255,255,255,0.8)",
+                  padding: "0.5rem 1rem",
+                  borderRadius: "20px",
+                  border: "1px solid rgba(0,0,0,0.1)"
+                }}>
+                  <span style={{ fontSize: "1.2rem" }}>💰</span>
+                  <span style={{ fontWeight: "500", fontSize: "0.9rem" }}>Precios justos</span>
+                </div>
+                <div style={{ 
+                  display: "flex", 
+                  alignItems: "center", 
+                  gap: "0.5rem",
+                  background: "rgba(255,255,255,0.8)",
+                  padding: "0.5rem 1rem",
+                  borderRadius: "20px",
+                  border: "1px solid rgba(0,0,0,0.1)"
+                }}>
+                  <span style={{ fontSize: "1.2rem" }}>💝</span>
+                  <span style={{ fontWeight: "500", fontSize: "0.9rem" }}>Hecho con amor</span>
+                </div>
+              </div>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <span style={{ fontSize: "1.5rem" }}>💰</span>
-              <span style={{ fontWeight: "500" }}>Precios justos</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <span style={{ fontSize: "1.5rem" }}>💝</span>
-              <span style={{ fontWeight: "500" }}>Hecho con amor</span>
+
+            {/* Right Side - Image Placeholder */}
+            <div style={{ 
+              display: "flex", 
+              justifyContent: "center", 
+              alignItems: "center",
+              height: "100%"
+            }}>
+              <div style={{ 
+                width: "400px", 
+                height: "400px", 
+                background: "white", 
+                borderRadius: "20px",
+                boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "relative",
+                overflow: "hidden"
+              }}>
+                {/* Blurred circular shapes like in the image */}
+                <div style={{ 
+                  position: "absolute",
+                  top: "20%",
+                  left: "20%",
+                  width: "120px",
+                  height: "120px",
+                  background: "linear-gradient(45deg, #FFE5B4, #FFD700)",
+                  borderRadius: "50%",
+                  filter: "blur(20px)",
+                  opacity: "0.7"
+                }} />
+                <div style={{ 
+                  position: "absolute",
+                  bottom: "30%",
+                  right: "25%",
+                  width: "100px",
+                  height: "100px",
+                  background: "linear-gradient(45deg, #98FB98, #90EE90)",
+                  borderRadius: "50%",
+                  filter: "blur(15px)",
+                  opacity: "0.6"
+                }} />
+                <div style={{ 
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  fontSize: "1.5rem",
+                  color: "rgba(0,0,0,0.3)",
+                  fontWeight: "500"
+                }}>
+                  Imagen del producto
+                </div>
+              </div>
             </div>
           </div>
         </div>
