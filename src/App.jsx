@@ -166,9 +166,9 @@ const DEFAULT_PRODUCTS = [
     variantes: V([["std", "Único", 200]]), 
     tags: ["decretos", "ritual", "abre caminos"], 
     imagen: "/images/placeholders/aceite-abrecaminos-product.png",
-    descripcion: "Aceite artesanal con extracción de esencias naturales de plantas sagradas. Con feromonas para potenciar su efecto. Ideal para afirmaciones y decretos, suaviza situaciones negativas y abre paso a lo positivo.",
-    beneficios: "Excelente para afirmaciones y decretos, suaviza situaciones negativas y abre camino a lo positivo.",
-    modoUso: "Con ayuda del gotero, aplicar 2-3 gotitas en las manos, frotar y repetir tu oración o decreto."
+    descripcion: "Es un producto artesanal, elaborado con extracción de esencias naturales de las plantas. Con feromonas para potenciar su efecto.",
+    beneficios: "El aceite Abre Caminos, como su nombre lo indica, es un excelente producto para realizar nuestras afirmaciones y decretos, ayuda a suavizar las situaciones negativas y abrirte paso a lo positivo.",
+    modoUso: "Con ayuda del gotero, aplica de 2 a 3 gotitas del Aceite Abre Caminos en tus manos, frótalo y mientras lo haces puedes repetir la oración o decreto de tu gusto."
   },
   { 
     id: "aceite-ungir", 
@@ -178,8 +178,8 @@ const DEFAULT_PRODUCTS = [
     variantes: V([["std", "Único", 250]]), 
     tags: ["consagrado", "paz", "ungir"], 
     imagen: "/images/placeholders/aceite-para-ungir-product.png",
-    descripcion: "Aceite artesanal de grado espiritual con base de aceite de Oliva, Mirra y Canela. La palabra 'Ungido' en hebreo significa Mesías. Consagrado para momentos espirituales sagrados.",
-    beneficios: "Usado en eventos de adoración y espirituales, para curar enfermedades y santificar momentos sagrados.",
+    descripcion: "Es un producto artesanal de grado espiritual, elaborado con base de aceite de Oliva, Mirra y Canela. La palabra 'Ungido' en hebreo significa Mesías.",
+    beneficios: "Consagrado para momentos espirituales sagrados, usado en eventos de adoración y espirituales, para curar enfermedades y santificar momentos sagrados.",
     modoUso: "Usar en momentos muy espirituales, con respeto. Elaborado para llevar paz y calma en momentos difíciles."
   },
   { 
@@ -190,9 +190,9 @@ const DEFAULT_PRODUCTS = [
     variantes: V([["std", "Único", 120]]), 
     tags: ["natural", "brillo", "artesanal"], 
     imagen: "/images/placeholders/shampoo-artesanal-product.png",
-    descripcion: "Shampoo artesanal elaborado con ingredientes naturales de la más alta calidad para el cuidado del cabello. Sin químicos agresivos, promueve el brillo natural.",
-    beneficios: "Limpieza natural del cabello, sin químicos agresivos, promueve el brillo natural.",
-    modoUso: "Usar como shampoo regular, masajear suavemente el cuero cabelludo."
+    descripcion: "Es un producto artesanal elaborado con ingredientes naturales de la más alta calidad para el cuidado del cabello. Sin químicos agresivos.",
+    beneficios: "Limpieza natural del cabello, sin químicos agresivos, promueve el brillo natural y la salud capilar.",
+    modoUso: "Usar como shampoo regular, masajear suavemente el cuero cabelludo para estimular la circulación."
   },
   { 
     id: "shampoo-miel", 
@@ -202,9 +202,9 @@ const DEFAULT_PRODUCTS = [
     variantes: V([["std", "Único", 140]]), 
     tags: ["miel", "suavidad", "natural"], 
     imagen: "/images/placeholders/shampoo-miel-product.png",
-    descripcion: "Shampoo con extracto de miel natural de la más alta pureza para suavizar y nutrir el cabello. Las propiedades naturales de la miel promueven la salud capilar.",
-    beneficios: "Suaviza el cabello, nutre con propiedades de la miel y promueve la salud capilar.",
-    modoUso: "Usar como shampoo regular, dejar actuar por 2-3 minutos para mayor beneficio."
+    descripcion: "Es un producto artesanal elaborado con extracto de miel natural de la más alta pureza para suavizar y nutrir el cabello.",
+    beneficios: "Suaviza el cabello, nutre con propiedades naturales de la miel y promueve la salud capilar integral.",
+    modoUso: "Usar como shampoo regular, dejar actuar por 2-3 minutos para mayor beneficio y absorción de nutrientes."
   },
   { 
     id: "shampoo-romero", 
@@ -214,9 +214,9 @@ const DEFAULT_PRODUCTS = [
     variantes: V([["std", "Único", 140]]), 
     tags: ["romero", "fortaleza", "natural"], 
     imagen: "/images/placeholders/shampoo-romero-product.png",
-    descripcion: "Shampoo con extracto de romero natural para fortalecer y dar volumen al cabello. Sus propiedades naturales estimulan el crecimiento saludable del cabello.",
-    beneficios: "Fortalece el cabello, da volumen y promueve el crecimiento saludable.",
-    modoUso: "Usar como shampoo regular, masajear el cuero cabelludo para estimular la circulación."
+    descripcion: "Es un producto artesanal elaborado con extracto de romero natural para fortalecer y dar volumen al cabello.",
+    beneficios: "Fortalece el cabello, da volumen natural y promueve el crecimiento saludable del cabello.",
+    modoUso: "Usar como shampoo regular, masajear el cuero cabelludo para estimular la circulación y activar los folículos."
   },
   { 
     id: "mascarilla-capilar", 
@@ -226,9 +226,9 @@ const DEFAULT_PRODUCTS = [
     variantes: V([["std", "Único", 80]]), 
     tags: ["hidratación", "brillo", "mascarilla"], 
     imagen: "/images/placeholders/mascarilla-capilar-product.png",
-    descripcion: "Mascarilla capilar natural de la más alta calidad para hidratar y dar brillo al cabello. Repara el cabello dañado y restaura su vitalidad natural.",
-    beneficios: "Hidratación profunda, brillo natural y reparación del cabello dañado.",
-    modoUso: "Aplicar después del shampoo, dejar actuar por 10-15 minutos y enjuagar."
+    descripcion: "Es un producto artesanal elaborado con ingredientes naturales de la más alta calidad para hidratar y dar brillo al cabello.",
+    beneficios: "Hidratación profunda, brillo natural y reparación integral del cabello dañado, restaura su vitalidad natural.",
+    modoUso: "Aplicar después del shampoo, dejar actuar por 10-15 minutos para máxima absorción y enjuagar abundantemente."
   },
   { 
     id: "agua-luna", 
@@ -238,9 +238,9 @@ const DEFAULT_PRODUCTS = [
     variantes: V([["std", "Único", 180]]), 
     tags: ["calma", "limpieza", "luna"], 
     imagen: "/images/placeholders/agua-de-luna-product.png",
-    descripcion: "Agua energizada con la energía sagrada de la luna para calma y limpieza espiritual. Su esencia lunar purifica y conecta con la energía cósmica.",
-    beneficios: "Calma emocional, limpieza espiritual y conexión con la energía lunar.",
-    modoUso: "Usar para limpieza energética, rociar en el ambiente o aplicar sobre el cuerpo."
+    descripcion: "Es un producto artesanal elaborado con agua energizada con la energía sagrada de la luna para calma y limpieza espiritual.",
+    beneficios: "Calma emocional profunda, limpieza espiritual integral y conexión directa con la energía lunar y cósmica.",
+    modoUso: "Usar para limpieza energética, rociar en el ambiente o aplicar sobre el cuerpo en momentos de meditación."
   },
   { 
     id: "miel-consagrada", 
@@ -250,9 +250,9 @@ const DEFAULT_PRODUCTS = [
     variantes: V([["std", "Único", 200]]), 
     tags: ["dulzura", "prosperidad", "consagrada"], 
     imagen: "/images/placeholders/miel-consagrada-product.png",
-    descripcion: "Miel consagrada de la más alta pureza para rituales de prosperidad y abundancia. Su dulzura sagrada activa la ley de la abundancia universal.",
-    beneficios: "Atrae prosperidad, abundancia y dulzura a la vida.",
-    modoUso: "Usar en rituales, ofrendas o consumir para atraer abundancia."
+    descripcion: "Es un producto artesanal elaborado con miel consagrada de la más alta pureza para rituales de prosperidad y abundancia.",
+    beneficios: "Su dulzura sagrada activa la ley de la abundancia universal, atrae prosperidad, abundancia y dulzura a la vida.",
+    modoUso: "Usar en rituales sagrados, ofrendas espirituales o consumir para atraer abundancia y prosperidad."
   },
   { 
     id: "sal-negra", 
@@ -262,9 +262,9 @@ const DEFAULT_PRODUCTS = [
     variantes: V([["std", "Único", 150]]), 
     tags: ["protección", "limpieza", "sal"], 
     imagen: "/images/placeholders/sal-negra-product.png",
-    descripcion: "Sal negra sagrada para protección y limpieza energética. Su poder purificador elimina energías negativas y crea un escudo de protección.",
-    beneficios: "Protección energética, limpieza de espacios y eliminación de energías negativas.",
-    modoUso: "Colocar en esquinas de la casa, usar en rituales de limpieza o protección."
+    descripcion: "Es un producto artesanal elaborado con sal negra sagrada para protección y limpieza energética integral.",
+    beneficios: "Su poder purificador elimina energías negativas, crea un escudo de protección y limpia espacios de manera profunda.",
+    modoUso: "Colocar en esquinas de la casa, usar en rituales de limpieza energética o protección espiritual."
   },
   { 
     id: "polvo-oro", 
@@ -274,9 +274,9 @@ const DEFAULT_PRODUCTS = [
     variantes: V([["std", "Único", 180]]), 
     tags: ["abundancia", "manifestación", "oro"], 
     imagen: "/images/placeholders/polvo-de-oro-product.png",
-    descripcion: "Polvo de oro sagrado para rituales de abundancia y manifestación. Su energía dorada activa la ley de la atracción y la manifestación de deseos.",
-    beneficios: "Atrae abundancia, riqueza y ayuda en la manifestación de deseos.",
-    modoUso: "Usar en rituales de abundancia, espolvorear en velas o usar en decretos."
+    descripcion: "Es un producto artesanal elaborado con polvo de oro sagrado para rituales de abundancia y manifestación.",
+    beneficios: "Su energía dorada activa la ley de la atracción y la manifestación de deseos, atrae abundancia y riqueza material y espiritual.",
+    modoUso: "Usar en rituales de abundancia, espolvorear en velas sagradas o usar en decretos y afirmaciones."
   },
   { 
     id: "palo-santo", 
@@ -286,9 +286,9 @@ const DEFAULT_PRODUCTS = [
     variantes: V([["std", "Único", 120]]), 
     tags: ["armonía", "purificar", "palo santo"], 
     imagen: "/images/placeholders/palo-santo-product.png",
-    descripcion: "Palo Santo sagrado para purificación y armonía del ambiente. Su humo purificador elimina energías negativas y crea un espacio sagrado de paz.",
-    beneficios: "Purifica el ambiente, crea armonía y elimina energías negativas.",
-    modoUso: "Encender y dejar que el humo purifique el espacio, ideal para limpieza energética."
+    descripcion: "Es un producto artesanal elaborado con palo santo sagrado para purificación y armonía del ambiente.",
+    beneficios: "Su humo purificador elimina energías negativas, crea un espacio sagrado de paz y restaura la armonía energética.",
+    modoUso: "Encender y dejar que el humo purifique el espacio, ideal para limpieza energética y rituales de purificación."
   },
   { 
     id: "sahumerios", 
@@ -298,9 +298,9 @@ const DEFAULT_PRODUCTS = [
     variantes: V([["std", "Único", 100]]), 
     tags: ["salvia", "aromas", "purificación"], 
     imagen: "/images/placeholders/sahumerios-product.png",
-    descripcion: "Sahumerios naturales de la más alta pureza para purificación y limpieza energética. Su aroma sagrado purifica el ambiente y crea un espacio de paz.",
-    beneficios: "Purificación del ambiente, limpieza energética y aromaterapia natural.",
-    modoUso: "Encender y dejar que el humo purifique el espacio, usar en rituales de limpieza."
+    descripcion: "Es un producto artesanal elaborado con sahumerios naturales de la más alta pureza para purificación y limpieza energética.",
+    beneficios: "Su aroma sagrado purifica el ambiente, limpia energías negativas y crea un espacio de paz y armonía espiritual.",
+    modoUso: "Encender y dejar que el humo purifique el espacio, ideal para limpieza energética y rituales de purificación."
   },
   { 
     id: "bano-amargo", 
@@ -310,9 +310,9 @@ const DEFAULT_PRODUCTS = [
     variantes: V([["std", "Único", 120]]), 
     tags: ["descarga", "limpieza", "amargo"], 
     imagen: "/images/placeholders/bano-amargo-product.png",
-    descripcion: "Baño energético amargo consagrado para descarga y limpieza profunda. Sus hierbas sagradas eliminan energías negativas y renuevan el espíritu.",
-    beneficios: "Descarga energética, limpieza profunda y renovación espiritual.",
-    modoUso: "Preparar baño con las hierbas, usar para limpieza energética profunda."
+    descripcion: "Es un producto artesanal elaborado con baño energético amargo consagrado para descarga y limpieza profunda.",
+    beneficios: "Sus hierbas sagradas eliminan energías negativas, renuevan el espíritu y proporcionan descarga energética integral.",
+    modoUso: "Preparar baño con las hierbas sagradas, usar para limpieza energética profunda y renovación espiritual."
   },
   { 
     id: "bano-amor-propio", 
@@ -322,9 +322,9 @@ const DEFAULT_PRODUCTS = [
     variantes: V([["std", "Único", 120]]), 
     tags: ["autoestima", "rosa", "amor propio"], 
     imagen: "/images/placeholders/bano-amor-propio.JPG",
-    descripcion: "Baño energético consagrado para aumentar el amor propio y la autoestima. Sus hierbas rosas conectan con la energía del amor y la belleza interior.",
-    beneficios: "Aumenta el amor propio, autoestima y conexión con la belleza interior.",
-    modoUso: "Preparar baño con las hierbas, usar para rituales de amor propio."
+    descripcion: "Es un producto artesanal elaborado con baño energético consagrado para aumentar el amor propio y la autoestima.",
+    beneficios: "Sus hierbas rosas conectan con la energía del amor y la belleza interior, aumentando el amor propio y la autoestima.",
+    modoUso: "Preparar baño con las hierbas sagradas, usar para rituales de amor propio y conexión con la belleza interior."
   },
   { 
     id: "bano-abre-caminos", 
@@ -334,9 +334,9 @@ const DEFAULT_PRODUCTS = [
     variantes: V([["std", "Único", 120]]), 
     tags: ["expansión", "canela", "abre caminos"], 
     imagen: "/images/placeholders/Cinnamon-orange.png",
-    descripcion: "Mezcla de plantas sanadoras sagradas: Canela, Naranja y Laureles. Ayuda a conectar con la energía cuando hay estancamiento en economía, trabajo o crecimiento laboral.",
-    beneficios: "Abre caminos, elimina estancamientos y conecta con energías de expansión y crecimiento.",
-    modoUso: "Hervir las hierbas en 1Lt de agua, mezclar con la tina. El resto se puede colocar en jardín o macetas."
+    descripcion: "Es un producto artesanal elaborado con mezcla de plantas sanadoras sagradas: Canela, Naranja y Laureles.",
+    beneficios: "Ayuda a conectar con la energía cuando hay estancamiento en economía, trabajo o crecimiento laboral, abre caminos y elimina estancamientos.",
+    modoUso: "Hervir las hierbas sagradas en 1Lt de agua, mezclar con la tina. El resto se puede colocar en jardín o macetas para continuar la energía."
   },
   { 
     id: "locion-ellas-ellos", 
@@ -346,33 +346,9 @@ const DEFAULT_PRODUCTS = [
     variantes: V([["ch", "Chica", 220], ["gd", "Grande", 300]]), 
     tags: ["autoestima", "amor-propio", "pareja"], 
     imagen: "/images/placeholders/locion-ellas-y-ellos.JPG",
-    descripcion: "Loción artesanal con extracción de flores y esencias naturales, con tonos suaves para Ellas y tonos frescos para Ellos. Ideal para parejas que desean reforzar su conexión y amor propio.",
-    beneficios: "Aumenta autoestima, amor propio y seguridad. Recomendada para parejas en situaciones complicadas.",
-    modoUso: "Usar como loción de diario para reforzar tu seguridad, aplicar después de bañarse."
-  },
-  { 
-    id: "aceite-abre", 
-    nombre: "Aceite Abre Caminos", 
-    categoria: "Aceites", 
-    moneda: "MXN", 
-    variantes: V([["std", "Único", 200]]), 
-    tags: ["decretos", "ritual", "abre caminos"], 
-    imagen: "/images/placeholders/aceite-abrecaminos-product.png",
-    descripcion: "Aceite artesanal con extracción de esencias naturales de plantas sagradas. Con feromonas para potenciar su efecto. Ideal para afirmaciones y decretos, suaviza situaciones negativas y abre paso a lo positivo.",
-    beneficios: "Excelente para afirmaciones y decretos, suaviza situaciones negativas y abre camino a lo positivo.",
-    modoUso: "Con ayuda del gotero, aplicar 2-3 gotitas en las manos, frotar y repetir tu oración o decreto."
-  },
-  { 
-    id: "aceite-ungir", 
-    nombre: "Aceite para Ungir", 
-    categoria: "Aceites", 
-    moneda: "MXN", 
-    variantes: V([["std", "Único", 250]]), 
-    tags: ["consagrado", "paz", "ungir"], 
-    imagen: "/images/placeholders/aceite-para-ungir-product.png",
-    descripcion: "Aceite artesanal de grado espiritual con base de aceite de Oliva, Mirra y Canela. La palabra 'Ungido' en hebreo significa Mesías. Consagrado para momentos espirituales sagrados.",
-    beneficios: "Usado en eventos de adoración y espirituales, para curar enfermedades y santificar momentos sagrados.",
-    modoUso: "Usar en momentos muy espirituales, con respeto. Elaborado para llevar paz y calma en momentos difíciles."
+    descripcion: "Es un producto artesanal elaborado con extracción de flores y esencias naturales, con tonos suaves para Ellas y tonos frescos para Ellos.",
+    beneficios: "Ideal para parejas que desean reforzar su conexión y amor propio, aumenta autoestima, amor propio y seguridad.",
+    modoUso: "Usar como loción de diario para reforzar tu seguridad, aplicar después de bañarse para máxima absorción."
   },
 
 ];
