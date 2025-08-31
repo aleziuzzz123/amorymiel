@@ -686,6 +686,7 @@ export default function App(){
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [showAdmin, setShowAdmin] = useState(false);
   const [products, setProducts] = useState(DEFAULT_PRODUCTS);
+  const [services, setServices] = useState(DEFAULT_SERVICES);
   const [openProduct, setOpenProduct] = useState(null);
   const [selectedVariant, setSelectedVariant] = useState(null);
   
@@ -702,6 +703,8 @@ export default function App(){
 
   useEffect(()=>{ try{ const raw=localStorage.getItem("amym-cart"); if(raw) setCart(JSON.parse(raw)); }catch(e){} },[]);
   useEffect(()=>{ try{ localStorage.setItem("amym-cart", JSON.stringify(cart)); }catch(e){} },[cart]);
+  useEffect(()=>{ try{ const raw=localStorage.getItem("amym-products"); if(raw) setProducts(JSON.parse(raw)); }catch(e){} },[]);
+  useEffect(()=>{ try{ const raw=localStorage.getItem("amym-services"); if(raw) setServices(JSON.parse(raw)); }catch(e){} },[]);
 
   const hasVariants = (it)=> Array.isArray(it.variantes)&&it.variantes.length>0;
   const minPrice = (it)=> hasVariants(it)? Math.min(...it.variantes.map(v=>v.precio||0)) : (it.precio||0);
