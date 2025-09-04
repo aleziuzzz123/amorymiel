@@ -1,0 +1,4 @@
+id,nombre,categoria,precio,moneda,duracion,modalidad,bookingLink,imagen
+serv-asesoria,Asesoría de bienestar (1:1),Servicios,399,MXN,60 min,online,https://wa.me/5210000000000?text=Quiero%20agendar%20asesor%C3%ADa%201:1,https://picsum.photos/seed/serv1/800/600
+serv-ritual,Ritual personalizado,Servicios,499,MXN,90 min,presencial/online,https://wa.me/5210000000000?text=Quiero%20un%20ritual%20personalizado,https://picsum.photos/seed/serv2/800/600
+serv-taller,Taller de bienestar grupal,Servicios,299,MXN,2 h,online,https://wa.me/5210000000000?text=Inter%C3%A9s%20en%20taller%20grupal,https://picsum.photos/seed/serv3/800/600

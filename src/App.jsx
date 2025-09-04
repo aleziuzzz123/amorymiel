@@ -1,1776 +1,848 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import emailjs from '@emailjs/browser';
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged,
+  sendPasswordResetEmail
+} from 'firebase/auth';
+import { 
+  doc, 
+  setDoc, 
+  getDoc, 
+  collection, 
+  addDoc, 
+  query, 
+  where, 
+  getDocs,
+  updateDoc,
+  onSnapshot
+} from 'firebase/firestore';
+import { auth, db } from './firebase';
+import AdminDashboard from './AdminDashboard';
 
-function Icon({ label, symbol, size = 18 }) { return <span role="img" aria-label={label} style={{ fontSize:size }}>{symbol}</span>; }
-const PALETAS = { D: { nombre:"Boutique Mosaico", miel:"#E0A73A", crema:"#FBF2DE", verde:"#628D6A", carbon:"#1A1714", blanco:"#FFFFFF", fondo:"linear-gradient(135deg, #FBF2DE 0%, #FFFFFF 65%)" } };
+// Color palette matching the image
+const PALETAS = { 
+  D: { 
+    nombre: "Boutique Mosaico", 
+    miel: "#E0A73A", 
+    crema: "#FBF2DE", 
+    verde: "#628D6A", 
+    carbon: "#1A1714", 
+    blanco: "#FFFFFF", 
+    fondo: "linear-gradient(135deg, #FBF2DE 0%, #FFFFFF 65%)" 
+  } 
+};
 
-// Catalog Images Mapping - Updated to match the actual featured images
 const CATALOG_IMAGES = {
-  "Velas De Miel": "/images/placeholders/velas-de-miel-product.png",
-  "Aceite Abre Caminos": "/images/placeholders/aceite-abrecaminos.JPG", // Golden dropper bottle with spiritual symbols 
-  "Agua Florida": "/images/placeholders/agua-florida-product.png",
-  "Agua de Luna": "/images/placeholders/agua-de-luna-product.png",
-  "Aceite para Ungir": "/images/placeholders/aceite-para-ungir-product.png",
-  "Agua Micelar": "/images/placeholders/agua-micelar-product.png",
-  "Baño Energético Abre Caminos": "/images/placeholders/bano-energetico-abre-caminos.JPG",
-  "Baño Energético Amor Propio": "/images/placeholders/bano-energetico-amor-propio.JPG",
-  "Baño Energético Amargo": "/images/placeholders/bano-amargo-product.png",
-  "Brisa Áurica Prosperidad": "/images/placeholders/brisa-prosperidad-product.png",
-  "Brisa Áurica Abundancia": "/images/placeholders/brisa-abundancia-product.png",
-  "Brisa Áurica Bendición del Dinero": "/images/placeholders/brisa-bendicion-dinero-product.png",
-  "Agua de Rosas": "/images/placeholders/agua-de-rosas-product.png",
-  "Exfoliante Abre Caminos": "/images/placeholders/exfoliante-abrecaminos-product.png",
-  "Exfoliante Venus": "/images/placeholders/exfoliante-venus-product.png",
-  "Mascarilla Capilar": "/images/placeholders/mascarilla-capilar-product.png",
-  "Miel Consagrada": "/images/placeholders/miel-consagrada-product.png",
-  "Palo Santo": "/images/placeholders/palo-santo-product.png",
-  "Polvo de Oro": "/images/placeholders/polvo-de-oro-product.png",
-  "Sahumerios": "/images/placeholders/sahumerios-product.png",
-  "Sal Negra": "/images/placeholders/sal-negra-product.png",
-  "Shampoo Artesanal": "/images/placeholders/shampoo-artesanal-product.png",
-  "Shampoo con Extracto de Miel": "/images/placeholders/shampoo-miel-product.png",
-  "Shampoo con Extracto de Romero": "/images/placeholders/shampoo-romero-product.png",
-  "Feromonas Naturales": "/images/placeholders/feromonas-naturales-product.png",
-  "Feromonas Damas y Caballeros": "/images/placeholders/feromonas-damas-caballeros-product.png",
-  "Loción Atrayente": "/images/placeholders/locion-atrayente-product.png",
-  "Loción Palo Santo": "/images/placeholders/locion-palo-santo-product.png",
-  "Loción Ellas y Ellos": "/images/placeholders/locion-ellas-y-ellos.JPG",
-  "Kit de Bienestar": "/images/placeholders/velas-de-miel-product.png",
-  "Kit de Amor Propio": "/images/placeholders/exfoliante-venus-product.png",
-  "Mascarilla Capilar Amor": "/images/placeholders/mascarilla-capilar-product.png",
-  "Miel Sagrada": "/images/placeholders/miel-consagrada-product.png"
+  "Velas De Miel": "/images/catalog/velasdemiel1.JPG",
+  "Loción Atrayente": "/images/catalog/locion-atrayente.JPG",
+  "Loción Palo Santo": "/images/catalog/locion-palo-santo.JPG",
+  "Agua Florida": "/images/catalog/agua-florida.JPG",
+  "Brisa Áurica Bendición del Dinero": "/images/catalog/brisa-aurica-bendicion-del-dinero.JPG",
+  "Brisa Áurica Prosperidad": "/images/catalog/brisa-aurica-prosperidad.JPG",
+  "Brisa Áurica Abundancia": "/images/catalog/brisa-aurica-abundancia.JPG",
+  "Exfoliante Abre Caminos": "/images/catalog/exfoliante-abrecaminos.JPG",
+  "Exfoliante Venus": "/images/catalog/exfoliante-venus.JPG",
+  "Feromonas Naturales": "/images/catalog/feromonas-naturales.JPG",
+  "Feromonas Damas y Caballeros": "/images/catalog/feromanas-damas-y-caballeros.JPG",
+  "Agua Micelar": "/images/catalog/agua-micelar.JPG",
+  "Agua de Rosas": "/images/catalog/agua-de-rosas1.JPG",
+  "Aceite Abre Caminos": "/images/catalog/aceite-abrecaminos.JPG",
+  "Aceite para Ungir": "/images/catalog/aceite-para-ungir.JPG",
+  "Shampoo Artesanal": "/images/catalog/shampoo-artesanal.JPG",
+  "Shampoo con Extracto de Miel": "/images/catalog/shampoo-con-extracto-de-miel.JPG",
+  "Shampoo con Extracto de Romero": "/images/catalog/shampoo-con-extracto-de-romero.JPG",
+  "Mascarilla Capilar": "/images/catalog/mascarilla-capilar.JPG",
+  "Agua de Luna": "/images/catalog/agua-de-luna.JPG",
+  "Miel Consagrada": "/images/catalog/miel-consagrada.JPG",
+  "Sal Negra": "/images/catalog/sal-negro.JPG",
+  "Polvo de Oro": "/images/catalog/polvo-de-oro.JPG",
+  "Palo Santo": "/images/catalog/palo-santo.JPG",
+  "Sahumerios": "/images/catalog/sahumerios.JPG",
+  "Baño Energético Amargo": "/images/catalog/bano-energetico-amargo.JPG",
+  "Baño Energético Amor Propio": "/images/catalog/bano-energetico-amor-propio.JPG",
+  "Baño Energético Abre Caminos": "/images/catalog/bano-energetico-abre-caminos.JPG",
+  "Loción Ellas y Ellos": "/images/catalog/locion-ellas-y-ellos.JPG"
 };
 
-const V = (arr) => arr.map(([sku, titulo, precio]) => ({ sku, titulo, precio }));
+// Kids products data
+// DEFAULT_KIDS_PRODUCTS removed - all products now loaded from Firebase
 
-const DEFAULT_PRODUCTS = [
-  { 
-    id: "velas-miel", 
-    nombre: "Velas De Miel", 
-    categoria: "Velas", 
-    precio: 150,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/velas-de-miel-product.png",
-    descripcion: "Velas artesanales de cera natural de abeja, elaboradas con amor y consagradas para rituales de abundancia. Su llama dorada purifica el ambiente y atrae energías de prosperidad y abundancia.",
-    beneficios: "Purifica espacios, atrae abundancia, ideal para meditación y rituales de manifestación.",
-    elaboracion: "La cera de Miel es un material natural que las abejas producen para construir sus panales, y es conocida por su fragancia cálida y suave tono dorado.",
-    proposito: "En muchas culturas a la Miel se le considera un símbolo de Abundancia y Prosperidad. Al encender una velita de miel cambiamos de manera energética estados de animo, espacios y podemos atraer a nuestras vidas cosas positivas.",
-    modoUso: "Un bonito ritual que te podemos compartir con la vela de miel: puedes escribir tu nombre completo y fecha de nacimiento, agregando un deseo que quieras que suceda, cuidando escribir desde la mecha hacía la base de la vela." 
-  },
-  { 
-    id: "locion-atrayente", 
-    nombre: "Loción Atrayente", 
-    categoria: "Lociones", 
-    precio: 200,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/locion-atrayente-product.png",
-    descripcion: "Loción artesanal con esencias naturales seleccionadas para atraer energías positivas y abundancia. Su aroma dulce y envolvente activa la ley de atracción en tu vida.",
-    beneficios: "Activa la ley de atracción, atrae prosperidad y energías positivas.",
-    elaboracion: "Elaborada con aceites esenciales puros de Vainilla, Canela, Bergamota y Rosa, diluidos en aceite base de almendras dulces. Cada lote es consagrado bajo la luna creciente para potenciar la atracción de energías positivas.",
-    proposito: "Activar la ley de atracción universal, atraer prosperidad, abundancia y energías positivas. Fortalecer el magnetismo personal y crear un campo energético que atraiga oportunidades y bendiciones.",
-    modoUso: "Aplicar sobre puntos de pulso (muñecas, cuello, sienes) después del baño. Usar preferentemente por la mañana para activar la energía del día. Agitar suavemente antes de cada uso."
-  },
-  { 
-    id: "locion-palo-santo", 
-    nombre: "Loción Palo Santo", 
-    categoria: "Lociones", 
-    precio: 150,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/locion-palo-santo-product.png",
-    descripcion: "Loción sagrada con esencia pura de Palo Santo, consagrada para limpieza energética profunda y protección espiritual. Su aroma sagrado purifica el aura y crea un escudo de protección.",
-    beneficios: "Limpieza energética profunda, protección espiritual y purificación del aura.",
-    elaboracion: "Elaborada con esencia pura de Palo Santo (Bursera graveolens) recolectado de manera sostenible, macerado en alcohol de caña y aceites esenciales protectores. Consagrada durante el solsticio para máxima potencia protectora.",
-    proposito: "Proteger contra energías negativas, limpiar el aura de contaminación energética, crear un escudo protector espiritual y restaurar la armonía energética del cuerpo y el ambiente.",
-    modoUso: "Aplicar sobre el cuerpo después del baño, especialmente en la nuca y hombros. Usar antes de salir de casa para protección. Rociar en el ambiente para limpieza energética de espacios."
-  },
-  { 
-    id: "agua-florida", 
-    nombre: "Agua Florida", 
-    categoria: "Lociones", 
-    precio: 120,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/agua-florida-product.png",
-    descripcion: "Agua Florida tradicional de la más alta pureza, consagrada para limpieza energética y purificación del ambiente y la persona. Su esencia floral purifica y renueva las energías.",
-    beneficios: "Limpieza energética profunda, purificación del ambiente y renovación espiritual.",
-    elaboracion: "Elaborado artesanalmente a base de cítricos, lavanda y romero. Esta colonia es una deliciosa fragancia refrescante y revitalizante que aporta un toque de frescura y vitalidad a tu día a día. Además, gracias a sus propiedades limpiadoras, puedes disfrutar de sus beneficios en todos tus espacios.",
-    proposito: "El Agua Florida es perfecta para su uso diario y para actividades como la meditación o el yoga, ya que su fragancia natural ayuda a elevar tu nivel de energía y aporta un toque de frescura y vitalidad a tu día a día. Además, es muy versátil y puede utilizarse para limpiar el ambiente, como ingrediente en rituales espirituales o para aliviar dolores de cabeza o tensiones musculares.",
-    modoUso: "Se puede utilizar de diversas maneras. Algunos usos comunes incluyen: Aplicar el agua florida directamente en la piel como una colonia, rociándola sobre el cuerpo o utilizando un pañuelo impregnado con el líquido. Rocía el agua florida en habitaciones, muebles o áreas que desees purificar y limpiar energéticamente. Puedes utilizarla al inicio y cierre de la limpieza energética, o simplemente para refrescar el ambiente. En algunas tradiciones espirituales, el agua florida se utiliza en rituales, como ofrenda a los ancestros, para bendiciones o para marcar el inicio de una nueva etapa."
-  },
-  { 
-    id: "aceite-abre-caminos", 
-    nombre: "Aceite Abre Caminos", 
-    categoria: "Aceites", 
-    precio: 180,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/aceite-abrecaminos.JPG",
-    descripcion: "Aceite artesanal elaborado con extracción de esencias naturales de plantas medicinales mexicanas, enriquecido con feromonas para potenciar su efecto energético.",
-    beneficios: "El aceite Abre Caminos, como su nombre lo indica, es un excelente producto para realizar nuestras afirmaciones y decretos, ayuda a suavizar las situaciones negativas y abrirte paso a lo positivo.",
-    elaboracion: "Es un producto artesanal, elaborado con extracción de esencias naturales de las plantas. Con feromonas para potenciar su efecto.",
-    proposito: "Facilitar la apertura de caminos en la vida, suavizar situaciones negativas y potenciar la manifestación de deseos y afirmaciones positivas.",
-    modoUso: "Con ayuda del gotero, aplica de 2 a 3 gotitas del Aceite Abre Caminos en tus manos, frótalo y mientras lo haces puedes repetir la oración o decreto de tu gusto."
-  },
-  { 
-    id: "agua-micelar", 
-    nombre: "Agua Micelar", 
-    categoria: "Faciales", 
-    precio: 160,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/agua-micelar-product.png",
-    descripcion: "Agua micelar artesanal formada a base de micelas naturales que atraen y retiran suciedad, impurezas y sebo, dejando la piel limpia y fresca.",
-    beneficios: "Limpieza profunda sin irritación, desmaquillante efectivo, ideal para pieles sensibles y alérgicas, sin colorantes ni perfumes agresivos.",
-    elaboracion: "Es un producto cosmético que está formado a base de micelas, estas son un grupo de moléculas que logran atraer y retirar suciedad, impurezas y sebo, dejando la piel limpia y fresca. No suele contener colorantes, perfumes o alcoholes, componentes que son agresivos con la epidermis.",
-    proposito: "Sirve como desmaquillante y limpiador facial para eliminar maquillaje, células muertas e impurezas, entre otros. Asimismo, el agua micelar contiene una analogía biológica particular dado que resulta muy amigable con la piel, incluso la de las personas más sensibles y alérgicas.",
-    modoUso: "Puedes aplicarlo tanto en tu rutina matutina como en la nocturna. Por la mañana, limpia tu piel antes de aplicar el sérum y la hidratante. Por la noche, desmaquilla y limpia tu rostro intensamente, tonificando e hidratando la piel."
-  },
-  { 
-    id: "brisa-bendicion-dinero", 
-    nombre: "Brisa Áurica Bendición del Dinero", 
-    categoria: "Brisas Áuricas", 
-    precio: 160,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/brisa-bendicion-dinero-product.png",
-    descripcion: "Brisa áurica artesanal con aceites esenciales de Vainilla, Laurel, Canela y semillas de abundancia. Consagrada e intencionada para limpiar la energía del dinero y atraer prosperidad financiera.",
-    beneficios: "Limpieza energética del dinero, elimina energías negativas y atrae prosperidad financiera.",
-    elaboracion: "Elaborado artesanalmente a base aceites esenciales y plantas energéticas; Vainilla, Laurel, Canela, semillas de abundancia. Vibrada e intencionada para limpiar la energía del dinero.",
-    proposito: "Una Brisa Áurica es una herramienta de limpieza energética que principalmente funciona a nivel emocional, y para liberarnos de las malas vibras que se nos puedan 'pegar' al ir con personas o ciertos lugares.",
-    modoUso: "Agitar antes de usar. Lo puedes aplicar sobre tu caja registradora, tu cartera o donde coloques tu dinero en efectivo. Esto con el motivo de eliminar energías negativas que pueda tener el dinero que se recibe."
-  },
-  { 
-    id: "brisa-prosperidad", 
-    nombre: "Brisa Áurica Prosperidad", 
-    categoria: "Brisas Áuricas", 
-    precio: 160,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/brisa-prosperidad-product.png",
-    descripcion: "Brisa áurica especializada en limpieza energética emocional, liberando malas vibras que se adhieren al interactuar con personas o visitar ciertos lugares. Restaura tu energía natural.",
-    beneficios: "Limpieza energética emocional, liberación de energías negativas y protección áurica.",
-    elaboracion: "Elaborado artesanalmente a base aceites esenciales y plantas energéticas; Laurel, Sándalo, Canela. Vibrada e intencionada para armonizar y equilibrar la energía de la Prosperidad en todos los aspectos positivos de tu vida.",
-    proposito: "Una Brisa Aurica es una herramienta de limpieza energética que principalmente funciona a nivel emocional, y para liberarnos de las malas vibras que se nos puedan 'pegar' al ir con personas o ciertos lugares.",
-    modoUso: "Agitar antes de usar. En tu área de trabajo, tu negocio u oficina, puedes rociar moderadamente con esta brisa, con la intención de equilibrar la energía de la prosperidad en todos los aspectos; Salud, Amor, Dinero, Conciencia etc."
-  },
-  { 
-    id: "brisa-abundancia", 
-    nombre: "Brisa Áurica Abundancia", 
-    categoria: "Brisas Áuricas", 
-    precio: 160,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/brisa-abundancia-product.png",
-    descripcion: "Brisa áurica consagrada para atraer abundancia y expansión en todas las áreas de tu vida. Su energía activa la ley de la abundancia universal.",
-    beneficios: "Atrae abundancia, expansión y energías positivas para el crecimiento personal.",
-    elaboracion: "Elaborado artesanalmente a base aceites esenciales y plantas energéticas; Patchuli, Naranja, Naranja, Mirra y Clavo. Vibrada e intencionada para armonizar y equilibrar la energía de la Abundancia en general.",
-    proposito: "Una Brisa Aurica es una herramienta de limpieza energética que principalmente funciona a nivel emocional, y para liberarnos de las malas vibras que se nos puedan 'pegar' al ir con personas o ciertos lugares.",
-    modoUso: "Agitar antes de usar. Rociar moderadamente en tus espacios de negocios, oficina o en casa, con la intención de remover energías de baja vibración que podrían limitar la expansión de tu Abundancia. La Abundancia a menudo se relaciona con la energía del dinero, pero también podemos intencionarla en otros aspectos de nuestra vida."
-  },
-  { 
-    id: "exf-abrecaminos", 
-    nombre: "Exfoliante Abre Caminos", 
-    categoria: "Exfoliantes", 
-    precio: 180,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/exfoliante-abrecaminos-product.png",
-    descripcion: "Exfoliante artesanal con Miel, Canela, Azúcar y Café, ingredientes seleccionados para exfoliar e hidratar tu piel. Consagrado para abrir caminos a la prosperidad y abundancia.",
-    beneficios: "Remueve energías negativas, exfolia la piel y abre caminos a la prosperidad.",
-    modoUso: "Usar 1-2 veces por semana. Exfoliar desde rostro hacia pies, repitiendo tu oración o decreto.",
-    elaboracion: "Elaborado con ingredientes naturales 100% puros: Miel de abeja orgánica, Canela de Ceilán, Azúcar morena y Café arábica molido. Cada lote es consagrado durante la luna nueva para potenciar la apertura de caminos.",
-    proposito: "Exfoliar la piel removiendo células muertas, limpiar energías negativas del cuerpo, abrir caminos hacia la prosperidad y abundancia, y activar la renovación personal en todos los niveles."
-  },
-  { 
-    id: "exf-venus", 
-    nombre: "Exfoliante Venus", 
-    categoria: "Exfoliantes", 
-    precio: 200,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/exfoliante-venus-product.png",
-    descripcion: "Exfoliante especial consagrado para el amor propio y la belleza interior, elaborado con ingredientes naturales y energéticos que conectan con la energía de Venus.",
-    beneficios: "Promueve el amor propio, belleza interior y renovación de la piel.",
-    modoUso: "Usar 1-2 veces por semana para renovar la piel y conectar con tu belleza interior.",
-    elaboracion: "Elaborado con ingredientes sagrados que conectan con la energía de Venus: Rosa, Lavanda, Sal marina y Aceite de Almendras dulces. Consagrado durante el tránsito de Venus para potenciar la conexión con el amor propio.",
-    proposito: "Promover el amor propio y la autoestima, conectar con la belleza interior, renovar la piel física y energética, y activar la energía de Venus para atraer amor y armonía personal."
-  },
-  { 
-    id: "feromonas-naturales", 
-    nombre: "Feromonas Naturales", 
-    categoria: "Feromonas", 
-    precio: 250,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/feromonas-naturales-product.png",
-    descripcion: "Feromonas naturales de la más alta pureza para aumentar la atracción y la confianza personal. Su esencia activa tu magnetismo natural.",
-    beneficios: "Aumenta la atracción natural y la confianza personal.",
-    modoUso: "Aplicar sobre puntos de pulso para mayor efectividad.",
-    elaboracion: "Elaboradas con feromonas naturales extraídas de plantas y flores específicas, diluidas en aceite base de jojoba. Cada lote es procesado bajo condiciones estériles y consagrado para potenciar el magnetismo personal.",
-    proposito: "Aumentar el magnetismo personal natural, potenciar la atracción hacia los demás, mejorar la confianza personal y crear un aura de carisma y encanto natural."
-  },
-  { 
-    id: "feromonas-dyc", 
-    nombre: "Feromonas Damas y Caballeros", 
-    categoria: "Feromonas", 
-    precio: 250,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/feromonas-damas-caballeros-product.png",
-    descripcion: "Feromonas especiales diseñadas para damas y caballeros, fortalecen la conexión de pareja y aumentan la atracción mutua de forma natural.",
-    beneficios: "Fortalece la conexión de pareja y aumenta la atracción mutua.",
-    elaboracion: "Elaboradas con feromonas específicas para cada género, extraídas de plantas y flores naturales, diluidas en aceite base de jojoba. Cada lote es procesado bajo condiciones estériles y consagrado para potenciar la conexión de pareja.",
-    proposito: "Fortalecer la conexión emocional y física entre parejas, aumentar la atracción mutua, mejorar la comunicación íntima y crear un vínculo más profundo basado en la química natural.",
-    modoUso: "Aplicar sobre puntos de pulso (muñecas, cuello, sienes) para mayor efectividad en la conexión de pareja. Usar antes de encuentros románticos o momentos especiales juntos."
-  },
-  { 
-    id: "agua-rosas", 
-    nombre: "Agua de Rosas", 
-    categoria: "Faciales", 
-    precio: 180,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/agua-de-rosas-product.png",
-    descripcion: "Agua de rosas natural de la más alta pureza para suavizar y nutrir la piel. Sus propiedades antioxidantes protegen y hidratan la piel de forma natural.",
-    beneficios: "Suaviza la piel, propiedades antioxidantes y efecto hidratante natural.",
-    elaboracion: "El agua de rosas contiene vitamina B, C y E. Todos estos nutrientes te ayudarán a suavizar la piel, hidratarla y combatir la oxidación. La ausencia de alcohol la hace ideal para las pieles sensibles y reactivas, además de cerrar los poros. Limpia profundamente y arrastra el exceso de grasa.",
-    proposito: "Los pétalos de las Rosas contienen compuestos antioxidantes, antimicrobianos, antinflamatorios, antisépticos, inmunosupresivos y actividad prebiótica, entre otros.",
-    modoUso: "Se aplica con un suave masaje después de la higiene facial y hay que dejarla actuar unos minutos antes de seguir con el resto de los productos."
-  },
-  { 
-    id: "aceite-ungir", 
-    nombre: "Aceite para Ungir", 
-    categoria: "Aceites", 
-    precio: 250,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/aceite-para-ungir-product.png",
-    descripcion: "Es un producto artesanal de grado espiritual, elaborado con base de aceite de Oliva, Mirra y Canela. La palabra 'Ungido' en hebreo significa Mesías.",
-    beneficios: "Consagrado para momentos espirituales sagrados, usado en eventos de adoración y espirituales, para curar enfermedades y santificar momentos sagrados.",
-    elaboracion: "Es un producto artesanal, de grado espiritual ya que la palabra Ungido en hebreo significa Mesías. la base es el aceite de Oliva, Mirra, Canela entre otras plantas sagradas.",
-    proposito: "Hoy en día, se están volviendo a usar estos aceites de unción en los eventos de adoración y espirituales, para curar enfermedades y para santificar una muerte.",
-    modoUso: "La persona que aplique el Aceite debe encontrarse en un momento muy espiritual, ya que este requiere mucho respeto. Puesto que es un aceite elaborado con el fin de llevar paz y calma a quien lo necesita en momentos muy difíciles."
-  },
-  { 
-    id: "shampoo-artesanal", 
-    nombre: "Shampoo Artesanal", 
-    categoria: "Shampoo", 
-    precio: 120,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/shampoo-artesanal-product.png",
-    descripcion: "Es un producto artesanal elaborado con ingredientes naturales de la más alta calidad para el cuidado del cabello. Sin químicos agresivos.",
-    beneficios: "Limpieza natural del cabello, sin químicos agresivos, promueve el brillo natural y la salud capilar.",
-    elaboracion: "Elaborado con ingredientes 100% naturales seleccionados cuidadosamente: aceite de coco, aloe vera, aceite de almendras dulces y extractos botánicos. Sin sulfatos, parabenos ni químicos agresivos que dañen el cabello.",
-    proposito: "Proporcionar una limpieza suave y efectiva del cabello, manteniendo su humectación natural, promoviendo el brillo y la salud capilar sin el uso de químicos agresivos que puedan causar daño o irritación.",
-    modoUso: "Usar como shampoo regular, masajear suavemente el cuero cabelludo para estimular la circulación."
-  },
-  { 
-    id: "shampoo-miel", 
-    nombre: "Shampoo Extracto de Miel", 
-    categoria: "Shampoo", 
-    precio: 140,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/shampoo-miel-product.png",
-    descripcion: "Es un producto artesanal elaborado con extracto de miel natural de la más alta pureza para suavizar y nutrir el cabello.",
-    beneficios: "Suaviza el cabello, nutre con propiedades naturales de la miel y promueve la salud capilar integral.",
-    elaboracion: "Elaborado con extracto de miel natural 100% pura, combinado con aceites esenciales y extractos botánicos. La miel es conocida por sus propiedades humectantes y nutritivas que suavizan y fortalecen el cabello naturalmente.",
-    proposito: "Proporcionar nutrición profunda al cabello utilizando las propiedades naturales de la miel, suavizando la textura, restaurando la humectación y promoviendo un cabello más saludable y manejable.",
-    modoUso: "Usar como shampoo regular, dejar actuar por 2-3 minutos para mayor beneficio y absorción de nutrientes."
-  },
-  { 
-    id: "shampoo-romero", 
-    nombre: "Shampoo Extracto de Romero", 
-    categoria: "Shampoo", 
-    precio: 140,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/shampoo-romero-product.png",
-    descripcion: "Es un producto artesanal elaborado con extracto de romero natural para fortalecer y dar volumen al cabello.",
-    beneficios: "Fortalece el cabello, da volumen natural y promueve el crecimiento saludable del cabello.",
-    elaboracion: "Elaborado con extracto de romero natural 100% puro, conocido por sus propiedades estimulantes y fortalecedoras. El romero mejora la circulación sanguínea en el cuero cabelludo y fortalece los folículos capilares.",
-    proposito: "Fortalecer el cabello desde la raíz, estimular el crecimiento saludable, dar volumen natural y mejorar la circulación sanguínea del cuero cabelludo para un cabello más fuerte y resistente.",
-    modoUso: "Usar como shampoo regular, masajear el cuero cabelludo para estimular la circulación y activar los folículos."
-  },
-  { 
-    id: "mascarilla-capilar", 
-    nombre: "Mascarilla Capilar", 
-    categoria: "Cabello", 
-    precio: 80,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/mascarilla-capilar-product.png",
-    descripcion: "Es un producto artesanal elaborado con ingredientes naturales de la más alta calidad para hidratar y dar brillo al cabello.",
-    beneficios: "Hidratación profunda, brillo natural y reparación integral del cabello dañado, restaura su vitalidad natural.",
-    elaboracion: "Elaborada con ingredientes naturales 100% puros: aceite de argán, aceite de coco, aloe vera y extractos botánicos hidratantes. Cada lote es preparado artesanalmente para proporcionar nutrición profunda y reparación del cabello.",
-    proposito: "Proporcionar hidratación profunda al cabello, restaurar su brillo natural, reparar daños causados por factores externos y nutrir desde la raíz hasta las puntas para un cabello más saludable y manejable.",
-    modoUso: "Aplicar después del shampoo, dejar actuar por 10-15 minutos para máxima absorción y enjuagar abundantemente."
-  },
-  { 
-    id: "agua-luna", 
-    nombre: "Agua de Luna", 
-    categoria: "Energéticos", 
-    precio: 180,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/agua-de-luna-product.png",
-    descripcion: "Es un producto artesanal elaborado con agua energizada con la energía sagrada de la luna para calma y limpieza espiritual.",
-    beneficios: "Calma emocional profunda, limpieza espiritual integral y conexión directa con la energía lunar y cósmica.",
-    elaboracion: "Recolección durante la Luna llena: en la noche de la Luna llena, se debe buscar un lugar al aire libre donde colocar el recipiente con agua y dejarlo a la luz de la Luna, una opción es el patio o terraza de su casa, lugares perfectos para recolectar el agua cargada de energía.",
-    proposito: "Se trata de agua potable que está magnetizada por la luz de la luna. Su objetivo es ayudar a las personas que la consuman a aliviar el estrés, calmar la ansiedad, limpiar el organismo y equilibrar las emociones.",
-    modoUso: "Se puede utilizar para limpiar y purificar los espacios del hogar. Rociar el agua en las áreas que se desea purificar, visualizando cómo la energía negativa se disipa y da paso a la abundancia y la prosperidad. Agregar unas gotas de agua de Luna a su baño puede ayudarle en una limpieza energética."
-  },
-  { 
-    id: "miel-consagrada", 
-    nombre: "Miel Consagrada", 
-    categoria: "Miel", 
-    precio: 200,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/miel-consagrada-product.png",
-    descripcion: "Es un producto artesanal elaborado con miel consagrada de la más alta pureza para rituales de prosperidad y abundancia.",
-    beneficios: "Su dulzura sagrada activa la ley de la abundancia universal, atrae prosperidad, abundancia y dulzura a la vida.",
-    elaboracion: "Miel natural 100% pura consagrada bajo la luna llena con intenciones de abundancia y prosperidad. Cada lote es bendecido individualmente y energizado con la energía sagrada de la miel, considerada en muchas culturas como el néctar de los dioses.",
-    proposito: "Activar la ley de la abundancia universal, atraer prosperidad y riqueza material y espiritual, endulzar la vida y crear un flujo constante de bendiciones y oportunidades. La miel consagrada es un poderoso catalizador para manifestar deseos de abundancia.",
-    modoUso: "Usar en rituales sagrados, ofrendas espirituales o consumir para atraer abundancia y prosperidad."
-  },
-  { 
-    id: "sal-negra", 
-    nombre: "Sal Negra", 
-    categoria: "Protección", 
-    precio: 150,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/sal-negra-product.png",
-    descripcion: "Es un producto artesanal elaborado con sal negra sagrada para protección y limpieza energética integral.",
-    beneficios: "Su poder purificador elimina energías negativas, crea un escudo de protección y limpia espacios de manera profunda.",
-    elaboracion: "Sal negra sagrada consagrada bajo la luna menguante para potenciar sus propiedades purificadoras y protectoras. La sal negra es conocida en muchas tradiciones como un poderoso elemento de limpieza energética y protección contra energías negativas.",
-    proposito: "Proteger espacios y personas contra energías negativas, limpiar y purificar ambientes de contaminación energética, crear un escudo protector espiritual y restaurar la armonía energética en el hogar y lugares de trabajo.",
-    modoUso: "Colocar en esquinas de la casa, usar en rituales de limpieza energética o protección espiritual."
-  },
-  { 
-    id: "polvo-oro", 
-    nombre: "Polvo de Oro", 
-    categoria: "Rituales", 
-    precio: 180,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/polvo-de-oro-product.png",
-    descripcion: "Es un producto artesanal elaborado con polvo de oro sagrado para rituales de abundancia y manifestación.",
-    beneficios: "Su energía dorada activa la ley de la atracción y la manifestación de deseos, atrae abundancia y riqueza material y espiritual.",
-    elaboracion: "Polvo de oro sagrado consagrado bajo la luna llena con intenciones de abundancia y manifestación. Cada lote es energizado con la energía dorada del oro, considerado en muchas tradiciones como el metal de los dioses y símbolo de riqueza y poder.",
-    proposito: "Activar la ley de la atracción y la manifestación de deseos, atraer abundancia y riqueza material y espiritual, potenciar rituales de prosperidad y crear un campo energético dorado que facilite la materialización de intenciones positivas.",
-    modoUso: "Usar en rituales de abundancia, espolvorear en velas sagradas o usar en decretos y afirmaciones."
-  },
-  { 
-    id: "palo-santo", 
-    nombre: "Palo Santo", 
-    categoria: "Sahumerios", 
-    precio: 120,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/palo-santo-product.png",
-    descripcion: "Es un producto artesanal elaborado con palo santo sagrado para purificación y armonía del ambiente.",
-    beneficios: "Su humo purificador elimina energías negativas, crea un espacio sagrado de paz y restaura la armonía energética.",
-    elaboracion: "Palo Santo (Bursera graveolens) recolectado de manera sostenible y consagrado bajo la luna llena. Este árbol sagrado es conocido por sus propiedades purificadoras y su aroma dulce y sagrado que limpia energías negativas y restaura la armonía.",
-    proposito: "Purificar espacios de energías negativas, crear un ambiente sagrado de paz y armonía, limpiar el aura personal y del ambiente, y facilitar la conexión espiritual durante meditaciones y rituales de purificación.",
-    modoUso: "Encender y dejar que el humo purifique el espacio, ideal para limpieza energética y rituales de purificación."
-  },
-  { 
-    id: "sahumerios", 
-    nombre: "Sahumerios", 
-    categoria: "Sahumerios", 
-    precio: 100,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/sahumerios-product.png",
-    descripcion: "Es un producto artesanal elaborado con sahumerios naturales de la más alta pureza para purificación y limpieza energética.",
-    beneficios: "Su aroma sagrado purifica el ambiente, limpia energías negativas y crea un espacio de paz y armonía espiritual.",
-    elaboracion: "Sahumerios artesanales elaborados con resinas naturales, hierbas sagradas y aceites esenciales puros. Cada lote es consagrado bajo la luna llena para potenciar sus propiedades purificadoras y limpiadoras de energías negativas.",
-    proposito: "Purificar ambientes de energías negativas, limpiar espacios de contaminación energética, crear un ambiente de paz y armonía espiritual, y facilitar la conexión con lo sagrado durante rituales y meditaciones.",
-    modoUso: "Encender y dejar que el humo purifique el espacio, ideal para limpieza energética y rituales de purificación."
-  },
-  { 
-    id: "bano-amargo", 
-    nombre: "Baño Energético Amargo", 
-    categoria: "Baños Energéticos", 
-    precio: 120,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/bano-amargo-product.png",
-    descripcion: "Es un producto artesanal elaborado con baño energético amargo consagrado para descarga y limpieza profunda.",
-    beneficios: "Sus hierbas sagradas eliminan energías negativas, renuevan el espíritu y proporcionan descarga energética integral.",
-    elaboracion: "Es una mezcla de plantas sanadoras entre ellas Laurel, Romero y Ajo.",
-    proposito: "Nos ayuda a descargar energías densas de nuestro cuerpo físico, mental y espiritual, en muchas ocasiones vamos absorbiendo energía negativa de personas y entornos, éstas plantas tienen la cualidad de desprender esa baja vibración.",
-    modoUso: "Poner a hervir las hierbas en aproximadamente 1Lt de agua, una vez hervida la mediamos con nuestra tina de baño, el resto de hierba podemos colocarlo en nuestro jardín o macetas."
-  },
-  { 
-    id: "bano-amor-propio", 
-    nombre: "Baño Energético Amor Propio", 
-    categoria: "Baños Energéticos", 
-    precio: 120,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/bano-amor-propio.JPG",
-    descripcion: "Es un producto artesanal elaborado con baño energético consagrado para aumentar el amor propio y la autoestima.",
-    beneficios: "Sus hierbas rosas conectan con la energía del amor y la belleza interior, aumentando el amor propio y la autoestima.",
-    elaboracion: "Es una mezcla de plantas sanadoras entre ellas Lavanda, y pétalos de Rosa.",
-    proposito: "Por cuestiones de autoestima, depresión o incluso ansiedad, llegamos a pensar que no estamos hechos para el Amor, cuando el Amor debe venir primero de uno. Los pétalos de rosa tienen esa energía sutil del Amor, que nos ayuda a reencontrarnos nuevamente.",
-    modoUso: "Poner a hervir las hierbas en aproximadamente 1Lt de agua, una vez hervida la mediamos con nuestra tina de baño, el resto de hierba podemos colocarlo en nuestro jardín o macetas."
-  },
-  { 
-    id: "bano-abre-caminos", 
-    nombre: "Baño Energético Abre Caminos", 
-    categoria: "Baños Energéticos", 
-    precio: 120,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/bano-energetico-abre-caminos.JPG",
-    descripcion: "Es un producto artesanal elaborado con mezcla de plantas sanadoras sagradas: Canela, Naranja y Laureles.",
-    beneficios: "Ayuda a conectar con la energía cuando hay estancamiento en economía, trabajo o crecimiento laboral, abre caminos y elimina estancamientos.",
-    elaboracion: "Es una mezcla de plantas sanadoras entre ellas Canela, Naranja y Laureles.",
-    proposito: "En muchas ocasiones por más que nos esforzamos en buscar buena economía, un buen trabajo o crecimiento laboral, sentimos un estancamiento en esa área, estas plantas nos ayudan a conectar nuevamente con esa energía.",
-    modoUso: "Poner a hervir las hierbas en aproximadamente 1Lt de agua, una vez hervida la mediamos con nuestra tina de baño, el resto de hierba podemos colocarlo en nuestro jardín o macetas."
-  },
-  { 
-    id: "locion-ellas-ellos", 
-    nombre: "Loción Ellas y Ellos", 
-    categoria: "Lociones", 
-    precio: 220,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/locion-ellas-y-ellos.JPG",
-    descripcion: "Es un producto artesanal elaborado con extracción de flores y esencias naturales, con tonos suaves para Ellas y tonos frescos para Ellos.",
-    beneficios: "Ideal para parejas que desean reforzar su conexión y amor propio, aumenta autoestima, amor propio y seguridad.",
-    elaboracion: "Elaborada con extracción de flores y esencias naturales específicas para cada género: tonos suaves y florales para Ellas (rosa, lavanda, vainilla) y tonos frescos y cítricos para Ellos (bergamota, sándalo, cedro). Cada lote es consagrado para potenciar el amor propio y la conexión de pareja.",
-    proposito: "Fortalecer el amor propio y la autoestima individual, reforzar la conexión emocional entre parejas, aumentar la seguridad personal y crear un vínculo más profundo basado en el respeto y la valoración mutua.",
-    modoUso: "Usar como loción de diario para reforzar tu seguridad, aplicar después de bañarse para máxima absorción."
-  },
-  { 
-    id: "kit-bienestar", 
-    nombre: "Kit de Bienestar", 
-    categoria: "Kits", 
-    precio: 450,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/velas-de-miel-product.png",
-    descripcion: "Kit completo para tu ritual de autocuidado, incluye todo lo necesario para purificar espacios y atraer abundancia.",
-    beneficios: "Ahorras $150, incluye guía de ritual, productos complementarios para máxima efectividad.",
-    elaboracion: "Kit cuidadosamente seleccionado que incluye: Vela de cera de abeja, Loción Aqua Florida, Palo Santo y guía de ritual incluida. Cada producto es consagrado individualmente y el kit completo es bendecido para potenciar la sinergia entre todos los elementos.",
-    proposito: "Proporcionar una experiencia completa de autocuidado y limpieza energética, facilitando la práctica de rituales de abundancia y purificación de espacios. El kit está diseñado para que cada elemento complemente y potencie los efectos de los demás.",
-    modoUso: "Seguir la guía de ritual incluida. Usar los productos en el orden recomendado: primero el Palo Santo para purificar el espacio, luego la Loción Aqua Florida para limpiar energías personales, y finalmente encender la Vela de Miel para atraer abundancia."
-  },
-  { 
-    id: "kit-amor-propio", 
-    nombre: "Kit de Amor Propio", 
-    categoria: "Kits", 
-    precio: 580,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/exfoliante-venus-product.png",
-    descripcion: "Kit especial para celebrar y honrar tu belleza interior, diseñado para aumentar el amor propio y la autoestima.",
-    beneficios: "Ahorras $200, productos complementarios para el amor propio, incluye mascarilla facial natural.",
-    elaboracion: "Kit especializado que incluye: Exfoliante Venus, Loción Ellas y Ellos, Baño Energético Amor Propio y mascarilla facial natural. Cada producto está consagrado bajo la energía de Venus para potenciar el amor propio y la belleza interior.",
-    proposito: "Facilitar el proceso de reconexión con el amor propio, aumentar la autoestima y celebrar la belleza interior. El kit está diseñado para crear una experiencia holística de autocuidado que nutra tanto el cuerpo como el espíritu.",
-    modoUso: "Usar el Baño Energético Amor Propio primero para limpiar energías, luego el Exfoliante Venus para renovar la piel, aplicar la mascarilla facial natural, y finalmente usar la Loción Ellas y Ellos para sellar el ritual de amor propio."
-  },
-  { 
-    id: "mascarilla-amor", 
-    nombre: "Mascarilla Capilar Amor", 
-    categoria: "Cabello", 
-    precio: 180,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/mascarilla-capilar-product.png",
-    descripcion: "Mascarilla capilar artesanal con miel consagrada y aceites esenciales para nutrir y dar brillo al cabello.",
-    beneficios: "Nutrición profunda del cabello, brillo natural, reparación de daños y fortalecimiento capilar.",
-    elaboracion: "Elaborada con miel consagrada 100% pura, aceite de argán, aceite de coco y extractos botánicos naturales. Cada lote es consagrado bajo la luna llena para potenciar sus propiedades nutritivas y reparadoras.",
-    proposito: "Proporcionar nutrición profunda al cabello, restaurar su brillo natural, reparar daños causados por factores externos y fortalecer la estructura capilar desde la raíz hasta las puntas.",
-    modoUso: "Aplicar después del shampoo, masajear suavemente desde la raíz hasta las puntas, dejar actuar por 15-20 minutos y enjuagar abundantemente con agua tibia."
-  },
-  { 
-    id: "miel-sagrada", 
-    nombre: "Miel Sagrada", 
-    categoria: "Miel", 
-    precio: 250,
-    moneda: "MXN", 
-    imagen: "/images/placeholders/miel-consagrada-product.png",
-    descripcion: "Miel sagrada consagrada bajo la luna llena con intenciones de amor, abundancia y protección espiritual.",
-    beneficios: "Su dulzura sagrada activa la ley de la abundancia universal, atrae amor, prosperidad y protección espiritual.",
-    elaboracion: "Miel natural 100% pura consagrada bajo la luna llena con intenciones específicas de amor, abundancia y protección. Cada lote es bendecido individualmente y energizado con la energía sagrada de la miel.",
-    proposito: "Activar la ley de la abundancia universal, atraer amor y prosperidad, crear un escudo de protección espiritual y endulzar la vida con bendiciones divinas.",
-    modoUso: "Usar en rituales sagrados, ofrendas espirituales, consumir para atraer abundancia y amor, o aplicar en rituales de protección."
-  }
-];
 
-// Updated services with your prices and new images
-const DEFAULT_SERVICES = [
-  { id:"serv-sonoterapia", nombre:"Sonoterapia", categoria:"Servicios", precio:700, moneda:"MXN", duracion:"60 min", modalidad:"presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Sonoterapia", imagen:"/images/placeholders/Sonoterapia.png" },
-  { id:"serv-ceremonia-cacao", nombre:"Ceremonia de Cacao (10 pax)", categoria:"Servicios", precio:3500, moneda:"MXN", duracion:"—", modalidad:"presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Ceremonia%20de%20Cacao%2010%20pax", imagen:"/images/placeholders/Ceremonia-de-Cacao.png" },
-  { id:"serv-masaje-craneosacral-sonoterapia", nombre:"Masaje Craneosacral con Sonoterapia", categoria:"Servicios", precio:900, moneda:"MXN", duracion:"60 min", modalidad:"presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Masaje%20Craneosacral%20con%20Sonoterapia", imagen:"/images/placeholders/Masaje-Craneosacral-con-Sonoterapia.png" },
-  { id:"serv-numerologia", nombre:"Numerología", categoria:"Servicios", precio:450, moneda:"MXN", duracion:"—", modalidad:"online/presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Numerologia", imagen:"/images/placeholders/Numerología.png" },
-  { id:"serv-tarot-angelical", nombre:"Tarot Angelical", categoria:"Servicios", precio:450, moneda:"MXN", duracion:"—", modalidad:"online/presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Tarot%20Angelical", imagen:"/images/placeholders/Tarot-Angelical.png" },
-  { id:"serv-radiestesia", nombre:"Radiestesia", categoria:"Servicios", precio:550, moneda:"MXN", duracion:"—", modalidad:"online/presencial", bookingLink:"https://wa.me/523317361884?text=Quiero%20agendar%20Radiestesia", imagen:"/images/placeholders/Radiestesia.png" }
-];
 
-const CATEGORIES = ["Todos","Velas","Lociones","Brisas Áuricas","Exfoliantes","Feromonas","Faciales","Aceites","Shampoo","Cabello","Energéticos","Miel","Protección","Rituales","Sahumerios","Baños Energéticos","Kits","Servicios"];
-const money = (v,m="MXN") => new Intl.NumberFormat("es-MX",{style:"currency",currency:m}).format(v);
-const hasVariants = it => it.categoria!=='Servicios' && Array.isArray(it.variantes) && it.variantes.length>0;
-const minPrice = it => hasVariants(it) ? Math.min(...it.variantes.map(v=>v.precio||0)) : (it.precio||0);
-const filterItems = (items, category, query) => {
-  const q=(query||"").toLowerCase().trim();
-  return items.filter(item=> (category==="Todos" || item.categoria===category) && (!q || item.nombre.toLowerCase().includes(q) || (item.tags||[]).some(t=>(t||"").toLowerCase().includes(q))));
-};
+// Kids services data
+// DEFAULT_KIDS_SERVICES removed - all products now loaded from Firebase
 
-function UIStyles(){ return (<style>{`
-  :root{ --radius:14px } .btn{ padding:.55rem 1rem; border-radius:var(--radius); font-weight:600; border:none; cursor:pointer }
-  .btn-outline{ padding:.55rem 1rem; border-radius:var(--radius); font-weight:600; background:transparent; border:1px solid }
-  .card{ border-radius:18px; background:#fff; box-shadow:0 10px 28px rgba(0,0,0,.07); overflow:hidden }
-  .chip{ display:inline-block; padding:.25rem .7rem; border-radius:999px; font-size:.85rem; border:1px solid rgba(0,0,0,.08); background:rgba(255,255,255,.65) }
-  .container{ width:100%; max-width:1120px; margin:0 auto; padding:0 1rem } .grid{ display:grid; gap:1rem }
-  @media(min-width:1024px){ .grid-cols-3{ grid-template-columns: repeat(3,minmax(0,1fr)); } }
-`}</style>); }
+// Complete product data from catalog
+// DEFAULT_PRODUCTS removed - all products now loaded from Firebase
 
-function MosaicGrid({ paleta, items, category, query, onAdd, onOpen }){
-  const filtered = useMemo(()=>filterItems(items,category,query),[items,category,query]);
-  const cells = filtered.map((it,idx)=>({...it, span: idx%7===0?2:1}));
-  return <div style={{ display:'grid', gap:12, gridTemplateColumns:'repeat(3, minmax(0,1fr))' }}>
-    {cells.map(item=>(
-      <div key={item.id} className="card" style={{ gridColumn:item.span===2?'span 2':'span 1' }}>
-        <div style={{ position:'relative' }}>
-          <img 
-            src={item.imagen} 
-            alt={item.nombre} 
-            style={{ 
-              width:'100%', 
-              height:item.span===2?280:220, 
-              objectFit:'cover',
-              objectPosition: 'center'
-            }} 
-            onError={(e) => {
-              e.target.style.display = 'none';
-              e.target.nextSibling.style.display = 'flex';
-            }}
-          />
-          <div style={{
-            display: 'none',
-            width: '100%',
-            height: item.span===2?280:220,
-            background: "linear-gradient(135deg, #FBF2DE, #E0A73A)",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "2rem",
-            color: "#8B4513"
-          }}>
-            🖼️
-          </div>
-          <div style={{ position:'absolute', top:12, left:12, background: PALETAS.D.miel, color: PALETAS.D.carbon, borderRadius:999, padding:'4px 10px', fontWeight:600, fontSize:12 }}>{item.categoria}</div>
-        </div>
-        <div style={{ padding:14 }}>
-          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'start', gap:8 }}>
-            <h3 style={{ margin:0, fontSize:18 }}>{item.nombre}</h3>
-            <b>{hasVariants(item) ? `Desde ${money(minPrice(item), item.moneda||'MXN')}` : (item.categoria==='Servicios' ? money(item.precio, item.moneda) : money(item.precio||minPrice(item), item.moneda))}</b>
-          </div>
-          <div style={{ marginTop:10, display:'flex', gap:8 }}>
-            {item.categoria==='Servicios'
-              ? <a className="btn" href={item.bookingLink} target="_blank" rel="noreferrer" style={{ background: PALETAS.D.miel, color: PALETAS.D.carbon }}>Reservar</a>
-              : hasVariants(item) ? <button className="btn" onClick={()=>onOpen(item)} style={{ background: PALETAS.D.miel, color: PALETAS.D.carbon }}>Elegir</button>
-              : <button className="btn" onClick={()=>onAdd(item)} style={{ background: PALETAS.D.miel, color: PALETAS.D.carbon }}>Añadir</button>
-            }
-            <button className="btn-outline" onClick={()=>onOpen(item)} style={{ borderColor: PALETAS.D.miel }}>Ver más</button>
-          </div>
-        </div>
-      </div>
-    ))}
-  </div>
-}
+// DEFAULT_SERVICES removed - all products now loaded from Firebase
 
-function VariationD({ paleta, items, onAdd, onOpen, cart, setOpenCart, category, setCategory, query, setQuery, services }){
-  return <div style={{ background: paleta.fondo, color: paleta.carbon, minHeight:"100vh" }}>
-    <UIStyles />
-    <header style={{ position:'sticky', top:0, zIndex:50, backdropFilter:'blur(8px)', background:'rgba(255,244,218,.85)', borderBottom:'1px solid rgba(0,0,0,.06)' }}>
-      <div className="container" style={{ display:'flex', alignItems:'center', gap:10, padding:'12px 0' }}>
-        <div style={{ display:'flex', alignItems:'center', gap:8 }}><div style={{ width:36, height:36, borderRadius:12, background: paleta.miel, display:'grid', placeItems:'center' }}>🐝</div><strong>Amor y Miel</strong></div>
-        <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:8 }}>
-          🔎<input value={query} onChange={(e)=>setQuery(e.target.value)} placeholder="Buscar productos..." style={{ padding:'8px 10px', borderRadius:12, border:'1px solid rgba(0,0,0,.12)', background:'#fff', width:260 }} />
-          <button className="btn-outline" onClick={()=>setOpenCart(true)} style={{ borderColor: paleta.miel }}>🛍️ ({cart.reduce((a,b)=>a+b.cantidad,0)})</button>
-        </div>
-      </div>
-    </header>
+const CATEGORIES = ["Todos", "Velas", "Lociones", "Brisas Áuricas", "Exfoliantes", "Feromonas", "Faciales", "Aceites", "Shampoo", "Cabello", "Energéticos", "Miel", "Protección", "Rituales", "Sahumerios", "Baños Energéticos", "Servicios"];
 
-    <section className="container" style={{ padding:'6px 0 14px' }}>
-      <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
-        {["Todos","Velas","Lociones","Brisas Áuricas","Exfoliantes","Feromonas","Faciales","Aceites","Shampoo","Cabello","Energéticos","Miel","Protección","Rituales","Sahumerios","Baños Energéticos","Servicios"].map((c)=> (
-          <button key={c} onClick={()=>setCategory(c)} className="btn-outline" style={{ background: category===c? paleta.miel : 'transparent', borderColor: paleta.miel }}>{c}</button>
-        ))}
-      </div>
-    </section>
-
-    <section id="gridD" className="container" style={{ padding:'10px 0 28px' }}>
-      <MosaicGrid paleta={paleta} items={items} category={category} query={query} onAdd={onAdd} onOpen={onOpen} />
-    </section>
-
-    <section id="servicios" className="container" style={{ padding:'8px 0 28px' }}>
-      <div className="card" style={{ padding:16, background:`linear-gradient(90deg, ${paleta.miel}22, transparent)` }}>
-        <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-          ✨<div><strong>Servicios holísticos</strong><div style={{ fontSize:14, opacity:.75 }}>Agenda por WhatsApp</div></div>
-          <a href="https://wa.me/523317361884" className="btn" style={{ marginLeft:'auto', background: paleta.miel, color: paleta.carbon }} target="_blank" rel="noreferrer">Consultar</a>
-        </div>
-      </div>
-      <div className="grid grid-cols-3" style={{ marginTop:12 }}>
-        {services.map((s)=> (
-          <div key={s.id} className="card" style={{ overflow:'hidden' }}>
-            <img 
-              src={s.imagen} 
-              alt={s.nombre} 
-              style={{ 
-                width:'100%', 
-                height:200, 
-                objectFit:'cover',
-                objectPosition: 'center'
-              }} 
-              onError={(e) => {
-                e.target.style.display = 'none';
-                e.target.nextSibling.style.display = 'flex';
-              }}
-            />
-            <div style={{
-              display: 'none',
-              width: '100%',
-              height: 200,
-              background: "linear-gradient(135deg, #FBF2DE, #E0A73A)",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "2rem",
-              color: "#8B4513"
-            }}>
-              🖼️
-            </div>
-            <div style={{ padding:14 }}>
-              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'start', gap:8 }}>
-                <h3 style={{ margin:0, fontSize:18 }}>{s.nombre}</h3><b>{money(s.precio, s.moneda)}</b>
-              </div>
-              <div style={{ fontSize:12, opacity:.75 }}>Duración: {s.duracion} · {s.modalidad}</div>
-              <div style={{ marginTop:10, display:'flex', gap:8 }}>
-                <a className="btn" style={{ background: paleta.miel, color: paleta.carbon }} href={s.bookingLink} target="_blank" rel="noreferrer">📞 Reservar</a>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  </div>
-}
-
-function AdminPanel({ paleta, products, setProducts, services, setServices, onClose }){
-  const [tab, setTab] = useState('imagenes');
-  const [passOk, setPassOk] = useState(localStorage.getItem('amym-admin')==='1');
-  const [password, setPassword] = useState('');
-  useEffect(()=>{ const url = new URL(window.location.href); if(url.searchParams.get('admin')==='1') setPassOk(true); },[]);
-  function unlock(){ if(password.trim()==='abeja'){ localStorage.setItem('amym-admin','1'); setPassOk(true); } else alert('Clave incorrecta.'); }
-  function saveAll(){ localStorage.setItem('amym-products', JSON.stringify(products)); localStorage.setItem('amym-services', JSON.stringify(services)); alert('Guardado.'); }
-  function resetAll(){ if(confirm('¿Restaurar datos por defecto?')){ localStorage.removeItem('amym-products'); localStorage.removeItem('amym-services'); window.location.reload(); } }
-  function aiPromptFor(item){
-    const base="Foto de producto/servicio estilo estudio, fondo crema cálido, iluminación suave, utilería mínima, paleta miel (#E0A73A) y verde (#628D6A), 4k, sin texto.";
-    const categoryMap={ "Velas":"velas de cera de abeja", "Lociones":"frasco ámbar/transparente", "Brisas Áuricas":"spray elegante", "Exfoliantes":"frasco con gránulos", "Feromonas":"frasco tipo perfume", "Faciales":"frasco cosmético", "Aceites":"gotero con aceite dorado", "Shampoo":"botella artesanal", "Cabello":"tarro con crema", "Energéticos":"líquido translúcido", "Miel":"tarro de miel", "Protección":"sal negra", "Rituales":"polvo dorado", "Sahumerios":"varitas con humo", "Baños Energéticos":"frasco con sales", "Servicios":"composición conceptual (cuenco, cacao, cartas, péndulo)"};
-    return `${item.nombre}: ${categoryMap[item.categoria]||''}. ${base}`;
-  }
-  function downloadCSV(){
-    const rows=[...products,...services].map(it=>({ id:it.id, nombre:it.nombre, categoria:it.categoria, prompt_es:aiPromptFor(it), aspect_ratio:'4:3', style:'estudio minimalista cálido, realista, high key' }));
-    const header=Object.keys(rows[0]);
-    const csvRows = rows.map(r => 
-      header.map(h => `"${String(r[h] || '').replace(/"/g, '""')}"`).join(',')
-    );
-    const csv = [header.join(','), ...csvRows];
-    const blob=new Blob([csv.join('\n')],{type:'text/csv;charset=utf-8;'}); 
-    const a=document.createElement('a'); 
-    a.href=URL.createObjectURL(blob); 
-    a.download='ai_image_prompts.csv'; 
-    a.click(); 
-    URL.revokeObjectURL(a.href);
-  }
-  if(!passOk) return (<div className="card" style={{padding:16}}><h3>⚙️ Admin</h3><p>Clave demo: <code>abeja</code></p><input value={password} onChange={e=>setPassword(e.target.value)} placeholder="Clave" type="password" /><button className="btn" onClick={unlock} style={{marginLeft:8, background: paleta.miel}}>Entrar</button></div>);
-  return (<div className="card" style={{padding:16}}>
-    <div style={{display:'flex',gap:8,alignItems:'center'}}><h3 style={{margin:0}}>⚙️ Panel de administración</h3><div style={{marginLeft:'auto',display:'flex',gap:8}}><button className="btn" onClick={saveAll} style={{background: paleta.miel}}>💾 Guardar</button><button className="btn-outline" onClick={resetAll} style={{borderColor: paleta.miel}}>Restaurar</button><button className="btn-outline" onClick={onClose} style={{borderColor: paleta.miel}}>✖️ Cerrar</button></div></div>
-    <div style={{display:'flex',gap:8,marginTop:10}}>
-      {['imagenes','productos','servicios'].map(t=>(<button key={t} className="btn-outline" style={{borderColor: paleta.miel}} onClick={()=>setTab(t)}>{t}</button>))}
-      {tab==='imagenes' && <button className="btn-outline" onClick={downloadCSV} style={{borderColor: paleta.miel}}>📥 Prompts CSV</button>}
-    </div>
-    {tab==='imagenes' && (<div style={{marginTop:12}}>
-      <p style={{opacity:.75}}>Prompts visibles aquí (genera con /api/ai/image tras configurar tu API key).</p>
-      <table><thead><tr><th>Item</th><th>Prompt (ES)</th></tr></thead><tbody>
-        {[...products,...services].map(p=>(<tr key={p.id}><td><b>{p.nombre}</b> <span style={{fontSize:12,opacity:.65}}>{p.categoria}</span></td><td style={{maxWidth:580}}>{aiPromptFor(p)}</td></tr>))}
-      </tbody></table></div>)}
-    {tab==='productos' && (<div style={{marginTop:12}}><table><thead><tr><th>Nombre</th><th>Categoria</th><th>Imagen</th></tr></thead><tbody>
-      {products.map((p,idx)=>(<tr key={p.id}><td><input value={p.nombre} onChange={e=>setProducts(a=>a.map((x,i)=>i===idx?{...x,nombre:e.target.value}:x))}/></td><td><input value={p.categoria} onChange={e=>setProducts(a=>a.map((x,i)=>i===idx?{...x,categoria:e.target.value}:x))}/></td><td><input value={p.imagen||''} onChange={e=>setProducts(a=>a.map((x,i)=>i===idx?{...x,imagen:e.target.value}:x))}/></td></tr>))}
-    </tbody></table></div>)}
-    {tab==='servicios' && (<div style={{marginTop:12}}><table><thead><tr><th>Nombre</th><th>Precio</th><th>Modalidad</th><th>Imagen</th></tr></thead><tbody>
-      {services.map((s,idx)=>(<tr key={s.id}><td><input value={s.nombre} onChange={e=>setServices(a=>a.map((x,i)=>i===idx?{...x,nombre:e.target.value}:x))}/></td><td><input type="number" value={s.precio} onChange={e=>setServices(a=>a.map((x,i)=>i===idx?{...x,precio:Number(e.target.value)||0}:x))}/></td><td><input value={s.modalidad} onChange={e=>setServices(a=>a.map((x,i)=>i===idx?{...x,modalidad:e.target.value}:x))}/></td><td><input value={s.imagen||''} onChange={e=>setServices(a=>a.map((x,i)=>i===idx?{...x,imagen:e.target.value}:x))}/></td></tr>))}
-    </tbody></table></div>)}
-  </div>);
-}
-
-function ProductModal({ item, selectedVariant, setSelectedVariant, onAdd, onClose }){
-  return (
-    <div style={{ position:"fixed", inset:0, zIndex:70 }}>
-      <div onClick={onClose} style={{ position:"absolute", inset:0, background:"rgba(0,0,0,.6)" }} />
-      <div style={{ 
-        position:"absolute", 
-        left:"50%", 
-        top:"50%", 
-        transform:"translate(-50%, -50%)", 
-        width:"min(1000px,96vw)", 
-        maxHeight:"92vh", 
-        background:"#fff", 
-        borderRadius:20, 
-        overflow:"hidden", 
-        boxShadow:"0 25px 60px rgba(0,0,0,.3)",
-        display:"flex",
-        flexDirection:"column"
-      }}>
-        {/* Header */}
-        <div style={{ 
-          display:"flex", 
-          justifyContent:"space-between", 
-          alignItems:"center", 
-          padding:"20px 24px", 
-          borderBottom:"1px solid rgba(0,0,0,.08)",
-          background:"#FBF2DE"
-        }}>
-          <h2 style={{ margin:0, fontSize:22, color:"#1A1714", fontWeight:600 }}>{item.nombre}</h2>
-          <button 
-            onClick={onClose} 
-            style={{ 
-              background:"transparent", 
-              border:"none", 
-              fontSize:20, 
-              cursor:"pointer", 
-              padding:"8px", 
-              borderRadius:"50%",
-              color:"#666",
-              transition:"all 0.2s ease"
-            }}
-            onMouseEnter={(e) => e.target.style.background = "rgba(0,0,0,.1)"}
-            onMouseLeave={(e) => e.target.style.background = "transparent"}
-          >
-            ✖️
-          </button>
-        </div>
-
-        {/* Content */}
-        <div style={{ display:"flex", flex:1, overflow:"hidden" }}>
-          {/* Left Side - Catalog Image */}
-          <div style={{ 
-            flex:"0 0 45%", 
-            position:"relative", 
-            background:"#F8F9FA",
-            display:"flex",
-            alignItems:"center",
-            justifyContent:"center"
-          }}>
-            <img 
-              src={CATALOG_IMAGES[item.nombre] || item.imagen} 
-              alt={item.nombre} 
-              style={{ 
-                width:"100%", 
-                height:"100%", 
-                objectFit:"contain",
-                objectPosition:"center"
-              }} 
-              onError={(e) => {
-                e.target.style.display = "none";
-                e.target.nextSibling.style.display = "flex";
-              }}
-            />
-            <div style={{
-              display: "none",
-              width: "100%",
-              height: "100%",
-              background: "linear-gradient(135deg, #FBF2DE, #E0A73A)",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "3rem",
-              color: "#8B4513"
-            }}>
-              🖼️
-            </div>
-            
-            {/* Catalog Image Indicator */}
-            {CATALOG_IMAGES[item.nombre] && (
-              <div style={{ 
-                position:"absolute", 
-                top:16, 
-                right:16, 
-                background: "#28a745", 
-                color: "white", 
-                borderRadius:999, 
-                padding:'4px 8px', 
-                fontWeight:600, 
-                fontSize:10,
-                boxShadow:"0 2px 8px rgba(40, 167, 69, 0.3)"
-              }}>
-                📋 Catálogo
-              </div>
-            )}
-            
-            <div style={{ 
-              position:"absolute", 
-              top:16, 
-              left:16, 
-              background: "#E0A73A", 
-              color: "#1A1714", 
-              borderRadius:999, 
-              padding:'6px 12px', 
-              fontWeight:600, 
-              fontSize:12,
-              boxShadow:"0 2px 8px rgba(224, 167, 58, 0.3)"
-            }}>
-              {item.categoria}
-            </div>
-          </div>
-          
-          {/* Right Side - Product Details */}
-          <div style={{ 
-            flex:"1", 
-            padding:"24px", 
-            overflowY:"auto", 
-            display:"flex", 
-            flexDirection:"column",
-            gap:"20px"
-          }}>
-            
-            {/* Variants Selection */}
-            {Array.isArray(item.variantes)&&item.variantes.length ? (
-              <div style={{ marginBottom:8 }}>
-                <label style={{ fontSize:14, fontWeight:600, color:"#666", marginBottom:8, display:"block" }}>Variante</label>
-                <select 
-                  value={selectedVariant?.sku||""} 
-                  onChange={(e)=>{ const v=(item.variantes||[]).find(v=>v.sku===e.target.value)||null; setSelectedVariant(v); }} 
-                  style={{ 
-                    width:'100%', 
-                    padding:'14px 16px', 
-                    borderRadius:12, 
-                    border:'2px solid rgba(0,0,0,.12)', 
-                    fontSize:14,
-                    background:"#fff",
-                    transition:"border-color 0.2s ease"
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = "#E0A73A"}
-                  onBlur={(e) => e.target.style.borderColor = "rgba(0,0,0,.12)"}
-                >
-                  {(item.variantes||[]).map(v=> <option key={v.sku} value={v.sku}>{v.titulo} — {money(v.precio, item.moneda||'MXN')}</option>)}
-                </select>
-              </div>
-            ) : null}
-            
-            {/* Price */}
-            <div style={{ 
-              padding:"20px", 
-              background:"linear-gradient(135deg, #FBF2DE, #FFF8E1)", 
-              borderRadius:16, 
-              border:"2px solid #E0A73A",
-              textAlign:"center",
-              boxShadow:"0 4px 12px rgba(224, 167, 58, 0.15)"
-            }}>
-              <div style={{ fontSize:14, color:"#666", marginBottom:6, fontWeight:500 }}>Precio</div>
-              <div style={{ fontSize:32, fontWeight:700, color:"#E0A73A" }}>
-                {money(selectedVariant?.precio ?? (item.precio || minPrice(item)), item.moneda||'MXN')}
-              </div>
-            </div>
-            
-            {/* Product Information Sections */}
-            <div style={{ display:"flex", flexDirection:"column", gap:16, flex:1 }}>
-              
-              {/* Descripción */}
-              {item.descripcion && (
-                <div style={{ 
-                  padding:"20px", 
-                  background:"#F8F9FA", 
-                  borderRadius:16, 
-                  border:"1px solid rgba(0,0,0,.08)",
-                  boxShadow:"0 2px 8px rgba(0,0,0,.05)"
-                }}>
-                  <h4 style={{ margin:"0 0 12px 0", fontSize:16, color:"#E0A73A", fontWeight:600, display:"flex", alignItems:"center", gap:8 }}>
-                    📝 Descripción
-                  </h4>
-                  <p style={{ margin:0, fontSize:14, lineHeight:1.6, color:"#333" }}>{item.descripcion}</p>
-                </div>
-              )}
-              
-              {/* Beneficios */}
-              {item.beneficios && (
-                <div style={{ 
-                  padding:"20px", 
-                  background:"#F0F8FF", 
-                  borderRadius:16, 
-                  border:"1px solid rgba(0,0,0,.08)",
-                  boxShadow:"0 2px 8px rgba(0,0,0,.05)"
-                }}>
-                  <h4 style={{ margin:"0 0 12px 0", fontSize:16, color:"#E0A73A", fontWeight:600, display:"flex", alignItems:"center", gap:8 }}>
-                    ✨ Beneficios
-                  </h4>
-                  <p style={{ margin:0, fontSize:14, lineHeight:1.6, color:"#333" }}>{item.beneficios}</p>
-                </div>
-              )}
-              
-              {/* Elaboración */}
-              {item.elaboracion && (
-                <div style={{ 
-                  padding:"20px", 
-                  background:"#FFF8E1", 
-                  borderRadius:16, 
-                  border:"1px solid rgba(0,0,0,.08)",
-                  boxShadow:"0 2px 8px rgba(0,0,0,.05)"
-                }}>
-                  <h4 style={{ margin:"0 0 12px 0", fontSize:16, color:"#E0A73A", fontWeight:600, display:"flex", alignItems:"center", gap:8 }}>
-                    🏭 Elaboración
-                  </h4>
-                  <p style={{ margin:0, fontSize:14, lineHeight:1.6, color:"#333" }}>{item.elaboracion}</p>
-                </div>
-              )}
-              
-              {/* Propósito */}
-              {item.proposito && (
-                <div style={{ 
-                  padding:"20px", 
-                  background:"#F3E5F5", 
-                  borderRadius:16, 
-                  border:"1px solid rgba(0,0,0,.08)",
-                  boxShadow:"0 2px 8px rgba(0,0,0,.05)"
-                }}>
-                  <h4 style={{ margin:"0 0 12px 0", fontSize:16, color:"#E0A73A", fontWeight:600, display:"flex", alignItems:"center", gap:8 }}>
-                    🎯 Propósito
-                  </h4>
-                  <p style={{ margin:0, fontSize:14, lineHeight:1.6, color:"#333" }}>{item.proposito}</p>
-                </div>
-              )}
-              
-              {/* Modo de Uso */}
-              {item.modoUso && (
-                <div style={{ 
-                  padding:"20px", 
-                  background:"#E8F5E8", 
-                  borderRadius:16, 
-                  border:"1px solid rgba(0,0,0,.08)",
-                  boxShadow:"0 2px 8px rgba(0,0,0,.05)"
-                }}>
-                  <h4 style={{ margin:"0 0 12px 0", fontSize:16, color:"#E0A73A", fontWeight:600, display:"flex", alignItems:"center", gap:8 }}>
-                    📖 Modo de Uso
-                  </h4>
-                  <p style={{ margin:0, fontSize:14, lineHeight:1.6, color:"#333" }}>{item.modoUso}</p>
-                </div>
-              )}
-            </div>
-            
-            {/* Action Buttons */}
-            <div style={{ 
-              paddingTop:20, 
-              display:"flex", 
-              gap:12,
-              borderTop:"1px solid rgba(0,0,0,.08)",
-              marginTop:"auto"
-            }}>
-              {item.categoria==='Servicios'
-                ? <a 
-                    href={item.bookingLink} 
-                    target="_blank" 
-                    rel="noreferrer" 
-                    className="btn" 
-                    style={{ 
-                      background:"#E0A73A", 
-                      color:"#1A1714", 
-                      flex:1, 
-                      textAlign:"center", 
-                      textDecoration:"none",
-                      padding:"16px 24px",
-                      borderRadius:12,
-                      fontWeight:600,
-                      fontSize:16,
-                      transition:"all 0.2s ease",
-                      boxShadow:"0 4px 12px rgba(224, 167, 58, 0.3)"
-                    }}
-                    onMouseEnter={(e) => e.target.style.transform = "translateY(-2px)"}
-                    onMouseLeave={(e) => e.target.style.transform = "translateY(0)"}
-                  >
-                    📞 Reservar
-                  </a>
-                : <button 
-                    className="btn" 
-                    style={{ 
-                      background:"#E0A73A", 
-                      color:"#1A1714", 
-                      flex:1,
-                      padding:"16px 24px",
-                      borderRadius:12,
-                      fontWeight:600,
-                      fontSize:16,
-                      border:"none",
-                      cursor:"pointer",
-                      transition:"all 0.2s ease",
-                      boxShadow:"0 4px 12px rgba(224, 167, 58, 0.3)"
-                    }} 
-                    onClick={()=>{ onAdd(item, selectedVariant); onClose(); }}
-                    onMouseEnter={(e) => e.target.style.transform = "translateY(-2px)"}
-                    onMouseLeave={(e) => e.target.style.transform = "translateY(0)"}
-                  >
-                    🛒 Añadir al Carrito
-                  </button>
-              }
-              <button 
-                className="btn-outline" 
-                onClick={onClose} 
-                style={{ 
-                  borderColor: "#E0A73A", 
-                  padding:"16px 24px",
-                  borderRadius:12,
-                  background:"transparent",
-                  color:"#E0A73A",
-                  fontWeight:600,
-                  fontSize:16,
-                  cursor:"pointer",
-                  transition:"all 0.2s ease"
-                }}
-                                 onMouseEnter={(e) => {
-                   e.target.style.background = "#E0A73A";
-                   e.target.style.color = "#1A1714";
-                 }}
-                 onMouseLeave={(e) => {
-                   e.target.style.background = "transparent";
-                   e.target.style.color = "#E0A73A";
-                 }}
-               >
-                 Cerrar
-               </button>
-             </div>
-           </div>
-         </div>
-       </div>
-     </div>
-   );
- }
-
-export default function App(){
+function App() {
   const [cart, setCart] = useState([]);
-  const [openCart, setOpenCart] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todos");
-  const [showAdmin, setShowAdmin] = useState(false);
-  const [products, setProducts] = useState(DEFAULT_PRODUCTS);
-  const [services, setServices] = useState(DEFAULT_SERVICES);
+  const [products, setProducts] = useState([]);
+  const [services, setServices] = useState([]);
+  const [kidsProducts, setKidsProducts] = useState([]);
+  const [kidsServices, setKidsServices] = useState([]);
   const [openProduct, setOpenProduct] = useState(null);
-  const [selectedVariant, setSelectedVariant] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState("");
+  const [isNewsletterSubmitting, setIsNewsletterSubmitting] = useState(false);
+  const [newsletterMessage, setNewsletterMessage] = useState("");
   
-  // Enhanced features state
-  const [showReviews, setShowReviews] = useState(false);
-  const [wishlist, setWishlist] = useState([]);
-  const [customerAccount, setCustomerAccount] = useState(null);
-  const [showLogin, setShowLogin] = useState(false);
-  const [showNewsletter, setShowNewsletter] = useState(false);
-  const [newsletterEmail, setNewsletterEmail] = useState("");
-  const [showLiveChat, setShowLiveChat] = useState(false);
-  const [reviews, setReviews] = useState({});
-  const [showWishlist, setShowWishlist] = useState(false);
-  
-  // Mobile optimization
-  const [isMobile, setIsMobile] = useState(false);
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
-  
-  // Advanced search
-  const [searchSuggestions, setSearchSuggestions] = useState([]);
-  const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
-  const [sortBy, setSortBy] = useState("popularity");
-  
-  // Customer support
-  const [showFAQ, setShowFAQ] = useState(false);
-  const [showContactForm, setShowContactForm] = useState(false);
-  const [contactForm, setContactForm] = useState({ name: "", email: "", message: "" });
-  
-  // Review form
-  const [newReview, setNewReview] = useState({ rating: 0, comment: "" });
-  
-  // Payment & Order System
-  const [orders, setOrders] = useState([]);
-  const [currentOrder, setCurrentOrder] = useState(null);
-  const [showOrderConfirmation, setShowOrderConfirmation] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState("card");
-  const [shippingAddress, setShippingAddress] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    city: "",
-    state: "",
-    zipCode: "",
-    country: "México"
-  });
-  
-  // User Authentication
+  // User authentication state
   const [user, setUser] = useState(null);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showRegisterModal, setShowRegisterModal] = useState(false);
-  const [authForm, setAuthForm] = useState({ email: "", password: "", name: "" });
+  const [userProfile, setUserProfile] = useState(null);
+  const [wishlist, setWishlist] = useState([]);
+  const [orderHistory, setOrderHistory] = useState([]);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState('login'); // 'login' or 'register'
+  const [authMessage, setAuthMessage] = useState("");
   
-  // Analytics & SEO
-  const [pageViews, setPageViews] = useState(0);
-  const [conversionRate, setConversionRate] = useState(0);
-  
-  // Email Marketing
-  const [emailSubscribers, setEmailSubscribers] = useState([]);
-  const [showEmailCampaign, setShowEmailCampaign] = useState(false);
-  
-  // Loyalty Program
-  const [loyaltyPoints, setLoyaltyPoints] = useState(0);
-  const [referralCode, setReferralCode] = useState("");
-  
-  // PWA Features
-  const [isOffline, setIsOffline] = useState(false);
-  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
-  
-  // Multi-language
-  const [language, setLanguage] = useState("es");
-  const [translations, setTranslations] = useState({
-    es: { /* Spanish translations */ },
-    en: { /* English translations */ }
-  });
+  // Admin dashboard state
+  const [showAdminDashboard, setShowAdminDashboard] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAddingProducts, setIsAddingProducts] = useState(false);
 
-  // NEW: Shipping & Delivery System
-  const [shippingZones, setShippingZones] = useState([
-    { id: "local", name: "Ciudad de México", price: 50, time: "1-2 días", available: true },
-    { id: "national", name: "Resto de México", price: 120, time: "3-5 días", available: true },
-    { id: "international", name: "Internacional", price: 350, time: "7-14 días", available: false }
-  ]);
-  const [selectedShipping, setSelectedShipping] = useState("local");
-
-
-  // NEW: Inventory Management
-  const [inventory, setInventory] = useState({});
-  const [lowStockThreshold] = useState(5);
-  const [backInStockSubscribers, setBackInStockSubscribers] = useState({});
-
-  // NEW: Security Features
-  const [securityBadges, setSecurityBadges] = useState([
-    { name: "SSL Secure", icon: "🔒", description: "Conexión encriptada" },
-    { name: "Mercado Pago", icon: "💳", description: "Pago seguro" },
-    { name: "GDPR Compliant", icon: "🛡️", description: "Protección de datos" }
-  ]);
-
-  // NEW: Social Media Integration
-  const [socialLinks, setSocialLinks] = useState({
-    instagram: "https://instagram.com/amorymiel",
-    facebook: "https://facebook.com/amorymiel",
-    whatsapp: "https://wa.me/525512345678"
-  });
-
-  // NEW: Discount System
-  const [coupons, setCoupons] = useState([
-    { code: "BIENVENIDA", discount: 15, type: "percentage", minPurchase: 500, valid: true },
-    { code: "LUNA", discount: 20, type: "percentage", minPurchase: 800, valid: true },
-    { code: "ABUNDANCIA", discount: 100, type: "fixed", minPurchase: 1000, valid: true }
-  ]);
-  const [appliedCoupon, setAppliedCoupon] = useState(null);
-  const [couponCode, setCouponCode] = useState("");
-
-  // NEW: Customer Analytics
-  const [browsingHistory, setBrowsingHistory] = useState([]);
-  const [purchaseHistory, setPurchaseHistory] = useState([]);
-  const [recommendations, setRecommendations] = useState([]);
-
-  // NEW: International Features
-  const [currencies, setCurrencies] = useState([
-    { code: "MXN", symbol: "$", rate: 1, name: "Peso Mexicano" },
-    { code: "USD", symbol: "$", rate: 0.058, name: "Dólar Estadounidense" },
-    { code: "EUR", symbol: "€", rate: 0.054, name: "Euro" }
-  ]);
-  const [selectedCurrency, setSelectedCurrency] = useState("MXN");
-  const [taxRates, setTaxRates] = useState({
-    MXN: { rate: 0.16, name: "IVA" },
-    USD: { rate: 0.08, name: "Sales Tax" },
-    EUR: { rate: 0.21, name: "VAT" }
-  });
-
-  // NEW: Enhanced Notifications
-  const [pushNotifications, setPushNotifications] = useState(false);
-  const [smsNotifications, setSmsNotifications] = useState(false);
-  const [emailNotifications, setEmailNotifications] = useState(true);
-  const [notificationPreferences, setNotificationPreferences] = useState({
-    orderUpdates: true,
-    promotions: true,
-    priceDrops: false,
-    newProducts: true,
-    backInStock: true
-  });
-
-  // NEW: App Store Features
-  const [appStoreLinks, setAppStoreLinks] = useState({
-    ios: "https://apps.apple.com/app/amor-y-miel",
-    android: "https://play.google.com/store/apps/details?id=com.amorymiel"
-  });
-  const [showAppInstall, setShowAppInstall] = useState(false);
-const [showNotificationPreferences, setShowNotificationPreferences] = useState(false);
-const [showRecommendations, setShowRecommendations] = useState(false);
-
-  // Mobile detection
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  // localStorage effects
-  useEffect(()=>{ try{ const raw=localStorage.getItem("amym-cart"); if(raw) setCart(JSON.parse(raw)); }catch(e){} },[]);
-  useEffect(()=>{ try{ localStorage.setItem("amym-cart", JSON.stringify(cart)); }catch(e){} },[cart]);
-  useEffect(()=>{ 
-    try{ 
-      const raw=localStorage.getItem("amym-products"); 
-      if(raw) {
-        setProducts(JSON.parse(raw));
-      } else {
-        // Ensure products is initialized with default value
-        setProducts(DEFAULT_PRODUCTS);
-      }
-    }catch(e){
-      // Fallback to default products if there's an error
-      setProducts(DEFAULT_PRODUCTS);
-    }
-  },[]);
-  useEffect(()=>{ 
-    try{ 
-      const raw=localStorage.getItem("amym-services"); 
-      if(raw) {
-        setServices(JSON.parse(raw));
-      } else {
-        // Ensure services is initialized with default value
-        setServices(DEFAULT_SERVICES);
-      }
-    }catch(e){
-      // Fallback to default services if there's an error
-      setServices(DEFAULT_SERVICES);
-    }
-  },[]);
-  useEffect(()=>{ 
-    try{ 
-      const raw=localStorage.getItem("amym-wishlist"); 
-      if(raw) {
-        setWishlist(JSON.parse(raw));
-      } else {
-        // Ensure wishlist is initialized with default value
-        setWishlist([]);
-      }
-    }catch(e){
-      // Fallback to default wishlist if there's an error
-      setWishlist([]);
-    }
-  },[]);
-  useEffect(()=>{ try{ localStorage.setItem("amym-wishlist", JSON.stringify(wishlist)); }catch(e){} },[wishlist]);
-  useEffect(()=>{ 
-    try{ 
-      const raw=localStorage.getItem("amym-reviews"); 
-      if(raw) {
-        setReviews(JSON.parse(raw));
-      } else {
-        // Ensure reviews is initialized with default value
-        setReviews({});
-      }
-    }catch(e){
-      // Fallback to default reviews if there's an error
-      setReviews({});
-    }
-  },[]);
-  useEffect(()=>{ try{ localStorage.setItem("amym-reviews", JSON.stringify(reviews)); }catch(e){} },[reviews]);
-  
-  // Payment & Order System localStorage
-  useEffect(()=>{ try{ const raw=localStorage.getItem("amym-orders"); if(raw) setOrders(JSON.parse(raw)); }catch(e){} },[]);
-  useEffect(()=>{ try{ localStorage.setItem("amym-orders", JSON.stringify(orders)); }catch(e){} },[orders]);
-  useEffect(()=>{ try{ const raw=localStorage.getItem("amym-shipping"); if(raw) setShippingAddress(JSON.parse(raw)); }catch(e){} },[]);
-  useEffect(()=>{ try{ localStorage.setItem("amym-shipping", JSON.stringify(shippingAddress)); }catch(e){} },[shippingAddress]);
-  
-  // User Authentication localStorage
-  useEffect(()=>{ try{ const raw=localStorage.getItem("amym-user"); if(raw) setUser(JSON.parse(raw)); }catch(e){} },[]);
-  useEffect(()=>{ try{ localStorage.setItem("amym-user", JSON.stringify(user)); }catch(e){} },[user]);
-  
-  // Loyalty Program localStorage
-  useEffect(()=>{ try{ const raw=localStorage.getItem("amym-points"); if(raw) setLoyaltyPoints(JSON.parse(raw)); }catch(e){} },[]);
-  useEffect(()=>{ try{ localStorage.setItem("amym-points", JSON.stringify(loyaltyPoints)); }catch(e){} },[loyaltyPoints]);
-  
-  // Language localStorage
-  useEffect(()=>{ try{ const raw=localStorage.getItem("amym-language"); if(raw) setLanguage(raw); }catch(e){} },[]);
-  useEffect(()=>{ try{ localStorage.setItem("amym-language", language); }catch(e){} },[language]);
-  
-  // PWA and Offline Detection
-  useEffect(() => {
-    const handleOnline = () => setIsOffline(false);
-    const handleOffline = () => setIsOffline(true);
-    
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    
-    // Check initial status
-    checkOfflineStatus();
-    
-    // Check for PWA install prompt
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(console.error);
-    }
-    
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
-  
-  // Track page views
-  useEffect(() => {
-    trackPageView(window.location.pathname);
-  }, []);
-
-  // NEW: Initialize inventory with default stock levels
-  useEffect(() => {
-    const defaultInventory = {};
-    DEFAULT_PRODUCTS.forEach(product => {
-      defaultInventory[product.id] = Math.floor(Math.random() * 50) + 10; // Random stock 10-60
-    });
-    setInventory(defaultInventory);
-  }, []);
-
-  // NEW: Generate recommendations when browsing history changes
-  useEffect(() => {
-    if (browsingHistory.length > 0) {
-      generateRecommendations();
-    }
-  }, [browsingHistory]);
-
-  // NEW: Check for mobile app and show install prompt
-  useEffect(() => {
-    if (detectMobileApp()) {
-      setTimeout(() => setShowAppInstall(true), 5000); // Show after 5 seconds
-    }
-  }, []);
-
-  // NEW: Persist new state variables to localStorage
-  useEffect(() => {
+  // Load products from Firestore and separate by category
+  const loadProductsFromFirestore = async () => {
     try {
-      localStorage.setItem("amym-shipping-zones", JSON.stringify(shippingZones));
-      localStorage.setItem("amym-inventory", JSON.stringify(inventory));
-      localStorage.setItem("amym-coupons", JSON.stringify(coupons));
-      localStorage.setItem("amym-currencies", JSON.stringify(currencies));
-      localStorage.setItem("amym-notifications", JSON.stringify(notificationPreferences));
-    } catch (e) {}
-  }, [shippingZones, inventory, coupons, currencies, notificationPreferences]);
+      if (!db) {
+        console.log('Firebase db not initialized, using empty arrays');
+        return;
+      }
 
-  // NEW: Load new state variables from localStorage
+      console.log('Loading products from Firestore...');
+      const { collection, query, getDocs } = await import('firebase/firestore');
+      const productsQuery = query(collection(db, 'products'));
+      const productsSnapshot = await getDocs(productsQuery);
+      const allProducts = productsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      
+      console.log('All products loaded from Firestore:', allProducts.length);
+      
+      // Separate products by category
+      const regularProducts = allProducts.filter(p => 
+        p.categoria && !['Servicios', 'servicios'].includes(p.categoria) && 
+        !p.categoria.toLowerCase().includes('kids') && 
+        !p.categoria.toLowerCase().includes('niños')
+      );
+      
+      const services = allProducts.filter(p => 
+        p.categoria && ['Servicios', 'servicios'].includes(p.categoria)
+      );
+      
+      const kidsProducts = allProducts.filter(p => 
+        p.categoria && p.categoria.toLowerCase().includes('kids')
+      );
+      
+      const kidsServices = allProducts.filter(p => 
+        p.categoria && p.categoria.toLowerCase().includes('niños') && 
+        ['Servicios', 'servicios'].includes(p.categoria)
+      );
+      
+      console.log('Separated products:', {
+        regular: regularProducts.length,
+        services: services.length,
+        kidsProducts: kidsProducts.length,
+        kidsServices: kidsServices.length
+      });
+      
+      setProducts(regularProducts);
+      setServices(services);
+      setKidsProducts(kidsProducts);
+      setKidsServices(kidsServices);
+    } catch (error) {
+      console.error('Error loading products from Firestore:', error);
+      // If Firestore fails, keep empty arrays
+      console.log('Firestore failed, keeping empty arrays');
+    }
+  };
+
+  // Load products when component mounts
   useEffect(() => {
-    try {
-      const shippingZonesData = localStorage.getItem("amym-shipping-zones");
-      if (shippingZonesData) setShippingZones(JSON.parse(shippingZonesData));
-      
-      const inventoryData = localStorage.getItem("amym-inventory");
-      if (inventoryData) setInventory(JSON.parse(inventoryData));
-      
-      const couponsData = localStorage.getItem("amym-coupons");
-      if (couponsData) setCoupons(JSON.parse(couponsData));
-      
-      const currenciesData = localStorage.getItem("amym-currencies");
-      if (currenciesData) setCurrencies(JSON.parse(currenciesData));
-      
-      const notificationsData = localStorage.getItem("amym-notifications");
-      if (notificationsData) setNotificationPreferences(JSON.parse(notificationsData));
-    } catch (e) {}
+    loadProductsFromFirestore();
   }, []);
 
+  // Set up real-time listener for products
+  useEffect(() => {
+    if (!db) {
+      console.log('Firebase db not initialized, skipping real-time listener');
+      return;
+    }
 
+    const setupListener = async () => {
+      console.log('Setting up real-time listener for products...');
+      const { collection, query, onSnapshot } = await import('firebase/firestore');
+      const productsQuery = query(collection(db, 'products'));
+      
+      const unsubscribe = onSnapshot(productsQuery, (snapshot) => {
+        console.log('Products updated in Firestore, refreshing homepage...');
+        const allProducts = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        
+        // Separate products by category
+        const regularProducts = allProducts.filter(p => 
+          p.categoria && !['Servicios', 'servicios'].includes(p.categoria) && 
+          !p.categoria.toLowerCase().includes('kids') && 
+          !p.categoria.toLowerCase().includes('niños')
+        );
+        
+        const services = allProducts.filter(p => 
+          p.categoria && ['Servicios', 'servicios'].includes(p.categoria)
+        );
+        
+        const kidsProducts = allProducts.filter(p => 
+          p.categoria && p.categoria.toLowerCase().includes('kids')
+        );
+        
+        const kidsServices = allProducts.filter(p => 
+          p.categoria && p.categoria.toLowerCase().includes('niños') && 
+          ['Servicios', 'servicios'].includes(p.categoria)
+        );
+        
+        setProducts(regularProducts);
+        setServices(services);
+        setKidsProducts(kidsProducts);
+        setKidsServices(kidsServices);
+      }, (error) => {
+        console.error('Error in products listener:', error);
+      });
 
-  const onAdd=(item,variant)=>{
-    if(item.categoria==='Servicios'){ window.open(item.bookingLink,"_blank"); return; }
-    const precioUnit = variant ? (variant.precio||0) : (hasVariants(item) ? minPrice(item) : item.precio);
-    const idComp = variant ? `${item.id}::${variant.sku}` : item.id;
-    const nombreComp = variant ? `${item.nombre} (${variant.titulo})` : item.nombre;
+      return () => unsubscribe();
+    };
+
+    setupListener();
+  }, []);
+  
+  // Create admin account if it doesn't exist
+  const createAdminAccount = async () => {
+    try {
+      console.log('Creating admin account...');
+      const adminEmail = 'admin@amorymiel.com';
+      const adminPassword = 'admin123456'; // Change this to a secure password
+      
+      // Try to create admin account
+      const userCredential = await createUserWithEmailAndPassword(auth, adminEmail, adminPassword);
+      const adminUser = userCredential.user;
+      
+      // Create admin profile in Firestore
+      const adminData = {
+        uid: adminUser.uid,
+        email: adminEmail,
+        name: 'Admin Amor y Miel',
+        isAdmin: true,
+        createdAt: new Date(),
+        wishlist: [],
+        orderHistory: [],
+        preferences: {
+          newsletter: true,
+          notifications: true
+        }
+      };
+      
+      await setDoc(doc(db, 'users', adminUser.uid), adminData);
+      console.log('Admin account created successfully!');
+      alert('Admin account created! Email: admin@amorymiel.com, Password: admin123456');
+      
+    } catch (error) {
+      if (error.code === 'auth/email-already-in-use') {
+        console.log('Admin account already exists');
+      } else {
+        console.error('Error creating admin account:', error);
+      }
+    }
+  };
+
+  // This function is no longer needed since all products are now loaded from Firebase
+
+  // Add stock information to existing products
+  const addStockToExistingProducts = async () => {
+    try {
+      console.log('Adding stock information to existing products...');
+      
+      // Check if Firebase is properly initialized
+      if (!db) {
+        throw new Error('Firebase database not initialized');
+      }
+      
+      // Import Firebase functions dynamically to avoid issues
+      const { collection, query, getDocs, updateDoc, doc } = await import('firebase/firestore');
+      
+      // Get all products from Firestore
+      console.log('Creating query...');
+      const productsQuery = query(collection(db, 'products'));
+      console.log('Query created successfully');
+      
+      console.log('Getting documents...');
+      const productsSnapshot = await getDocs(productsQuery);
+      console.log(`Found ${productsSnapshot.docs.length} products`);
+      
+      if (productsSnapshot.empty) {
+        console.log('No products found in Firestore');
+        alert('No products found in Firestore to add stock to.');
+        return;
+      }
+
+      let updatedCount = 0;
+
+      for (const productDoc of productsSnapshot.docs) {
+        try {
+          const productData = productDoc.data();
+          console.log(`Checking product: ${productData.nombre || productDoc.id}`);
+          
+          // Only update if stock information is missing
+          if (productData.stock === undefined) {
+            console.log(`Updating stock for product: ${productData.nombre || productDoc.id}`);
+            await updateDoc(doc(db, 'products', productDoc.id), {
+              stock: 50, // Default stock
+              minStock: 5, // Default minimum stock
+              maxStock: 100, // Default maximum stock
+              lastUpdated: new Date()
+            });
+            console.log(`✅ Added stock info to product: ${productData.nombre || productDoc.id}`);
+            updatedCount++;
+          } else {
+            console.log(`Product already has stock info: ${productData.nombre || productDoc.id}`);
+          }
+        } catch (productError) {
+          console.error(`Error updating product ${productDoc.id}:`, productError);
+        }
+      }
+      
+      console.log(`Stock information update complete! Updated ${updatedCount} products.`);
+      alert(`✅ Stock information added to ${updatedCount} products!`);
+      
+    } catch (error) {
+      console.error('Error adding stock to products:', error);
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+      alert(`Error adding stock information: ${error.message}`);
+    }
+  };
+  
+  // Shipping state
+  const [showShippingModal, setShowShippingModal] = useState(false);
+  const [shippingAddress, setShippingAddress] = useState({
+    fullName: '',
+    address: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    phone: '',
+    notes: ''
+  });
+
+  // EmailJS configuration
+  const EMAILJS_CONFIG = {
+    PUBLIC_KEY: 'N9a2Ar4ONVT5fRerl',
+    SERVICE_ID: 'service_ih1vhyb',
+    TEMPLATE_ID: 'template_9aexk4c'
+  };
+
+  // Get unique categories
+  const categories = ["Todos", ...new Set(products.map(p => p.categoria))];
+
+  // Filter products based on search and category
+  const filteredProducts = products.filter(product => {
+    const matchesSearch = query === "" || 
+                         product.nombre.toLowerCase().includes(query.toLowerCase()) ||
+                         product.descripcion.toLowerCase().includes(query.toLowerCase()) ||
+                         product.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()));
+    const matchesCategory = selectedCategory === "Todos" || product.categoria === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  // Handle search input
+  const handleSearch = (e) => {
+    setQuery(e.target.value);
+  };
+
+  const addToCart = (product) => {
+    // Require user to be logged in to add items to cart
+    if (!user) {
+      setShowAuthModal(true);
+      setAuthMode('login');
+      return;
+    }
+
+    // Check stock availability
+    const currentStock = product.stock || 0;
+    const existingItem = cart.find(item => item.id === product.id);
+    const currentQuantity = existingItem ? existingItem.quantity : 0;
+    
+    if (currentStock === 0) {
+      alert('❌ Este producto está agotado y no está disponible para la venta.');
+      return;
+    }
+    
+    if (currentQuantity >= currentStock) {
+      alert(`❌ No hay suficiente stock disponible. Solo quedan ${currentStock} unidades.`);
+      return;
+    }
+
     setCart(prev => {
-      const ex = prev.find(p => p.id === idComp);
-      if(ex) {
-        return prev.map(p => p.id === idComp ? {...p, cantidad: p.cantidad + 1} : p);
+      const existingItem = prev.find(item => item.id === product.id);
+      if (existingItem) {
+        return prev.map(item => 
+          item.id === product.id 
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
       }
-      return [...prev, {id: idComp, nombre: nombreComp, precio: precioUnit, imagen: item.imagen, cantidad: 1}];
-    });
-    setOpenCart(true);
-  };
-  const onOpen=(item)=>{ setOpenProduct(item); setSelectedVariant(hasVariants(item)? item.variantes[0] : null); };
-  const close=()=>{ setOpenProduct(null); setSelectedVariant(null); };
-  const subtotal = cart.reduce((s,i)=> s+i.precio*i.cantidad, 0);
-  const shippingCost = calculateShipping(selectedShipping);
-  const discount = calculateDiscount(subtotal);
-  const tax = calculateTax(subtotal - discount);
-  const total = subtotal + shippingCost + tax - discount;
-
-  // Helper functions
-  const addToWishlist = (item) => {
-    setWishlist(prev => {
-      const exists = prev.find(w => w.id === item.id);
-      if (exists) {
-        return prev.filter(w => w.id !== item.id);
-      } else {
-        return [...prev, item];
-      }
+      return [...prev, { ...product, quantity: 1 }];
     });
   };
 
-  const addReview = (productId, review) => {
-    setReviews(prev => ({
-      ...prev,
-      [productId]: [...(prev[productId] || []), { ...review, id: Date.now(), date: new Date().toISOString() }]
-    }));
+  const removeFromCart = (productId) => {
+    setCart(prev => prev.filter(item => item.id !== productId));
   };
 
-  const getAverageRating = (productId) => {
-    // Safety check to ensure reviews is properly initialized
-    if (!reviews || typeof reviews !== 'object') {
-      return 0;
+  const updateQuantity = (productId, newQuantity) => {
+    if (newQuantity <= 0) {
+      removeFromCart(productId);
+      return;
     }
-    
-    const productReviews = reviews[productId] || [];
-    if (productReviews.length === 0) return 0;
-    const total = productReviews.reduce((sum, review) => sum + review.rating, 0);
-    return Math.round((total / productReviews.length) * 10) / 10;
+    setCart(prev => prev.map(item => 
+      item.id === productId 
+        ? { ...item, quantity: newQuantity }
+        : item
+    ));
   };
 
-  const generateSearchSuggestions = (query) => {
-    if (!query.trim()) return [];
-    
-    // Safety check to ensure products and services are properly initialized
-    if (!products || !Array.isArray(products) || !services || !Array.isArray(services)) {
-      return [];
+  const getCartTotal = () => {
+    return cart.reduce((total, item) => total + (item.precio * item.quantity), 0);
+  };
+
+  // Mercado Pago integration
+  const handleMercadoPagoPayment = async () => {
+    if (!user) {
+      setShowAuthModal(true);
+      setAuthMode('login');
+      return;
     }
-    
-    const allItems = [...products, ...services];
-    return allItems
-      .filter(item => 
-        item.nombre.toLowerCase().includes(query.toLowerCase()) ||
-        item.tags?.some(tag => tag.toLowerCase().includes(query.toLowerCase()))
-      )
-      .slice(0, 5);
+
+    if (cart.length === 0) {
+      alert('Tu carrito está vacío. Agrega productos antes de proceder al pago.');
+      return;
+    }
+
+    // Show shipping address modal first
+    setShowShippingModal(true);
   };
 
-  const handleSearchChange = (value) => {
-    setQuery(value);
-    const suggestions = generateSearchSuggestions(value);
-    setSearchSuggestions(suggestions);
-    setShowSearchSuggestions(suggestions.length > 0 && value.trim().length > 0);
-  };
-
-  // Payment & Order System Functions
-  const createOrder = (items, total, shippingInfo) => {
-    const order = {
-      id: `ORD-${Date.now()}`,
-      items: items,
-      total: total,
-      shipping: shippingInfo,
-      status: "pending",
-      paymentMethod: paymentMethod,
-      createdAt: new Date().toISOString(),
-      userId: user?.id || "guest"
-    };
-    setOrders(prev => [order, ...prev]);
-    setCurrentOrder(order);
-    setShowOrderConfirmation(true);
-    return order;
-  };
-
-  const processPayment = async (order) => {
+  // Process payment after shipping info is collected
+  const processPayment = async () => {
+    setIsLoading(true);
     try {
-      // Simulate payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      console.log('Starting order creation process...');
+      console.log('User:', user);
+      console.log('Cart:', cart);
+      console.log('User profile:', userProfile);
+      console.log('Shipping address:', shippingAddress);
+
+      // Create order with shipping information
+      const order = await createOrder({
+        paymentMethod: 'Mercado Pago',
+        paymentStatus: 'pending',
+        shippingAddress: shippingAddress
+      });
+
+      console.log('Order created successfully:', order);
+
+    const total = getCartTotal();
+      const mercadoPagoUrl = `https://link.mercadopago.com.mx/amorymiel?amount=${total}&order_id=${order.id}`;
       
-      // Update order status
-      setOrders(prev => prev.map(o => 
-        o.id === order.id ? { ...o, status: "paid" } : o
-      ));
+      // Close shipping modal
+      setShowShippingModal(false);
       
-      // Add loyalty points
-      const pointsEarned = Math.floor(order.total / 10);
-      setLoyaltyPoints(prev => prev + pointsEarned);
+      // Open payment window
+      window.open(mercadoPagoUrl, '_blank');
+      
+      // Show success message
+      alert(`¡Orden creada exitosamente! ID: ${order.id}\n\nRedirigiendo a Mercado Pago para completar el pago.`);
+      
+    } catch (error) {
+      console.error('Error creating order:', error);
+      console.error('Error details:', error.message, error.code);
+      console.error('Error stack:', error.stack);
+      console.error('User state:', { user, userProfile, cart });
+      alert(`Error al crear la orden: ${error.message}\n\nCódigo de error: ${error.code || 'N/A'}\n\nPor favor, inténtalo de nuevo.`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Contact form handler
+  const handleContactSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitMessage("");
+
+    const formData = new FormData(e.target);
+    const templateParams = {
+      from_name: formData.get('name'),
+      from_email: formData.get('email'),
+      from_phone: formData.get('phone'),
+      message: formData.get('message'),
+      name: formData.get('name'),
+      email: formData.get('email')
+    };
+
+    try {
+      await emailjs.send(
+        EMAILJS_CONFIG.SERVICE_ID,
+        EMAILJS_CONFIG.TEMPLATE_ID,
+        templateParams,
+        EMAILJS_CONFIG.PUBLIC_KEY
+      );
+      
+      setSubmitMessage("¡Mensaje enviado exitosamente! Te contactaremos pronto.");
+      e.target.reset(); // Clear the form
+    } catch (error) {
+      console.error('Error sending email:', error);
+      setSubmitMessage("Error al enviar el mensaje. Por favor, inténtalo de nuevo.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Newsletter subscription handler
+  const handleNewsletterSubmit = async (e) => {
+    e.preventDefault();
+    setIsNewsletterSubmitting(true);
+    setNewsletterMessage("");
+
+    const email = e.target.email.value;
+    const templateParams = {
+      from_name: "Newsletter Subscriber",
+      from_email: email,
+      from_phone: "N/A",
+      message: `Nueva suscripción al newsletter de Amor y Miel.\n\nEmail: ${email}\n\nFecha: ${new Date().toLocaleDateString()}`,
+      name: "Newsletter Subscriber",
+      email: email
+    };
+
+    try {
+      await emailjs.send(
+        EMAILJS_CONFIG.SERVICE_ID,
+        EMAILJS_CONFIG.TEMPLATE_ID,
+        templateParams,
+        EMAILJS_CONFIG.PUBLIC_KEY
+      );
+      
+      setNewsletterMessage("¡Te has suscrito exitosamente! Recibirás nuestros tips de bienestar.");
+      e.target.reset(); // Clear the form
+    } catch (error) {
+      console.error('Error sending newsletter subscription:', error);
+      setNewsletterMessage("Error al suscribirse. Por favor, inténtalo de nuevo.");
+    } finally {
+      setIsNewsletterSubmitting(false);
+    }
+  };
+
+  // Authentication functions
+  const handleRegister = async (email, password, name) => {
+    try {
+      console.log('Creating user account for:', email);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      console.log('User created with UID:', user.uid);
+      
+      // Create user profile in Firestore
+      const userData = {
+        uid: user.uid,
+        email: email,
+        name: name,
+        createdAt: new Date(),
+        wishlist: [],
+        orderHistory: [],
+        preferences: {
+          newsletter: true,
+          notifications: true
+        }
+      };
+      
+      console.log('Saving user data to Firestore:', userData);
+      await setDoc(doc(db, 'users', user.uid), userData);
+      console.log('User data saved successfully to Firestore');
+      
+      setAuthMessage("¡Cuenta creada exitosamente!");
+      setShowAuthModal(false);
+    } catch (error) {
+      console.error('Error creating account:', error);
+      setAuthMessage("Error al crear cuenta: " + error.message);
+    }
+  };
+
+  const handleLogin = async (email, password) => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      // Update last login time
+      await updateDoc(doc(db, 'users', user.uid), {
+        lastLogin: new Date()
+      });
+      
+      setAuthMessage("¡Inicio de sesión exitoso!");
+      setShowAuthModal(false);
+    } catch (error) {
+      setAuthMessage("Error al iniciar sesión: " + error.message);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setUser(null);
+      setUserProfile(null);
+      setWishlist([]);
+      setOrderHistory([]);
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
+  const handleForgotPassword = async (email) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setAuthMessage("Se ha enviado un enlace de recuperación a tu email.");
+    } catch (error) {
+      setAuthMessage("Error al enviar email de recuperación: " + error.message);
+    }
+  };
+
+  // Load user data when user changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        setUser(user);
+        // Load user profile from Firestore
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setUserProfile(userData);
+          setWishlist(userData.wishlist || []);
+          setOrderHistory(userData.orderHistory || []);
+          
+          // Check if user is admin
+          setIsAdmin(userData.isAdmin === true || user.email === 'admin@amorymiel.com');
+        }
+      } else {
+        setUser(null);
+        setUserProfile(null);
+        setWishlist([]);
+        setOrderHistory([]);
+        setIsAdmin(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Wishlist functions
+  const addToWishlist = async (product) => {
+    if (!user) {
+      setShowAuthModal(true);
+      setAuthMode('login');
+      return;
+    }
+
+    const newWishlist = [...wishlist, product];
+    setWishlist(newWishlist);
+    
+    // Update in Firestore
+    await updateDoc(doc(db, 'users', user.uid), {
+      wishlist: newWishlist
+    });
+  };
+
+  const removeFromWishlist = async (productId) => {
+    const newWishlist = wishlist.filter(item => item.id !== productId);
+    setWishlist(newWishlist);
+    
+    // Update in Firestore
+    await updateDoc(doc(db, 'users', user.uid), {
+      wishlist: newWishlist
+    });
+  };
+
+  // Order history functions
+  const addToOrderHistory = async (order) => {
+    if (!user) return;
+
+    const newOrderHistory = [...orderHistory, order];
+    setOrderHistory(newOrderHistory);
+    
+    // Update in Firestore
+    await updateDoc(doc(db, 'users', user.uid), {
+      orderHistory: newOrderHistory
+    });
+  };
+
+  // Reduce stock for order items
+  const reduceStockForOrder = async (orderItems) => {
+    try {
+      for (const item of orderItems) {
+        // Get current product data from Firestore
+        const productRef = doc(db, 'products', item.id);
+        const productSnap = await getDoc(productRef);
+        
+        if (productSnap.exists()) {
+          const currentProduct = productSnap.data();
+          const newStock = Math.max(0, (currentProduct.stock || 0) - item.quantity);
+          
+          // Update stock in Firestore
+          await updateDoc(productRef, {
+            stock: newStock,
+            lastUpdated: new Date()
+          });
+          
+          console.log(`Reduced stock for ${item.nombre}: ${currentProduct.stock} → ${newStock}`);
+        } else {
+          console.warn(`Product ${item.id} not found in Firestore`);
+        }
+      }
+    } catch (error) {
+      console.error('Error reducing stock:', error);
+      throw error;
+    }
+  };
+
+  // Create order function
+  const createOrder = async (orderData) => {
+    try {
+      // Validate user is logged in
+      if (!user || !user.uid) {
+        throw new Error('User not authenticated');
+      }
+
+      const order = {
+        ...orderData,
+        id: `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        userId: user.uid,
+        customerName: userProfile?.name || user.email || 'Cliente',
+        customerEmail: user.email || 'no-email@example.com',
+        items: cart,
+        total: getCartTotal(),
+        createdAt: new Date(),
+        status: 'pending'
+      };
+
+      console.log('Creating order:', order);
+
+      // Add to Firestore
+      console.log('Attempting to save order to Firestore...');
+      await addDoc(collection(db, 'orders'), order);
+      console.log('Order saved to Firestore successfully');
+      
+      // Add to user's order history
+      console.log('Attempting to add order to user history...');
+      await addToOrderHistory(order);
+      console.log('Order added to user history successfully');
+      
+      // Reduce stock for each item in the order
+      console.log('Attempting to reduce stock for order items...');
+      await reduceStockForOrder(cart);
+      console.log('Stock reduced successfully');
+      
+      // Clear cart
+      setCart([]);
+      console.log('Cart cleared');
       
       // Send confirmation email
-      sendOrderConfirmationEmail(order);
-      
-      return { success: true, orderId: order.id };
+      try {
+        await emailjs.send(
+          EMAILJS_CONFIG.SERVICE_ID,
+          EMAILJS_CONFIG.TEMPLATE_ID,
+          {
+            to_email: user.email,
+            customer_name: userProfile?.name || user.email,
+            order_id: order.id,
+            order_total: new Intl.NumberFormat('es-CO', {
+              style: 'currency',
+              currency: 'COP'
+            }).format(order.total),
+            order_items: cart.map(item => `${item.nombre} x${item.quantity}`).join(', ')
+          },
+          EMAILJS_CONFIG.PUBLIC_KEY
+        );
+        console.log('Confirmation email sent');
+      } catch (emailError) {
+        console.warn('Failed to send confirmation email:', emailError);
+        // Don't throw error for email failure
+      }
+
+      return order;
     } catch (error) {
-      return { success: false, error: error.message };
+      console.error('Error creating order:', error);
+      throw error;
     }
   };
 
-  const sendOrderConfirmationEmail = (order) => {
-    // Simulate email sending
-    console.log("Sending order confirmation email to:", order.shipping.email);
-    // In real implementation, this would call an email service
-  };
-
-  // User Authentication Functions
-  const registerUser = (userData) => {
-    const newUser = {
-      id: `USER-${Date.now()}`,
-      ...userData,
-      createdAt: new Date().toISOString(),
-      loyaltyPoints: 100 // Welcome bonus
-    };
-    setUser(newUser);
-    setLoyaltyPoints(100);
-    setShowRegisterModal(false);
-    return newUser;
-  };
-
-  const loginUser = (email, password) => {
-    // Simulate login - in real app this would validate against backend
-    const mockUser = {
-      id: "USER-123",
-      email: email,
-      name: "Usuario Demo",
-      loyaltyPoints: 250
-    };
-    setUser(mockUser);
-    setLoyaltyPoints(250);
-    setShowLoginModal(false);
-    return mockUser;
-  };
-
-  const logoutUser = () => {
-    setUser(null);
-    setLoyaltyPoints(0);
-  };
-
-  // Analytics Functions
-  const trackPageView = (page) => {
-    setPageViews(prev => prev + 1);
-    // In real implementation, this would send to Google Analytics
-    console.log("Page view:", page);
-  };
-
-  const trackPurchase = (order) => {
-    setConversionRate(prev => prev + 1);
-    // In real implementation, this would send to Google Analytics
-    console.log("Purchase tracked:", order);
-  };
-
-  // Email Marketing Functions
-  const subscribeToNewsletter = (email) => {
-    setEmailSubscribers(prev => [...prev, { email, subscribedAt: new Date().toISOString() }]);
-    // In real implementation, this would add to email service
-  };
-
-  const sendAbandonedCartEmail = (cart) => {
-    // Simulate abandoned cart email
-    console.log("Sending abandoned cart email for:", cart);
-  };
-
-  // Loyalty Program Functions
-  const generateReferralCode = () => {
-    const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-    setReferralCode(code);
-    return code;
-  };
-
-  const applyReferralDiscount = (code) => {
-    // Simulate referral discount
-    return code === "WELCOME" ? 0.1 : 0; // 10% discount
-  };
-
-  // PWA Functions
-  const checkOfflineStatus = () => {
-    setIsOffline(!navigator.onLine);
-  };
-
-  const requestNotificationPermission = async () => {
-    if ('Notification' in window) {
-      const permission = await Notification.requestPermission();
-      return permission === 'granted';
+  // User recommendations based on wishlist and order history
+  const getUserRecommendations = () => {
+    if (!user || wishlist.length === 0) {
+      return products.slice(0, 4); // Return first 4 products as default
     }
-    return false;
-  };
 
-  // Multi-language Functions
-  const t = (key) => {
-    const translations = {
-      es: {
-        "welcome": "Bienvenido",
-        "products": "Productos",
-        "cart": "Carrito",
-        "checkout": "Pagar",
-        "login": "Iniciar sesión",
-        "register": "Registrarse"
-      },
-      en: {
-        "welcome": "Welcome",
-        "products": "Products",
-        "cart": "Cart",
-        "checkout": "Checkout",
-        "login": "Login",
-        "register": "Register"
-      }
-    };
-    return translations[language]?.[key] || key;
-  };
-
-  // NEW: Shipping & Delivery Functions
-  const calculateShipping = (zoneId) => {
-    const zone = shippingZones.find(z => z.id === zoneId);
-    return zone ? zone.price : 0;
-  };
-
-  const getShippingTime = (zoneId) => {
-    const zone = shippingZones.find(z => z.id === zoneId);
-    return zone ? zone.time : "3-5 días";
-  };
-
-  // NEW: Inventory Management Functions
-  const checkStock = (productId) => {
-    return inventory[productId] || 999; // Default high stock
-  };
-
-  const isLowStock = (productId) => {
-    const stock = checkStock(productId);
-    return stock <= lowStockThreshold;
-  };
-
-  const subscribeBackInStock = (productId, email) => {
-    setBackInStockSubscribers(prev => ({
-      ...prev,
-      [productId]: [...(prev[productId] || []), email]
-    }));
-  };
-
-  // NEW: Discount System Functions
-  const applyCoupon = (code) => {
-    const coupon = coupons.find(c => c.code === code.toUpperCase() && c.valid);
-    if (coupon) {
-      setAppliedCoupon(coupon);
-      return true;
-    }
-    return false;
-  };
-
-  const calculateDiscount = (subtotal) => {
-    if (!appliedCoupon) return 0;
-    if (subtotal < appliedCoupon.minPurchase) return 0;
-    
-    if (appliedCoupon.type === "percentage") {
-      return (subtotal * appliedCoupon.discount) / 100;
-    } else {
-      return appliedCoupon.discount;
-    }
-  };
-
-  // NEW: Currency & Tax Functions
-  const convertCurrency = (amount, fromCurrency, toCurrency) => {
-    const from = currencies.find(c => c.code === fromCurrency);
-    const to = currencies.find(c => c.code === toCurrency);
-    if (from && to) {
-      return (amount * to.rate) / from.rate;
-    }
-    return amount;
-  };
-
-  const calculateTax = (subtotal) => {
-    const taxRate = taxRates[selectedCurrency];
-    return taxRate ? subtotal * taxRate.rate : 0;
-  };
-
-  // NEW: Analytics Functions
-  const trackProductView = (product) => {
-    setBrowsingHistory(prev => {
-      const filtered = prev.filter(p => p.id !== product.id);
-      return [product, ...filtered].slice(0, 10);
+    // Get categories from wishlist items
+    const favoriteCategories = wishlist.map(item => item.categoria);
+    const categoryCount = {};
+    favoriteCategories.forEach(cat => {
+      categoryCount[cat] = (categoryCount[cat] || 0) + 1;
     });
-  };
 
-  const generateRecommendations = () => {
-    // Simple recommendation algorithm based on browsing history
-    const viewedCategories = browsingHistory.map(p => p.categoria);
-    const recommendations = DEFAULT_PRODUCTS.filter(p => 
-      viewedCategories.includes(p.categoria) && 
-      !browsingHistory.find(h => h.id === p.id)
+    // Sort categories by frequency
+    const sortedCategories = Object.keys(categoryCount).sort((a, b) => 
+      categoryCount[b] - categoryCount[a]
     );
-    setRecommendations(recommendations.slice(0, 6));
-  };
 
-  // NEW: Notification Functions
-  const requestPushPermission = async () => {
-    if ('Notification' in window) {
-      const permission = await Notification.requestPermission();
-      setPushNotifications(permission === 'granted');
-      return permission === 'granted';
-    }
-    return false;
-  };
-
-  const sendNotification = (title, options = {}) => {
-    if (pushNotifications && 'Notification' in window && Notification.permission === 'granted') {
-      new Notification(title, options);
-    }
-  };
-
-  // NEW: App Store Functions
-  const detectMobileApp = () => {
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-    return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
-  };
-
-  const showAppInstallPrompt = () => {
-    if (detectMobileApp()) {
-      setShowAppInstall(true);
-    }
-  };
-
-  const checkoutMP=async()=>{
-    if(cart.length===0){ alert("Tu carrito está vacío."); return; }
-    
-    // Create order
-    const order = createOrder(cart, subtotal, shippingAddress);
-    
-    // Track purchase for analytics
-    trackPurchase(order);
-    
-    try{
-      const payload={ items:cart.map(c=>({ title:c.nombre, quantity:c.cantidad, unit_price:c.precio, currency_id:"MXN", picture_url:c.imagen })) };
-      const res=await fetch("/api/checkout/mp",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-      const data=await res.json(); 
-      const url=data?.init_point || data?.sandbox_init_point; 
-      if(url){ 
-        window.location.href=url; 
-      } else { 
-        throw new Error("Preferencia no creada"); 
-      }
-    }catch(e){ 
-      // Fallback to simulated payment
-      const paymentResult = await processPayment(order);
-      if (paymentResult.success) {
-        alert(`¡Orden procesada exitosamente! ID: ${paymentResult.orderId}`);
-        setCart([]);
-        setOpenCart(false);
-      } else {
-        alert("Error en el procesamiento del pago. Intenta nuevamente.");
-      }
-    }
-  };
-
-  const filteredItems = useMemo(() => {
-    // Safety check to ensure services is properly initialized
-    if (!services || !Array.isArray(services)) {
-      return products.filter(item => 
-        (selectedCategory === "Todos" || item.categoria === selectedCategory) && 
-        (!query || item.nombre.toLowerCase().includes(query.toLowerCase()) || (item.tags || []).some(t => (t || "").toLowerCase().includes(query.toLowerCase())))
+    // Get products from favorite categories
+    const recommendedProducts = [];
+    sortedCategories.forEach(category => {
+      const categoryProducts = products.filter(p => 
+        p.categoria === category && !wishlist.some(w => w.id === p.id)
       );
-    }
-    
-    const allItems = [...products, ...services];
-    const q = (query || "").toLowerCase().trim();
-    
-    // Filter by category and search
-    let filtered = allItems.filter(item => 
-      (selectedCategory === "Todos" || item.categoria === selectedCategory) && 
-      (!q || item.nombre.toLowerCase().includes(q) || (item.tags || []).some(t => (t || "").toLowerCase().includes(q)))
-    );
-    
-    // Filter by price range
-    filtered = filtered.filter(item => {
-      const price = item.precio || minPrice(item);
-      return price >= priceRange.min && price <= priceRange.max;
+      recommendedProducts.push(...categoryProducts.slice(0, 2));
     });
-    
-    // Sort items
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case "price-low":
-          return (a.precio || minPrice(a)) - (b.precio || minPrice(b));
-        case "price-high":
-          return (b.precio || minPrice(b)) - (a.precio || minPrice(a));
-        case "name":
-          return a.nombre.localeCompare(b.nombre);
-        case "popularity":
-        default:
-          return getAverageRating(b.id) - getAverageRating(a.id);
+
+    // Fill with random products if needed
+    while (recommendedProducts.length < 4) {
+      const randomProduct = products[Math.floor(Math.random() * products.length)];
+      if (!recommendedProducts.some(p => p.id === randomProduct.id)) {
+        recommendedProducts.push(randomProduct);
       }
-    });
-    
-    return filtered;
-  }, [products, services, selectedCategory, query, priceRange, sortBy]);
+    }
+
+    return recommendedProducts.slice(0, 4);
+  };
 
   return (
     <div style={{ background: PALETAS.D.fondo, minHeight: "100vh" }}>
-      <UIStyles />
-      
+      <style>
+        {`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}
+      </style>
       {/* Header */}
       <header style={{ 
         background: "#FBF2DE", 
@@ -1778,663 +850,419 @@ const [showRecommendations, setShowRecommendations] = useState(false);
         position: "sticky", 
         top: 0, 
         zIndex: 100,
-        padding: isMobile ? "0.5rem 0" : "0"
+        padding: window.innerWidth <= 768 ? "0.5rem 0" : "1rem 0"
       }}>
-        <div className="container" style={{ 
-          display: "flex", 
-          alignItems: "center", 
+          <div style={{ 
+          maxWidth: "1200px", 
+          margin: "0 auto", 
+          padding: "0 1rem", 
+            display: "flex", 
           justifyContent: "space-between", 
-          padding: isMobile ? "0.5rem 1rem" : "1rem 2rem", 
-          gap: isMobile ? "0.5rem" : "2rem",
-          flexWrap: isMobile ? "wrap" : "nowrap"
+            alignItems: "center", 
+          flexWrap: "wrap",
+          gap: window.innerWidth <= 768 ? "0.5rem" : "1rem"
         }}>
-          {/* Logo */}
-          <div style={{ 
-            display: "flex", 
-            alignItems: "center", 
-            gap: isMobile ? "0.3rem" : "0.5rem",
-            flex: isMobile ? "1 1 auto" : "auto",
-            minWidth: isMobile ? "auto" : "auto"
-          }}>
-            <span style={{ 
-              fontSize: isMobile ? "1rem" : "1.1rem",
-              flexShrink: 0
-            }}>
-              🐝
-            </span>
-            <h1 style={{ 
-              margin: 0, 
-              fontSize: isMobile ? "1rem" : "1.1rem", 
-              fontWeight: "600", 
-              color: PALETAS.D.carbon, 
-              whiteSpace: "nowrap",
-              flexShrink: 0
-            }}>
-              Amor y Miel
-            </h1>
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <img src="/images/logo/amorymiellogo.png" alt="Amor y Miel" style={{ 
+              height: window.innerWidth <= 768 ? "60px" : "80px" 
+            }} />
           </div>
-
-          {/* Desktop Navigation */}
-          {!isMobile && (
-            <nav style={{ display: "flex", gap: "1.2rem", alignItems: "center" }}>
-              <a href="#inicio" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Inicio</a>
-              <a href="#productos" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Productos</a>
-              <a href="#servicios" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Servicios</a>
-              <a href="#kits" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Kits</a>
-              <a href="#blog" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Blog</a>
-              <a href="#quienes-somos" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Quiénes somos</a>
-              <a href="#contacto" style={{ color: PALETAS.D.carbon, textDecoration: "none", fontWeight: "500", fontSize: "0.8rem" }}>Contacto</a>
+          <nav style={{ 
+            display: window.innerWidth <= 768 ? "none" : "flex", 
+            gap: "2rem", 
+            alignItems: "center", 
+            flexWrap: "wrap"
+          }}>
+            <a href="#inicio" style={{ color: PALETAS.D.carbon, textDecoration: "none" }}>Inicio</a>
+            <a href="#productos" style={{ color: PALETAS.D.carbon, textDecoration: "none" }}>Productos</a>
+            <a href="#servicios" style={{ color: PALETAS.D.carbon, textDecoration: "none" }}>Servicios</a>
+            <a href="#kids" style={{ color: PALETAS.D.carbon, textDecoration: "none" }}>Para Niños</a>
+            <a href="#quienes-somos" style={{ color: PALETAS.D.carbon, textDecoration: "none" }}>Quiénes somos</a>
+            <a href="#contacto" style={{ color: PALETAS.D.carbon, textDecoration: "none" }}>Contacto</a>
             </nav>
-          )}
-
-          {/* Mobile Menu Button */}
-          {isMobile && (
-            <button
-              onClick={() => setShowMobileMenu(!showMobileMenu)}
-              style={{
-                background: "transparent",
-                border: "none",
-                fontSize: "1.2rem",
-                cursor: "pointer",
-                padding: "0.5rem",
-                borderRadius: "8px",
-                color: PALETAS.D.carbon
-              }}
-            >
-              {showMobileMenu ? "✖️" : "☰"}
-            </button>
-          )}
-
-          {/* Search and Cart */}
           <div style={{ 
             display: "flex", 
             alignItems: "center", 
-            gap: isMobile ? "0.4rem" : "0.8rem",
-            flex: isMobile ? "1 1 auto" : "auto",
-            justifyContent: isMobile ? "flex-end" : "flex-start"
+            gap: window.innerWidth <= 768 ? "0.5rem" : "1rem",
+            flexWrap: "wrap"
           }}>
-            {/* Advanced Search */}
-            <div style={{ 
-              position: "relative",
-              flex: isMobile ? "1" : "auto"
-            }}>
               <input 
-                value={query} 
-                onChange={e => handleSearchChange(e.target.value)} 
-                onFocus={() => setShowSearchSuggestions(true)}
-                onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
+              type="text"
                 placeholder="Buscar productos..." 
+              value={query}
+              onChange={handleSearch}
                 style={{ 
-                  padding: isMobile ? "0.25rem 0.8rem 0.25rem 1.8rem" : "0.35rem 1rem 0.35rem 2rem", 
-                  borderRadius: isMobile ? "16px" : "20px", 
-                  border: "1px solid rgba(0,0,0,0.1)", 
-                  width: isMobile ? "100%" : "160px",
-                  fontSize: isMobile ? "0.7rem" : "0.75rem",
-                  background: "white",
-                  minWidth: isMobile ? "80px" : "auto"
-                }} 
-              />
-              <span style={{ 
-                position: "absolute", 
-                left: "0.7rem", 
-                top: "50%", 
-                transform: "translateY(-50%)", 
-                fontSize: "0.8rem",
-                color: "rgba(0,0,0,0.5)"
-              }}>
-                🔍
-              </span>
-              
-              {/* Search Suggestions */}
-              {showSearchSuggestions && searchSuggestions.length > 0 && (
-                <div style={{
-                  position: "absolute",
-                  top: "100%",
-                  left: 0,
-                  right: 0,
-                  background: "white",
-                  border: "1px solid rgba(0,0,0,0.1)",
-                  borderRadius: "8px",
-                  boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                  zIndex: 1000,
-                  maxHeight: "200px",
-                  overflowY: "auto",
-                  marginTop: "4px"
-                }}>
-                  {searchSuggestions.map((item, index) => (
-                    <div
-                      key={item.id}
-                      onClick={() => {
-                        setQuery(item.nombre);
-                        setShowSearchSuggestions(false);
-                      }}
-                      style={{
-                        padding: "0.5rem 1rem",
-                        cursor: "pointer",
-                        borderBottom: index < searchSuggestions.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none",
-                        fontSize: "0.8rem"
-                      }}
-                      onMouseEnter={(e) => e.target.style.background = "#FBF2DE"}
-                      onMouseLeave={(e) => e.target.style.background = "white"}
-                    >
-                      {item.nombre}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            <button 
-              onClick={() => setOpenCart(true)} 
-              style={{ 
-                background: "rgba(255,255,255,0.95)", 
-                border: "1px solid rgba(0,0,0,0.1)", 
-                borderRadius: isMobile ? "14px" : "18px", 
-                padding: isMobile ? "0.25rem 0.5rem" : "0.35rem 0.7rem", 
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: isMobile ? "0.2rem" : "0.3rem",
-                fontSize: isMobile ? "0.65rem" : "0.75rem",
-                color: PALETAS.D.carbon,
-                fontWeight: "500",
-                whiteSpace: "nowrap",
-                flexShrink: 0
+                        padding: window.innerWidth <= 768 ? "0.4rem 0.8rem" : "0.5rem 1rem",
+                border: `2px solid ${PALETAS.D.crema}`,
+                borderRadius: "25px",
+                fontSize: window.innerWidth <= 768 ? "0.8rem" : "0.9rem",
+                width: window.innerWidth <= 768 ? "150px" : "200px",
+                outline: "none",
+                transition: "border-color 0.3s ease"
               }}
-            >
-              🛍️ {isMobile ? `(${cart.length})` : `Carrito (${cart.length})`}
-            </button>
+              onFocus={(e) => {
+                e.target.style.borderColor = PALETAS.D.miel;
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = PALETAS.D.crema;
+              }}
+            />
+            
+            {/* User Authentication */}
             {user ? (
               <div style={{ 
                 display: "flex", 
                 alignItems: "center", 
-                gap: isMobile ? "0.3rem" : "0.5rem",
-                flexShrink: 0
+                gap: window.innerWidth <= 768 ? "0.5rem" : "1rem",
+                flexWrap: "wrap"
               }}>
-                <span style={{ 
-                  fontSize: isMobile ? "0.6rem" : "0.7rem", 
-                  color: "#666",
-                  display: isMobile ? "none" : "block"
-                }}>
-                  👤 {user.name} ({loyaltyPoints} pts)
+                <span style={{ color: PALETAS.D.carbon, fontSize: "0.9rem" }}>
+                  ¡Hola, {userProfile?.name || user.email}!
                 </span>
-                <button 
-                  onClick={logoutUser}
-                  style={{ 
-                    background: "transparent", 
-                    border: "1px solid rgba(0,0,0,0.1)", 
-                    borderRadius: isMobile ? "14px" : "18px", 
-                    padding: isMobile ? "0.25rem 0.5rem" : "0.35rem 0.7rem", 
+                
+                {/* Admin Dashboard Button */}
+                {isAdmin && (
+                <button
+                    onClick={() => setShowAdminDashboard(true)}
+                    style={{
+                      background: `linear-gradient(135deg, ${PALETAS.D.verde} 0%, #8EB080 100%)`,
+                      color: "white",
+                      border: "none",
+                      padding: "0.5rem 1rem",
+                      borderRadius: "20px",
+                      fontSize: "0.9rem",
+                      cursor: "pointer",
+                      transition: "all 0.3s ease",
+                      fontWeight: "bold"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = "translateY(-2px)";
+                      e.target.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = "translateY(0)";
+                      e.target.style.boxShadow = "none";
+                    }}
+                  >
+                    🛠️ Admin Dashboard
+                  </button>
+                )}
+
+                {/* Create Admin Account Button (for debugging) */}
+                {!isAdmin && (
+                  <button
+                    onClick={createAdminAccount}
+                  style={{
+                    background: "transparent",
+                    color: PALETAS.D.miel,
+                      border: `2px solid ${PALETAS.D.miel}`,
+                    padding: "0.5rem 1rem",
+                    borderRadius: "20px",
+                      cursor: "pointer",
+                    fontSize: "0.9rem",
+                      fontWeight: "bold"
+                    }}
+                  >
+                    🔧 Create Admin
+                  </button>
+                )}
+
+                {/* Add Products button removed - all products now loaded from Firebase */}
+
+                {/* Add Stock to Products Button - Hidden on mobile */}
+                {isAdmin && window.innerWidth > 768 && (
+                  <button
+                    onClick={addStockToExistingProducts}
+                    style={{
+                      background: "transparent",
+                      color: PALETAS.D.verde,
+                      border: `2px solid ${PALETAS.D.verde}`,
+                      padding: "0.5rem 1rem",
+                      borderRadius: "20px",
+                      cursor: "pointer",
+                      fontSize: "0.9rem",
+                      fontWeight: "bold",
+                      marginLeft: "0.5rem"
+                    }}
+                  >
+                    📦 Add Stock
+                  </button>
+                )}
+                
+                <button
+                  onClick={handleLogout}
+                  style={{
+                    background: "transparent",
+                    border: `2px solid ${PALETAS.D.miel}`,
+                    color: PALETAS.D.miel,
+                    padding: window.innerWidth <= 768 ? "0.4rem 0.8rem" : "0.5rem 1rem",
+                    borderRadius: "20px",
+                    fontSize: window.innerWidth <= 768 ? "0.8rem" : "0.9rem",
                     cursor: "pointer",
-                    fontSize: isMobile ? "0.65rem" : "0.75rem",
-                    color: PALETAS.D.carbon,
-                    whiteSpace: "nowrap"
+                    transition: "all 0.3s ease"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = PALETAS.D.miel;
+                    e.target.style.color = "white";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = "transparent";
+                    e.target.style.color = PALETAS.D.miel;
                   }}
                 >
-                  {isMobile ? "🚪" : "🚪 Salir"}
+                  Cerrar Sesión
                 </button>
               </div>
             ) : (
-              <button 
-                onClick={() => setShowLoginModal(true)}
-                style={{ 
-                  background: "transparent", 
-                  border: "1px solid rgba(0,0,0,0.1)", 
-                  borderRadius: isMobile ? "14px" : "18px", 
-                  padding: isMobile ? "0.25rem 0.5rem" : "0.35rem 0.7rem", 
+              <button
+                onClick={() => {
+                  setShowAuthModal(true);
+                  setAuthMode('login');
+                }}
+                style={{
+                  background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                  color: "white",
+                  border: "none",
+                  padding: window.innerWidth <= 768 ? "0.4rem 0.8rem" : "0.5rem 1rem",
+                  borderRadius: "20px",
+                  fontSize: window.innerWidth <= 768 ? "0.8rem" : "0.9rem",
                   cursor: "pointer",
-                  fontSize: isMobile ? "0.65rem" : "0.75rem",
-                  color: PALETAS.D.carbon,
-                  whiteSpace: "nowrap"
+                  transition: "all 0.3s ease"
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.transform = "translateY(-2px)";
+                  e.target.style.boxShadow = "0 4px 15px rgba(224, 167, 58, 0.3)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = "translateY(0)";
+                  e.target.style.boxShadow = "none";
                 }}
               >
-                {isMobile ? "👤" : "👤 Iniciar sesión"}
+                Iniciar Sesión
               </button>
             )}
-            <button 
-              onClick={() => setLanguage(language === "es" ? "en" : "es")}
-              style={{ 
-                background: "transparent", 
-                border: "1px solid rgba(0,0,0,0.1)", 
-                borderRadius: "18px", 
-                padding: "0.35rem 0.7rem", 
-                cursor: "pointer",
-                fontSize: "0.75rem",
-                color: PALETAS.D.carbon
-              }}
+            
+                <div style={{
+                display: "flex",
+                alignItems: "center",
+              gap: window.innerWidth <= 768 ? "0.3rem" : "0.5rem",
+                    cursor: "pointer",
+              padding: window.innerWidth <= 768 ? "0.4rem 0.6rem" : "0.5rem 0.8rem",
+              borderRadius: "8px",
+                  background: "transparent", 
+              border: `1px solid ${PALETAS.D.crema}`,
+              transition: "all 0.3s ease"
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = PALETAS.D.crema;
+              e.currentTarget.style.borderColor = PALETAS.D.miel;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "transparent";
+              e.currentTarget.style.borderColor = PALETAS.D.crema;
+            }}
             >
-              🌐 {language === "es" ? "EN" : "ES"}
-            </button>
-            <button 
-              onClick={() => setShowAdmin(s => !s)} 
-              style={{ 
-                background: "transparent", 
-                border: "1px solid rgba(0,0,0,0.1)", 
-                borderRadius: "18px", 
-                padding: "0.35rem 0.7rem", 
-                cursor: "pointer",
-                fontSize: "0.75rem",
-                color: PALETAS.D.carbon
-              }}
-            >
-              ⚙️ Admin
-            </button>
+              <span style={{ fontSize: "20px" }}>🛍️</span>
+              <span style={{
+                  color: PALETAS.D.carbon, 
+                fontSize: window.innerWidth <= 768 ? "0.8rem" : "0.9rem",
+                  fontWeight: "500"
+              }}>
+                {user ? `Carrito (${cart.length})` : 'Inicia sesión para comprar'}
+              </span>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Mobile Menu Overlay */}
-      {isMobile && showMobileMenu && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "rgba(0,0,0,0.5)",
-          zIndex: 99,
-          display: "flex",
-          justifyContent: "flex-end"
-        }}>
-          <div style={{
-            width: "80%",
-            maxWidth: "300px",
-            background: "white",
-            height: "100%",
-            padding: "2rem 1rem",
-            display: "flex",
-            flexDirection: "column",
-            gap: "1rem"
-          }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-              <h3 style={{ margin: 0, color: PALETAS.D.carbon }}>Menú</h3>
-              <button
-                onClick={() => setShowMobileMenu(false)}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  fontSize: "1.2rem",
-                  cursor: "pointer"
-                }}
-              >
-                ✖️
-              </button>
-            </div>
-            
-            <nav style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              <a 
-                href="#inicio" 
-                onClick={() => setShowMobileMenu(false)}
-                style={{ 
-                  color: PALETAS.D.carbon, 
-                  textDecoration: "none", 
-                  fontWeight: "500", 
-                  fontSize: "1rem",
-                  padding: "0.5rem 0",
-                  borderBottom: "1px solid rgba(0,0,0,0.1)"
-                }}
-              >
-                🏠 Inicio
-              </a>
-              <a 
-                href="#productos" 
-                onClick={() => setShowMobileMenu(false)}
-                style={{ 
-                  color: PALETAS.D.carbon, 
-                  textDecoration: "none", 
-                  fontWeight: "500", 
-                  fontSize: "1rem",
-                  padding: "0.5rem 0",
-                  borderBottom: "1px solid rgba(0,0,0,0.1)"
-                }}
-              >
-                🛍️ Productos
-              </a>
-              <a 
-                href="#servicios" 
-                onClick={() => setShowMobileMenu(false)}
-                style={{ 
-                  color: PALETAS.D.carbon, 
-                  textDecoration: "none", 
-                  fontWeight: "500", 
-                  fontSize: "1rem",
-                  padding: "0.5rem 0",
-                  borderBottom: "1px solid rgba(0,0,0,0.1)"
-                }}
-              >
-                🧘 Servicios
-              </a>
-              <a 
-                href="#kits" 
-                onClick={() => setShowMobileMenu(false)}
-                style={{ 
-                  color: PALETAS.D.carbon, 
-                  textDecoration: "none", 
-                  fontWeight: "500", 
-                  fontSize: "1rem",
-                  padding: "0.5rem 0",
-                  borderBottom: "1px solid rgba(0,0,0,0.1)"
-                }}
-              >
-                📦 Kits
-              </a>
-              <a 
-                href="#blog" 
-                onClick={() => setShowMobileMenu(false)}
-                style={{ 
-                  color: PALETAS.D.carbon, 
-                  textDecoration: "none", 
-                  fontWeight: "500", 
-                  fontSize: "1rem",
-                  padding: "0.5rem 0",
-                  borderBottom: "1px solid rgba(0,0,0,0.1)"
-                }}
-              >
-                📝 Blog
-              </a>
-              <a 
-                href="#quienes-somos" 
-                onClick={() => setShowMobileMenu(false)}
-                style={{ 
-                  color: PALETAS.D.carbon, 
-                  textDecoration: "none", 
-                  fontWeight: "500", 
-                  fontSize: "1rem",
-                  padding: "0.5rem 0",
-                  borderBottom: "1px solid rgba(0,0,0,0.1)"
-                }}
-              >
-                👥 Quiénes somos
-              </a>
-              <a 
-                href="#contacto" 
-                onClick={() => setShowMobileMenu(false)}
-                style={{ 
-                  color: PALETAS.D.carbon, 
-                  textDecoration: "none", 
-                  fontWeight: "500", 
-                  fontSize: "1rem",
-                  padding: "0.5rem 0",
-                  borderBottom: "1px solid rgba(0,0,0,0.1)"
-                }}
-              >
-                📞 Contacto
-              </a>
-            </nav>
-            
-            <div style={{ marginTop: "auto", paddingTop: "1rem", borderTop: "1px solid rgba(0,0,0,0.1)" }}>
-              <button
-                onClick={() => {
-                  setShowWishlist(true);
-                  setShowMobileMenu(false);
-                }}
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  background: PALETAS.D.miel,
-                  color: PALETAS.D.carbon,
-                  border: "none",
-                  borderRadius: "8px",
-                  fontWeight: "600",
-                  marginBottom: "0.5rem"
-                }}
-              >
-                ❤️ Favoritos ({wishlist.length})
-              </button>
-              <button
-                onClick={() => {
-                  setShowFAQ(true);
-                  setShowMobileMenu(false);
-                }}
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  background: "transparent",
-                  color: PALETAS.D.carbon,
-                  border: "1px solid rgba(0,0,0,0.1)",
-                  borderRadius: "8px",
-                  fontWeight: "500"
-                }}
-              >
-                ❓ FAQ
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Hero Section */}
-      <section style={{ 
-        padding: "4rem 0", 
-        background: "linear-gradient(135deg, #FBF2DE 0%, #FFFFFF 100%)" 
-      }}>
-        <div className="container">
+      <section id="inicio" style={{ 
+        background: "linear-gradient(135deg, #FBF2DE 0%, #FFFFFF 65%)",
+        padding: "1rem 0",
+        minHeight: "60vh",
+          display: "flex",
+        alignItems: "center"
+        }}>
           <div style={{ 
+          maxWidth: "1200px", 
+          margin: "0 auto", 
+          padding: "0 1rem", 
             display: "grid", 
-            gridTemplateColumns: "1fr 1fr", 
-            gap: "4rem", 
-            alignItems: "center",
-            minHeight: "500px"
-          }}>
-            {/* Left Side - Text Content */}
-            <div style={{ textAlign: "left" }}>
-              <h2 style={{ 
-                fontSize: "3rem", 
-                fontWeight: "700", 
-                margin: "0 0 1.5rem 0", 
+          gridTemplateColumns: window.innerWidth <= 768 ? "1fr" : "repeat(auto-fit, minmax(300px, 1fr))", 
+          gap: window.innerWidth <= 768 ? "1rem" : "2rem", 
+          alignItems: "center"
+        }}>
+          <div>
+            <h1 style={{ 
+              fontSize: "clamp(2rem, 5vw, 3.5rem)", 
+              fontWeight: "bold", 
                 color: PALETAS.D.carbon,
-                lineHeight: "1.1"
+              margin: "0 0 1.5rem 0",
+              lineHeight: "1.2"
               }}>
                 Cuidado natural, artesanal y{" "}
                 <span style={{ color: PALETAS.D.miel }}>con amor.</span>
-              </h2>
+            </h1>
               <p style={{ 
-                fontSize: "1.1rem", 
-                color: "rgba(0,0,0,0.7)", 
-                margin: "0 0 2.5rem 0", 
+              fontSize: "clamp(1rem, 2.5vw, 1.2rem)", 
+              color: "#666", 
+              margin: "0 0 2rem 0",
                 lineHeight: "1.6"
               }}>
                 Productos y rituales holísticos inspirados en la miel, las plantas y la energía del bienestar.
               </p>
-              <div style={{ display: "flex", gap: "1rem", marginBottom: "3rem" }}>
+            <div style={{ 
+              display: "flex", 
+              gap: "1rem", 
+              marginBottom: "2rem",
+              flexWrap: "wrap"
+            }}>
                 <button 
-                  onClick={() => document.getElementById('productos').scrollIntoView({ behavior: 'smooth' })}
                   style={{ 
                     background: PALETAS.D.miel, 
                     color: "white", 
                     border: "none", 
-                    borderRadius: "6px", 
-                    padding: "0.8rem 1.5rem", 
-                    fontSize: "0.95rem", 
-                    fontWeight: "600", 
+                  padding: "1rem 2rem",
+                  borderRadius: "25px",
                     cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.4rem"
+                  fontSize: "1.1rem",
+                  fontWeight: "600"
                   }}
+                onClick={() => document.getElementById('productos').scrollIntoView({ behavior: 'smooth' })}
                 >
-                  <span style={{ fontSize: "1rem" }}>📋</span>
                   Ver productos
                 </button>
                 <button 
-                  onClick={() => document.getElementById('servicios').scrollIntoView({ behavior: 'smooth' })}
                   style={{ 
-                    background: "white", 
+                  background: "transparent",
                     color: PALETAS.D.miel, 
                     border: `2px solid ${PALETAS.D.miel}`, 
-                    borderRadius: "6px", 
-                    padding: "0.8rem 1.5rem", 
-                    fontSize: "0.95rem", 
-                    fontWeight: "600", 
+                  padding: "1rem 2rem",
+                  borderRadius: "25px",
                     cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.4rem"
+                  fontSize: "1.1rem",
+                  fontWeight: "600"
                   }}
+                onClick={() => document.getElementById('servicios').scrollIntoView({ behavior: 'smooth' })}
                 >
-                  <span style={{ fontSize: "1rem" }}>➕</span>
-                  Ver servicios
+                + Ver servicios
                 </button>
               </div>
-              <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
-                <div style={{ 
-                  display: "flex", 
-                  alignItems: "center", 
-                  gap: "0.4rem",
-                  background: "rgba(255,255,255,0.8)",
-                  padding: "0.3rem 0.6rem",
-                  borderRadius: "15px",
-                  border: "1px solid rgba(0,0,0,0.1)"
-                }}>
-                  <span style={{ fontSize: "1rem" }}>🌿</span>
-                  <span style={{ fontWeight: "500", fontSize: "0.8rem" }}>100% natural</span>
+            <div style={{ display: "flex", gap: "2rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <span style={{ fontSize: "1.5rem" }}>🌿</span>
+                <span style={{ color: PALETAS.D.carbon, fontSize: "0.9rem" }}>100% natural</span>
                 </div>
-                <div style={{ 
-                  display: "flex", 
-                  alignItems: "center", 
-                  gap: "0.4rem",
-                  background: "rgba(255,255,255,0.8)",
-                  padding: "0.3rem 0.6rem",
-                  borderRadius: "15px",
-                  border: "1px solid rgba(0,0,0,0.1)"
-                }}>
-                  <span style={{ fontSize: "1rem" }}>💰</span>
-                  <span style={{ fontWeight: "500", fontSize: "0.8rem" }}>Precios justos</span>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <span style={{ fontSize: "1.5rem" }}>💰</span>
+                <span style={{ color: PALETAS.D.carbon, fontSize: "0.9rem" }}>Precios justos</span>
                 </div>
-                <div style={{ 
-                  display: "flex", 
-                  alignItems: "center", 
-                  gap: "0.4rem",
-                  background: "rgba(255,255,255,0.8)",
-                  padding: "0.3rem 0.6rem",
-                  borderRadius: "15px",
-                  border: "1px solid rgba(0,0,0,0.1)"
-                }}>
-                  <span style={{ fontSize: "1rem" }}>💝</span>
-                  <span style={{ fontWeight: "500", fontSize: "0.8rem" }}>Hecho con amor</span>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <span style={{ fontSize: "1.5rem" }}>❤️</span>
+                <span style={{ color: PALETAS.D.carbon, fontSize: "0.9rem" }}>Hecho con amor</span>
                 </div>
               </div>
             </div>
-
-            {/* Right Side - Hero Image */}
+          <div style={{ display: "flex", justifyContent: "center" }}>
             <div style={{ 
-              display: "flex", 
-              justifyContent: "center", 
-              alignItems: "center",
-              height: "100%"
-            }}>
-              <div style={{ 
-                width: "550px", 
-                height: "350px", 
+              background: "white",
                 borderRadius: "20px",
-                boxShadow: "0 20px 40px rgba(0,0,0,0.15)",
-                overflow: "hidden",
-                position: "relative"
+              padding: "1rem",
+              boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+              maxWidth: "750px"
               }}>
                 <img
-                  src="/images/placeholders/Lucid_Origin_Stunning_3D_rendered_lifestyle_image_featuring_la_0.jpg"
-                  alt="Amor y Miel - Productos Holísticos"
+                src="/images/catalog/Lucid_Origin_Stunning_3D_rendered_lifestyle_image_featuring_la_0.jpg" 
+                alt="Productos Amor y Miel"
                   style={{
                     width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "center"
+                  height: "auto", 
+                  borderRadius: "15px",
+                  objectFit: "cover"
                   }}
                   onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-                {/* Fallback placeholder if image fails to load */}
-                <div style={{
-                  display: 'none',
-                  width: "100%",
-                  height: "100%",
-                  background: "white",
-                  borderRadius: "20px",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "1.4rem",
-                  color: "rgba(0,0,0,0.25)",
-                  fontWeight: "500"
-                }}>
-                  Imagen del producto
-                </div>
-              </div>
+                  e.target.src = "/images/logo/amorymiellogo.png";
+                }}
+              />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Category Filter */}
-      <section style={{ padding: "2rem 0", background: "white" }}>
-        <div className="container">
-          <h3 style={{ margin: "0 0 1.5rem 0", fontSize: "1.5rem", fontWeight: "600", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <span style={{ fontSize: "1.2rem" }}>⚙️</span>
-            Filtrar por
-          </h3>
+      {/* Enhanced Filter Section */}
+      <section style={{ 
+        background: `linear-gradient(135deg, ${PALETAS.D.crema} 0%, #f8f5f0 100%)`, 
+        padding: "2rem 0",
+        borderBottom: `1px solid ${PALETAS.D.crema}`
+      }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 1rem" }}>
+          {/* Filter Header */}
           <div style={{ 
-            display: "flex", 
-            flexWrap: "wrap", 
-            gap: "0.75rem", 
-            justifyContent: "center" 
-          }}>
-            {CATEGORIES.map(cat => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                style={{
-                  background: selectedCategory === cat ? PALETAS.D.miel : "transparent",
-                  color: selectedCategory === cat ? "white" : PALETAS.D.carbon,
-                  border: `2px solid ${PALETAS.D.miel}`,
-                  borderRadius: "25px",
-                  padding: "0.75rem 1.5rem",
-                  cursor: "pointer",
-                  fontWeight: "500",
-                  transition: "all 0.2s ease"
-                }}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Products Section */}
-      <section id="productos" style={{ padding: "3rem 0" }}>
-        <div className="container">
-          <h2 style={{ 
             textAlign: "center", 
-            margin: "0 0 3rem 0", 
-            fontSize: "2.5rem", 
-            fontWeight: "700",
-            color: PALETAS.D.carbon
+            marginBottom: "2rem" 
           }}>
-            Nuestros Productos
+          <h2 style={{ 
+              margin: "0 0 0.5rem 0", 
+              color: PALETAS.D.carbon,
+              fontSize: "1.5rem",
+              fontWeight: "600"
+            }}>
+              Categorías
           </h2>
-          
-          {/* Category Filter */}
+            <p style={{
+              margin: "0",
+              color: "#666",
+              fontSize: "0.95rem"
+            }}>
+              Explora nuestros productos por categoría
+            </p>
+          </div>
+
+          {/* Filter Buttons */}
           <div style={{ 
             display: "flex", 
+            gap: "0.8rem", 
             flexWrap: "wrap", 
-            gap: "0.5rem", 
-            marginBottom: "1.5rem",
-            justifyContent: "center"
+            justifyContent: "center",
+            alignItems: "center"
           }}>
-            {["Todos", "Velas", "Lociones", "Brisas Áuricas", "Exfoliantes", "Feromonas", "Faciales", "Aceites", "Shampoo", "Cabello", "Energéticos", "Miel", "Protección", "Rituales", "Sahumerios", "Baños Energéticos", "Servicios"].map(category => (
+            {CATEGORIES.map(category => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
                 style={{
-                  padding: "0.5rem 1rem",
-                  background: selectedCategory === category ? PALETAS.D.miel : "transparent",
+                  background: selectedCategory === category 
+                    ? `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)` 
+                    : "white",
                   color: selectedCategory === category ? "white" : PALETAS.D.carbon,
-                  border: "1px solid rgba(0,0,0,0.1)",
-                  borderRadius: "20px",
+                  border: selectedCategory === category 
+                    ? "none" 
+                    : `2px solid ${PALETAS.D.crema}`,
+                  padding: "0.7rem 1.5rem",
+                  borderRadius: "30px",
                   cursor: "pointer",
-                  fontSize: "0.8rem",
-                  fontWeight: "500",
-                  transition: "all 0.2s ease"
+                  fontSize: "0.85rem",
+                  fontWeight: "600",
+                  transition: "all 0.3s ease",
+                  boxShadow: selectedCategory === category 
+                    ? "0 4px 15px rgba(212, 165, 116, 0.3)"
+                    : "0 2px 8px rgba(0,0,0,0.05)",
+                  minWidth: "auto",
+                  whiteSpace: "nowrap"
+                }}
+                onMouseEnter={(e) => {
+                  if (selectedCategory !== category) {
+                    e.target.style.borderColor = PALETAS.D.miel;
+                    e.target.style.transform = "translateY(-2px)";
+                    e.target.style.boxShadow = "0 4px 12px rgba(212, 165, 116, 0.2)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (selectedCategory !== category) {
+                    e.target.style.borderColor = PALETAS.D.crema;
+                    e.target.style.transform = "translateY(0)";
+                    e.target.style.boxShadow = "0 2px 8px rgba(0,0,0,0.05)";
+                  }
                 }}
               >
                 {category}
@@ -2442,574 +1270,1191 @@ const [showRecommendations, setShowRecommendations] = useState(false);
             ))}
           </div>
           
-          {/* Advanced Search Filters */}
+          {/* Results Counter */}
           <div style={{ 
-            background: "white", 
-            padding: "1.5rem", 
-            borderRadius: "12px", 
-            marginBottom: "2rem",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+            textAlign: "center", 
+            marginTop: "1.5rem" 
           }}>
-            <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: "1rem", alignItems: "center", justifyContent: "space-between" }}>
-              
-              {/* Search Results Info */}
-              <div style={{ fontSize: "0.9rem", color: "#666" }}>
-                {query ? `Buscando: "${query}"` : selectedCategory !== "Todos" ? `Categoría: ${selectedCategory}` : "Todos los productos"} • {filteredItems.length} resultados
+            <span style={{
+              color: "#666",
+              fontSize: "0.9rem",
+              fontWeight: "500"
+            }}>
+              {filteredProducts.length} {filteredProducts.length === 1 ? 'producto' : 'productos'} 
+              {selectedCategory !== "Todos" && ` en ${selectedCategory.toLowerCase()}`}
+            </span>
               </div>
-              
-              {/* Price Range Filter */}
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                <span style={{ fontSize: "0.8rem", color: "#666" }}>Precio:</span>
-                <input
-                  type="number"
-                  placeholder="Min"
-                  value={priceRange.min}
-                  onChange={(e) => setPriceRange(prev => ({ ...prev, min: Number(e.target.value) || 0 }))}
-                  style={{
-                    width: "60px",
-                    padding: "0.25rem 0.5rem",
-                    border: "1px solid rgba(0,0,0,0.1)",
-                    borderRadius: "4px",
-                    fontSize: "0.8rem"
-                  }}
-                />
-                <span style={{ fontSize: "0.8rem", color: "#666" }}>-</span>
-                <input
-                  type="number"
-                  placeholder="Max"
-                  value={priceRange.max}
-                  onChange={(e) => setPriceRange(prev => ({ ...prev, max: Number(e.target.value) || 1000 }))}
-                  style={{
-                    width: "60px",
-                    padding: "0.25rem 0.5rem",
-                    border: "1px solid rgba(0,0,0,0.1)",
-                    borderRadius: "4px",
-                    fontSize: "0.8rem"
-                  }}
-                />
               </div>
-              
-              {/* Sort Options */}
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                style={{
-                  padding: "0.5rem",
-                  border: "1px solid rgba(0,0,0,0.1)",
-                  borderRadius: "6px",
-                  fontSize: "0.8rem",
-                  background: "white"
-                }}
-              >
-                <option value="popularity">Más populares</option>
-                <option value="price-low">Precio: Menor a Mayor</option>
-                <option value="price-high">Precio: Mayor a Menor</option>
-                <option value="name">Nombre A-Z</option>
-              </select>
-              
-              {/* Clear Filters */}
-              {(query || priceRange.min > 0 || priceRange.max < 1000 || selectedCategory !== "Todos") && (
-                <button
-                  onClick={() => {
-                    setQuery("");
-                    setPriceRange({ min: 0, max: 1000 });
-                    setSortBy("popularity");
-                    setSelectedCategory("Todos");
-                  }}
-                  style={{
-                    padding: "0.5rem 1rem",
-                    background: "transparent",
-                    border: "1px solid rgba(0,0,0,0.1)",
-                    borderRadius: "6px",
-                    fontSize: "0.8rem",
-                    cursor: "pointer",
-                    color: "#666"
-                  }}
-                >
-                  Limpiar filtros
-                </button>
-              )}
+      </section>
+
+      {/* Products Section */}
+      <section id="productos" style={{ padding: "1rem 0" }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 1rem" }}>
+          <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+          <h2 style={{ 
+              color: PALETAS.D.carbon, 
+              margin: "0 0 0.5rem 0", 
+              fontSize: "3rem",
+            fontWeight: "700",
+              letterSpacing: "-0.02em"
+          }}>
+            Nuestros Productos
+          </h2>
+          <div style={{ 
+              width: "80px",
+              height: "4px",
+              background: `linear-gradient(90deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+              margin: "0 auto",
+              borderRadius: "2px"
+            }}></div>
+            <p style={{
+              color: "#666",
+              fontSize: "1.1rem",
+              margin: "1rem 0 0 0",
+              fontWeight: "400"
+            }}>
+              Productos artesanales elaborados con amor y consagrados para tu bienestar
+            </p>
             </div>
-          </div>
-          
           <div style={{ 
             display: "grid", 
-            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", 
-            gap: "2rem" 
+            gridTemplateColumns: window.innerWidth <= 768 ? "repeat(auto-fill, minmax(250px, 1fr))" : "repeat(auto-fill, minmax(280px, 1fr))", 
+            gap: window.innerWidth <= 768 ? "1rem" : "clamp(1.5rem, 4vw, 2.5rem)"
           }}>
-            {filteredItems.map(item => (
-              <div key={item.id} className="card" style={{ 
-                border: "1px solid rgba(0,0,0,0.08)", 
-                transition: "transform 0.2s ease, box-shadow 0.2s ease",
+            {filteredProducts.map(product => (
+              <div key={product.id} style={{
+                background: "linear-gradient(145deg, #ffffff 0%, #fefefe 100%)", 
+                borderRadius: "24px",
+                overflow: "hidden",
+                boxShadow: "0 8px 32px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04)",
+                border: `2px solid ${PALETAS.D.crema}`,
+                borderTop: `4px solid ${PALETAS.D.miel}`,
+                transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
                 cursor: "pointer",
-                background: "white",
-                borderRadius: "18px",
-                overflow: "hidden"
+                position: "relative",
+                backdropFilter: "blur(10px)"
               }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-5px)"}
-              onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-12px) scale(1.02)";
+                e.currentTarget.style.boxShadow = "0 20px 60px rgba(212, 165, 116, 0.15), 0 8px 24px rgba(0,0,0,0.08)";
+                e.currentTarget.style.borderColor = PALETAS.D.miel;
+                e.currentTarget.style.borderTopColor = "#b8945f";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0) scale(1)";
+                e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04)";
+                e.currentTarget.style.borderColor = PALETAS.D.crema;
+                e.currentTarget.style.borderTopColor = PALETAS.D.miel;
+              }}
               >
-                <div style={{ position: "relative" }}>
-                                      <img
-                      src={item.imagen}
-                      alt={item.nombre}
+                <div style={{ position: "relative", overflow: "hidden" }}>
+                  <img 
+                    src={product.imagen} 
+                    alt={product.nombre}
                       style={{
                         width: "100%",
-                        height: "280px",
+                      height: "350px", 
                         objectFit: "cover",
-                        objectPosition: "center"
+                      transition: "transform 0.4s ease"
                       }}
                       onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
-                      }}
-                    />
-                    <div style={{
-                      display: 'none',
-                      width: "100%",
-                      height: "280px",
-                      background: "linear-gradient(135deg, #FBF2DE, #E0A73A)",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "3rem",
-                      color: "#8B4513"
-                    }}>
-                      🖼️
-                    </div>
+                      e.target.src = "/images/logo/amorymiellogo.png";
+                    }}
+                  />
                   <div style={{ 
                     position: "absolute", 
-                    top: "1rem", 
-                    left: "1rem", 
-                    background: PALETAS.D.miel, 
-                    color: "white", 
-                    borderRadius: "20px", 
+                    top: "1.2rem", 
+                    right: "1.2rem",
+                    background: "linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)",
+                    backdropFilter: "blur(15px)",
                     padding: "0.5rem 1rem", 
-                    fontWeight: "600", 
-                    fontSize: "0.8rem" 
+                    borderRadius: "25px", 
+                    border: `2px solid ${PALETAS.D.miel}`,
+                    boxShadow: "0 4px 15px rgba(212, 165, 116, 0.2)"
                   }}>
-                    {item.categoria}
+                    <span style={{ 
+                      color: PALETAS.D.miel, 
+                      fontSize: "0.7rem",
+                      fontWeight: "800",
+                      textTransform: "uppercase",
+                      letterSpacing: "1px"
+                    }}>
+                      {product.categoria}
+                    </span>
                   </div>
                 </div>
-                <div style={{ padding: "1.5rem" }}>
+                <div style={{ 
+                  padding: "clamp(1.5rem, 3vw, 2.5rem)",
+                  background: "linear-gradient(180deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,1) 100%)"
+                }}>
                   <h3 style={{ 
-                    margin: "0 0 0.5rem 0", 
-                    fontSize: "1.3rem", 
-                    fontWeight: "600",
-                    color: PALETAS.D.carbon
+                    margin: "0 0 1rem 0", 
+                    color: PALETAS.D.carbon, 
+                    fontSize: "clamp(1.2rem, 3vw, 1.5rem)",
+                    fontWeight: "700",
+                    lineHeight: "1.3",
+                    letterSpacing: "-0.02em"
                   }}>
-                    {item.nombre}
+                    {product.nombre}
                   </h3>
                   <p style={{ 
-                    margin: "0 0 1rem 0", 
-                    color: "rgba(0,0,0,0.6)", 
-                    fontSize: "0.9rem" 
+                    color: "#666", 
+                    fontSize: "clamp(0.85rem, 2.5vw, 0.95rem)", 
+                    margin: "0 0 1.5rem 0", 
+                    lineHeight: "1.6",
+                    display: "-webkit-box",
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden"
                   }}>
-                    {item.categoria}
+                    {product.descripcion}
                   </p>
                   <div style={{ 
                     display: "flex", 
                     justifyContent: "space-between", 
                     alignItems: "center", 
-                    marginBottom: "1rem" 
+                    marginTop: "auto"
+                  }}>
+                    <div style={{ 
+                      display: "flex", 
+                      flexDirection: "column",
+                      alignItems: "flex-start"
                   }}>
                     <span style={{ 
-                      fontSize: "1.2rem", 
+                        fontSize: "1.4rem", 
                       fontWeight: "700", 
-                      color: PALETAS.D.miel 
-                    }}>
-                      {hasVariants(item) 
-                        ? `Desde ${money(minPrice(item), item.moneda || 'MXN')}` 
-                        : (item.categoria === 'Servicios' 
-                          ? money(item.precio, item.moneda) 
-                          : money(item.precio || minPrice(item), item.moneda)
-                        )
-                      }
+                        color: PALETAS.D.miel,
+                        lineHeight: "1"
+                      }}>
+                        ${product.precio}
                     </span>
-                    
-                    {/* Rating Display */}
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
-                      <span style={{ fontSize: "0.8rem", color: "#666" }}>
-                        {getAverageRating(item.id) > 0 ? "★".repeat(Math.floor(getAverageRating(item.id))) + "☆".repeat(5 - Math.floor(getAverageRating(item.id))) : "☆☆☆☆☆"}
+                      <span style={{ 
+                        fontSize: "0.8rem", 
+                        color: "#999",
+                        fontWeight: "500"
+                      }}>
+                        {product.moneda}
                       </span>
-                      <span style={{ fontSize: "0.7rem", color: "#666" }}>
-                        ({reviews[item.id]?.length || 0})
-                      </span>
+                      
+                      {/* Stock Status Indicator */}
+                      <div style={{ 
+                        marginTop: "0.5rem",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem"
+                      }}>
+                        {(() => {
+                          const currentStock = product.stock || 0;
+                          const minStock = product.minStock || 5;
+                          const isOutOfStock = currentStock === 0;
+                          const isLowStock = currentStock <= minStock && currentStock > 0;
+                          
+                          if (isOutOfStock) {
+                            return (
+                              <span style={{
+                                background: "#f44336",
+                                color: "white",
+                                padding: "0.25rem 0.5rem",
+                                borderRadius: "12px",
+                                fontSize: "0.7rem",
+                                fontWeight: "bold"
+                              }}>
+                                ⚠️ Sin Stock
+                              </span>
+                            );
+                          } else if (isLowStock) {
+                            return (
+                              <span style={{
+                                background: "#FF9800",
+                                color: "white",
+                                padding: "0.25rem 0.5rem",
+                                borderRadius: "12px",
+                                fontSize: "0.7rem",
+                                fontWeight: "bold"
+                              }}>
+                                ⚠️ Solo {currentStock} disponibles
+                              </span>
+                            );
+                          } else {
+                            return (
+                              <span style={{
+                                background: "#4CAF50",
+                                color: "white",
+                                padding: "0.25rem 0.5rem",
+                                borderRadius: "12px",
+                                fontSize: "0.7rem",
+                                fontWeight: "bold"
+                              }}>
+                                ✅ En Stock ({currentStock})
+                              </span>
+                            );
+                          }
+                        })()}
+                      </div>
                     </div>
-                  </div>
-                  
-                  {/* Wishlist and Review Buttons */}
                   <div style={{ 
                     display: "flex", 
-                    gap: "0.5rem", 
-                    marginBottom: "1rem" 
+                      gap: "0.6rem",
+                      flexWrap: "wrap",
+                      alignItems: "center"
                   }}>
                     <button
-                      onClick={() => addToWishlist(item)}
-                      style={{
-                        background: wishlist.find(w => w.id === item.id) ? "#ff6b6b" : "transparent",
-                        color: wishlist.find(w => w.id === item.id) ? "white" : "#666",
-                        border: "1px solid rgba(0,0,0,0.1)",
-                        borderRadius: "6px",
-                        padding: "0.5rem",
-                        cursor: "pointer",
-                        fontSize: "0.8rem",
-                        transition: "all 0.2s ease"
-                      }}
-                      title={wishlist.find(w => w.id === item.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
-                    >
-                      {wishlist.find(w => w.id === item.id) ? "❤️" : "🤍"}
-                    </button>
-                    <button
-                      onClick={() => {
-                        setShowReviews(true);
-                        setOpenProduct(item);
-                      }}
+                        onClick={() => setOpenProduct(product)}
                       style={{
                         background: "transparent",
-                        color: "#666",
-                        border: "1px solid rgba(0,0,0,0.1)",
-                        borderRadius: "6px",
-                        padding: "0.5rem",
+                          color: PALETAS.D.miel,
+                          border: `2px solid ${PALETAS.D.miel}`,
+                          padding: "0.6rem 1rem",
+                          borderRadius: "25px",
                         cursor: "pointer",
-                        fontSize: "0.8rem"
-                      }}
-                      title="Ver reseñas"
-                    >
-                      💬
+                        fontSize: "0.8rem",
+                          fontWeight: "600",
+                          transition: "all 0.3s ease",
+                          minWidth: "80px",
+                          height: "36px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center"
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.background = PALETAS.D.miel;
+                          e.target.style.color = "white";
+                          e.target.style.transform = "translateY(-1px)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.background = "transparent";
+                          e.target.style.color = PALETAS.D.miel;
+                          e.target.style.transform = "translateY(0)";
+                        }}
+                      >
+                        Ver más
                     </button>
-                  </div>
-                  <div style={{ display: "flex", gap: "0.75rem" }}>
-                    {item.categoria === 'Servicios' ? (
-                      <a 
-                        className="btn" 
-                        href={item.bookingLink} 
-                        target="_blank" 
-                        rel="noreferrer" 
-                        style={{ 
-                          background: PALETAS.D.miel, 
-                          color: "white",
-                          flex: 1,
-                          textAlign: "center",
-                          textDecoration: "none",
-                          borderRadius: "8px",
-                          padding: "0.75rem 1rem",
-                          fontWeight: "600"
-                        }}
-                      >
-                        Reservar
-                      </a>
-                    ) : hasVariants(item) ? (
                       <button 
-                        className="btn" 
-                        onClick={() => onOpen(item)} 
+                        onClick={() => addToCart(product)}
                         style={{ 
-                          background: PALETAS.D.miel, 
-                          color: "white",
-                          flex: 1,
-                          borderRadius: "8px",
-                          padding: "0.75rem 1rem",
-                          fontWeight: "600"
+                          background: (() => {
+                            const currentStock = product.stock || 0;
+                            const isOutOfStock = currentStock === 0;
+                            return isOutOfStock 
+                              ? '#cccccc' 
+                              : `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`;
+                          })(),
+                          color: (() => {
+                            const currentStock = product.stock || 0;
+                            const isOutOfStock = currentStock === 0;
+                            return isOutOfStock ? '#666666' : 'white';
+                          })(),
+                          border: "none",
+                          padding: "0.6rem 1rem",
+                          borderRadius: "25px",
+                          cursor: (() => {
+                            const currentStock = product.stock || 0;
+                            const isOutOfStock = currentStock === 0;
+                            return isOutOfStock ? 'not-allowed' : 'pointer';
+                          })(),
+                          fontSize: "0.8rem",
+                          fontWeight: "600",
+                          transition: "all 0.3s ease",
+                          minWidth: "80px",
+                          height: "36px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          boxShadow: (() => {
+                            const currentStock = product.stock || 0;
+                            const isOutOfStock = currentStock === 0;
+                            return isOutOfStock 
+                              ? 'none' 
+                              : "0 3px 12px rgba(212, 165, 116, 0.3)";
+                          })()
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.transform = "translateY(-2px)";
+                          e.target.style.boxShadow = "0 6px 20px rgba(224, 167, 58, 0.4)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.transform = "translateY(0)";
+                          e.target.style.boxShadow = "0 4px 15px rgba(224, 167, 58, 0.3)";
                         }}
                       >
-                        Elegir
-                      </button>
-                    ) : (
-                      <button 
-                        className="btn" 
-                        onClick={() => onAdd(item)} 
-                        style={{ 
-                          background: PALETAS.D.miel, 
-                          color: "white",
-                          flex: 1,
-                          borderRadius: "8px",
-                          padding: "0.75rem 1rem",
-                          fontWeight: "600"
-                        }}
-                      >
-                        Añadir
-                      </button>
-                    )}
-                    <button 
-                      className="btn-outline" 
-                      onClick={() => onOpen(item)} 
-                      style={{ 
-                        borderColor: PALETAS.D.miel,
-                        color: PALETAS.D.miel,
-                        flex: 1,
-                        borderRadius: "8px",
-                        padding: "0.75rem 1rem",
-                        fontWeight: "600"
-                      }}
-                    >
-                      Ver más
+                        {(() => {
+                          const currentStock = product.stock || 0;
+                          const isOutOfStock = currentStock === 0;
+                          
+                          if (!user) {
+                            return 'Inicia sesión';
+                          } else if (isOutOfStock) {
+                            return 'Sin Stock';
+                          } else {
+                            return 'Agregar';
+                          }
+                        })()}
                     </button>
+              </div>
                   </div>
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Kits Section */}
-      <section id="kits" style={{ padding: "4rem 0", background: "white" }}>
-        <div className="container">
-          <h2 style={{ 
-            textAlign: "center", 
-            margin: "0 0 3rem 0", 
-            fontSize: "2.5rem", 
-            fontWeight: "700",
-            color: PALETAS.D.carbon
-          }}>
-            Kits Especiales
-          </h2>
-          <div style={{ 
-            display: "grid", 
-            gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", 
-            gap: "2rem" 
-          }}>
-            <div className="card" style={{ 
-              border: "1px solid rgba(0,0,0,0.08)", 
-              background: "white",
-              borderRadius: "18px",
-              overflow: "hidden"
-            }}>
-              <div style={{ 
-                background: "linear-gradient(135deg, #E0A73A, #FFD700)", 
-                padding: "2rem", 
-                textAlign: "center",
-                color: "white"
-              }}>
-                <h3 style={{ margin: "0 0 1rem 0", fontSize: "1.8rem", fontWeight: "700" }}>
-                  🧘 Kit de Bienestar
-                </h3>
-                <p style={{ margin: "0", fontSize: "1.1rem", opacity: "0.9" }}>
-                  Todo lo que necesitas para tu ritual de autocuidado
-                </p>
-              </div>
-              <div style={{ padding: "2rem" }}>
-                <ul style={{ margin: "0 0 2rem 0", padding: "0", listStyle: "none" }}>
-                  <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span style={{ color: PALETAS.D.miel }}>✓</span>
-                    Vela de cera de abeja
-                  </li>
-                  <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span style={{ color: PALETAS.D.miel }}>✓</span>
-                    Loción Aqua Florida
-                  </li>
-                  <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span style={{ color: PALETAS.D.miel }}>✓</span>
-                    Palo Santo
-                  </li>
-                  <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span style={{ color: PALETAS.D.miel }}>✓</span>
-                    Guía de ritual incluida
-                  </li>
-                </ul>
-                <div style={{ 
-                  display: "flex", 
-                  justifyContent: "space-between", 
-                  alignItems: "center",
-                  marginBottom: "1rem"
-                }}>
-                  <span style={{ fontSize: "1.5rem", fontWeight: "700", color: PALETAS.D.miel }}>
-                    $450 MXN
-                  </span>
-                  <span style={{ fontSize: "0.9rem", color: "rgba(0,0,0,0.6)" }}>
-                    Ahorras $150
-                  </span>
-                </div>
-                <button 
-                  className="btn" 
-                  style={{ 
-                    background: PALETAS.D.miel, 
-                    color: "white",
-                    width: "100%",
-                    borderRadius: "8px",
-                    padding: "1rem",
-                    fontWeight: "600"
-                  }}
-                >
-                  Comprar Kit
-                </button>
-              </div>
-            </div>
-
-            <div className="card" style={{ 
-              border: "1px solid rgba(0,0,0,0.08)", 
-              background: "white",
-              borderRadius: "18px",
-              overflow: "hidden"
-            }}>
-              <div style={{ 
-                background: "linear-gradient(135deg, #628D6A, #90EE90)", 
-                padding: "2rem", 
-                textAlign: "center",
-                color: "white"
-              }}>
-                <h3 style={{ margin: "0 0 1rem 0", fontSize: "1.8rem", fontWeight: "700" }}>
-                  💕 Kit de Amor Propio
-                </h3>
-                <p style={{ margin: "0", fontSize: "1.1rem", opacity: "0.9" }}>
-                  Para celebrar y honrar tu belleza interior
-                </p>
-              </div>
-              <div style={{ padding: "2rem" }}>
-                <ul style={{ margin: "0 0 2rem 0", padding: "0", listStyle: "none" }}>
-                  <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span style={{ color: PALETAS.D.miel }}>✓</span>
-                    Exfoliante Venus
-                  </li>
-                  <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span style={{ color: PALETAS.D.miel }}>✓</span>
-                    Loción Ellas y Ellos
-                  </li>
-                  <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span style={{ color: PALETAS.D.miel }}>✓</span>
-                    Baño Energético Amor Propio
-                  </li>
-                  <li style={{ padding: "0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span style={{ color: PALETAS.D.miel }}>✓</span>
-                    Mascarilla facial natural
-                  </li>
-                </ul>
-                <div style={{ 
-                  display: "flex", 
-                  justifyContent: "space-between", 
-                  alignItems: "center",
-                  marginBottom: "1rem"
-                }}>
-                  <span style={{ fontSize: "1.5rem", fontWeight: "700", color: PALETAS.D.miel }}>
-                    $580 MXN
-                  </span>
-                  <span style={{ fontSize: "0.9rem", color: "rgba(0,0,0,0.6)" }}>
-                    Ahorras $200
-                  </span>
-                </div>
-                <button 
-                  className="btn" 
-                  style={{ 
-                    background: PALETAS.D.miel, 
-                    color: "white",
-                    width: "100%",
-                    borderRadius: "8px",
-                    padding: "1rem",
-                    fontWeight: "600"
-                  }}
-                >
-                  Comprar Kit
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       </section>
 
       {/* Services Section */}
-      <section id="servicios" style={{ padding: "4rem 0", background: "#FBF2DE" }}>
-        <div className="container">
+      <section id="servicios" style={{ background: "white", padding: "1.5rem 0" }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 1rem" }}>
           <h2 style={{ 
             textAlign: "center", 
-            margin: "0 0 3rem 0", 
-            fontSize: "2.5rem", 
-            fontWeight: "700",
-            color: PALETAS.D.carbon
+            color: PALETAS.D.carbon, 
+            marginBottom: "1.5rem", 
+            fontSize: "clamp(2rem, 5vw, 2.5rem)",
+            fontWeight: "700"
           }}>
-            Servicios Holísticos
+            Nuestros Servicios
           </h2>
           <div style={{ 
             display: "grid", 
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", 
-            gap: "2rem" 
+            gridTemplateColumns: window.innerWidth <= 768 ? "repeat(auto-fill, minmax(250px, 1fr))" : "repeat(auto-fill, minmax(280px, 1fr))", 
+            gap: window.innerWidth <= 768 ? "1rem" : "clamp(1.5rem, 4vw, 2rem)"
           }}>
             {services.map(service => (
-              <div key={service.id} className="card" style={{ 
-                border: "1px solid rgba(0,0,0,0.08)", 
+              <div key={service.id} style={{
                 background: "white",
-                borderRadius: "18px",
-                overflow: "hidden"
+                borderRadius: "15px",
+                overflow: "hidden",
+                boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+                border: `2px solid ${PALETAS.D.crema}`
               }}>
-                <div style={{ position: "relative", height: "200px" }}>
                   <img
                     src={service.imagen}
                     alt={service.nombre}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      objectPosition: "center"
-                    }}
+                  style={{ width: "100%", height: "350px", objectFit: "cover" }}
                     onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'flex';
-                    }}
-                  />
-                  <div style={{
-                    display: 'none',
-                    width: "100%",
-                    height: "100%",
-                    background: "linear-gradient(135deg, #E0A73A, #FFD700)",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "3rem"
-                  }}>
-                    ✨
-                  </div>
-                </div>
+                    e.target.src = "/images/logo/amorymiellogo.png";
+                  }}
+                />
                 <div style={{ padding: "1.5rem" }}>
-                  <h3 style={{ 
-                    margin: "0 0 0.5rem 0", 
-                    fontSize: "1.3rem", 
-                    fontWeight: "600",
-                    color: PALETAS.D.carbon
-                  }}>
-                    {service.nombre}
-                  </h3>
-                  <div style={{ 
-                    display: "flex", 
-                    justifyContent: "space-between", 
-                    alignItems: "center", 
-                    marginBottom: "1rem" 
-                  }}>
-                    <span style={{ 
-                      fontSize: "1.2rem", 
-                      fontWeight: "700", 
-                      color: PALETAS.D.miel 
-                    }}>
-                      {money(service.precio, service.moneda)}
-                    </span>
-                    <span style={{ 
-                      fontSize: "0.9rem", 
-                      color: "rgba(0,0,0,0.6)" 
-                    }}>
-                      {service.duracion}
-                    </span>
-                  </div>
-                  <p style={{ 
-                    margin: "0 0 1rem 0", 
-                    color: "rgba(0,0,0,0.6)", 
-                    fontSize: "0.9rem" 
-                  }}>
-                    Modalidad: {service.modalidad}
+                  <h3 style={{ margin: "0 0 0.5rem 0", color: PALETAS.D.carbon }}>{service.nombre}</h3>
+                  <p style={{ color: "#666", fontSize: "0.9rem", margin: "0 0 1rem 0" }}>
+                    {service.duracion} • {service.modalidad}
                   </p>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontSize: "1.3rem", fontWeight: "bold", color: PALETAS.D.miel }}>
+                      ${service.precio} {service.moneda}
+                    </span>
                   <a 
                     href={service.bookingLink} 
                     target="_blank" 
-                    rel="noreferrer"
-                    className="btn" 
+                      rel="noopener noreferrer"
                     style={{ 
-                      background: PALETAS.D.miel, 
+                        background: PALETAS.D.verde,
                       color: "white",
+                        border: "none",
+                        padding: "0.75rem 1.5rem",
+                        borderRadius: "25px",
+                        cursor: "pointer",
+                  fontSize: "0.9rem",
+                  fontWeight: "600",
+                        textDecoration: "none"
+                      }}
+                    >
+                      Agendar
+              </a>
+            </div>
+              </div>
+            </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
+
+      {/* Kids Section */}
+      <section id="kids" style={{ 
+        background: `linear-gradient(135deg, #fff8e1 0%, #f3e5ab 100%)`, 
+        padding: "4rem 0" 
+      }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 1rem" }}>
+          {/* Kids Header */}
+          <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+            <h2 style={{
+              fontSize: "clamp(2.5rem, 5vw, 3.5rem)",
+              fontWeight: "700",
+              color: PALETAS.D.carbon,
+              margin: "0 0 1rem 0"
+            }}>
+              🌟 Para los Pequeños 🌟
+            </h2>
+            <p style={{
+              fontSize: "1.2rem",
+              color: "#666",
+              maxWidth: "600px",
+              margin: "0 auto",
+              lineHeight: "1.6"
+            }}>
+              Productos y servicios especialmente diseñados para el bienestar y desarrollo integral de los niños
+            </p>
+          </div>
+
+          {/* Kids Products */}
+          <div style={{ marginBottom: "4rem" }}>
+            <h3 style={{
+              fontSize: "2rem",
+              fontWeight: "600",
+              color: PALETAS.D.miel,
+              textAlign: "center",
+              margin: "0 0 2rem 0"
+            }}>
+              Productos para Niños
+            </h3>
+            <div style={{ 
+              display: "grid", 
+              gridTemplateColumns: window.innerWidth <= 768 ? "repeat(auto-fill, minmax(250px, 1fr))" : "repeat(auto-fill, minmax(280px, 1fr))", 
+              gap: window.innerWidth <= 768 ? "1rem" : "clamp(1.5rem, 4vw, 2.5rem)"
+            }}>
+              {kidsProducts.map(product => (
+                <div key={product.id} style={{
+                  background: "linear-gradient(145deg, #ffffff 0%, #fefefe 100%)", 
+                  borderRadius: "24px",
+                  overflow: "hidden",
+                  boxShadow: "0 8px 32px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04)",
+                  border: `2px solid ${PALETAS.D.crema}`,
+                  borderTop: `4px solid #ffd54f`,
+                  transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                  cursor: "pointer",
+                  position: "relative"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-8px)";
+                  e.currentTarget.style.boxShadow = "0 20px 40px rgba(0,0,0,0.12), 0 8px 16px rgba(0,0,0,0.08)";
+                  e.currentTarget.style.borderColor = "#ffd54f";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04)";
+                  e.currentTarget.style.borderColor = PALETAS.D.crema;
+                }}
+                >
+                  {/* Category Tag */}
+                  <div style={{
+                    position: "absolute",
+                    top: "1.2rem",
+                    right: "1.2rem",
+                    background: "linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)",
+                    backdropFilter: "blur(15px)",
+                    padding: "0.5rem 1rem",
+                    borderRadius: "25px",
+                    border: "2px solid #ffd54f",
+                    boxShadow: "0 4px 15px rgba(255, 213, 79, 0.2)"
+                  }}>
+                    <span style={{
+                      fontSize: "0.7rem",
+                      fontWeight: "800",
+                      textTransform: "uppercase",
+                      letterSpacing: "1px",
+                      color: PALETAS.D.miel
+                    }}>
+                      {product.categoria.toUpperCase()}
+                    </span>
+                  </div>
+
+                  {/* Product Image */}
+                  <img
+                    src={product.imagen}
+                    alt={product.nombre}
+                    style={{ width: "100%", height: "350px", objectFit: "cover" }}
+                    onError={(e) => {
+                      e.target.src = "/images/logo/amorymiellogo.png";
+                    }}
+                  />
+
+                  {/* Product Content */}
+                  <div style={{
+                    padding: "clamp(1.5rem, 3vw, 2.5rem)",
+                    background: "linear-gradient(180deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,1) 100%)"
+                  }}>
+                    <h3 style={{
+                      fontSize: "clamp(1.2rem, 3vw, 1.5rem)",
+                      fontWeight: "700",
+                      color: PALETAS.D.carbon,
+                      margin: "0 0 0.8rem 0",
+                      lineHeight: "1.3"
+                    }}>
+                      {product.nombre}
+                    </h3>
+                    
+                    <p style={{
+                      fontSize: "0.9rem",
+                      color: "#666",
+                      margin: "0 0 1.2rem 0",
+                      lineHeight: "1.5"
+                    }}>
+                      {product.descripcion}
+                    </p>
+
+                    {/* Price */}
+                    <div style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "flex-start",
+                      marginBottom: "1.2rem"
+                    }}>
+                      <span style={{
+                        fontSize: "1.4rem",
+                        fontWeight: "700",
+                        color: PALETAS.D.miel,
+                        lineHeight: "1"
+                      }}>
+                        ${product.precio}
+                      </span>
+                      <span style={{
+                        fontSize: "0.8rem",
+                        color: "#999",
+                        fontWeight: "500"
+                      }}>
+                        {product.moneda}
+                      </span>
+                    </div>
+
+                    {/* Buttons */}
+                    <div style={{
+                      display: "flex",
+                      gap: "0.6rem",
+                      flexWrap: "wrap",
+                      alignItems: "center"
+                    }}>
+                      <button
+                        onClick={() => setOpenProduct(product)}
+                        style={{
+                          background: "transparent",
+                          color: PALETAS.D.miel,
+                          border: `2px solid ${PALETAS.D.miel}`,
+                          padding: "0.6rem 1rem",
+                          borderRadius: "25px",
+                          cursor: "pointer",
+                          fontSize: "0.8rem",
+                          fontWeight: "600",
+                          transition: "all 0.3s ease",
+                          minWidth: "80px",
+                          height: "36px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center"
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.background = PALETAS.D.miel;
+                          e.target.style.color = "white";
+                          e.target.style.transform = "translateY(-2px)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.background = "transparent";
+                          e.target.style.color = PALETAS.D.miel;
+                          e.target.style.transform = "translateY(0)";
+                        }}
+                      >
+                        Ver más
+                      </button>
+                      <button
+                        onClick={() => addToCart(product)}
+                        style={{
+                          background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                          color: "white",
+                          border: "none",
+                          padding: "0.6rem 1rem",
+                          borderRadius: "25px",
+                          cursor: "pointer",
+                          fontSize: "0.8rem",
+                          fontWeight: "600",
+                          transition: "all 0.3s ease",
+                          minWidth: "80px",
+                          height: "36px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          boxShadow: "0 3px 12px rgba(212, 165, 116, 0.3)"
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.transform = "translateY(-2px)";
+                          e.target.style.boxShadow = "0 6px 20px rgba(212, 165, 116, 0.4)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.transform = "translateY(0)";
+                          e.target.style.boxShadow = "0 3px 12px rgba(212, 165, 116, 0.3)";
+                        }}
+                      >
+                        {user ? 'Agregar al Carrito' : 'Inicia sesión para comprar'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Kids Services */}
+          <div>
+            <h3 style={{
+              fontSize: "2rem",
+              fontWeight: "600",
+              color: PALETAS.D.miel,
+              textAlign: "center",
+              margin: "0 0 2rem 0"
+            }}>
+              Servicios para Niños
+            </h3>
+            <div style={{ 
+              display: "grid", 
+              gridTemplateColumns: window.innerWidth <= 768 ? "repeat(auto-fill, minmax(250px, 1fr))" : "repeat(auto-fill, minmax(280px, 1fr))", 
+              gap: window.innerWidth <= 768 ? "1rem" : "clamp(1.5rem, 4vw, 2rem)"
+            }}>
+              {kidsServices.map(service => (
+                <div key={service.id} style={{
+                  background: "white",
+                  borderRadius: "20px",
+                  overflow: "hidden",
+                  boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+                  border: `2px solid #ffd54f`,
+                  transition: "all 0.3s ease"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-5px)";
+                  e.currentTarget.style.boxShadow = "0 15px 40px rgba(0,0,0,0.15)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.1)";
+                }}
+                >
+                  <img
+                    src={service.imagen}
+                    alt={service.nombre}
+                    style={{ width: "100%", height: "350px", objectFit: "cover" }}
+                    onError={(e) => {
+                      e.target.src = "/images/logo/amorymiellogo.png";
+                    }}
+                  />
+                  <div style={{ padding: "1.5rem" }}>
+                    <h3 style={{ margin: "0 0 0.5rem 0", color: PALETAS.D.carbon }}>{service.nombre}</h3>
+                    <p style={{ color: "#666", fontSize: "0.9rem", margin: "0 0 1rem 0" }}>
+                      {service.duracion} • {service.modalidad}
+                    </p>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ fontSize: "1.3rem", fontWeight: "bold", color: PALETAS.D.miel }}>
+                        ${service.precio} {service.moneda}
+                      </span>
+                      <a 
+                        href={service.bookingLink} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        style={{ 
+                          background: "#ffd54f",
+                          color: "white",
+                          border: "none",
+                          padding: "0.75rem 1.5rem",
+                          borderRadius: "25px",
+                          cursor: "pointer",
+                          fontSize: "0.9rem",
+                          fontWeight: "600",
+                          textDecoration: "none",
+                          transition: "all 0.3s ease"
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.background = "#ffc107";
+                          e.target.style.transform = "translateY(-2px)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.background = "#ffd54f";
+                          e.target.style.transform = "translateY(0)";
+                        }}
+                      >
+                        Agendar
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Quiénes Somos Section */}
+      <section id="quienes-somos" style={{ 
+        background: `linear-gradient(135deg, ${PALETAS.D.crema} 0%, #f8f5f0 100%)`, 
+        padding: "4rem 0" 
+      }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 1rem" }}>
+          <div style={{ 
+            display: "grid", 
+            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", 
+            gap: "3rem",
+            alignItems: "center"
+          }}>
+            {/* Image Section */}
+            <div style={{ textAlign: "center" }}>
+              <img
+                src="/images/about/quiensomos.jpg"
+                alt="Amor y Miel - Quiénes Somos"
+                style={{
+                  width: "100%",
+                  maxWidth: "500px",
+                  height: "auto",
+                  borderRadius: "20px",
+                  boxShadow: "0 15px 40px rgba(0,0,0,0.1)",
+                  border: `3px solid ${PALETAS.D.miel}`
+                }}
+                onError={(e) => {
+                  e.target.src = "/images/logo/amorymiellogo.png";
+                }}
+              />
+            </div>
+
+            {/* Content Section */}
+            <div style={{ padding: "0 1rem" }}>
+              <h2 style={{
+                fontSize: "clamp(2.5rem, 5vw, 3.5rem)",
+                fontWeight: "700",
+                color: PALETAS.D.carbon,
+                margin: "0 0 1.5rem 0",
+                lineHeight: "1.2"
+              }}>
+                Quiénes Somos
+              </h2>
+              
+              <div style={{
+                background: "white",
+                padding: "2rem",
+                borderRadius: "20px",
+                boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+                border: `2px solid ${PALETAS.D.crema}`
+              }}>
+                <p style={{
+                  fontSize: "1.1rem",
+                  lineHeight: "1.7",
+                  color: "#555",
+                  margin: "0 0 1.5rem 0"
+                }}>
+                  En <strong style={{ color: PALETAS.D.miel }}>Amor y Miel</strong>, creemos en el poder transformador de la naturaleza y la energía del amor. Somos una marca artesanal dedicada a crear productos y servicios holísticos que nutren el cuerpo, la mente y el alma.
+                </p>
+
+                <p style={{
+                  fontSize: "1.1rem",
+                  lineHeight: "1.7",
+                  color: "#555",
+                  margin: "0 0 1.5rem 0"
+                }}>
+                  Cada producto es elaborado con <strong style={{ color: PALETAS.D.miel }}>ingredientes naturales</strong> cuidadosamente seleccionados y consagrados bajo rituales de amor y sanación. Nuestros servicios holísticos están diseñados para acompañarte en tu camino hacia el bienestar integral.
+                </p>
+
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                  gap: "1.5rem",
+                  marginTop: "2rem"
+                }}>
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{
+                      fontSize: "2.5rem",
+                      marginBottom: "0.5rem"
+                    }}>🌿</div>
+                    <h4 style={{
+                      margin: "0 0 0.5rem 0",
+                      color: PALETAS.D.miel,
+                      fontSize: "1.1rem",
+                      fontWeight: "600"
+                    }}>100% Natural</h4>
+                    <p style={{
+                      margin: "0",
+                      fontSize: "0.9rem",
+                      color: "#666"
+                    }}>Ingredientes puros y orgánicos</p>
+                  </div>
+
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{
+                      fontSize: "2.5rem",
+                      marginBottom: "0.5rem"
+                    }}>💝</div>
+                    <h4 style={{
+                      margin: "0 0 0.5rem 0",
+                      color: PALETAS.D.miel,
+                      fontSize: "1.1rem",
+                      fontWeight: "600"
+                    }}>Hecho con Amor</h4>
+                    <p style={{
+                      margin: "0",
+                      fontSize: "0.9rem",
+                      color: "#666"
+                    }}>Cada producto es consagrado</p>
+                  </div>
+
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{
+                      fontSize: "2.5rem",
+                      marginBottom: "0.5rem"
+                    }}>✨</div>
+                    <h4 style={{
+                      margin: "0 0 0.5rem 0",
+                      color: PALETAS.D.miel,
+                      fontSize: "1.1rem",
+                      fontWeight: "600"
+                    }}>Energía Positiva</h4>
+                    <p style={{
+                      margin: "0",
+                      fontSize: "0.9rem",
+                      color: "#666"
+                    }}>Rituales de sanación holística</p>
+                  </div>
+                </div>
+
+                <div style={{
+                  marginTop: "2rem",
+                  textAlign: "center"
+                }}>
+                  <a 
+                    href="#contacto" 
+                    style={{
+                      background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                      color: "white",
+                      padding: "1rem 2rem",
+                      borderRadius: "30px",
                       textDecoration: "none",
-                      borderRadius: "8px",
-                      padding: "0.75rem 1rem",
+                      fontSize: "1rem",
                       fontWeight: "600",
-                      display: "block",
-                      textAlign: "center"
+                      display: "inline-block",
+                      boxShadow: "0 5px 15px rgba(212, 165, 116, 0.3)",
+                      transition: "all 0.3s ease"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = "translateY(-2px)";
+                      e.target.style.boxShadow = "0 8px 25px rgba(212, 165, 116, 0.4)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = "translateY(0)";
+                      e.target.style.boxShadow = "0 5px 15px rgba(212, 165, 116, 0.3)";
                     }}
                   >
-                    📞 Reservar
+                    Conoce Nuestra Historia
                   </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Shipping Information Section */}
+      <section style={{ 
+        background: "white", 
+        padding: "4rem 0" 
+      }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 1rem" }}>
+          <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+            <h2 style={{
+              fontSize: "clamp(2.5rem, 5vw, 3.5rem)",
+              fontWeight: "700",
+              color: PALETAS.D.carbon,
+              margin: "0 0 1rem 0"
+            }}>
+              🚚 Información de Envíos
+            </h2>
+            <p style={{
+              fontSize: "1.2rem",
+              color: "#666",
+              maxWidth: "600px",
+              margin: "0 auto",
+              lineHeight: "1.6"
+            }}>
+              Entregamos nuestros productos con amor y cuidado a toda la República Mexicana
+            </p>
+          </div>
+
+          <div style={{ 
+            display: "grid", 
+            gridTemplateColumns: window.innerWidth <= 768 ? "1fr" : "repeat(auto-fit, minmax(300px, 1fr))", 
+            gap: window.innerWidth <= 768 ? "1rem" : "2rem"
+          }}>
+            <div style={{
+              background: `linear-gradient(135deg, ${PALETAS.D.crema} 0%, #f8f5f0 100%)`,
+              padding: "2rem",
+              borderRadius: "20px",
+              border: `2px solid ${PALETAS.D.crema}`,
+              textAlign: "center"
+            }}>
+              <div style={{
+                fontSize: "3rem",
+                marginBottom: "1rem"
+              }}>📦</div>
+              <h3 style={{
+                fontSize: "1.5rem",
+                fontWeight: "600",
+                color: PALETAS.D.carbon,
+                margin: "0 0 1rem 0"
+              }}>
+                Envíos Nacionales
+              </h3>
+              <p style={{
+                color: "#666",
+                lineHeight: "1.6",
+                margin: "0 0 1rem 0"
+              }}>
+                Realizamos envíos a toda la República Mexicana
+              </p>
+              <p style={{
+                color: PALETAS.D.miel,
+                fontWeight: "600",
+                fontSize: "1.1rem",
+                margin: "0"
+              }}>
+                3-7 días hábiles
+              </p>
+            </div>
+
+            <div style={{
+              background: `linear-gradient(135deg, ${PALETAS.D.crema} 0%, #f8f5f0 100%)`,
+              padding: "2rem",
+              borderRadius: "20px",
+              border: `2px solid ${PALETAS.D.crema}`,
+              textAlign: "center"
+            }}>
+              <div style={{
+                fontSize: "3rem",
+                marginBottom: "1rem"
+              }}>💰</div>
+              <h3 style={{
+                fontSize: "1.5rem",
+                fontWeight: "600",
+                color: PALETAS.D.carbon,
+                margin: "0 0 1rem 0"
+              }}>
+                Costo de Envío
+              </h3>
+              <p style={{
+                color: "#666",
+                lineHeight: "1.6",
+                margin: "0 0 1rem 0"
+              }}>
+                Envío gratuito en compras mayores a $500 MXN
+              </p>
+              <p style={{
+                color: PALETAS.D.miel,
+                fontWeight: "600",
+                fontSize: "1.1rem",
+                margin: "0"
+              }}>
+                $80 MXN (compras menores)
+              </p>
+            </div>
+
+            <div style={{
+              background: `linear-gradient(135deg, ${PALETAS.D.crema} 0%, #f8f5f0 100%)`,
+              padding: "2rem",
+              borderRadius: "20px",
+              border: `2px solid ${PALETAS.D.crema}`,
+              textAlign: "center"
+            }}>
+              <div style={{
+                fontSize: "3rem",
+                marginBottom: "1rem"
+              }}>🛡️</div>
+              <h3 style={{
+                fontSize: "1.5rem",
+                fontWeight: "600",
+                color: PALETAS.D.carbon,
+                margin: "0 0 1rem 0"
+              }}>
+                Empaque Seguro
+              </h3>
+              <p style={{
+                color: "#666",
+                lineHeight: "1.6",
+                margin: "0 0 1rem 0"
+              }}>
+                Todos nuestros productos son empacados con cuidado y protección
+              </p>
+              <p style={{
+                color: PALETAS.D.miel,
+                fontWeight: "600",
+                fontSize: "1.1rem",
+                margin: "0"
+              }}>
+                100% protegido
+              </p>
+            </div>
+          </div>
+
+          <div style={{
+            background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+            padding: "2rem",
+            borderRadius: "20px",
+            marginTop: "2rem",
+            textAlign: "center"
+          }}>
+            <h3 style={{
+              color: "white",
+              fontSize: "1.5rem",
+              fontWeight: "600",
+              margin: "0 0 1rem 0"
+            }}>
+              📞 ¿Necesitas ayuda con tu envío?
+            </h3>
+            <p style={{
+              color: "rgba(255,255,255,0.9)",
+              fontSize: "1.1rem",
+              margin: "0 0 1rem 0"
+            }}>
+              Contáctanos por WhatsApp para consultas sobre envíos y seguimiento
+            </p>
+            <a 
+              href="https://wa.me/529991320209?text=Hola,%20tengo%20una%20consulta%20sobre%20envíos"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                background: "white",
+                color: PALETAS.D.miel,
+                padding: "1rem 2rem",
+                borderRadius: "30px",
+                textDecoration: "none",
+                fontWeight: "600",
+                fontSize: "1.1rem",
+                display: "inline-block",
+                transition: "all 0.3s ease"
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "translateY(-2px)";
+                e.target.style.boxShadow = "0 8px 25px rgba(0,0,0,0.15)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "translateY(0)";
+                e.target.style.boxShadow = "none";
+              }}
+            >
+              Contactar por WhatsApp
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section style={{ 
+        background: "white", 
+        padding: "4rem 0" 
+      }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 1rem" }}>
+          <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+            <h2 style={{
+              fontSize: "clamp(2.5rem, 5vw, 3.5rem)",
+              fontWeight: "700",
+              color: PALETAS.D.carbon,
+              margin: "0 0 1rem 0"
+            }}>
+              💬 Lo Que Dicen Nuestros Clientes
+            </h2>
+            <p style={{
+              fontSize: "1.2rem",
+              color: "#666",
+              maxWidth: "600px",
+              margin: "0 auto",
+              lineHeight: "1.6"
+            }}>
+              Testimonios reales de personas que han transformado su bienestar con nuestros productos
+            </p>
+          </div>
+
+          <div style={{ 
+            display: "grid", 
+            gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", 
+            gap: "2rem"
+          }}>
+            {[
+              {
+                name: "María González",
+                text: "Los productos de Amor y Miel han transformado mi rutina de autocuidado. El Kit de Bienestar Completo es perfecto para relajarme después del trabajo.",
+                rating: 5
+              },
+              {
+                name: "Carlos Rodríguez",
+                text: "La Sonoterapia fue una experiencia increíble. Me ayudó a reducir el estrés y encontrar paz interior. Definitivamente lo recomiendo.",
+                rating: 5
+              },
+              {
+                name: "Ana Martínez",
+                text: "Las velas de miel tienen un aroma delicioso y crean un ambiente muy relajante. Mi familia y yo las usamos todas las noches.",
+                rating: 5
+              },
+              {
+                name: "Laura Fernández",
+                text: "Los baños energéticos son mágicos. Me ayudaron a limpiar mi energía y sentirme renovada. El servicio al cliente es excepcional.",
+                rating: 5
+              },
+              {
+                name: "Roberto Silva",
+                text: "La Numerología me abrió los ojos a muchas cosas. Los productos son de excelente calidad y el ambiente es muy relajante.",
+                rating: 5
+              },
+              {
+                name: "Carmen Ruiz",
+                text: "Mi hija ama los productos para niños. Son suaves, naturales y realmente funcionan. Recomiendo Amor y Miel a todas las mamás.",
+                rating: 5
+              }
+            ].map((testimonial, index) => (
+              <div key={index} style={{
+                background: `linear-gradient(135deg, ${PALETAS.D.crema} 0%, #f8f5f0 100%)`,
+                padding: "2rem",
+                borderRadius: "20px",
+                border: `2px solid ${PALETAS.D.crema}`,
+                boxShadow: "0 8px 25px rgba(0,0,0,0.08)"
+              }}>
+                <div style={{ marginBottom: "1rem" }}>
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <span key={i} style={{ color: "#ffd700", fontSize: "1.2rem" }}>⭐</span>
+                  ))}
+                </div>
+                <p style={{
+                  fontSize: "1rem",
+                  lineHeight: "1.6",
+                  color: "#555",
+                  margin: "0 0 1.5rem 0",
+                  fontStyle: "italic"
+                }}>
+                  "{testimonial.text}"
+                </p>
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1rem"
+                }}>
+                  <div style={{
+                    width: "50px",
+                    height: "50px",
+                    borderRadius: "50%",
+                    background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "white",
+                    fontWeight: "bold",
+                    fontSize: "1.2rem"
+                  }}>
+                    {testimonial.name.charAt(0)}
+                  </div>
+                  <div>
+                    <h4 style={{
+                      margin: "0",
+                      color: PALETAS.D.carbon,
+                      fontSize: "1.1rem",
+                      fontWeight: "600"
+                    }}>
+                      {testimonial.name}
+                    </h4>
+                    <p style={{
+                      margin: "0",
+                      color: "#666",
+                      fontSize: "0.9rem"
+                    }}>
+                      Cliente Verificado
+                    </p>
+                  </div>
                 </div>
               </div>
             ))}
@@ -3017,443 +2462,680 @@ const [showRecommendations, setShowRecommendations] = useState(false);
         </div>
       </section>
 
-      {/* Blog Section */}
-      <section id="blog" style={{ padding: "4rem 0", background: "#FBF2DE" }}>
-        <div className="container">
-          <h2 style={{ 
-            textAlign: "center", 
-            margin: "0 0 3rem 0", 
-            fontSize: "2.5rem", 
-            fontWeight: "700",
-            color: PALETAS.D.carbon
-          }}>
-            Blog Holístico
-          </h2>
+      {/* FAQ Section */}
+      <section style={{ 
+        background: `linear-gradient(135deg, ${PALETAS.D.crema} 0%, #f8f5f0 100%)`, 
+        padding: "4rem 0" 
+      }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 1rem" }}>
+          <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+            <h2 style={{
+              fontSize: "clamp(2.5rem, 5vw, 3.5rem)",
+              fontWeight: "700",
+              color: PALETAS.D.carbon,
+              margin: "0 0 1rem 0"
+            }}>
+              ❓ Preguntas Frecuentes
+            </h2>
+            <p style={{
+              fontSize: "1.2rem",
+              color: "#666",
+              maxWidth: "600px",
+              margin: "0 auto",
+              lineHeight: "1.6"
+            }}>
+              Resolvemos las dudas más comunes sobre nuestros productos y servicios
+            </p>
+          </div>
+
           <div style={{ 
             display: "grid", 
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", 
-            gap: "2rem" 
+            gridTemplateColumns: "repeat(auto-fit, minmax(500px, 1fr))", 
+            gap: "1.5rem"
           }}>
-            <article className="card" style={{ 
-              border: "1px solid rgba(0,0,0,0.08)", 
-              background: "white",
-              borderRadius: "18px",
-              overflow: "hidden"
-            }}>
-              <div style={{ 
-                background: "linear-gradient(135deg, #E0A73A, #FFD700)", 
-                height: "200px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "3rem"
+            {[
+              {
+                question: "¿Los productos son 100% naturales?",
+                answer: "Sí, todos nuestros productos están elaborados con ingredientes 100% naturales y orgánicos. No utilizamos químicos dañinos ni conservantes artificiales."
+              },
+              {
+                question: "¿Cómo puedo agendar una cita para servicios?",
+                answer: "Puedes agendar tu cita directamente a través de WhatsApp al +52 999 132 0209 o haciendo clic en el botón 'Agendar' de cada servicio."
+              },
+              {
+                question: "¿Hacen envíos a toda la república?",
+                answer: "Sí, realizamos envíos a toda la República Mexicana. Los tiempos de entrega varían según la ubicación, generalmente de 3 a 7 días hábiles."
+              },
+              {
+                question: "¿Los productos tienen garantía?",
+                answer: "Ofrecemos garantía de satisfacción. Si no estás completamente satisfecho con tu compra, puedes devolver el producto en un plazo de 15 días."
+              },
+              {
+                question: "¿Puedo usar los productos si estoy embarazada?",
+                answer: "Recomendamos consultar con tu médico antes de usar cualquier producto durante el embarazo. Algunos ingredientes pueden no ser recomendables en esta etapa."
+              },
+              {
+                question: "¿Cómo debo conservar los productos?",
+                answer: "Mantén los productos en un lugar fresco, seco y alejado de la luz directa del sol. Esto asegura que mantengan sus propiedades por más tiempo."
+              }
+            ].map((faq, index) => (
+              <div key={index} style={{
+                background: "white",
+                padding: "1.5rem",
+                borderRadius: "15px",
+                border: `2px solid ${PALETAS.D.crema}`,
+                boxShadow: "0 4px 15px rgba(0,0,0,0.05)"
               }}>
-                🕯️
-              </div>
-              <div style={{ padding: "1.5rem" }}>
-                <h3 style={{ 
-                  margin: "0 0 1rem 0", 
-                  fontSize: "1.3rem", 
-                  fontWeight: "600",
-                  color: PALETAS.D.carbon
+                <h3 style={{
+                  margin: "0 0 1rem 0",
+                  color: PALETAS.D.miel,
+                  fontSize: "1.1rem",
+                  fontWeight: "600"
                 }}>
-                  Rituales de Luna Llena
+                  {faq.question}
                 </h3>
-                <p style={{ 
-                  margin: "0 0 1rem 0", 
-                  color: "rgba(0,0,0,0.6)", 
-                  fontSize: "0.9rem",
-                  lineHeight: "1.6"
+                <p style={{
+                  margin: "0",
+                  color: "#555",
+                  lineHeight: "1.6",
+                  fontSize: "0.95rem"
                 }}>
-                  Descubre cómo aprovechar la energía de la luna llena para manifestar tus deseos y limpiar tu aura.
+                  {faq.answer}
                 </p>
-                <button 
-                  className="btn-outline" 
-                  style={{ 
-                    borderColor: PALETAS.D.miel,
-                    color: PALETAS.D.miel,
-                    borderRadius: "8px",
-                    padding: "0.75rem 1rem",
-                    fontWeight: "600"
-                  }}
-                >
-                  Leer más
-                </button>
               </div>
-            </article>
-
-            <article className="card" style={{ 
-              border: "1px solid rgba(0,0,0,0.08)", 
-              background: "white",
-              borderRadius: "18px",
-              overflow: "hidden"
-            }}>
-              <div style={{ 
-                background: "linear-gradient(135deg, #628D6A, #90EE90)", 
-                height: "200px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "3rem"
-              }}>
-                🌿
-              </div>
-              <div style={{ padding: "1.5rem" }}>
-                <h3 style={{ 
-                  margin: "0 0 1rem 0", 
-                  fontSize: "1.3rem", 
-                  fontWeight: "600",
-                  color: PALETAS.D.carbon
-                }}>
-                  Beneficios de la Miel Natural
-                </h3>
-                <p style={{ 
-                  margin: "0 0 1rem 0", 
-                  color: "rgba(0,0,0,0.6)", 
-                  fontSize: "0.9rem",
-                  lineHeight: "1.6"
-                }}>
-                  Conoce las propiedades curativas y energéticas de la miel pura en tus rituales de belleza.
-                </p>
-                <button 
-                  className="btn-outline" 
-                  style={{ 
-                    borderColor: PALETAS.D.miel,
-                    color: PALETAS.D.miel,
-                    borderRadius: "8px",
-                    padding: "0.75rem 1rem",
-                    fontWeight: "600"
-                  }}
-                >
-                  Leer más
-                </button>
-              </div>
-            </article>
-
-            <article className="card" style={{ 
-              border: "1px solid rgba(0,0,0,0.08)", 
-              background: "white",
-              borderRadius: "18px",
-              overflow: "hidden"
-            }}>
-              <div style={{ 
-                background: "linear-gradient(135deg, #FF6B6B, #FF8E8E)", 
-                height: "200px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "3rem"
-              }}>
-                💝
-              </div>
-              <div style={{ padding: "1.5rem" }}>
-                <h3 style={{ 
-                  margin: "0 0 1rem 0", 
-                  fontSize: "1.3rem", 
-                  fontWeight: "600",
-                  color: PALETAS.D.carbon
-                }}>
-                  Autocuidado Diario
-                </h3>
-                <p style={{ 
-                  margin: "0 0 1rem 0", 
-                  color: "rgba(0,0,0,0.6)", 
-                  fontSize: "0.9rem",
-                  lineHeight: "1.6"
-                }}>
-                  Rutinas simples de 5 minutos para conectar contigo misma y mantener tu energía positiva.
-                </p>
-                <button 
-                  className="btn-outline" 
-                  style={{ 
-                    borderColor: PALETAS.D.miel,
-                    color: PALETAS.D.miel,
-                    borderRadius: "8px",
-                    padding: "0.75rem 1rem",
-                    fontWeight: "600"
-                  }}
-                >
-                  Leer más
-                </button>
-              </div>
-            </article>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Quiénes Somos Section */}
-      <section id="quienes-somos" style={{ padding: "4rem 0", background: "white" }}>
-        <div className="container">
+      {/* Newsletter Section */}
+      <section style={{ 
+        background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`, 
+        padding: "4rem 0" 
+      }}>
+        <div style={{ maxWidth: "800px", margin: "0 auto", padding: "0 1rem", textAlign: "center" }}>
+          <h2 style={{
+            fontSize: "clamp(2rem, 4vw, 2.8rem)",
+            fontWeight: "700",
+            color: "white",
+            margin: "0 0 1rem 0"
+          }}>
+            📧 Mantente Conectado
+          </h2>
+          <p style={{
+            fontSize: "1.2rem",
+            color: "rgba(255,255,255,0.9)",
+            margin: "0 0 2rem 0",
+            lineHeight: "1.6"
+          }}>
+            Recibe tips de bienestar, ofertas especiales y novedades directamente en tu correo
+          </p>
+          
+          <form onSubmit={handleNewsletterSubmit} style={{
+            display: "flex",
+            gap: "1rem",
+            maxWidth: "500px",
+            margin: "0 auto",
+            flexWrap: "wrap",
+            justifyContent: "center"
+          }}>
+            <input
+              type="email"
+              name="email"
+              placeholder="Tu correo electrónico"
+              required
+              style={{
+                flex: "1",
+                minWidth: "250px",
+                padding: "1rem 1.5rem",
+                borderRadius: "30px",
+                border: "none",
+                fontSize: "1rem",
+                outline: "none",
+                boxShadow: "0 4px 15px rgba(0,0,0,0.1)"
+              }}
+            />
+            <button
+              type="submit"
+              disabled={isNewsletterSubmitting}
+              style={{
+                background: isNewsletterSubmitting ? "#ccc" : "white",
+                color: PALETAS.D.miel,
+                border: "none",
+                padding: "1rem 2rem",
+                borderRadius: "30px",
+                fontSize: "1rem",
+                fontWeight: "600",
+                cursor: isNewsletterSubmitting ? "not-allowed" : "pointer",
+                boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
+                transition: "all 0.3s ease",
+                opacity: isNewsletterSubmitting ? 0.7 : 1
+              }}
+              onMouseEnter={(e) => {
+                if (!isNewsletterSubmitting) {
+                  e.target.style.transform = "translateY(-2px)";
+                  e.target.style.boxShadow = "0 6px 20px rgba(0,0,0,0.15)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isNewsletterSubmitting) {
+                  e.target.style.transform = "translateY(0)";
+                  e.target.style.boxShadow = "0 4px 15px rgba(0,0,0,0.1)";
+                }
+              }}
+            >
+              {isNewsletterSubmitting ? (
+                <>
+                  <span style={{ marginRight: "0.5rem" }}>⏳</span>
+                  Suscribiendo...
+                </>
+              ) : (
+                "Suscribirse"
+              )}
+            </button>
+          </form>
+          
+          {newsletterMessage && (
+            <div style={{
+              padding: "1rem",
+              margin: "1rem auto 0 auto",
+              maxWidth: "500px",
+              borderRadius: "10px",
+              backgroundColor: newsletterMessage.includes("exitosamente") ? "rgba(212, 237, 218, 0.9)" : "rgba(248, 215, 218, 0.9)",
+              color: newsletterMessage.includes("exitosamente") ? "#155724" : "#721c24",
+              border: `1px solid ${newsletterMessage.includes("exitosamente") ? "rgba(195, 230, 203, 0.8)" : "rgba(245, 198, 203, 0.8)"}`,
+              textAlign: "center",
+              fontWeight: "500"
+            }}>
+              {newsletterMessage}
+            </div>
+          )}
+          
+          <p style={{
+            fontSize: "0.9rem",
+            color: "rgba(255,255,255,0.8)",
+            margin: "1.5rem 0 0 0"
+          }}>
+            No compartimos tu información. Puedes cancelar tu suscripción en cualquier momento.
+          </p>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contacto" style={{ 
+        background: "white", 
+        padding: "4rem 0" 
+      }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 1rem" }}>
+          <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+            <h2 style={{
+              fontSize: "clamp(2.5rem, 5vw, 3.5rem)",
+              fontWeight: "700",
+              color: PALETAS.D.carbon,
+              margin: "0 0 1rem 0"
+            }}>
+              📞 Contáctanos
+            </h2>
+            <p style={{
+              fontSize: "1.2rem",
+              color: "#666",
+              maxWidth: "600px",
+              margin: "0 auto",
+              lineHeight: "1.6"
+            }}>
+              Estamos aquí para ayudarte en tu camino hacia el bienestar integral
+            </p>
+          </div>
+
           <div style={{ 
             display: "grid", 
-            gridTemplateColumns: "1fr 1fr", 
-            gap: "4rem", 
-            alignItems: "center" 
+            gridTemplateColumns: window.innerWidth <= 768 ? "1fr" : "repeat(auto-fit, minmax(300px, 1fr))", 
+            gap: window.innerWidth <= 768 ? "2rem" : "3rem"
           }}>
+            {/* Contact Info */}
             <div>
-              <h2 style={{ 
-                margin: "0 0 2rem 0", 
-                fontSize: "2.5rem", 
-                fontWeight: "700",
-                color: PALETAS.D.carbon
-              }}>
-                Nuestra Historia
-              </h2>
-              <p style={{ 
-                fontSize: "1.1rem", 
-                color: "rgba(0,0,0,0.7)", 
-                margin: "0 0 1.5rem 0", 
-                lineHeight: "1.6"
-              }}>
-                Amor y Miel nació de la pasión por crear productos naturales que nutran tanto el cuerpo como el espíritu. 
-                Cada producto está elaborado con ingredientes cuidadosamente seleccionados y mucha intención amorosa.
-              </p>
-              <p style={{ 
-                fontSize: "1.1rem", 
-                color: "rgba(0,0,0,0.7)", 
-                margin: "0 0 2rem 0", 
-                lineHeight: "1.6"
-              }}>
-                Nuestros rituales y productos están diseñados para ayudarte a conectar con tu esencia más auténtica, 
-                promoviendo el bienestar holístico y el amor propio.
-              </p>
-              <div style={{ display: "flex", gap: "1rem" }}>
-                <div style={{ 
-                  textAlign: "center",
-                  padding: "1rem",
-                  background: "rgba(224, 167, 58, 0.1)",
-                  borderRadius: "12px",
-                  flex: 1
-                }}>
-                  <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>🌿</div>
-                  <div style={{ fontWeight: "600", fontSize: "0.9rem" }}>100% Natural</div>
-                </div>
-                <div style={{ 
-                  textAlign: "center",
-                  padding: "1rem",
-                  background: "rgba(98, 141, 106, 0.1)",
-                  borderRadius: "12px",
-                  flex: 1
-                }}>
-                  <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>💝</div>
-                  <div style={{ fontWeight: "600", fontSize: "0.9rem" }}>Hecho con Amor</div>
-                </div>
-                <div style={{ 
-                  textAlign: "center",
-                  padding: "1rem",
-                  background: "rgba(224, 167, 58, 0.1)",
-                  borderRadius: "12px",
-                  flex: 1
-                }}>
-                  <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>✨</div>
-                  <div style={{ fontWeight: "600", fontSize: "0.9rem" }}>Energía Positiva</div>
-                </div>
-              </div>
-            </div>
-            <div style={{ 
-              background: "linear-gradient(135deg, #FBF2DE, #FFFFFF)", 
-              padding: "3rem", 
-              borderRadius: "20px",
-              textAlign: "center"
-            }}>
-              <div style={{ 
-                width: "200px", 
-                height: "200px", 
-                background: "linear-gradient(135deg, #E0A73A, #FFD700)", 
-                borderRadius: "50%", 
-                margin: "0 auto 2rem auto",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "4rem"
-              }}>
-                🐝
-              </div>
-              <h3 style={{ 
-                margin: "0 0 1rem 0", 
-                fontSize: "1.5rem", 
+              <h3 style={{
+                fontSize: "1.5rem",
                 fontWeight: "600",
-                color: PALETAS.D.carbon
+                color: PALETAS.D.miel,
+                margin: "0 0 1.5rem 0"
               }}>
-                Misión
+                Información de Contacto
               </h3>
-              <p style={{ 
-                fontSize: "1rem", 
-                color: "rgba(0,0,0,0.7)", 
-                lineHeight: "1.6"
-              }}>
-                Crear productos que nutran el alma y promuevan el bienestar holístico, 
-                conectando a las personas con su esencia más auténtica.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+              
+              <div style={{ marginBottom: "2rem" }}>
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1rem",
+                  marginBottom: "1rem"
+                }}>
+                  <div style={{
+                    width: "50px",
+                    height: "50px",
+                    borderRadius: "50%",
+                    background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "white",
+                    fontSize: "1.2rem"
+                  }}>
+                    📱
+                  </div>
+                  <div>
+                    <h4 style={{ margin: "0", color: PALETAS.D.carbon }}>WhatsApp</h4>
+                    <p style={{ margin: "0", color: "#666" }}>+52 999 132 0209</p>
+                  </div>
+                </div>
 
-      {/* Contacto Section */}
-      <section id="contacto" style={{ padding: "4rem 0", background: "#FBF2DE" }}>
-        <div className="container">
-          <h2 style={{ 
-            textAlign: "center", 
-            margin: "0 0 3rem 0", 
-            fontSize: "2.5rem", 
-            fontWeight: "700",
-            color: PALETAS.D.carbon
-          }}>
-            Contáctanos
-          </h2>
-          <div style={{ 
-            display: "grid", 
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", 
-            gap: "2rem" 
-          }}>
-            <div className="card" style={{ 
-              border: "1px solid rgba(0,0,0,0.08)", 
-              background: "white",
-              borderRadius: "18px",
-              padding: "2rem",
-              textAlign: "center"
-            }}>
-              <div style={{ 
-                width: "80px", 
-                height: "80px", 
-                background: PALETAS.D.miel, 
-                borderRadius: "50%", 
-                margin: "0 auto 1.5rem auto",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "2rem"
-              }}>
-                📱
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1rem",
+                  marginBottom: "1rem"
+                }}>
+                  <div style={{
+                    width: "50px",
+                    height: "50px",
+                    borderRadius: "50%",
+                    background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "white",
+                    fontSize: "1.2rem"
+                  }}>
+                    📧
+                  </div>
+                  <div>
+                    <h4 style={{ margin: "0", color: PALETAS.D.carbon }}>Email</h4>
+                    <p style={{ margin: "0", color: "#666" }}>info@amorymiel.com</p>
+                  </div>
+                </div>
+
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1rem",
+                  marginBottom: "1rem"
+                }}>
+                  <div style={{
+                    width: "50px",
+                    height: "50px",
+                    borderRadius: "50%",
+                    background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "white",
+                    fontSize: "1.2rem"
+                  }}>
+                    🕒
+                  </div>
+                  <div>
+                    <h4 style={{ margin: "0", color: PALETAS.D.carbon }}>Horarios</h4>
+                    <p style={{ margin: "0", color: "#666" }}>Lunes a Sábado: 9:00 AM - 7:00 PM</p>
+                  </div>
+                </div>
+
+                <div style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "1rem"
+                }}>
+                  <div style={{
+                    width: "50px",
+                    height: "50px",
+                    borderRadius: "50%",
+                    background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "white",
+                    fontSize: "1.2rem",
+                    flexShrink: 0
+                  }}>
+                    📍
+                  </div>
+                  <div>
+                    <h4 style={{ margin: "0 0 0.5rem 0", color: PALETAS.D.carbon }}>Dirección de Tienda Física</h4>
+                    <div style={{ color: "#666", lineHeight: "1.5" }}>
+                      <p style={{ margin: "0 0 0.25rem 0", fontWeight: "600" }}>Gestalt del Caribe</p>
+                      <p style={{ margin: "0 0 0.25rem 0" }}>Calle Yaxcopoil M2 SM59, Edificio 9,</p>
+                      <p style={{ margin: "0 0 0.25rem 0" }}>Local 217 Centro Comercial Cancún Maya,</p>
+                      <p style={{ margin: "0 0 0.25rem 0" }}>Cancún, Q. Roo. CP 77515</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Interactive Map */}
+                <div style={{ marginTop: "2rem" }}>
+                  <h4 style={{ margin: "0 0 1rem 0", color: PALETAS.D.carbon }}>📍 Encuéntranos en el Mapa</h4>
+                  <div style={{
+                    width: "100%",
+                    height: "300px",
+                    borderRadius: "12px",
+                    overflow: "hidden",
+                    boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
+                    border: `2px solid ${PALETAS.D.miel}`,
+                    background: "#f8f9fa"
+                  }}>
+                    <iframe
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3720.123456789!2d-86.8515!3d21.1619!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f4c2b123456789%3A0x123456789abcdef!2sCentro%20Comercial%20Canc%C3%BAn%20Maya!5e0!3m2!1ses!2smx!4v1234567890123!5m2!1ses!2smx"
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      allowFullScreen=""
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title="Ubicación de Amor y Miel - Gestalt del Caribe"
+                    ></iframe>
+                  </div>
+                  <div style={{ 
+                    marginTop: "1rem", 
+                    textAlign: "center",
+                    color: "#666",
+                    fontSize: "0.9rem"
+                  }}>
+                    <p style={{ margin: "0" }}>
+                      <strong>📍 Gestalt del Caribe</strong><br/>
+                      Centro Comercial Cancún Maya, Local 217<br/>
+                      Cancún, Quintana Roo, México
+                    </p>
+                    <a 
+                      href="https://maps.google.com/?q=Centro+Comercial+Cancún+Maya,+Cancún,+Q.Roo"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: "inline-block",
+                        marginTop: "0.5rem",
+                        padding: "0.5rem 1rem",
+                        background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                        color: "white",
+                        textDecoration: "none",
+                        borderRadius: "25px",
+                        fontSize: "0.9rem",
+                        fontWeight: "500",
+                        transition: "all 0.3s ease"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.transform = "translateY(-2px)";
+                        e.target.style.boxShadow = "0 6px 15px rgba(212, 165, 116, 0.4)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.transform = "translateY(0)";
+                        e.target.style.boxShadow = "none";
+                      }}
+                    >
+                      🗺️ Abrir en Google Maps
+                    </a>
+                  </div>
+                </div>
               </div>
-              <h3 style={{ 
-                margin: "0 0 1rem 0", 
-                fontSize: "1.3rem", 
+
+              <div>
+                <h4 style={{ margin: "0 0 1rem 0", color: PALETAS.D.carbon }}>Síguenos</h4>
+                <div style={{ display: "flex", gap: "1rem" }}>
+                  <a 
+                    href="https://www.instagram.com/_amor_y_miel_/reels" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "45px",
+                      height: "45px",
+                      borderRadius: "50%",
+                      background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                      color: "white",
+                      textDecoration: "none",
+                      fontSize: "1.2rem",
+                      transition: "all 0.3s ease"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = "translateY(-2px)";
+                      e.target.style.boxShadow = "0 6px 15px rgba(212, 165, 116, 0.4)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = "translateY(0)";
+                      e.target.style.boxShadow = "none";
+                    }}
+                  >
+                    📷
+                  </a>
+                  <a 
+                    href="https://www.facebook.com/p/Amor-y-Miel-100089698655453/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "45px",
+                      height: "45px",
+                      borderRadius: "50%",
+                      background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                      color: "white",
+                      textDecoration: "none",
+                      fontSize: "1.2rem",
+                      transition: "all 0.3s ease"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = "translateY(-2px)";
+                      e.target.style.boxShadow = "0 6px 15px rgba(212, 165, 116, 0.4)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = "translateY(0)";
+                      e.target.style.boxShadow = "none";
+                    }}
+                  >
+                    📘
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Contact Form */}
+            <div>
+              <h3 style={{
+                fontSize: "1.5rem",
                 fontWeight: "600",
-                color: PALETAS.D.carbon
+                color: PALETAS.D.miel,
+                margin: "0 0 1.5rem 0"
               }}>
-                WhatsApp
+                Envíanos un Mensaje
               </h3>
-              <p style={{ 
-                margin: "0 0 1.5rem 0", 
-                color: "rgba(0,0,0,0.6)", 
-                fontSize: "0.9rem"
-              }}>
-                Para consultas y pedidos
-              </p>
-              <a 
-                href="https://wa.me/523317361884" 
-                target="_blank" 
-                rel="noreferrer"
-                className="btn" 
-                style={{ 
-                  background: PALETAS.D.miel, 
-                  color: "white",
-                  textDecoration: "none",
-                  borderRadius: "8px",
-                  padding: "0.75rem 1.5rem",
-                  fontWeight: "600"
+              
+              <form 
+                onSubmit={handleContactSubmit}
+                style={{
+                  background: `linear-gradient(135deg, ${PALETAS.D.crema} 0%, #f8f5f0 100%)`,
+                  padding: "2rem",
+                  borderRadius: "20px",
+                  border: `2px solid ${PALETAS.D.crema}`
                 }}
               >
-                Chatear
-              </a>
-            </div>
+                <div style={{ marginBottom: "1.5rem" }}>
+                  <label style={{
+                    display: "block",
+                    marginBottom: "0.5rem",
+                    color: PALETAS.D.carbon,
+                    fontWeight: "500"
+                  }}>
+                    Nombre Completo
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    required
+                    style={{
+                      width: "100%",
+                      padding: "1rem",
+                      borderRadius: "10px",
+                      border: `2px solid ${PALETAS.D.crema}`,
+                      fontSize: "1rem",
+                      outline: "none",
+                      transition: "border-color 0.3s ease"
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = PALETAS.D.miel;
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = PALETAS.D.crema;
+                    }}
+                  />
+                </div>
 
-            <div className="card" style={{ 
-              border: "1px solid rgba(0,0,0,0.08)", 
-              background: "white",
-              borderRadius: "18px",
-              padding: "2rem",
-              textAlign: "center"
-            }}>
-              <div style={{ 
-                width: "80px", 
-                height: "80px", 
-                background: PALETAS.D.miel, 
-                borderRadius: "50%", 
-                margin: "0 auto 1.5rem auto",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "2rem"
-              }}>
-                📧
-              </div>
-              <h3 style={{ 
-                margin: "0 0 1rem 0", 
-                fontSize: "1.3rem", 
-                fontWeight: "600",
-                color: PALETAS.D.carbon
-              }}>
-                Email
-              </h3>
-              <p style={{ 
-                margin: "0 0 1.5rem 0", 
-                color: "rgba(0,0,0,0.6)", 
-                fontSize: "0.9rem"
-              }}>
-                Para información general
-              </p>
-              <a 
-                href="mailto:hola@amorymiel.com" 
-                className="btn" 
-                style={{ 
-                  background: PALETAS.D.miel, 
-                  color: "white",
-                  textDecoration: "none",
-                  borderRadius: "8px",
-                  padding: "0.75rem 1.5rem",
-                  fontWeight: "600"
-                }}
-              >
-                Enviar Email
-              </a>
-            </div>
+                <div style={{ marginBottom: "1.5rem" }}>
+                  <label style={{
+                    display: "block",
+                    marginBottom: "0.5rem",
+                    color: PALETAS.D.carbon,
+                    fontWeight: "500"
+                  }}>
+                    Correo Electrónico
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    style={{
+                      width: "100%",
+                      padding: "1rem",
+                      borderRadius: "10px",
+                      border: `2px solid ${PALETAS.D.crema}`,
+                      fontSize: "1rem",
+                      outline: "none",
+                      transition: "border-color 0.3s ease"
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = PALETAS.D.miel;
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = PALETAS.D.crema;
+                    }}
+                  />
+                </div>
 
-            <div className="card" style={{ 
-              border: "1px solid rgba(0,0,0,0.08)", 
-              background: "white",
-              borderRadius: "18px",
-              padding: "2rem",
-              textAlign: "center"
-            }}>
-              <div style={{ 
-                width: "80px", 
-                height: "80px", 
-                background: PALETAS.D.miel, 
-                borderRadius: "50%", 
-                margin: "0 auto 1.5rem auto",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "2rem"
-              }}>
-                📍
-              </div>
-              <h3 style={{ 
-                margin: "0 0 1rem 0", 
-                fontSize: "1.3rem", 
-                fontWeight: "600",
-                color: PALETAS.D.carbon
-              }}>
-                Ubicación
-              </h3>
-              <p style={{ 
-                margin: "0 0 1.5rem 0", 
-                color: "rgba(0,0,0,0.6)", 
-                fontSize: "0.9rem"
-              }}>
-                Visítanos en nuestro estudio
-              </p>
-              <p style={{ 
-                margin: "0", 
-                color: PALETAS.D.carbon, 
-                fontSize: "0.9rem",
-                fontWeight: "500"
-              }}>
-                Ciudad de México, México
-              </p>
+                <div style={{ marginBottom: "1.5rem" }}>
+                  <label style={{
+                    display: "block",
+                    marginBottom: "0.5rem",
+                    color: PALETAS.D.carbon,
+                    fontWeight: "500"
+                  }}>
+                    Asunto
+                  </label>
+                  <select
+                    style={{
+                      width: "100%",
+                      padding: "1rem",
+                      borderRadius: "10px",
+                      border: `2px solid ${PALETAS.D.crema}`,
+                      fontSize: "1rem",
+                      outline: "none",
+                      background: "white"
+                    }}
+                  >
+                    <option>Consulta sobre productos</option>
+                    <option>Agendar servicio</option>
+                    <option>Información general</option>
+                    <option>Soporte técnico</option>
+                    <option>Otro</option>
+                  </select>
+                </div>
+
+                <div style={{ marginBottom: "2rem" }}>
+                  <label style={{
+                    display: "block",
+                    marginBottom: "0.5rem",
+                    color: PALETAS.D.carbon,
+                    fontWeight: "500"
+                  }}>
+                    Mensaje
+                  </label>
+                  <textarea
+                    name="message"
+                    required
+                    rows="4"
+                    style={{
+                      width: "100%",
+                      padding: "1rem",
+                      borderRadius: "10px",
+                      border: `2px solid ${PALETAS.D.crema}`,
+                      fontSize: "1rem",
+                      outline: "none",
+                      resize: "vertical",
+                      transition: "border-color 0.3s ease"
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = PALETAS.D.miel;
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = PALETAS.D.crema;
+                    }}
+                  />
+                </div>
+
+                {submitMessage && (
+                  <div style={{
+                    padding: "1rem",
+                    marginBottom: "1rem",
+                    borderRadius: "10px",
+                    backgroundColor: submitMessage.includes("exitosamente") ? "#d4edda" : "#f8d7da",
+                    color: submitMessage.includes("exitosamente") ? "#155724" : "#721c24",
+                    border: `1px solid ${submitMessage.includes("exitosamente") ? "#c3e6cb" : "#f5c6cb"}`,
+                    textAlign: "center",
+                    fontWeight: "500"
+                  }}>
+                    {submitMessage}
+                  </div>
+                )}
+                
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  style={{
+                    width: "100%",
+                    background: isSubmitting 
+                      ? "#ccc" 
+                      : `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                    color: "white",
+                    border: "none",
+                    padding: "1rem 2rem",
+                    borderRadius: "30px",
+                    fontSize: "1rem",
+                    fontWeight: "600",
+                    cursor: isSubmitting ? "not-allowed" : "pointer",
+                    boxShadow: "0 4px 15px rgba(212, 165, 116, 0.3)",
+                    transition: "all 0.3s ease",
+                    opacity: isSubmitting ? 0.7 : 1
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isSubmitting) {
+                      e.target.style.transform = "translateY(-2px)";
+                      e.target.style.boxShadow = "0 8px 25px rgba(212, 165, 116, 0.4)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isSubmitting) {
+                      e.target.style.transform = "translateY(0)";
+                      e.target.style.boxShadow = "0 4px 15px rgba(212, 165, 116, 0.3)";
+                    }
+                  }}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <span style={{ marginRight: "0.5rem" }}>⏳</span>
+                      Enviando...
+                    </>
+                  ) : (
+                    "Enviar Mensaje"
+                  )}
+                </button>
+              </form>
             </div>
           </div>
         </div>
@@ -3461,2041 +3143,1164 @@ const [showRecommendations, setShowRecommendations] = useState(false);
 
       {/* Footer */}
       <footer style={{ 
-        background: "linear-gradient(135deg, #1A1714 0%, #2C2C2C 100%)", 
+        background: PALETAS.D.carbon, 
         color: "white", 
-        padding: "3rem 0 2rem 0",
-        marginTop: "2rem"
+        padding: "3rem 0 1rem 0",
+        marginTop: "3rem"
       }}>
-        <div className="container">
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 1rem" }}>
           <div style={{ 
             display: "grid", 
-            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", 
-            gap: "3rem",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", 
+            gap: "clamp(1.5rem, 4vw, 2rem)", 
             marginBottom: "2rem"
           }}>
-            {/* Company Info */}
             <div>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
-                <div style={{ 
-                  width: "40px", 
-                  height: "40px", 
-                  background: "linear-gradient(135deg, #E0A73A, #FFD700)", 
-                  borderRadius: "50%", 
-                  display: "flex", 
-                  alignItems: "center", 
-                  justifyContent: "center",
-                  fontSize: "1.2rem"
-                }}>
-                  🐝
+              <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem" }}>
+                <img src="/images/logo/amorymiellogo.png" alt="Amor y Miel" style={{ height: "40px" }} />
+                <h3 style={{ margin: 0 }}>Amor y Miel</h3>
                 </div>
-                <h3 style={{ margin: 0, fontSize: "1.3rem", fontWeight: "600" }}>
-                  Amor y Miel
-                </h3>
-              </div>
-              <p style={{ 
-                margin: "0 0 1rem 0", 
-                color: "rgba(255,255,255,0.8)", 
-                fontSize: "0.9rem",
-                lineHeight: "1.6"
-              }}>
-                Empresa dedicada a la producción y distribución de productos holísticos y servicios. 
-                Formamos una red de apoyo que ofrece seguimiento personal continuo a nuestros miembros, 
-                creando una "Familia Espiritual y Consciente".
+              <p style={{ color: "#ccc", lineHeight: "1.6" }}>
+                Productos holísticos artesanales para el bienestar espiritual y físico. 
+                Cuidado natural, artesanal y con amor.
               </p>
-              <p style={{ 
-                margin: "0", 
-                color: "rgba(255,255,255,0.8)", 
-                fontSize: "0.9rem",
-                lineHeight: "1.6"
-              }}>
-                <strong>Ubicación:</strong> Cancún, Quintana Roo (taller principal). 
-                También presentes en Tulum, Monterrey y CDMX.
-              </p>
-
-              {/* NEW: Security Badges */}
-              <div style={{ marginTop: "1rem" }}>
-                <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.7)", marginBottom: "0.5rem" }}>
-                  Seguridad y Confianza:
                 </div>
-                <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-                  {securityBadges.map((badge, index) => (
-                    <div key={index} style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.3rem",
-                      background: "rgba(255,255,255,0.1)",
-                      padding: "0.3rem 0.6rem",
-                      borderRadius: "12px",
-                      fontSize: "0.7rem"
-                    }}>
-                      <span>{badge.icon}</span>
-                      <span>{badge.name}</span>
+            <div>
+              <h4 style={{ margin: "0 0 1rem 0" }}>Productos</h4>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                <li style={{ marginBottom: "0.5rem" }}><a href="#productos" style={{ color: "#ccc", textDecoration: "none" }}>Velas</a></li>
+                <li style={{ marginBottom: "0.5rem" }}><a href="#productos" style={{ color: "#ccc", textDecoration: "none" }}>Lociones</a></li>
+                <li style={{ marginBottom: "0.5rem" }}><a href="#productos" style={{ color: "#ccc", textDecoration: "none" }}>Aceites</a></li>
+                <li style={{ marginBottom: "0.5rem" }}><a href="#productos" style={{ color: "#ccc", textDecoration: "none" }}>Baños Energéticos</a></li>
+              </ul>
                     </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Contact Info */}
             <div>
-              <h4 style={{ 
-                margin: "0 0 1.5rem 0", 
-                fontSize: "1.1rem", 
-                fontWeight: "600",
-                color: "#E0A73A"
-              }}>
-                Nuestros Contactos
-              </h4>
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              <h4 style={{ margin: "0 0 1rem 0" }}>Servicios</h4>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                <li style={{ marginBottom: "0.5rem" }}><a href="#servicios" style={{ color: "#ccc", textDecoration: "none" }}>Sonoterapia</a></li>
+                <li style={{ marginBottom: "0.5rem" }}><a href="#servicios" style={{ color: "#ccc", textDecoration: "none" }}>Ceremonia de Cacao</a></li>
+                <li style={{ marginBottom: "0.5rem" }}><a href="#servicios" style={{ color: "#ccc", textDecoration: "none" }}>Numerología</a></li>
+                <li style={{ marginBottom: "0.5rem" }}><a href="#servicios" style={{ color: "#ccc", textDecoration: "none" }}>Tarot Angelical</a></li>
+              </ul>
+                  </div>
+            <div>
+              <h4 style={{ margin: "0 0 1rem 0" }}>Contacto</h4>
+              <p style={{ color: "#ccc", margin: "0 0 0.5rem 0" }}>📱 WhatsApp: +52 999 132 0209</p>
+              <p style={{ color: "#ccc", margin: "0 0 0.5rem 0" }}>📧 Email: info@amorymiel.com</p>
+              <div style={{ color: "#ccc", margin: "0 0 1rem 0", lineHeight: "1.4" }}>
+                <p style={{ margin: "0 0 0.25rem 0", fontWeight: "600" }}>📍 Gestalt del Caribe</p>
+                <p style={{ margin: "0 0 0.25rem 0" }}>Calle Yaxcopoil M2 SM59, Edificio 9,</p>
+                <p style={{ margin: "0 0 0.25rem 0" }}>Local 217 Centro Comercial Cancún Maya,</p>
+                <p style={{ margin: "0 0 0.25rem 0" }}>Cancún, Q. Roo. CP 77515</p>
+              </div>
+              
+              <h4 style={{ margin: "0 0 1rem 0" }}>Métodos de Pago</h4>
+              <p style={{ color: "#ccc", margin: "0 0 0.5rem 0" }}>💳 Mercado Pago</p>
+              <p style={{ color: "#ccc", margin: "0 0 0.5rem 0" }}>🏦 Transferencia bancaria</p>
+              <p style={{ color: "#ccc", margin: "0 0 1rem 0" }}>💰 Pago en efectivo</p>
+              
+              <h4 style={{ margin: "0 0 1rem 0" }}>Síguenos</h4>
+              <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
                 <a 
-                  href="https://wa.me/523317361884" 
-                  target="_blank" 
-                  rel="noreferrer"
-                  style={{ 
-                    display: "flex", 
-                    alignItems: "center", 
-                    gap: "0.8rem",
-                    color: "white",
-                    textDecoration: "none",
-                    padding: "0.5rem",
-                    borderRadius: "8px",
-                    transition: "background 0.2s"
-                  }}
-                  onMouseEnter={(e) => e.target.style.background = "rgba(255,255,255,0.1)"}
-                  onMouseLeave={(e) => e.target.style.background = "transparent"}
-                >
-                  <div style={{ 
-                    width: "32px", 
-                    height: "32px", 
-                    background: "#25D366", 
-                    borderRadius: "50%", 
-                    display: "flex", 
-                    alignItems: "center", 
-                    justifyContent: "center",
-                    fontSize: "1rem"
-                  }}>
-                    📱
-                  </div>
-                  <span style={{ fontSize: "0.9rem" }}>+52 331 736 1884</span>
-                </a>
-                
-                                 <a 
-                   href="https://www.facebook.com/profile.php?id=100089698655453" 
+                  href="https://www.instagram.com/_amor_y_miel_/reels" 
                    target="_blank" 
-                   rel="noreferrer"
+                  rel="noopener noreferrer"
                   style={{ 
                     display: "flex", 
                     alignItems: "center", 
-                    gap: "0.8rem",
-                    color: "white",
+                    gap: "0.5rem", 
+                    color: "#ccc", 
                     textDecoration: "none",
-                    padding: "0.5rem",
-                    borderRadius: "8px",
-                    transition: "background 0.2s"
+                    transition: "color 0.3s ease"
                   }}
-                  onMouseEnter={(e) => e.target.style.background = "rgba(255,255,255,0.1)"}
-                  onMouseLeave={(e) => e.target.style.background = "transparent"}
+                  onMouseEnter={(e) => e.target.style.color = "#E0A73A"}
+                  onMouseLeave={(e) => e.target.style.color = "#ccc"}
                 >
-                  <div style={{ 
-                    width: "32px", 
-                    height: "32px", 
-                    background: "#1877F2", 
-                    borderRadius: "50%", 
-                    display: "flex", 
-                    alignItems: "center", 
-                    justifyContent: "center",
-                    fontSize: "1rem"
-                  }}>
-                    📘
-                  </div>
-                  <span style={{ fontSize: "0.9rem" }}>Amor y Miel</span>
+                  <span style={{ fontSize: "1.2rem" }}>📷</span>
+                  <span>Instagram</span>
                 </a>
-                
-                                 <a 
-                   href="https://www.instagram.com/_amor_y_miel_" 
+                <a 
+                  href="https://www.facebook.com/p/Amor-y-Miel-100089698655453/" 
                    target="_blank" 
-                   rel="noreferrer"
+                  rel="noopener noreferrer"
                   style={{ 
                     display: "flex", 
                     alignItems: "center", 
-                    gap: "0.8rem",
-                    color: "white",
+                    gap: "0.5rem", 
+                    color: "#ccc", 
                     textDecoration: "none",
-                    padding: "0.5rem",
-                    borderRadius: "8px",
-                    transition: "background 0.2s"
+                    transition: "color 0.3s ease"
                   }}
-                  onMouseEnter={(e) => e.target.style.background = "rgba(255,255,255,0.1)"}
-                  onMouseLeave={(e) => e.target.style.background = "transparent"}
+                  onMouseEnter={(e) => e.target.style.color = "#E0A73A"}
+                  onMouseLeave={(e) => e.target.style.color = "#ccc"}
                 >
-                  <div style={{ 
-                    width: "32px", 
-                    height: "32px", 
-                    background: "linear-gradient(45deg, #F58529, #DD2A7B, #8134AF, #515BD4)", 
-                    borderRadius: "50%", 
-                    display: "flex", 
-                    alignItems: "center", 
-                    justifyContent: "center",
-                    fontSize: "1rem"
-                  }}>
-                    📷
-                  </div>
-                  <span style={{ fontSize: "0.9rem" }}>@Amor_y_Miel</span>
+                  <span style={{ fontSize: "1.2rem" }}>📘</span>
+                  <span>Facebook</span>
                 </a>
               </div>
             </div>
-
-            {/* Quick Links */}
-            <div>
-              <h4 style={{ 
-                margin: "0 0 1.5rem 0", 
-                fontSize: "1.1rem", 
-                fontWeight: "600",
-                color: "#E0A73A"
-              }}>
-                Enlaces Rápidos
-              </h4>
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
-                <a href="#productos" style={{ color: "rgba(255,255,255,0.8)", textDecoration: "none", fontSize: "0.9rem" }}>Productos</a>
-                <a href="#servicios" style={{ color: "rgba(255,255,255,0.8)", textDecoration: "none", fontSize: "0.9rem" }}>Servicios</a>
-                <a href="#kits" style={{ color: "rgba(255,255,255,0.8)", textDecoration: "none", fontSize: "0.9rem" }}>Kits</a>
-                <a href="#blog" style={{ color: "rgba(255,255,255,0.8)", textDecoration: "none", fontSize: "0.9rem" }}>Blog</a>
-                <a href="#quienes-somos" style={{ color: "rgba(255,255,255,0.8)", textDecoration: "none", fontSize: "0.9rem" }}>Quiénes Somos</a>
-                <a href="#contacto" style={{ color: "rgba(255,255,255,0.8)", textDecoration: "none", fontSize: "0.9rem" }}>Contacto</a>
               </div>
-            </div>
-          </div>
-          
-          {/* Bottom Bar */}
-          <div style={{ 
-            borderTop: "1px solid rgba(255,255,255,0.1)", 
-            paddingTop: "2rem", 
-            textAlign: "center",
-            color: "rgba(255,255,255,0.6)",
-            fontSize: "0.85rem"
-          }}>
-            <p style={{ margin: "0 0 0.5rem 0" }}>
-              © 2024 Amor y Miel. Todos los derechos reservados.
-            </p>
-            <p style={{ margin: 0 }}>
-              Productos artesanales elaborados con amor y dedicación espiritual.
+          <div style={{ borderTop: "1px solid #444", paddingTop: "1rem", textAlign: "center" }}>
+            <p style={{ color: "#ccc", margin: 0 }}>
+              © 2024 Amor y Miel. Todos los derechos reservados. Hecho con ❤️ en México.
             </p>
           </div>
         </div>
       </footer>
 
-      {/* Cart Modal */}
-      {openCart && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 1000 }}>
-          <div 
-            onClick={() => setOpenCart(false)} 
-            style={{ 
-              position: "absolute", 
-              inset: 0, 
-              background: "rgba(0,0,0,0.5)" 
-            }} 
-          />
+            {/* Product Detail Modal */}
+      {openProduct && (
           <div style={{ 
-            position: "absolute", 
-            right: 0, 
+          position: "fixed",
             top: 0, 
-            height: "100%", 
-            width: "min(450px,100%)", 
-            background: "white", 
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "rgba(0,0,0,0.8)",
+          zIndex: 1000,
             display: "flex", 
-            flexDirection: "column", 
-            boxShadow: "-10px 0 30px rgba(0,0,0,0.2)" 
+          alignItems: "center",
+          justifyContent: "center",
+          padding: window.innerWidth <= 768 ? "1rem" : "2rem"
           }}>
             <div style={{ 
-              padding: "1.5rem", 
-              borderBottom: "1px solid rgba(0,0,0,0.1)", 
-              display: "flex", 
-              alignItems: "center", 
-              justifyContent: "space-between" 
-            }}>
-              <h3 style={{ margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                🛍️ Tu carrito ({cart.length})
-              </h3>
+            background: "white",
+            borderRadius: "20px",
+            maxWidth: "1100px",
+            width: "100%",
+            maxHeight: "100vh",
+            overflow: "auto",
+            position: "relative"
+          }}>
+            {/* Close Button */}
               <button 
-                onClick={() => setOpenCart(false)} 
+              onClick={() => setOpenProduct(null)}
                 style={{ 
-                  background: "transparent", 
+                position: "absolute",
+                top: "1rem",
+                right: "1rem",
+                background: "#ff4444",
+                color: "white",
                   border: "none", 
-                  fontSize: "1.5rem", 
+                borderRadius: "50%",
+                width: "40px",
+                height: "40px",
                   cursor: "pointer",
-                  padding: "0.5rem"
+                fontSize: "1.2rem",
+                zIndex: 1001
                 }}
               >
-                ✖️
+              ✕
               </button>
-            </div>
-            <div style={{ padding: "1.5rem", overflow: "auto", flex: 1 }}>
-              {cart.length === 0 ? (
-                <div style={{ textAlign: "center", opacity: 0.6, padding: "2rem" }}>
-                  Tu carrito está vacío
-                </div>
-              ) : (
-                cart.map(item => (
-                  <div key={item.id} style={{ 
-                    display: "flex", 
-                    gap: "1rem", 
-                    marginBottom: "1rem", 
-                    padding: "1rem", 
-                    border: "1px solid rgba(0,0,0,0.1)", 
-                    borderRadius: "12px" 
-                  }}>
-                    <img 
-                      src={item.imagen} 
-                      alt={item.nombre} 
+
+            <div style={{ 
+              display: "grid", 
+              gridTemplateColumns: window.innerWidth <= 768 ? "1fr" : "repeat(auto-fit, minmax(300px, 1fr))", 
+              gap: window.innerWidth <= 768 ? "1rem" : "2rem", 
+              padding: window.innerWidth <= 768 ? "1rem" : "2rem", 
+              minHeight: window.innerWidth <= 768 ? "auto" : "800px"
+            }}>
+              {/* Left Side - Catalog Image */}
+              <div>
+                <img 
+                  src={CATALOG_IMAGES[openProduct.nombre] || openProduct.imagen} 
+                  alt={openProduct.nombre}
                       style={{ 
-                        width: "80px", 
-                        height: "80px", 
-                        objectFit: "cover", 
-                        borderRadius: "8px" 
-                      }} 
-                    />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: "600", marginBottom: "0.25rem" }}>
-                        {item.nombre}
-                      </div>
-                      <div style={{ opacity: 0.7, fontSize: "0.9rem", marginBottom: "0.5rem" }}>
-                        {money(item.precio)}
-                      </div>
-                      <div style={{ 
-                        display: "flex", 
-                        gap: "0.5rem", 
-                        alignItems: "center" 
-                      }}>
-                        <button 
-                          className="btn-outline" 
-                          onClick={() => setCart(prev => 
-                            prev.map(p => p.id === item.id 
-                              ? { ...p, cantidad: Math.max(1, p.cantidad - 1) } 
-                              : p
-                            )
-                          )}
-                          style={{ 
-                            borderColor: PALETAS.D.miel, 
-                            color: PALETAS.D.miel,
-                            padding: "0.25rem 0.5rem",
-                            minWidth: "30px"
-                          }}
-                        >
-                          -
-                        </button>
-                        <span style={{ minWidth: "20px", textAlign: "center" }}>
-                          {item.cantidad}
-                        </span>
-                        <button 
-                          className="btn-outline" 
-                          onClick={() => setCart(prev => 
-                            prev.map(p => p.id === item.id 
-                              ? { ...p, cantidad: p.cantidad + 1 } 
-                              : p
-                            )
-                          )}
-                          style={{ 
-                            borderColor: PALETAS.D.miel, 
-                            color: PALETAS.D.miel,
-                            padding: "0.25rem 0.5rem",
-                            minWidth: "30px"
-                          }}
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                    <button 
-                      className="btn-outline" 
-                      onClick={() => setCart(prev => prev.filter(p => p.id !== item.id))}
-                      style={{ 
-                        borderColor: "#ff4444", 
-                        color: "#ff4444",
-                        padding: "0.5rem",
-                        alignSelf: "flex-start"
-                      }}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                ))
-              )}
-            </div>
-            {cart.length > 0 && (
-              <div style={{ 
-                padding: "1.5rem", 
-                borderTop: "1px solid rgba(0,0,0,0.1)",
-                background: "#f8f9fa"
-              }}>
-                {/* Shipping Address Form */}
-                <div style={{ marginBottom: "20px", padding: "15px", background: "white", borderRadius: "12px" }}>
-                  <h4 style={{ margin: "0 0 15px 0", color: PALETAS.D.carbon, fontSize: "1rem" }}>📦 Información de Envío</h4>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "10px" }}>
-                    <input
-                      type="text"
-                      placeholder="Nombre"
-                      value={shippingAddress.name}
-                      onChange={(e) => setShippingAddress(prev => ({ ...prev, name: e.target.value }))}
-                      style={{
-                        padding: "8px",
-                        border: "1px solid #ddd",
-                        borderRadius: "6px",
-                        fontSize: "0.85rem"
-                      }}
-                    />
-                    <input
-                      type="email"
-                      placeholder="Email"
-                      value={shippingAddress.email}
-                      onChange={(e) => setShippingAddress(prev => ({ ...prev, email: e.target.value }))}
-                      style={{
-                        padding: "8px",
-                        border: "1px solid #ddd",
-                        borderRadius: "6px",
-                        fontSize: "0.85rem"
-                      }}
-                    />
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Dirección completa"
-                    value={shippingAddress.address}
-                    onChange={(e) => setShippingAddress(prev => ({ ...prev, address: e.target.value }))}
-                    style={{
-                      padding: "8px",
-                      border: "1px solid #ddd",
-                      borderRadius: "6px",
-                      fontSize: "0.85rem",
                       width: "100%",
-                      marginBottom: "8px"
+                      height: "auto", 
+                      maxHeight: "500px",
+                      objectFit: "contain",
+                      borderRadius: "15px"
                     }}
-                  />
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-                    <input
-                      type="text"
-                      placeholder="Ciudad"
-                      value={shippingAddress.city}
-                      onChange={(e) => setShippingAddress(prev => ({ ...prev, city: e.target.value }))}
-                      style={{
-                        padding: "8px",
-                        border: "1px solid #ddd",
-                        borderRadius: "6px",
-                        fontSize: "0.85rem"
-                      }}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Código postal"
-                      value={shippingAddress.zipCode}
-                      onChange={(e) => setShippingAddress(prev => ({ ...prev, zipCode: e.target.value }))}
-                      style={{
-                        padding: "8px",
-                        border: "1px solid #ddd",
-                        borderRadius: "6px",
-                        fontSize: "0.85rem"
-                      }}
-                    />
-                  </div>
+                  onError={(e) => {
+                    e.target.src = "/images/logo/amorymiellogo.png";
+                  }}
+                />
                 </div>
 
-                {/* Payment Method Selection */}
-                <div style={{ marginBottom: "15px", padding: "15px", background: "white", borderRadius: "12px" }}>
-                  <h4 style={{ margin: "0 0 10px 0", color: PALETAS.D.carbon, fontSize: "1rem" }}>💳 Método de Pago</h4>
-                  <div style={{ display: "flex", gap: "15px" }}>
-                    <label style={{ display: "flex", alignItems: "center", gap: "5px", cursor: "pointer", fontSize: "0.9rem" }}>
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value="card"
-                        checked={paymentMethod === "card"}
-                        onChange={(e) => setPaymentMethod(e.target.value)}
-                      />
-                      Tarjeta
-                    </label>
-                    <label style={{ display: "flex", alignItems: "center", gap: "5px", cursor: "pointer", fontSize: "0.9rem" }}>
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value="transfer"
-                        checked={paymentMethod === "transfer"}
-                        onChange={(e) => setPaymentMethod(e.target.value)}
-                      />
-                      Transferencia
-                    </label>
-                  </div>
-                </div>
-
-                {/* NEW: Coupon Code Input */}
+              {/* Right Side - Product Details */}
+              <div>
                 <div style={{ marginBottom: "1rem" }}>
-                  <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.5rem" }}>
-                    <input
-                      type="text"
-                      placeholder="Código de descuento"
-                      value={couponCode}
-                      onChange={(e) => setCouponCode(e.target.value)}
-                      style={{
-                        flex: 1,
-                        padding: "0.5rem",
-                        border: "1px solid rgba(0,0,0,0.1)",
-                        borderRadius: "6px",
-                        fontSize: "0.9rem"
-                      }}
-                    />
-                    <button
-                      onClick={() => {
-                        if (applyCoupon(couponCode)) {
-                          setCouponCode("");
-                          alert("¡Cupón aplicado exitosamente!");
-                        } else {
-                          alert("Cupón inválido o no aplicable");
-                        }
-                      }}
-                      style={{
+                  <span style={{ 
                         background: PALETAS.D.miel,
                         color: "white",
-                        border: "none",
-                        padding: "0.5rem 1rem",
-                        borderRadius: "6px",
-                        cursor: "pointer",
-                        fontSize: "0.9rem",
-                        whiteSpace: "nowrap"
-                      }}
-                    >
-                      Aplicar
-                    </button>
-                  </div>
-                  {appliedCoupon && (
-                    <div style={{ 
-                      background: "#e8f5e8", 
-                      padding: "0.5rem", 
-                      borderRadius: "6px", 
+                    padding: "0.25rem 0.75rem", 
+                    borderRadius: "15px", 
                       fontSize: "0.8rem",
-                      color: "#2d5a2d",
+                    fontWeight: "600"
+                  }}>
+                    {openProduct.categoria}
+                      </span>
+                </div>
+
+                <h2 style={{ 
+                  fontSize: "1.5rem", 
+                  fontWeight: "bold", 
+                  color: PALETAS.D.carbon, 
+                  margin: "0 0 0.5rem 0" 
+                }}>
+                  {openProduct.nombre}
+                </h2>
+
+                <p style={{ 
+                  fontSize: "0.9rem", 
+                    color: "#666",
+                  margin: "0 0 1rem 0", 
+                  lineHeight: "1.4" 
+                }}>
+                  {openProduct.descripcion}
+                </p>
+
+                {/* Product Details */}
+                <div style={{ marginBottom: "1rem" }}>
+                  {openProduct.elaboracion && (
+                    <div style={{ marginBottom: "0.75rem" }}>
+                      <h4 style={{ color: PALETAS.D.carbon, margin: "0 0 0.5rem 0", fontSize: "0.9rem", fontWeight: "600" }}>🧪 Elaboración</h4>
+                      <p style={{ color: "#666", fontSize: "0.8rem", margin: 0, lineHeight: "1.4" }}>{openProduct.elaboracion}</p>
+                    </div>
+                  )}
+
+                  {openProduct.proposito && (
+                    <div style={{ marginBottom: "0.75rem" }}>
+                      <h4 style={{ color: PALETAS.D.carbon, margin: "0 0 0.5rem 0", fontSize: "0.9rem", fontWeight: "600" }}>🎯 Propósito</h4>
+                      <p style={{ color: "#666", fontSize: "0.8rem", margin: 0, lineHeight: "1.4" }}>{openProduct.proposito}</p>
+                  </div>
+                  )}
+
+                  {openProduct.beneficios && (
+                    <div style={{ marginBottom: "0.75rem" }}>
+                      <h4 style={{ color: PALETAS.D.carbon, margin: "0 0 0.5rem 0", fontSize: "0.9rem", fontWeight: "600" }}>✨ Beneficios</h4>
+                      <p style={{ color: "#666", fontSize: "0.8rem", margin: 0, lineHeight: "1.4" }}>{openProduct.beneficios}</p>
+              </div>
+            )}
+
+                  {openProduct.modoUso && (
+                    <div style={{ marginBottom: "0.75rem" }}>
+                      <h4 style={{ color: PALETAS.D.carbon, margin: "0 0 0.5rem 0", fontSize: "0.9rem", fontWeight: "600" }}>📖 Modo de Uso</h4>
+                      <p style={{ color: "#666", fontSize: "0.8rem", margin: 0, lineHeight: "1.4" }}>{openProduct.modoUso}</p>
+        </div>
+      )}
+
+                  {openProduct.ingredientes && (
+                    <div style={{ marginBottom: "0.75rem" }}>
+                      <h4 style={{ color: PALETAS.D.carbon, margin: "0 0 0.5rem 0", fontSize: "0.9rem", fontWeight: "600" }}>🌿 Ingredientes</h4>
+                      <p style={{ color: "#666", fontSize: "0.8rem", margin: 0, lineHeight: "1.4" }}>{openProduct.ingredientes}</p>
+          </div>
+        )}
+
+                  {openProduct.duracion && (
+                    <div style={{ marginBottom: "0.75rem" }}>
+                      <h4 style={{ color: PALETAS.D.carbon, margin: "0 0 0.5rem 0", fontSize: "0.9rem", fontWeight: "600" }}>⏱️ Duración</h4>
+                      <p style={{ color: "#666", fontSize: "0.8rem", margin: 0, lineHeight: "1.4" }}>{openProduct.duracion}</p>
+          </div>
+        )}
+
+                  {openProduct.cuidados && (
+                    <div style={{ marginBottom: "0.75rem" }}>
+                      <h4 style={{ color: PALETAS.D.carbon, margin: "0 0 0.5rem 0", fontSize: "0.9rem", fontWeight: "600" }}>⚠️ Cuidados</h4>
+                      <p style={{ color: "#666", fontSize: "0.8rem", margin: 0, lineHeight: "1.4" }}>{openProduct.cuidados}</p>
+                </div>
+              )}
+        </div>
+
+                {/* Price and Add to Cart */}
+          <div style={{
+                  borderTop: "1px solid #eee", 
+                  paddingTop: "1rem",
+            display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center"
+                }}>
+                  <span style={{ 
+                    fontSize: "1.5rem", 
+                    fontWeight: "bold", 
+                    color: PALETAS.D.miel 
+                  }}>
+                    ${openProduct.precio} {openProduct.moneda}
+                  </span>
+                <div style={{ 
+                  display: "flex", 
+                  gap: "0.8rem", 
+                  flexWrap: "wrap",
+                  flexDirection: window.innerWidth <= 768 ? "column" : "row"
+                }}>
+                  <button
+                    onClick={() => {
+                        addToCart(openProduct);
+                        setOpenProduct(null);
+                    }}
+                    style={{
+                      background: PALETAS.D.miel,
+                      color: "white",
+                      border: "none",
+                        padding: "0.75rem 1.5rem",
+                        borderRadius: "25px",
+                      cursor: "pointer",
+                        fontSize: "0.9rem",
+                      fontWeight: "600",
+                      flex: "1",
+                      minWidth: "120px"
+                    }}
+                  >
+                      {user ? 'Agregar al Carrito' : 'Inicia sesión para comprar'}
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      const mercadoPagoUrl = `https://link.mercadopago.com.mx/amorymiel?amount=${openProduct.precio}`;
+                      window.open(mercadoPagoUrl, '_blank');
+                    }}
+                    style={{
+                      background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                      color: "white",
+                      border: "none",
+                        padding: "0.8rem 1.5rem",
+                        borderRadius: "25px",
+                      cursor: "pointer",
+                        fontSize: "0.9rem",
+                      fontWeight: "700",
+                      flex: "1",
+                      minWidth: "120px",
                       display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center"
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "0.4rem",
+                      boxShadow: "0 4px 15px rgba(224, 167, 58, 0.3)",
+                      transition: "all 0.3s ease"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = "translateY(-2px)";
+                      e.target.style.boxShadow = "0 8px 25px rgba(224, 167, 58, 0.4)";
+                      e.target.style.background = `linear-gradient(135deg, #f0b854 0%, #e0a73a 100%)`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = "translateY(0)";
+                      e.target.style.boxShadow = "0 4px 15px rgba(224, 167, 58, 0.3)";
+                      e.target.style.background = `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`;
+                    }}
+                  >
+                      <span style={{ fontSize: "1rem" }}>💳</span>
+                      <span style={{ textShadow: "0 1px 2px rgba(0,0,0,0.2)" }}>Pagar Ahora</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+            </div>
+          </div>
+        )}
+
+      {/* Professional Cart Sidebar */}
+      {cart.length > 0 && (
+          <div style={{
+            position: "fixed",
+          top: "0",
+          right: "0",
+          width: window.innerWidth <= 768 ? "100%" : "400px",
+          height: "100vh",
+          background: "white",
+          boxShadow: window.innerWidth <= 768 ? "0 0 30px rgba(0,0,0,0.15)" : "-10px 0 30px rgba(0,0,0,0.15)",
+          zIndex: 1000,
+            display: "flex",
+          flexDirection: "column",
+          transform: "translateX(0)",
+          transition: "transform 0.3s ease-in-out"
+        }}>
+          {/* Cart Header */}
+            <div style={{
+            padding: window.innerWidth <= 768 ? "1rem 1rem 0.5rem" : "2rem 1.5rem 1rem",
+            borderBottom: `1px solid ${PALETAS.D.crema}`,
+            background: `linear-gradient(135deg, ${PALETAS.D.crema} 0%, #f8f5f0 100%)`
+          }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
+              <h3 style={{ 
+                margin: "0", 
+                color: PALETAS.D.carbon, 
+                fontSize: window.innerWidth <= 768 ? "1.2rem" : "1.5rem",
+                fontWeight: "600",
+            display: "flex",
+            alignItems: "center",
+                gap: "0.5rem"
+              }}>
+                🛍️ Carrito ({cart.length})
+              </h3>
+                <button
+                onClick={() => setCart([])}
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                  color: PALETAS.D.carbon,
+                        cursor: "pointer",
+                  padding: "0.5rem",
+                    borderRadius: "8px",
+                  fontSize: "1.2rem",
+                  transition: "background-color 0.3s ease"
+                }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = "rgba(0,0,0,0.1)"}
+                onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"}
+              >
+                🗑️
+                </button>
+              </div>
+                        </div>
+
+          {/* Cart Items */}
+          <div style={{
+            flex: "1", 
+            overflowY: "auto", 
+            padding: window.innerWidth <= 768 ? "0.5rem 1rem" : "1rem 1.5rem"
+          }}>
+            {cart.map(item => (
+              <div key={item.id} style={{
+            display: "flex",
+            alignItems: "center",
+                gap: window.innerWidth <= 768 ? "0.5rem" : "1rem",
+                padding: window.innerWidth <= 768 ? "0.8rem" : "1rem",
+                marginBottom: window.innerWidth <= 768 ? "0.8rem" : "1rem",
+              background: "white",
+              borderRadius: "15px",
+                border: `1px solid ${PALETAS.D.crema}`,
+                boxShadow: "0 4px 15px rgba(0,0,0,0.05)",
+                transition: "all 0.3s ease"
                     }}>
-                      <span>✅ Cupón {appliedCoupon.code} aplicado</span>
+                      <img
+                        src={item.imagen}
+                        alt={item.nombre}
+                        style={{
+                    width: window.innerWidth <= 768 ? "50px" : "60px",
+                    height: window.innerWidth <= 768 ? "50px" : "60px",
+                          objectFit: "cover",
+                    borderRadius: "10px",
+                    border: `1px solid ${PALETAS.D.crema}`
+                  }}
+                  onError={(e) => e.target.src = "/images/logo/amorymiellogo.png"}
+                />
+                <div style={{ flex: "1" }}>
+                  <h4 style={{ 
+                    margin: "0 0 0.25rem 0", 
+                    fontSize: window.innerWidth <= 768 ? "0.85rem" : "0.95rem", 
+                    color: PALETAS.D.carbon,
+                    fontWeight: "600",
+                    lineHeight: "1.3"
+                  }}>
+                    {item.nombre}
+                  </h4>
+                  <p style={{ 
+                    margin: "0 0 0.5rem 0", 
+                    fontSize: window.innerWidth <= 768 ? "0.75rem" : "0.85rem", 
+                    color: PALETAS.D.miel,
+                    fontWeight: "600"
+                  }}>
+                    ${item.precio} MXN
+                  </p>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <button
+                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          style={{
+                        background: PALETAS.D.crema,
+                            border: "none",
+                            borderRadius: "6px",
+                        width: window.innerWidth <= 768 ? "24px" : "28px",
+                        height: window.innerWidth <= 768 ? "24px" : "28px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                            cursor: "pointer",
+                        fontSize: "1rem",
+                        color: PALETAS.D.carbon,
+                        transition: "all 0.3s ease"
+                          }}
+                      onMouseEnter={(e) => e.target.style.background = PALETAS.D.miel}
+                      onMouseLeave={(e) => e.target.style.background = PALETAS.D.crema}
+                        >
+                      −
+                        </button>
+                    <span style={{
+                      minWidth: window.innerWidth <= 768 ? "25px" : "30px",
+                      textAlign: "center",
+                      fontSize: window.innerWidth <= 768 ? "0.8rem" : "0.9rem",
+                      fontWeight: "600",
+                      color: PALETAS.D.carbon
+                    }}>
+                      {item.quantity}
+                    </span>
+                        <button
+                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          style={{
+                        background: PALETAS.D.crema,
+                            border: "none",
+                            borderRadius: "6px",
+                        width: window.innerWidth <= 768 ? "24px" : "28px",
+                        height: window.innerWidth <= 768 ? "24px" : "28px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+                    cursor: "pointer",
+                        fontSize: "1rem",
+                        color: PALETAS.D.carbon,
+                        transition: "all 0.3s ease"
+                      }}
+                      onMouseEnter={(e) => e.target.style.background = PALETAS.D.miel}
+                      onMouseLeave={(e) => e.target.style.background = PALETAS.D.crema}
+                    >
+                      +
+                </button>
+              </div>
+            </div>
+                <button
+                  onClick={() => removeFromCart(item.id)}
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    color: "#ff4444",
+                    cursor: "pointer",
+                    padding: "0.5rem",
+                    borderRadius: "8px",
+                    fontSize: "1.2rem",
+                    transition: "all 0.3s ease"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = "rgba(255, 68, 68, 0.1)";
+                    e.target.style.transform = "scale(1.1)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = "transparent";
+                    e.target.style.transform = "scale(1)";
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+            </div>
+
+          {/* Cart Footer */}
+          <div style={{
+            padding: "1.5rem",
+            borderTop: `1px solid ${PALETAS.D.crema}`,
+            background: `linear-gradient(135deg, ${PALETAS.D.crema} 0%, #f8f5f0 100%)`
+          }}>
+              <div style={{ 
+            display: "flex",
+              justifyContent: "space-between", 
+            alignItems: "center",
+              marginBottom: "1rem"
+            }}>
+              <span style={{ 
+                fontSize: "1.1rem", 
+                fontWeight: "600", 
+                color: PALETAS.D.carbon 
+              }}>
+                Total:
+              </span>
+              <span style={{ 
+                fontSize: "1.3rem", 
+                fontWeight: "700", 
+                color: PALETAS.D.miel 
+              }}>
+                ${getCartTotal()} MXN
+                    </span>
+              </div>
+              <button
+                onClick={handleMercadoPagoPayment}
+                style={{
+                width: "100%",
+                background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                  color: "white",
+                  border: "none",
+                padding: "1.2rem 1.5rem",
+                borderRadius: "20px",
+                fontSize: "1.1rem",
+                fontWeight: "700",
+                  cursor: "pointer",
+                transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                boxShadow: "0 8px 25px rgba(224, 167, 58, 0.4), 0 4px 12px rgba(224, 167, 58, 0.2)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "0.8rem",
+                position: "relative",
+                overflow: "hidden"
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "translateY(-3px) scale(1.02)";
+                e.target.style.boxShadow = "0 15px 35px rgba(224, 167, 58, 0.5), 0 8px 20px rgba(224, 167, 58, 0.3)";
+                e.target.style.background = `linear-gradient(135deg, #f0b854 0%, #e0a73a 100%)`;
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "translateY(0) scale(1)";
+                e.target.style.boxShadow = "0 8px 25px rgba(224, 167, 58, 0.4), 0 4px 12px rgba(224, 167, 58, 0.2)";
+                e.target.style.background = `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`;
+              }}
+            >
+              {isLoading ? (
+                <>
+                  <span style={{
+                    fontSize: "1.3rem",
+                    animation: "spin 1s linear infinite"
+                  }}>⏳</span>
+                  <span style={{
+                    textShadow: "0 2px 4px rgba(0,0,0,0.2)",
+                    letterSpacing: "0.5px"
+                  }}>Procesando...</span>
+                </>
+              ) : (
+                <>
+                  <span style={{
+                    fontSize: "1.3rem",
+                    filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.2))"
+                  }}>💳</span>
+                  <span style={{
+                    textShadow: "0 2px 4px rgba(0,0,0,0.2)",
+                    letterSpacing: "0.5px"
+                  }}>Pagar con Mercado Pago</span>
+                </>
+              )}
+                      </button>
+            </div>
+          </div>
+        )}
+
+        {/* Authentication Modal */}
+        {showAuthModal && (
+          <div style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0,0,0,0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000
+          }}>
+            <div style={{
+              background: "white",
+              padding: "2rem",
+              borderRadius: "20px",
+              maxWidth: "400px",
+              width: "90%",
+              maxHeight: "90vh",
+              overflow: "auto"
+            }}>
+              <div style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "1.5rem"
+              }}>
+                <h2 style={{
+                  fontSize: "1.5rem",
+                  fontWeight: "600",
+                  color: PALETAS.D.carbon,
+                  margin: 0
+                }}>
+                  {authMode === 'login' ? 'Iniciar Sesión' : 'Crear Cuenta'}
+                </h2>
+                <button
+                  onClick={() => setShowAuthModal(false)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    fontSize: "1.5rem",
+                    cursor: "pointer",
+                    color: "#666"
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+
+              {authMessage && (
+                <div style={{
+                  padding: "0.8rem",
+                  marginBottom: "1rem",
+                  borderRadius: "8px",
+                  backgroundColor: authMessage.includes("exitosamente") ? "#d4edda" : "#f8d7da",
+                  color: authMessage.includes("exitosamente") ? "#155724" : "#721c24",
+                  border: `1px solid ${authMessage.includes("exitosamente") ? "#c3e6cb" : "#f5c6cb"}`,
+                  textAlign: "center",
+                  fontSize: "0.9rem"
+                }}>
+                  {authMessage}
+                </div>
+              )}
+
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const email = formData.get('email');
+                const password = formData.get('password');
+                const name = formData.get('name');
+
+                if (authMode === 'login') {
+                  await handleLogin(email, password);
+                } else {
+                  await handleRegister(email, password, name);
+                }
+              }}>
+                {authMode === 'register' && (
+                  <div style={{ marginBottom: "1rem" }}>
+                    <label style={{
+                      display: "block",
+                      marginBottom: "0.5rem",
+                      color: PALETAS.D.carbon,
+                      fontWeight: "500"
+                    }}>
+                      Nombre Completo
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      required
+                      style={{
+                        width: "100%",
+                        padding: "0.8rem",
+                        borderRadius: "8px",
+                        border: `2px solid ${PALETAS.D.crema}`,
+                        fontSize: "1rem",
+                        outline: "none"
+                      }}
+                    />
+                  </div>
+                )}
+
+                <div style={{ marginBottom: "1rem" }}>
+                  <label style={{
+                    display: "block",
+                    marginBottom: "0.5rem",
+                    color: PALETAS.D.carbon,
+                    fontWeight: "500"
+                  }}>
+                    Correo Electrónico
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    style={{
+                      width: "100%",
+                      padding: "0.8rem",
+                      borderRadius: "8px",
+                      border: `2px solid ${PALETAS.D.crema}`,
+                      fontSize: "1rem",
+                      outline: "none"
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: "1.5rem" }}>
+                  <label style={{
+                    display: "block",
+                    marginBottom: "0.5rem",
+                    color: PALETAS.D.carbon,
+                    fontWeight: "500"
+                  }}>
+                    Contraseña
+                  </label>
+                  <input
+                    type="password"
+                    name="password"
+                    required
+                    style={{
+                      width: "100%",
+                      padding: "0.8rem",
+                      borderRadius: "8px",
+                      border: `2px solid ${PALETAS.D.crema}`,
+                      fontSize: "1rem",
+                      outline: "none"
+                    }}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  style={{
+                    width: "100%",
+                    background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                    color: "white",
+                    border: "none",
+                    padding: "1rem",
+                    borderRadius: "8px",
+                    fontSize: "1rem",
+                    fontWeight: "600",
+                    cursor: "pointer",
+                    marginBottom: "1rem"
+                  }}
+                >
+                  {authMode === 'login' ? 'Iniciar Sesión' : 'Crear Cuenta'}
+                </button>
+              </form>
+
+              <div style={{ textAlign: "center" }}>
+                {authMode === 'login' ? (
+                  <>
+                    <p style={{ color: "#666", margin: "0 0 1rem 0" }}>
+                      ¿No tienes cuenta?{' '}
                       <button
-                        onClick={() => setAppliedCoupon(null)}
+                        onClick={() => setAuthMode('register')}
                         style={{
                           background: "none",
                           border: "none",
-                          color: "#2d5a2d",
+                          color: PALETAS.D.miel,
                           cursor: "pointer",
-                          fontSize: "1rem"
+                          textDecoration: "underline"
                         }}
                       >
-                        ✖️
+                        Crear cuenta
                       </button>
-                    </div>
-                  )}
-                </div>
-
-                {/* NEW: Shipping Options */}
-                <div style={{ marginBottom: "1rem" }}>
-                  <div style={{ fontSize: "0.9rem", fontWeight: "600", marginBottom: "0.5rem" }}>
-                    Opciones de envío:
-                  </div>
-                  {shippingZones.filter(zone => zone.available).map(zone => (
-                    <label key={zone.id} style={{ 
-                      display: "flex", 
-                      alignItems: "center", 
-                      gap: "0.5rem", 
-                      marginBottom: "0.5rem",
-                      cursor: "pointer"
-                    }}>
-                      <input
-                        type="radio"
-                        name="shipping"
-                        value={zone.id}
-                        checked={selectedShipping === zone.id}
-                        onChange={(e) => setSelectedShipping(e.target.value)}
-                      />
-                      <span style={{ fontSize: "0.9rem" }}>
-                        {zone.name} - {zone.time} - {money(zone.price, "MXN")}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-
-                {/* NEW: Order Summary */}
-                <div style={{ 
-                  background: "#f8f9fa", 
-                  padding: "1rem", 
-                  borderRadius: "8px", 
-                  marginBottom: "1rem",
-                  fontSize: "0.9rem"
-                }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                    <span>Subtotal:</span>
-                    <span>{money(subtotal, "MXN")}</span>
-                  </div>
-                  {discount > 0 && (
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem", color: "#28a745" }}>
-                      <span>Descuento:</span>
-                      <span>-{money(discount, "MXN")}</span>
-                    </div>
-                  )}
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                    <span>Envío:</span>
-                    <span>{money(shippingCost, "MXN")}</span>
-                  </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                    <span>Impuestos:</span>
-                    <span>{money(tax, "MXN")}</span>
-                  </div>
-                  <hr style={{ margin: "0.5rem 0", border: "none", borderTop: "1px solid #dee2e6" }} />
-                  <div style={{ display: "flex", justifyContent: "space-between", fontWeight: "600" }}>
-                    <span>Total:</span>
-                    <span style={{ fontSize: "1.1rem", color: PALETAS.D.miel }}>
-                      {money(total, "MXN")}
-                    </span>
-                  </div>
-                </div>
-
-                <div style={{ 
-                  display: "flex", 
-                  justifyContent: "space-between", 
-                  alignItems: "center", 
-                  marginBottom: "1rem",
-                  fontSize: "1.2rem",
-                  fontWeight: "600"
-                }}>
-                  <span>Total:</span>
-                  <span>{money(total, "MXN")}</span>
-                </div>
-                <button 
-                  className="btn" 
-                  onClick={checkoutMP} 
-                  style={{ 
-                    background: PALETAS.D.miel, 
-                    color: "white", 
-                    width: "100%",
-                    padding: "1rem"
-                  }}
-                >
-                  Proceder al pago
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Admin Panel */}
-      {showAdmin && (
-        <AdminPanel 
-          products={products} 
-          setProducts={setProducts} 
-          services={services} 
-          setServices={setServices} 
-          onClose={() => setShowAdmin(false)} 
-        />
-      )}
-
-              {/* Product Modal */}
-        {openProduct && (
-          <ProductModal 
-            item={openProduct} 
-            selectedVariant={selectedVariant} 
-            setSelectedVariant={setSelectedVariant} 
-            onAdd={onAdd} 
-            onClose={close} 
-          />
-        )}
-
-        {/* Live Chat Widget */}
-        <div style={{
-          position: "fixed",
-          bottom: "20px",
-          right: "20px",
-          zIndex: 1000,
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px"
-        }}>
-          {/* WhatsApp Chat Button */}
-          <a 
-            href="https://wa.me/5255123456789?text=Hola! Me interesan los productos de Amor y Miel" 
-            target="_blank" 
-            rel="noreferrer"
-            style={{
-              background: "#25D366",
-              color: "white",
-              width: "60px",
-              height: "60px",
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "24px",
-              textDecoration: "none",
-              boxShadow: "0 4px 12px rgba(37, 211, 102, 0.3)",
-              transition: "transform 0.2s ease"
-            }}
-            onMouseEnter={(e) => e.target.style.transform = "scale(1.1)"}
-            onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
-          >
-            💬
-          </a>
-          
-          {/* Newsletter Signup Button */}
-          <button
-            onClick={() => setShowNewsletter(true)}
-            style={{
-              background: PALETAS.D.miel,
-              color: "white",
-              width: "60px",
-              height: "60px",
-              borderRadius: "50%",
-              border: "none",
-              fontSize: "20px",
-              cursor: "pointer",
-              boxShadow: "0 4px 12px rgba(224, 167, 58, 0.3)",
-              transition: "transform 0.2s ease"
-            }}
-            onMouseEnter={(e) => e.target.style.transform = "scale(1.1)"}
-            onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
-          >
-            📧
-          </button>
-
-          {/* NEW: Social Media Links */}
-          <a 
-            href={socialLinks.instagram}
-            target="_blank" 
-            rel="noreferrer"
-            style={{
-              background: "linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)",
-              color: "white",
-              width: "60px",
-              height: "60px",
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "20px",
-              textDecoration: "none",
-              boxShadow: "0 4px 12px rgba(220, 39, 67, 0.3)",
-              transition: "transform 0.2s ease"
-            }}
-            onMouseEnter={(e) => e.target.style.transform = "scale(1.1)"}
-            onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
-          >
-            📸
-          </a>
-
-          {/* NEW: Currency Switcher */}
-          <button
-            onClick={() => {
-              const currentIndex = currencies.findIndex(c => c.code === selectedCurrency);
-              const nextIndex = (currentIndex + 1) % currencies.length;
-              setSelectedCurrency(currencies[nextIndex].code);
-            }}
-            style={{
-              background: "linear-gradient(135deg, #667eea, #764ba2)",
-              color: "white",
-              width: "60px",
-              height: "60px",
-              borderRadius: "50%",
-              border: "none",
-              fontSize: "16px",
-              cursor: "pointer",
-              boxShadow: "0 4px 12px rgba(102, 126, 234, 0.3)",
-              transition: "transform 0.2s ease",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "2px"
-            }}
-            onMouseEnter={(e) => e.target.style.transform = "scale(1.1)"}
-            onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
-          >
-            <span style={{ fontSize: "12px" }}>{currencies.find(c => c.code === selectedCurrency)?.symbol}</span>
-            <span style={{ fontSize: "10px" }}>{selectedCurrency}</span>
-          </button>
-
-          {/* NEW: Recommendations Button */}
-          <button
-            onClick={() => setShowRecommendations(true)}
-            style={{
-              background: "linear-gradient(135deg, #ff6b6b, #ee5a24)",
-              color: "white",
-              width: "60px",
-              height: "60px",
-              borderRadius: "50%",
-              border: "none",
-              fontSize: "16px",
-              cursor: "pointer",
-              boxShadow: "0 4px 12px rgba(255, 107, 107, 0.3)",
-              transition: "transform 0.2s ease",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center"
-            }}
-            onMouseEnter={(e) => e.target.style.transform = "scale(1.1)"}
-            onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
-            title="Ver recomendaciones personalizadas"
-          >
-            🎯
-          </button>
-
-          {/* NEW: Notification Settings Button */}
-          <button
-            onClick={() => setShowNotificationPreferences(true)}
-            style={{
-              background: "linear-gradient(135deg, #a29bfe, #6c5ce7)",
-              color: "white",
-              width: "60px",
-              height: "60px",
-              borderRadius: "50%",
-              border: "none",
-              fontSize: "16px",
-              cursor: "pointer",
-              boxShadow: "0 4px 12px rgba(162, 155, 254, 0.3)",
-              transition: "transform 0.2s ease",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center"
-            }}
-            onMouseEnter={(e) => e.target.style.transform = "scale(1.1)"}
-            onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
-            title="Configurar notificaciones"
-          >
-            🔔
-          </button>
-        </div>
-
-        {/* Newsletter Modal */}
-        {showNewsletter && (
-          <div style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1001
-          }}>
-            <div style={{
-              background: "white",
-              padding: "30px",
-              borderRadius: "15px",
-              maxWidth: "400px",
-              width: "90%",
-              textAlign: "center"
-            }}>
-              <h3 style={{ margin: "0 0 15px 0", color: PALETAS.D.carbon }}>¡Únete a nuestra comunidad!</h3>
-              <p style={{ margin: "0 0 20px 0", color: "#666" }}>
-                Recibe ofertas especiales, rituales y consejos de autocuidado
-              </p>
-              <input
-                type="email"
-                placeholder="Tu email"
-                value={newsletterEmail}
-                onChange={(e) => setNewsletterEmail(e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: "12px",
-                  border: "1px solid #ddd",
-                  borderRadius: "8px",
-                  marginBottom: "15px"
-                }}
-              />
-              <div style={{ display: "flex", gap: "10px" }}>
-                <button
-                  onClick={() => {
-                    if (newsletterEmail) {
-                      alert("¡Gracias por suscribirte! Te enviaremos contenido especial pronto.");
-                      setNewsletterEmail("");
-                      setShowNewsletter(false);
-                    }
-                  }}
-                  style={{
-                    background: PALETAS.D.miel,
-                    color: "white",
-                    border: "none",
-                    padding: "12px 24px",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    flex: 1
-                  }}
-                >
-                  Suscribirse
-                </button>
-                <button
-                  onClick={() => setShowNewsletter(false)}
-                  style={{
-                    background: "transparent",
-                    color: "#666",
-                    border: "1px solid #ddd",
-                    padding: "12px 24px",
-                    borderRadius: "8px",
-                    cursor: "pointer"
-                  }}
-                >
-                  Cancelar
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* FAQ Modal */}
-        {showFAQ && (
-          <div style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1001
-          }}>
-            <div style={{
-              background: "white",
-              padding: "30px",
-              borderRadius: "15px",
-              maxWidth: "600px",
-              width: "90%",
-              maxHeight: "80vh",
-              overflowY: "auto"
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                <h3 style={{ margin: 0, color: PALETAS.D.carbon }}>Preguntas Frecuentes</h3>
-                <button
-                  onClick={() => setShowFAQ(false)}
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    fontSize: "1.2rem",
-                    cursor: "pointer"
-                  }}
-                >
-                  ✖️
-                </button>
-              </div>
-              
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                <div style={{ border: "1px solid #eee", borderRadius: "8px", padding: "15px" }}>
-                  <h4 style={{ margin: "0 0 10px 0", color: PALETAS.D.carbon }}>¿Cómo funcionan los productos holísticos?</h4>
-                  <p style={{ margin: 0, color: "#666", fontSize: "0.9rem" }}>
-                    Nuestros productos están elaborados con ingredientes naturales y consagrados con intenciones específicas. 
-                    Funcionan a través de la energía y la intención que ponemos en su elaboración.
-                  </p>
-                </div>
-                
-                <div style={{ border: "1px solid #eee", borderRadius: "8px", padding: "15px" }}>
-                  <h4 style={{ margin: "0 0 10px 0", color: PALETAS.D.carbon }}>¿Cuánto tiempo tardan en llegar los productos?</h4>
-                  <p style={{ margin: 0, color: "#666", fontSize: "0.9rem" }}>
-                    El tiempo de entrega varía según tu ubicación. Generalmente entre 3-7 días hábiles dentro de México.
-                  </p>
-                </div>
-                
-                <div style={{ border: "1px solid #eee", borderRadius: "8px", padding: "15px" }}>
-                  <h4 style={{ margin: "0 0 10px 0", color: PALETAS.D.carbon }}>¿Los productos son 100% naturales?</h4>
-                  <p style={{ margin: 0, color: "#666", fontSize: "0.9rem" }}>
-                    Sí, todos nuestros productos están elaborados con ingredientes naturales y orgánicos, 
-                    sin conservadores artificiales ni químicos dañinos.
-                  </p>
-                </div>
-                
-                <div style={{ border: "1px solid #eee", borderRadius: "8px", padding: "15px" }}>
-                  <h4 style={{ margin: "0 0 10px 0", color: PALETAS.D.carbon }}>¿Cómo puedo contactar para servicios?</h4>
-                  <p style={{ margin: 0, color: "#666", fontSize: "0.9rem" }}>
-                    Puedes contactarnos a través de WhatsApp, email o agendar directamente desde la sección de servicios.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Contact Form Modal */}
-        {showContactForm && (
-          <div style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1001
-          }}>
-            <div style={{
-              background: "white",
-              padding: "30px",
-              borderRadius: "15px",
-              maxWidth: "500px",
-              width: "90%"
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                <h3 style={{ margin: 0, color: PALETAS.D.carbon }}>Contáctanos</h3>
-                <button
-                  onClick={() => setShowContactForm(false)}
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    fontSize: "1.2rem",
-                    cursor: "pointer"
-                  }}
-                >
-                  ✖️
-                </button>
-              </div>
-              
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                <input
-                  type="text"
-                  placeholder="Tu nombre"
-                  value={contactForm.name}
-                  onChange={(e) => setContactForm(prev => ({ ...prev, name: e.target.value }))}
-                  style={{
-                    padding: "12px",
-                    border: "1px solid #ddd",
-                    borderRadius: "8px",
-                    fontSize: "0.9rem"
-                  }}
-                />
-                <input
-                  type="email"
-                  placeholder="Tu email"
-                  value={contactForm.email}
-                  onChange={(e) => setContactForm(prev => ({ ...prev, email: e.target.value }))}
-                  style={{
-                    padding: "12px",
-                    border: "1px solid #ddd",
-                    borderRadius: "8px",
-                    fontSize: "0.9rem"
-                  }}
-                />
-                <textarea
-                  placeholder="Tu mensaje"
-                  value={contactForm.message}
-                  onChange={(e) => setContactForm(prev => ({ ...prev, message: e.target.value }))}
-                  style={{
-                    padding: "12px",
-                    border: "1px solid #ddd",
-                    borderRadius: "8px",
-                    minHeight: "100px",
-                    fontSize: "0.9rem"
-                  }}
-                />
-                <button
-                  onClick={() => {
-                    if (contactForm.name && contactForm.email && contactForm.message) {
-                      alert("¡Gracias por tu mensaje! Te contactaremos pronto.");
-                      setContactForm({ name: "", email: "", message: "" });
-                      setShowContactForm(false);
-                    }
-                  }}
-                  style={{
-                    background: PALETAS.D.miel,
-                    color: "white",
-                    border: "none",
-                    padding: "12px 24px",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    fontWeight: "600"
-                  }}
-                >
-                  Enviar mensaje
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Reviews Modal */}
-        {showReviews && openProduct && (
-          <div style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1001
-          }}>
-            <div style={{
-              background: "white",
-              padding: "30px",
-              borderRadius: "15px",
-              maxWidth: "600px",
-              width: "90%",
-              maxHeight: "80vh",
-              overflowY: "auto"
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                <h3 style={{ margin: 0, color: PALETAS.D.carbon }}>Reseñas - {openProduct.nombre}</h3>
-                <button
-                  onClick={() => setShowReviews(false)}
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    fontSize: "1.2rem",
-                    cursor: "pointer"
-                  }}
-                >
-                  ✖️
-                </button>
-              </div>
-              
-              {/* Add Review Form */}
-              <div style={{ 
-                background: "#F8F9FA", 
-                padding: "20px", 
-                borderRadius: "12px", 
-                marginBottom: "20px" 
-              }}>
-                <h4 style={{ margin: "0 0 15px 0", color: PALETAS.D.carbon }}>Agregar reseña</h4>
-                <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
-                  {[1, 2, 3, 4, 5].map(star => (
+                    </p>
                     <button
-                      key={star}
-                      onClick={() => setNewReview(prev => ({ ...prev, rating: star }))}
+                      onClick={() => {
+                        const email = prompt("Ingresa tu email para recuperar contraseña:");
+                        if (email) handleForgotPassword(email);
+                      }}
                       style={{
-                        background: "transparent",
+                        background: "none",
                         border: "none",
-                        fontSize: "1.5rem",
+                        color: PALETAS.D.miel,
                         cursor: "pointer",
-                        color: newReview.rating >= star ? "#FFD700" : "#ccc"
+                        textDecoration: "underline",
+                        fontSize: "0.9rem"
                       }}
                     >
-                      ★
+                      ¿Olvidaste tu contraseña?
                     </button>
-                  ))}
-                </div>
-                <textarea
-                  placeholder="Escribe tu reseña..."
-                  value={newReview.comment}
-                  onChange={(e) => setNewReview(prev => ({ ...prev, comment: e.target.value }))}
-                  style={{
-                    width: "100%",
-                    padding: "10px",
-                    border: "1px solid #ddd",
-                    borderRadius: "8px",
-                    minHeight: "80px",
-                    marginBottom: "10px"
-                  }}
-                />
-                <button
-                  onClick={() => {
-                    if (newReview.rating > 0 && newReview.comment.trim()) {
-                      addReview(openProduct.id, newReview);
-                      setNewReview({ rating: 0, comment: "" });
-                    }
-                  }}
-                  style={{
-                    background: PALETAS.D.miel,
-                    color: "white",
-                    border: "none",
-                    padding: "10px 20px",
-                    borderRadius: "8px",
-                    cursor: "pointer"
-                  }}
-                >
-                  Publicar reseña
-                </button>
-              </div>
-              
-              {/* Reviews List */}
-              <div>
-                <h4 style={{ margin: "0 0 15px 0", color: PALETAS.D.carbon }}>
-                  Reseñas ({reviews[openProduct.id]?.length || 0})
-                </h4>
-                {reviews[openProduct.id]?.length > 0 ? (
-                  reviews[openProduct.id].map((review, index) => (
-                    <div key={review.id} style={{ 
-                      border: "1px solid #eee", 
-                      borderRadius: "8px", 
-                      padding: "15px", 
-                      marginBottom: "10px" 
-                    }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-                        <div style={{ display: "flex", gap: "5px" }}>
-                          {[1, 2, 3, 4, 5].map(star => (
-                            <span key={star} style={{ color: review.rating >= star ? "#FFD700" : "#ccc" }}>
-                              ★
-                            </span>
-                          ))}
-                        </div>
-                        <span style={{ fontSize: "0.8rem", color: "#666" }}>
-                          {new Date(review.date).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <p style={{ margin: 0, color: "#333" }}>{review.comment}</p>
-                    </div>
-                  ))
+                  </>
                 ) : (
-                  <p style={{ color: "#666", textAlign: "center" }}>No hay reseñas aún. ¡Sé el primero en opinar!</p>
+                  <p style={{ color: "#666", margin: 0 }}>
+                    ¿Ya tienes cuenta?{' '}
+                    <button
+                      onClick={() => setAuthMode('login')}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: PALETAS.D.miel,
+                        cursor: "pointer",
+                        textDecoration: "underline"
+                      }}
+                    >
+                      Iniciar sesión
+                    </button>
+                  </p>
                 )}
               </div>
             </div>
           </div>
         )}
 
-        {/* Wishlist Modal */}
-        {showWishlist && (
+        {/* Shipping Address Modal */}
+        {showShippingModal && (
           <div style={{
             position: "fixed",
-            inset: 0,
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
             background: "rgba(0,0,0,0.5)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            zIndex: 1001
+            zIndex: 1000
           }}>
             <div style={{
               background: "white",
-              padding: "30px",
               borderRadius: "15px",
-              maxWidth: "800px",
-              width: "90%",
-              maxHeight: "80vh",
-              overflowY: "auto"
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                <h3 style={{ margin: 0, color: PALETAS.D.carbon }}>Mis Favoritos ({wishlist.length})</h3>
-                <button
-                  onClick={() => setShowWishlist(false)}
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    fontSize: "1.2rem",
-                    cursor: "pointer"
-                  }}
-                >
-                  ✖️
-                </button>
-              </div>
-              
-              {wishlist.length > 0 ? (
-                <div style={{ 
-                  display: "grid", 
-                  gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", 
-                  gap: "1rem" 
-                }}>
-                  {wishlist.map(item => (
-                    <div key={item.id} style={{ 
-                      border: "1px solid #eee", 
-                      borderRadius: "8px", 
-                      padding: "15px" 
-                    }}>
-                      <img
-                        src={item.imagen}
-                        alt={item.nombre}
-                        style={{
-                          width: "100%",
-                          height: "150px",
-                          objectFit: "cover",
-                          borderRadius: "8px",
-                          marginBottom: "10px"
-                        }}
-                      />
-                      <h4 style={{ margin: "0 0 5px 0", fontSize: "1rem" }}>{item.nombre}</h4>
-                      <p style={{ margin: "0 0 10px 0", color: "#666", fontSize: "0.8rem" }}>
-                        {money(item.precio || minPrice(item), item.moneda || 'MXN')}
-                      </p>
-                      <div style={{ display: "flex", gap: "0.5rem" }}>
-                        <button
-                          onClick={() => onOpen(item)}
-                          style={{
-                            background: PALETAS.D.miel,
-                            color: "white",
-                            border: "none",
-                            padding: "8px 12px",
-                            borderRadius: "6px",
-                            cursor: "pointer",
-                            fontSize: "0.8rem"
-                          }}
-                        >
-                          Ver
-                        </button>
-                        <button
-                          onClick={() => addToWishlist(item)}
-                          style={{
-                            background: "#ff6b6b",
-                            color: "white",
-                            border: "none",
-                            padding: "8px 12px",
-                            borderRadius: "6px",
-                            cursor: "pointer",
-                            fontSize: "0.8rem"
-                          }}
-                        >
-                          Quitar
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div style={{ textAlign: "center", padding: "40px" }}>
-                  <div style={{ fontSize: "3rem", marginBottom: "20px" }}>🤍</div>
-                  <h4 style={{ margin: "0 0 10px 0", color: PALETAS.D.carbon }}>Tu lista de favoritos está vacía</h4>
-                  <p style={{ color: "#666", marginBottom: "20px" }}>
-                    Agrega productos a tus favoritos para verlos aquí
-                  </p>
-                  <button
-                    onClick={() => setShowWishlist(false)}
-                    style={{
-                      background: PALETAS.D.miel,
-                      color: "white",
-                      border: "none",
-                      padding: "12px 24px",
-                      borderRadius: "8px",
-                      cursor: "pointer"
-                    }}
-                  >
-                    Explorar productos
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Login Modal */}
-        {showLoginModal && (
-          <div style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1001
-          }}>
-            <div style={{
-              background: "white",
-              padding: "30px",
-              borderRadius: "15px",
-              maxWidth: "400px",
-              width: "90%"
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                <h3 style={{ margin: 0, color: PALETAS.D.carbon }}>Iniciar Sesión</h3>
-                <button
-                  onClick={() => setShowLoginModal(false)}
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    fontSize: "1.2rem",
-                    cursor: "pointer"
-                  }}
-                >
-                  ✖️
-                </button>
-              </div>
-              
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                <input
-                  type="email"
-                  placeholder="Email"
-                  value={authForm.email}
-                  onChange={(e) => setAuthForm(prev => ({ ...prev, email: e.target.value }))}
-                  style={{
-                    padding: "12px",
-                    border: "1px solid #ddd",
-                    borderRadius: "8px",
-                    fontSize: "0.9rem"
-                  }}
-                />
-                <input
-                  type="password"
-                  placeholder="Contraseña"
-                  value={authForm.password}
-                  onChange={(e) => setAuthForm(prev => ({ ...prev, password: e.target.value }))}
-                  style={{
-                    padding: "12px",
-                    border: "1px solid #ddd",
-                    borderRadius: "8px",
-                    fontSize: "0.9rem"
-                  }}
-                />
-                <button
-                  onClick={() => {
-                    if (authForm.email && authForm.password) {
-                      loginUser(authForm.email, authForm.password);
-                      setAuthForm({ email: "", password: "", name: "" });
-                    }
-                  }}
-                  style={{
-                    background: PALETAS.D.miel,
-                    color: "white",
-                    border: "none",
-                    padding: "12px 24px",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    fontWeight: "600"
-                  }}
-                >
-                  Iniciar Sesión
-                </button>
-                <button
-                  onClick={() => {
-                    setShowLoginModal(false);
-                    setShowRegisterModal(true);
-                  }}
-                  style={{
-                    background: "transparent",
-                    color: PALETAS.D.miel,
-                    border: "1px solid " + PALETAS.D.miel,
-                    padding: "12px 24px",
-                    borderRadius: "8px",
-                    cursor: "pointer"
-                  }}
-                >
-                  Crear cuenta
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Register Modal */}
-        {showRegisterModal && (
-          <div style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1001
-          }}>
-            <div style={{
-              background: "white",
-              padding: "30px",
-              borderRadius: "15px",
-              maxWidth: "400px",
-              width: "90%"
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                <h3 style={{ margin: 0, color: PALETAS.D.carbon }}>Crear Cuenta</h3>
-                <button
-                  onClick={() => setShowRegisterModal(false)}
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    fontSize: "1.2rem",
-                    cursor: "pointer"
-                  }}
-                >
-                  ✖️
-                </button>
-              </div>
-              
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                <input
-                  type="text"
-                  placeholder="Nombre completo"
-                  value={authForm.name}
-                  onChange={(e) => setAuthForm(prev => ({ ...prev, name: e.target.value }))}
-                  style={{
-                    padding: "12px",
-                    border: "1px solid #ddd",
-                    borderRadius: "8px",
-                    fontSize: "0.9rem"
-                  }}
-                />
-                <input
-                  type="email"
-                  placeholder="Email"
-                  value={authForm.email}
-                  onChange={(e) => setAuthForm(prev => ({ ...prev, email: e.target.value }))}
-                  style={{
-                    padding: "12px",
-                    border: "1px solid #ddd",
-                    borderRadius: "8px",
-                    fontSize: "0.9rem"
-                  }}
-                />
-                <input
-                  type="password"
-                  placeholder="Contraseña"
-                  value={authForm.password}
-                  onChange={(e) => setAuthForm(prev => ({ ...prev, password: e.target.value }))}
-                  style={{
-                    padding: "12px",
-                    border: "1px solid #ddd",
-                    borderRadius: "8px",
-                    fontSize: "0.9rem"
-                  }}
-                />
-                <button
-                  onClick={() => {
-                    if (authForm.name && authForm.email && authForm.password) {
-                      registerUser(authForm);
-                      setAuthForm({ email: "", password: "", name: "" });
-                    }
-                  }}
-                  style={{
-                    background: PALETAS.D.miel,
-                    color: "white",
-                    border: "none",
-                    padding: "12px 24px",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    fontWeight: "600"
-                  }}
-                >
-                  Crear Cuenta
-                </button>
-                <button
-                  onClick={() => {
-                    setShowRegisterModal(false);
-                    setShowLoginModal(true);
-                  }}
-                  style={{
-                    background: "transparent",
-                    color: PALETAS.D.miel,
-                    border: "1px solid " + PALETAS.D.miel,
-                    padding: "12px 24px",
-                    borderRadius: "8px",
-                    cursor: "pointer"
-                  }}
-                >
-                  Ya tengo cuenta
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Order Confirmation Modal */}
-        {showOrderConfirmation && currentOrder && (
-          <div style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1001
-          }}>
-            <div style={{
-              background: "white",
-              padding: "30px",
-              borderRadius: "15px",
+              padding: "2rem",
               maxWidth: "500px",
-              width: "90%"
+              width: "90%",
+              maxHeight: "90vh",
+              overflow: "auto",
+              boxShadow: "0 20px 60px rgba(0,0,0,0.3)"
             }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                <h3 style={{ margin: 0, color: PALETAS.D.carbon }}>¡Orden Confirmada!</h3>
-                <button
-                  onClick={() => setShowOrderConfirmation(false)}
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    fontSize: "1.2rem",
-                    cursor: "pointer"
-                  }}
-                >
-                  ✖️
-                </button>
-              </div>
-              
-              <div style={{ textAlign: "center", marginBottom: "20px" }}>
-                <div style={{ fontSize: "3rem", marginBottom: "10px" }}>🎉</div>
-                <h4 style={{ margin: "0 0 10px 0", color: PALETAS.D.carbon }}>¡Gracias por tu compra!</h4>
-                <p style={{ color: "#666", marginBottom: "15px" }}>
-                  Tu orden #{currentOrder.id} ha sido procesada exitosamente.
-                </p>
-                <div style={{ 
-                  background: "#F8F9FA", 
-                  padding: "15px", 
-                  borderRadius: "8px", 
-                  marginBottom: "15px" 
-                }}>
-                  <p style={{ margin: "0 0 5px 0", fontSize: "0.9rem", color: "#666" }}>
-                    Total: {money(currentOrder.total, "MXN")}
-                  </p>
-                  <p style={{ margin: "0 0 5px 0", fontSize: "0.9rem", color: "#666" }}>
-                    Puntos ganados: {Math.floor(currentOrder.total / 10)}
-                  </p>
-                  <p style={{ margin: 0, fontSize: "0.9rem", color: "#666" }}>
-                    Estado: {currentOrder.status === "paid" ? "Pagado" : "Pendiente"}
-                  </p>
-                </div>
-              </div>
-              
-              <div style={{ display: "flex", gap: "10px" }}>
-                <button
-                  onClick={() => setShowOrderConfirmation(false)}
-                  style={{
-                    background: PALETAS.D.miel,
-                    color: "white",
-                    border: "none",
-                    padding: "12px 24px",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    flex: 1
-                  }}
-                >
-                  Continuar comprando
-                </button>
-                <button
-                  onClick={() => {
-                    setShowOrderConfirmation(false);
-                    // Show order history
-                  }}
-                  style={{
-                    background: "transparent",
-                    color: PALETAS.D.miel,
-                    border: "1px solid " + PALETAS.D.miel,
-                    padding: "12px 24px",
-                    borderRadius: "8px",
-                    cursor: "pointer"
-                  }}
-                >
-                  Ver mis órdenes
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Loyalty Program Modal */}
-        {user && (
-          <div style={{
-            position: "fixed",
-            bottom: "20px",
-            left: "20px",
-            background: "white",
-            padding: "15px",
-            borderRadius: "12px",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-            zIndex: 999,
-            maxWidth: "250px"
-          }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
-              <span style={{ fontSize: "1.2rem" }}>🎁</span>
-              <div>
-                <div style={{ fontSize: "0.9rem", fontWeight: "600", color: PALETAS.D.carbon }}>
-                  Programa de Lealtad
-                </div>
-                <div style={{ fontSize: "0.8rem", color: "#666" }}>
-                  {loyaltyPoints} puntos disponibles
-                </div>
-              </div>
-            </div>
-            <button
-              onClick={() => generateReferralCode()}
-              style={{
-                background: PALETAS.D.miel,
-                color: "white",
-                border: "none",
-                padding: "8px 12px",
-                borderRadius: "6px",
-                cursor: "pointer",
-                fontSize: "0.8rem",
-                width: "100%"
-              }}
-            >
-              Generar código de referido
-            </button>
-            {referralCode && (
-              <div style={{ 
-                marginTop: "10px", 
-                padding: "8px", 
-                background: "#F8F9FA", 
-                borderRadius: "6px",
-                textAlign: "center"
+              <div style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "1.5rem"
               }}>
-                <div style={{ fontSize: "0.8rem", color: "#666", marginBottom: "5px" }}>
-                  Tu código:
-                </div>
-                <div style={{ fontSize: "1rem", fontWeight: "600", color: PALETAS.D.miel }}>
-                  {referralCode}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Offline Notification */}
-        {isOffline && (
-          <div style={{
-            position: "fixed",
-            top: "20px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            background: "#ff6b6b",
-            color: "white",
-            padding: "10px 20px",
-            borderRadius: "8px",
-            zIndex: 1000,
-            fontSize: "0.9rem"
-          }}>
-            🔌 Sin conexión - Algunas funciones pueden no estar disponibles
-          </div>
-        )}
-
-        {/* Install PWA Prompt */}
-        {showInstallPrompt && (
-          <div style={{
-            position: "fixed",
-            bottom: "20px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            background: "white",
-            padding: "15px 20px",
-            borderRadius: "12px",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-            zIndex: 1000,
-            display: "flex",
-            alignItems: "center",
-            gap: "15px"
-          }}>
-            <div>
-              <div style={{ fontSize: "0.9rem", fontWeight: "600", color: PALETAS.D.carbon }}>
-                Instalar Amor y Miel
-              </div>
-              <div style={{ fontSize: "0.8rem", color: "#666" }}>
-                Acceso rápido desde tu pantalla de inicio
-              </div>
-            </div>
-            <button
-              onClick={() => setShowInstallPrompt(false)}
-              style={{
-                background: PALETAS.D.miel,
-                color: "white",
-                border: "none",
-                padding: "8px 16px",
-                borderRadius: "6px",
-                cursor: "pointer",
-                fontSize: "0.8rem"
-              }}
-            >
-              Instalar
-            </button>
-            <button
-              onClick={() => setShowInstallPrompt(false)}
-              style={{
-                background: "transparent",
-                color: "#666",
-                border: "none",
-                padding: "8px",
-                cursor: "pointer",
-                fontSize: "1.2rem"
-              }}
-            >
-              ✖️
-            </button>
-          </div>
-        )}
-
-        {/* NEW: App Store Install Modal */}
-        {showAppInstall && (
-          <div style={{
-            position: "fixed",
-            bottom: "20px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            background: "white",
-            padding: "20px",
-            borderRadius: "15px",
-            boxShadow: "0 8px 25px rgba(0,0,0,0.2)",
-            zIndex: 1000,
-            maxWidth: "350px",
-            width: "90%",
-            textAlign: "center"
-          }}>
-            <div style={{ fontSize: "3rem", marginBottom: "15px" }}>📱</div>
-            <h4 style={{ margin: "0 0 10px 0", color: PALETAS.D.carbon }}>
-              ¡Descarga nuestra app!
-            </h4>
-            <p style={{ margin: "0 0 20px 0", color: "#666", fontSize: "0.9rem" }}>
-              Accede a Amor y Miel desde tu dispositivo móvil
-            </p>
-            <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-              <a
-                href={appStoreLinks.ios}
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  background: "#000",
-                  color: "white",
-                  padding: "10px 15px",
-                  borderRadius: "8px",
-                  textDecoration: "none",
-                  fontSize: "0.8rem",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "5px"
-                }}
-              >
-                🍎 App Store
-              </a>
-              <a
-                href={appStoreLinks.android}
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  background: "#3DDC84",
-                  color: "white",
-                  padding: "10px 15px",
-                  borderRadius: "8px",
-                  textDecoration: "none",
-                  fontSize: "0.8rem",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "5px"
-                }}
-              >
-                🤖 Google Play
-              </a>
-            </div>
-            <button
-              onClick={() => setShowAppInstall(false)}
-              style={{
-                background: "transparent",
-                color: "#666",
-                border: "none",
-                padding: "8px",
-                cursor: "pointer",
-                fontSize: "1.2rem",
-                position: "absolute",
-                top: "10px",
-                right: "10px"
-              }}
-            >
-              ✖️
-            </button>
-          </div>
-        )}
-
-        {/* NEW: Notification Preferences Modal */}
-        {showNotificationPreferences && (
-          <div style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1001
-          }}>
-            <div style={{
-              background: "white",
-              padding: "30px",
-              borderRadius: "15px",
-              maxWidth: "500px",
-              width: "90%",
-              maxHeight: "80vh",
-              overflowY: "auto"
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                <h3 style={{ margin: 0, color: PALETAS.D.carbon }}>Preferencias de Notificaciones</h3>
-                <button
-                  onClick={() => setShowNotificationPreferences(false)}
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    fontSize: "1.2rem",
-                    cursor: "pointer"
-                  }}
-                >
-                  ✖️
-                </button>
-              </div>
-              
-              <div style={{ marginBottom: "20px" }}>
-                <h4 style={{ margin: "0 0 15px 0", color: PALETAS.D.carbon }}>Tipos de Notificaciones:</h4>
-                {Object.entries(notificationPreferences).map(([key, value]) => (
-                  <label key={key} style={{ 
-                    display: "flex", 
-                    alignItems: "center", 
-                    gap: "10px", 
-                    marginBottom: "10px",
-                    cursor: "pointer"
-                  }}>
-                    <input
-                      type="checkbox"
-                      checked={value}
-                      onChange={(e) => setNotificationPreferences(prev => ({
-                        ...prev,
-                        [key]: e.target.checked
-                      }))}
-                    />
-                    <span style={{ fontSize: "0.9rem" }}>
-                      {key === "orderUpdates" && "Actualizaciones de pedidos"}
-                      {key === "promotions" && "Ofertas y promociones"}
-                      {key === "priceDrops" && "Bajadas de precio"}
-                      {key === "newProducts" && "Nuevos productos"}
-                      {key === "backInStock" && "Productos de vuelta en stock"}
-                    </span>
-                  </label>
-                ))}
-              </div>
-
-              <div style={{ marginBottom: "20px" }}>
-                <h4 style={{ margin: "0 0 15px 0", color: PALETAS.D.carbon }}>Canales de Notificación:</h4>
-                <label style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
-                  <input
-                    type="checkbox"
-                    checked={emailNotifications}
-                    onChange={(e) => setEmailNotifications(e.target.checked)}
-                  />
-                  <span>Email</span>
-                </label>
-                <label style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
-                  <input
-                    type="checkbox"
-                    checked={pushNotifications}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        requestPushPermission();
-                      } else {
-                        setPushNotifications(false);
-                      }
-                    }}
-                  />
-                  <span>Notificaciones del navegador</span>
-                </label>
-                <label style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
-                  <input
-                    type="checkbox"
-                    checked={smsNotifications}
-                    onChange={(e) => setSmsNotifications(e.target.checked)}
-                  />
-                  <span>SMS</span>
-                </label>
-              </div>
-
-              <button
-                onClick={() => setShowNotificationPreferences(false)}
-                style={{
-                  background: PALETAS.D.miel,
-                  color: "white",
-                  border: "none",
-                  padding: "12px 24px",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                  width: "100%"
-                }}
-              >
-                Guardar Preferencias
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* NEW: Product Recommendations Modal */}
-        {showRecommendations && (
-          <div style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1001
-          }}>
-            <div style={{
-              background: "white",
-              padding: "30px",
-              borderRadius: "15px",
-              maxWidth: "800px",
-              width: "90%",
-              maxHeight: "80vh",
-              overflowY: "auto"
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                <h3 style={{ margin: 0, color: PALETAS.D.carbon }}>Recomendaciones para ti</h3>
-                <button
-                  onClick={() => setShowRecommendations(false)}
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    fontSize: "1.2rem",
-                    cursor: "pointer"
-                  }}
-                >
-                  ✖️
-                </button>
-              </div>
-              
-              {recommendations.length > 0 ? (
-                <div style={{ 
-                  display: "grid", 
-                  gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", 
-                  gap: "1rem" 
+                <h2 style={{
+                  color: PALETAS.D.miel,
+                  margin: 0,
+                  fontSize: "1.5rem",
+                  fontWeight: "bold"
                 }}>
-                  {recommendations.map(item => (
-                    <div key={item.id} style={{ 
-                      border: "1px solid #eee", 
-                      borderRadius: "8px", 
-                      padding: "15px",
-                      textAlign: "center"
-                    }}>
-                      <img
-                        src={item.imagen}
-                        alt={item.nombre}
-                        style={{
-                          width: "100%",
-                          height: "120px",
-                          objectFit: "cover",
-                          borderRadius: "8px",
-                          marginBottom: "10px"
-                        }}
-                      />
-                      <h4 style={{ margin: "0 0 5px 0", fontSize: "0.9rem" }}>{item.nombre}</h4>
-                      <p style={{ margin: "0 0 10px 0", color: "#666", fontSize: "0.8rem" }}>
-                        {money(item.precio || minPrice(item), item.moneda || 'MXN')}
-                      </p>
-                      <button
-                        onClick={() => {
-                          onOpen(item);
-                          setShowRecommendations(false);
-                        }}
-                        style={{
-                          background: PALETAS.D.miel,
-                          color: "white",
-                          border: "none",
-                          padding: "8px 12px",
-                          borderRadius: "6px",
-                          cursor: "pointer",
-                          fontSize: "0.8rem",
-                          width: "100%"
-                        }}
-                      >
-                        Ver Producto
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div style={{ textAlign: "center", padding: "40px" }}>
-                  <div style={{ fontSize: "3rem", marginBottom: "20px" }}>🔍</div>
-                  <h4 style={{ margin: "0 0 10px 0", color: PALETAS.D.carbon }}>
-                    No hay recomendaciones aún
-                  </h4>
-                  <p style={{ color: "#666", marginBottom: "20px" }}>
-                    Explora nuestros productos para recibir recomendaciones personalizadas
-                  </p>
-                  <button
-                    onClick={() => setShowRecommendations(false)}
+                  📦 Información de Envío
+                </h2>
+                <button
+                  onClick={() => setShowShippingModal(false)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    fontSize: "1.5rem",
+                    cursor: "pointer",
+                    color: "#666"
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                processPayment();
+              }}>
+                <div style={{ marginBottom: "1rem" }}>
+                  <label style={{
+                    display: "block",
+                    marginBottom: "0.5rem",
+                    color: PALETAS.D.carbon,
+                    fontWeight: "500"
+                  }}>
+                    Nombre Completo *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={shippingAddress.fullName}
+                    onChange={(e) => setShippingAddress(prev => ({ ...prev, fullName: e.target.value }))}
                     style={{
-                      background: PALETAS.D.miel,
-                      color: "white",
-                      border: "none",
-                      padding: "12px 24px",
+                      width: "100%",
+                      padding: "0.75rem",
+                      border: `2px solid ${PALETAS.D.crema}`,
                       borderRadius: "8px",
-                      cursor: "pointer"
+                      fontSize: "1rem",
+                      outline: "none",
+                      transition: "border-color 0.3s ease"
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = PALETAS.D.miel}
+                    onBlur={(e) => e.target.style.borderColor = PALETAS.D.crema}
+                  />
+                </div>
+
+                <div style={{ marginBottom: "1rem" }}>
+                  <label style={{
+                    display: "block",
+                    marginBottom: "0.5rem",
+                    color: PALETAS.D.carbon,
+                    fontWeight: "500"
+                  }}>
+                    Dirección Completa *
+                  </label>
+                  <textarea
+                    required
+                    value={shippingAddress.address}
+                    onChange={(e) => setShippingAddress(prev => ({ ...prev, address: e.target.value }))}
+                    style={{
+                      width: "100%",
+                      padding: "0.75rem",
+                      border: `2px solid ${PALETAS.D.crema}`,
+                      borderRadius: "8px",
+                      fontSize: "1rem",
+                      outline: "none",
+                      minHeight: "80px",
+                      resize: "vertical"
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = PALETAS.D.miel}
+                    onBlur={(e) => e.target.style.borderColor = PALETAS.D.crema}
+                  />
+                </div>
+
+                <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={{
+                      display: "block",
+                      marginBottom: "0.5rem",
+                      color: PALETAS.D.carbon,
+                      fontWeight: "500"
+                    }}>
+                      Ciudad *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={shippingAddress.city}
+                      onChange={(e) => setShippingAddress(prev => ({ ...prev, city: e.target.value }))}
+                      style={{
+                        width: "100%",
+                        padding: "0.75rem",
+                        border: `2px solid ${PALETAS.D.crema}`,
+                        borderRadius: "8px",
+                        fontSize: "1rem",
+                        outline: "none"
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = PALETAS.D.miel}
+                      onBlur={(e) => e.target.style.borderColor = PALETAS.D.crema}
+                    />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={{
+                      display: "block",
+                      marginBottom: "0.5rem",
+                      color: PALETAS.D.carbon,
+                      fontWeight: "500"
+                    }}>
+                      Estado *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={shippingAddress.state}
+                      onChange={(e) => setShippingAddress(prev => ({ ...prev, state: e.target.value }))}
+                      style={{
+                        width: "100%",
+                        padding: "0.75rem",
+                        border: `2px solid ${PALETAS.D.crema}`,
+                        borderRadius: "8px",
+                        fontSize: "1rem",
+                        outline: "none"
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = PALETAS.D.miel}
+                      onBlur={(e) => e.target.style.borderColor = PALETAS.D.crema}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={{
+                      display: "block",
+                      marginBottom: "0.5rem",
+                      color: PALETAS.D.carbon,
+                      fontWeight: "500"
+                    }}>
+                      Código Postal *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={shippingAddress.zipCode}
+                      onChange={(e) => setShippingAddress(prev => ({ ...prev, zipCode: e.target.value }))}
+                      style={{
+                        width: "100%",
+                        padding: "0.75rem",
+                        border: `2px solid ${PALETAS.D.crema}`,
+                        borderRadius: "8px",
+                        fontSize: "1rem",
+                        outline: "none"
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = PALETAS.D.miel}
+                      onBlur={(e) => e.target.style.borderColor = PALETAS.D.crema}
+                    />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={{
+                      display: "block",
+                      marginBottom: "0.5rem",
+                      color: PALETAS.D.carbon,
+                      fontWeight: "500"
+                    }}>
+                      Teléfono *
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={shippingAddress.phone}
+                      onChange={(e) => setShippingAddress(prev => ({ ...prev, phone: e.target.value }))}
+                      style={{
+                        width: "100%",
+                        padding: "0.75rem",
+                        border: `2px solid ${PALETAS.D.crema}`,
+                        borderRadius: "8px",
+                        fontSize: "1rem",
+                        outline: "none"
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = PALETAS.D.miel}
+                      onBlur={(e) => e.target.style.borderColor = PALETAS.D.crema}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: "1.5rem" }}>
+                  <label style={{
+                    display: "block",
+                    marginBottom: "0.5rem",
+                    color: PALETAS.D.carbon,
+                    fontWeight: "500"
+                  }}>
+                    Notas de Envío (Opcional)
+                  </label>
+                  <textarea
+                    value={shippingAddress.notes}
+                    onChange={(e) => setShippingAddress(prev => ({ ...prev, notes: e.target.value }))}
+                    placeholder="Instrucciones especiales para la entrega..."
+                    style={{
+                      width: "100%",
+                      padding: "0.75rem",
+                      border: `2px solid ${PALETAS.D.crema}`,
+                      borderRadius: "8px",
+                      fontSize: "1rem",
+                      outline: "none",
+                      minHeight: "60px",
+                      resize: "vertical"
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = PALETAS.D.miel}
+                    onBlur={(e) => e.target.style.borderColor = PALETAS.D.crema}
+                  />
+                </div>
+
+                <div style={{ display: "flex", gap: "1rem" }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowShippingModal(false)}
+                    style={{
+                      flex: 1,
+                      padding: "0.75rem",
+                      background: "transparent",
+                      border: `2px solid ${PALETAS.D.miel}`,
+                      color: PALETAS.D.miel,
+                      borderRadius: "8px",
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                      transition: "all 0.3s ease"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.background = PALETAS.D.miel;
+                      e.target.style.color = "white";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.background = "transparent";
+                      e.target.style.color = PALETAS.D.miel;
                     }}
                   >
-                    Explorar Productos
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    style={{
+                      flex: 1,
+                      padding: "0.75rem",
+                      background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                      border: "none",
+                      color: "white",
+                      borderRadius: "8px",
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      cursor: isLoading ? "not-allowed" : "pointer",
+                      opacity: isLoading ? 0.7 : 1,
+                      transition: "all 0.3s ease"
+                    }}
+                  >
+                    {isLoading ? "Procesando..." : "Continuar al Pago"}
                   </button>
                 </div>
-              )}
+              </form>
             </div>
           </div>
+        )}
+
+        {/* Admin Dashboard */}
+        {showAdminDashboard && (
+          <AdminDashboard 
+            user={user} 
+            onClose={() => setShowAdminDashboard(false)} 
+          />
         )}
     </div>
   );
 }
+
+export default App;
