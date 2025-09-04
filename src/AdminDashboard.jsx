@@ -209,6 +209,13 @@ const AdminDashboard = ({ user, onClose }) => {
         updatedAt: new Date()
       };
       
+      // Validate image data size
+      if (productData.imagen && productData.imagen.length > 1000000) { // 1MB limit
+        alert('La imagen es demasiado grande. Por favor, usa una imagen más pequeña.');
+        setIsAddingProduct(false);
+        return;
+      }
+      
       await addDoc(collection(db, 'products'), productData);
       
       // Reset form
@@ -231,7 +238,17 @@ const AdminDashboard = ({ user, onClose }) => {
       alert('Producto agregado exitosamente!');
     } catch (error) {
       console.error('Error adding product:', error);
-      alert('Error al agregar el producto. Inténtalo de nuevo.');
+      console.error('Error details:', error.message, error.code);
+      
+      let errorMessage = 'Error al agregar el producto. Inténtalo de nuevo.';
+      
+      if (error.code === 'permission-denied') {
+        errorMessage = 'No tienes permisos para agregar productos.';
+      } else if (error.message.includes('image')) {
+        errorMessage = 'Error con la imagen. Intenta con una imagen más pequeña.';
+      }
+      
+      alert(errorMessage);
     } finally {
       setIsAddingProduct(false);
     }
@@ -279,6 +296,16 @@ const AdminDashboard = ({ user, onClose }) => {
         updatedAt: new Date()
       };
       
+      console.log('Updating product with data:', productData);
+      console.log('Product ID:', editingProductId);
+      
+      // Validate image data size
+      if (productData.imagen && productData.imagen.length > 1000000) { // 1MB limit
+        alert('La imagen es demasiado grande. Por favor, usa una imagen más pequeña.');
+        setIsAddingProduct(false);
+        return;
+      }
+      
       await updateDoc(doc(db, 'products', editingProductId), productData);
       console.log('Product updated successfully');
       
@@ -303,7 +330,19 @@ const AdminDashboard = ({ user, onClose }) => {
       alert('Producto actualizado exitosamente!');
     } catch (error) {
       console.error('Error updating product:', error);
-      alert('Error al actualizar el producto. Inténtalo de nuevo.');
+      console.error('Error details:', error.message, error.code);
+      
+      let errorMessage = 'Error al actualizar el producto. Inténtalo de nuevo.';
+      
+      if (error.code === 'permission-denied') {
+        errorMessage = 'No tienes permisos para actualizar este producto.';
+      } else if (error.code === 'not-found') {
+        errorMessage = 'El producto no fue encontrado.';
+      } else if (error.message.includes('image')) {
+        errorMessage = 'Error con la imagen. Intenta con una imagen más pequeña.';
+      }
+      
+      alert(errorMessage);
     } finally {
       setIsAddingProduct(false);
     }
