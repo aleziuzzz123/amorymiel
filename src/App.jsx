@@ -583,11 +583,22 @@ function App() {
     try {
       const { collection, query, getDocs, addDoc, deleteDoc, doc } = await import('firebase/firestore');
       
+      // Check if user is admin
+      if (!user || user.email !== 'admin@amorymiel.com') {
+        alert('❌ Solo el administrador puede migrar pedidos');
+        return;
+      }
+      
       // Get all existing orders
       const ordersQuery = query(collection(db, 'orders'));
       const ordersSnapshot = await getDocs(ordersQuery);
       
       console.log(`Found ${ordersSnapshot.docs.length} orders to migrate`);
+      
+      if (ordersSnapshot.docs.length === 0) {
+        alert('ℹ️ No hay pedidos para migrar');
+        return;
+      }
       
       for (const orderDoc of ordersSnapshot.docs) {
         const orderData = orderDoc.data();
@@ -620,7 +631,7 @@ function App() {
       
     } catch (error) {
       console.error('Error migrating orders:', error);
-      alert('Error migrating orders. Check console for details.');
+      alert(`Error migrating orders: ${error.message}`);
     }
   };
 
