@@ -15,6 +15,55 @@ import { db } from './firebase';
 
 // All products are now loaded from Firebase with deduplication
 
+// Comprehensive product information for detailed product modals
+const PRODUCT_DETAILS = {
+  "Palo Santo": {
+    elaboracion: "El Palo Santo es una madera sagrada que proviene del árbol Bursera graveolens, nativo de América del Sur. Se recolecta de forma sostenible de árboles que han muerto naturalmente, permitiendo que la madera se cure y desarrolle sus propiedades aromáticas y energéticas únicas durante el proceso de secado natural.",
+    proposito: "El Palo Santo es reconocido por sus propiedades medicinales antirreumáticas, diuréticas, depurativas y antisépticas. Es ampliamente utilizado en prácticas de yoga, reiki y aromaterapia para limpiar y purificar ambientes, eliminar energías negativas y crear espacios de paz y armonía espiritual.",
+    beneficios: "Purifica el aire y elimina bacterias, reduce el estrés y la ansiedad, facilita la meditación y la concentración, mejora la calidad del sueño, equilibra las emociones, fortalece el sistema inmunológico, y crea un ambiente propicio para la sanación espiritual y el bienestar general.",
+    modoUso: "Enciende el Palo Santo con una vela, inclínalo en un ángulo de 45 grados y deja que se consuma durante 1-2 minutos. Apaga la llama y pasa el humo sagrado sobre tu cuerpo y por los espacios que desees purificar. El humo debe circular libremente para limpiar las energías negativas.",
+    ingredientes: "100% Palo Santo (Bursera graveolens) de origen natural, sin aditivos químicos ni conservantes artificiales.",
+    duracion: "Cada barra de Palo Santo puede durar entre 8-12 usos, dependiendo del tamaño y la frecuencia de uso.",
+    cuidados: "Conservar en un lugar seco y fresco, alejado de la humedad. Mantener en su empaque original para preservar sus propiedades aromáticas."
+  },
+  "Velas De Miel": {
+    elaboracion: "Nuestras velas de miel son elaboradas artesanalmente con cera de abeja 100% pura, recolectada de colmenas locales y sostenibles. El proceso incluye la filtración natural de la cera, el moldeado a mano y la consagración ritual para potenciar sus propiedades energéticas de abundancia y prosperidad.",
+    proposito: "Diseñadas específicamente para rituales de abundancia, prosperidad y purificación energética. La cera de abeja natural emite iones negativos que purifican el aire y crean un ambiente propicio para la manifestación de deseos y la atracción de energías positivas.",
+    beneficios: "Purifica el aire de toxinas y alérgenos, mejora la calidad del aire interior, emite iones negativos beneficiosos, crea un ambiente relajante y meditativo, potencia rituales de abundancia, y su aroma natural es relajante y terapéutico.",
+    modoUso: "Enciende la vela en un lugar seguro y estable. Deja que se consuma completamente para activar sus propiedades energéticas. Ideal para usar durante meditaciones, rituales de abundancia o simplemente para crear un ambiente purificado en tu hogar.",
+    ingredientes: "Cera de abeja 100% pura, mecha de algodón natural, sin parafina ni aditivos químicos.",
+    duracion: "Tiempo de combustión: 8-12 horas, dependiendo del tamaño de la vela.",
+    cuidados: "Mantener alejada de corrientes de aire, no mover mientras está encendida, y cortar la mecha a 1cm antes de cada uso para una combustión óptima."
+  },
+  "Miel Consagrada": {
+    elaboracion: "Nuestra miel consagrada es recolectada de colmenas locales y purificadas, sometida a rituales sagrados de consagración bajo la luna llena. El proceso incluye la purificación energética, la bendición ritual y el almacenamiento en recipientes de cristal para preservar su pureza y propiedades energéticas.",
+    proposito: "Especialmente consagrada para rituales de abundancia, prosperidad y manifestación. Su pureza energética la hace ideal para endulzar decretos, rituales de atracción y ceremonias de abundancia, potenciando la ley de atracción y la manifestación de deseos.",
+    beneficios: "Potencia rituales de abundancia y prosperidad, endulza decretos y afirmaciones, atrae energías positivas y oportunidades, fortalece la conexión espiritual, y su pureza energética facilita la manifestación de deseos.",
+    modoUso: "Consumir una cucharadita en ayunas con intención de abundancia, usar para endulzar decretos escritos, agregar a rituales de manifestación, o simplemente consumir con gratitud para atraer prosperidad.",
+    ingredientes: "Miel de abeja 100% pura, sin pasteurizar, sin aditivos químicos ni conservantes artificiales.",
+    duracion: "Conservar en refrigeración hasta 2 años, mantener en recipiente de cristal para preservar sus propiedades energéticas.",
+    cuidados: "Mantener en lugar fresco y seco, alejado de la luz directa del sol, y usar utensilios de madera o cristal para preservar su pureza energética."
+  },
+  "Aceite Abrecaminos": {
+    elaboracion: "Es un producto artesanal, elaborado con extracción de esencias naturales de las plantas. Cada botella es cuidadosamente preparada con ingredientes seleccionados para potenciar sus propiedades energéticas y espirituales.",
+    proposito: "El aceite Abrecaminos, como su nombre lo indica, es un excelente producto para realizar nuestras afirmaciones y decretos, ayuda a suavizar las situaciones negativas y abrirte paso a lo positivo. Diseñado para superar obstáculos y atraer nuevas oportunidades.",
+    beneficios: "Facilita la manifestación de deseos, ayuda a superar obstáculos y bloqueos, atrae nuevas oportunidades y caminos, potencia las afirmaciones y decretos, suaviza situaciones negativas, y abre puertas hacia experiencias positivas.",
+    modoUso: "Con ayuda del gotero, aplica de 2 a 3 gotitas del Aceite Abrecaminos en tus manos, frótalo y mientras lo haces puedes repetir la oración o decreto de tu gusto. Úsalo en rituales de manifestación y meditación.",
+    ingredientes: "Aceite base de oliva, esencias naturales de plantas sagradas, extractos botánicos seleccionados, sin conservantes artificiales.",
+    duracion: "Conservar en lugar fresco y seco hasta 2 años. Mantener el frasco bien cerrado para preservar sus propiedades.",
+    cuidados: "Mantener alejado de la luz directa del sol, no exponer a temperaturas extremas, y usar con respeto y intención positiva."
+  },
+  "Aceite para Ungir": {
+    elaboracion: "Es un producto artesanal, de grado espiritual ya que la palabra Ungido en hebreo significa Mesías. La base es el aceite de Oliva, Mirra, Canela entre otras plantas sagradas. Cada botella es consagrada con rituales especiales para potenciar sus propiedades espirituales.",
+    proposito: "Hoy en día, se están volviendo a usar estos aceites de unción en los eventos de adoración y espirituales, para curar enfermedades y para santificar una muerte. Diseñado para momentos de profunda conexión espiritual y sanación.",
+    beneficios: "Proporciona paz y calma en momentos difíciles, facilita la conexión espiritual profunda, ayuda en procesos de sanación emocional y física, potencia rituales de adoración, y brinda consuelo en momentos de transición.",
+    modoUso: "La persona que aplique el Aceite debe encontrarse en un momento muy espiritual, ya que este requiere mucho respeto. Puesto que es un aceite elaborado con el fin de llevar paz y calma a quien lo necesita en momentos muy difíciles.",
+    ingredientes: "Aceite de oliva virgen extra, mirra, canela, plantas sagradas seleccionadas, esencias consagradas, sin aditivos químicos.",
+    duracion: "Conservar en lugar fresco y seco hasta 3 años. Mantener en recipiente de cristal para preservar su pureza espiritual.",
+    cuidados: "Usar con reverencia y respeto, mantener en lugar sagrado, y aplicar solo en momentos de profunda intención espiritual."
+  }
+};
+
 const AdminDashboard = ({ user, onClose }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [users, setUsers] = useState([]);
@@ -139,7 +188,14 @@ const AdminDashboard = ({ user, onClose }) => {
       }, []);
       
       console.log(`Admin Dashboard: Removed ${allProducts.length - uniqueProducts.length} duplicate products`);
-      setProducts(uniqueProducts);
+      
+      // Merge products with detailed descriptions from PRODUCT_DETAILS
+      const productsWithDetails = uniqueProducts.map(product => ({
+        ...product,
+        ...(PRODUCT_DETAILS[product.nombre] || {})
+      }));
+      
+      setProducts(productsWithDetails);
 
       // Load cart items for abandonment tracking
       const cartItemsQuery = query(collection(db, 'cart_items'), orderBy('addedAt', 'desc'));
@@ -242,7 +298,14 @@ const AdminDashboard = ({ user, onClose }) => {
         categoria: '',
         stock: 0,
         activo: true,
-        imagen: ''
+        imagen: '',
+        elaboracion: '',
+        proposito: '',
+        beneficios: '',
+        modoUso: '',
+        ingredientes: '',
+        duracion: '',
+        cuidados: ''
       });
       
       // Refresh data
@@ -383,7 +446,15 @@ const AdminDashboard = ({ user, onClose }) => {
       minStock: product.minStock || 5,
       maxStock: product.maxStock || 100,
       activo: product.activo !== false,
-      imagen: product.imagen || ''
+      imagen: product.imagen || '',
+      // Detailed product information
+      elaboracion: product.elaboracion || '',
+      proposito: product.proposito || '',
+      beneficios: product.beneficios || '',
+      modoUso: product.modoUso || '',
+      ingredientes: product.ingredientes || '',
+      duracion: product.duracion || '',
+      cuidados: product.cuidados || ''
     });
     console.log('Edit mode activated, switching to form tab');
   };
@@ -426,7 +497,14 @@ const AdminDashboard = ({ user, onClose }) => {
         minStock: 5,
         maxStock: 100,
         activo: true,
-        imagen: ''
+        imagen: '',
+        elaboracion: '',
+        proposito: '',
+        beneficios: '',
+        modoUso: '',
+        ingredientes: '',
+        duracion: '',
+        cuidados: ''
       });
       setIsEditingProduct(false);
       setEditingProductId(null);
@@ -1501,6 +1579,164 @@ const AdminDashboard = ({ user, onClose }) => {
                       resize: 'vertical'
                     }}
                   />
+                </div>
+
+                {/* Detailed Product Information */}
+                <div style={{ marginBottom: '1.5rem', padding: '1rem', background: '#f8f9fa', borderRadius: '10px', border: '1px solid #eee' }}>
+                  <h4 style={{ color: '#D4A574', marginBottom: '1rem', fontSize: '1.1rem' }}>📋 Información Detallada del Producto</h4>
+                  
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '0.5rem', color: '#333', fontWeight: '500', fontSize: '0.9rem' }}>
+                        🧪 Elaboración
+                      </label>
+                      <textarea
+                        value={newProduct.elaboracion || ''}
+                        onChange={(e) => setNewProduct(prev => ({ ...prev, elaboracion: e.target.value }))}
+                        style={{
+                          width: '100%',
+                          padding: '0.75rem',
+                          border: '2px solid #eee',
+                          borderRadius: '8px',
+                          fontSize: '0.9rem',
+                          outline: 'none',
+                          minHeight: '80px',
+                          resize: 'vertical'
+                        }}
+                        placeholder="Describe cómo se elabora el producto..."
+                      />
+                    </div>
+                    
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '0.5rem', color: '#333', fontWeight: '500', fontSize: '0.9rem' }}>
+                        🎯 Propósito
+                      </label>
+                      <textarea
+                        value={newProduct.proposito || ''}
+                        onChange={(e) => setNewProduct(prev => ({ ...prev, proposito: e.target.value }))}
+                        style={{
+                          width: '100%',
+                          padding: '0.75rem',
+                          border: '2px solid #eee',
+                          borderRadius: '8px',
+                          fontSize: '0.9rem',
+                          outline: 'none',
+                          minHeight: '80px',
+                          resize: 'vertical'
+                        }}
+                        placeholder="Explica para qué sirve el producto..."
+                      />
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '0.5rem', color: '#333', fontWeight: '500', fontSize: '0.9rem' }}>
+                        ✨ Beneficios
+                      </label>
+                      <textarea
+                        value={newProduct.beneficios || ''}
+                        onChange={(e) => setNewProduct(prev => ({ ...prev, beneficios: e.target.value }))}
+                        style={{
+                          width: '100%',
+                          padding: '0.75rem',
+                          border: '2px solid #eee',
+                          borderRadius: '8px',
+                          fontSize: '0.9rem',
+                          outline: 'none',
+                          minHeight: '80px',
+                          resize: 'vertical'
+                        }}
+                        placeholder="Lista los beneficios del producto..."
+                      />
+                    </div>
+                    
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '0.5rem', color: '#333', fontWeight: '500', fontSize: '0.9rem' }}>
+                        📖 Modo de Uso
+                      </label>
+                      <textarea
+                        value={newProduct.modoUso || ''}
+                        onChange={(e) => setNewProduct(prev => ({ ...prev, modoUso: e.target.value }))}
+                        style={{
+                          width: '100%',
+                          padding: '0.75rem',
+                          border: '2px solid #eee',
+                          borderRadius: '8px',
+                          fontSize: '0.9rem',
+                          outline: 'none',
+                          minHeight: '80px',
+                          resize: 'vertical'
+                        }}
+                        placeholder="Explica cómo usar el producto..."
+                      />
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '0.5rem', color: '#333', fontWeight: '500', fontSize: '0.9rem' }}>
+                        🌿 Ingredientes
+                      </label>
+                      <textarea
+                        value={newProduct.ingredientes || ''}
+                        onChange={(e) => setNewProduct(prev => ({ ...prev, ingredientes: e.target.value }))}
+                        style={{
+                          width: '100%',
+                          padding: '0.75rem',
+                          border: '2px solid #eee',
+                          borderRadius: '8px',
+                          fontSize: '0.9rem',
+                          outline: 'none',
+                          minHeight: '80px',
+                          resize: 'vertical'
+                        }}
+                        placeholder="Lista los ingredientes del producto..."
+                      />
+                    </div>
+                    
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '0.5rem', color: '#333', fontWeight: '500', fontSize: '0.9rem' }}>
+                        ⏱️ Duración
+                      </label>
+                      <textarea
+                        value={newProduct.duracion || ''}
+                        onChange={(e) => setNewProduct(prev => ({ ...prev, duracion: e.target.value }))}
+                        style={{
+                          width: '100%',
+                          padding: '0.75rem',
+                          border: '2px solid #eee',
+                          borderRadius: '8px',
+                          fontSize: '0.9rem',
+                          outline: 'none',
+                          minHeight: '80px',
+                          resize: 'vertical'
+                        }}
+                        placeholder="Especifica la duración del producto..."
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', color: '#333', fontWeight: '500', fontSize: '0.9rem' }}>
+                      ⚠️ Cuidados
+                    </label>
+                    <textarea
+                      value={newProduct.cuidados || ''}
+                      onChange={(e) => setNewProduct(prev => ({ ...prev, cuidados: e.target.value }))}
+                      style={{
+                        width: '100%',
+                        padding: '0.75rem',
+                        border: '2px solid #eee',
+                        borderRadius: '8px',
+                        fontSize: '0.9rem',
+                        outline: 'none',
+                        minHeight: '60px',
+                        resize: 'vertical'
+                      }}
+                      placeholder="Menciona los cuidados especiales del producto..."
+                    />
+                  </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
