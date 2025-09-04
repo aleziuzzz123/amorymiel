@@ -13,212 +13,7 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebase';
 
-// Import the updated product descriptions from the main app
-const DEFAULT_PRODUCTS = [
-  { 
-    id: "velas-miel", 
-    nombre: "Velas De Miel", 
-    categoria: "Velas", 
-    precio: 150,
-    descripcion: "🕯️ Velas artesanales de cera natural de abeja 100% pura ✨ Elaboradas con amor y consagradas para rituales de abundancia 🌙 Perfectas para purificar espacios y atraer prosperidad 💰"
-  },
-  { 
-    id: "locion-atrayente", 
-    nombre: "Loción Atrayente", 
-    categoria: "Lociones", 
-    precio: 180,
-    descripcion: "✨ Loción artesanal con esencias naturales seleccionadas 💎 Perfecta para atraer energías positivas y abundancia 🌟 Ideal para mejorar la autoestima y confianza personal 💪"
-  },
-  { 
-    id: "locion-palo-santo", 
-    nombre: "Loción Palo Santo", 
-    categoria: "Lociones", 
-    precio: 200,
-    descripcion: "🕊️ Loción sagrada con esencia pura de Palo Santo 🌿 Consagrada para limpieza energética profunda ✨ Perfecta para purificar espacios y proteger contra energías negativas 🛡️"
-  },
-  { 
-    id: "agua-florida", 
-    nombre: "Agua Florida", 
-    categoria: "Lociones", 
-    precio: 180,
-    descripcion: "🌺 Agua Florida tradicional de la más alta pureza ✨ Consagrada para limpieza energética profunda 🧘‍♀️ Perfecta para purificar espacios sagrados y limpiar auras 💫 Ideal para rituales de limpieza espiritual ancestral 🌿"
-  },
-  { 
-    id: "brisa-bendicion-dinero", 
-    nombre: "Brisa Áurica Bendición del Dinero", 
-    categoria: "Brisas Áuricas", 
-    precio: 220,
-    descripcion: "💰 Brisa áurica artesanal consagrada para limpiar la energía del dinero ✨ Perfecta para atraer prosperidad y abundancia financiera 🌟 Ideal para rociar en billeteras y espacios de trabajo 💼"
-  },
-  { 
-    id: "brisa-prosperidad", 
-    nombre: "Brisa Áurica Prosperidad", 
-    categoria: "Brisas Áuricas", 
-    precio: 220,
-    descripcion: "🌟 Brisa áurica especializada en atraer prosperidad universal ✨ Perfecta para limpieza energética emocional y liberación de energías negativas 🧘‍♀️ Ideal para crear un aura de éxito y bienestar 💫"
-  },
-  { 
-    id: "brisa-abundancia", 
-    nombre: "Brisa Áurica Abundancia", 
-    categoria: "Brisas Áuricas", 
-    precio: 220,
-    descripcion: "🌟 Brisa áurica consagrada para atraer abundancia universal ✨ Perfecta para expandir oportunidades en todas las áreas de tu vida 💰 Ideal para abrir nuevos caminos de prosperidad y crecimiento personal 🌱"
-  },
-  { 
-    id: "exf-abrecaminos", 
-    nombre: "Exfoliante Abre Caminos", 
-    categoria: "Exfoliantes", 
-    precio: 180,
-    descripcion: "Exfoliante artesanal con Miel, Canela, Azúcar y Café para exfoliar e hidratar tu piel."
-  },
-  { 
-    id: "exf-venus", 
-    nombre: "Exfoliante Venus", 
-    categoria: "Exfoliantes", 
-    precio: 200,
-    descripcion: "💖 Exfoliante especial consagrado para el amor propio y la belleza interior ✨ Perfecto para nutrir la piel mientras se trabaja la autoestima 🌹 Ideal para rituales de autocuidado y conexión con la energía femenina 💫"
-  },
-  { 
-    id: "feromonas-naturales", 
-    nombre: "Feromonas Naturales", 
-    categoria: "Feromonas", 
-    precio: 250,
-    descripcion: "💫 Feromonas naturales de la más alta pureza para aumentar la atracción personal ✨ Perfectas para potenciar el magnetismo natural y la confianza 💪 Ideal para crear conexiones auténticas y aumentar el atractivo 🌟"
-  },
-  { 
-    id: "feromonas-dyc", 
-    nombre: "Feromonas Damas y Caballeros", 
-    categoria: "Feromonas", 
-    precio: 250,
-    descripcion: "💕 Feromonas especiales diseñadas para damas y caballeros 💑 Fortalecen la conexión de pareja y aumentan la atracción mutua ✨ Perfectas para potenciar la química natural y crear vínculos más profundos 💖"
-  },
-  { 
-    id: "agua-micelar", 
-    nombre: "Agua Micelar", 
-    categoria: "Faciales", 
-    precio: 220,
-    descripcion: "✨ Agua micelar artesanal formada a base de micelas naturales 🌿 Atrae y retira suciedad de forma suave y efectiva 💆‍♀️ Perfecta para limpiar y purificar la piel naturalmente 🌟"
-  },
-  { 
-    id: "agua-rosas", 
-    nombre: "Agua de Rosas", 
-    categoria: "Faciales", 
-    precio: 180,
-    descripcion: "🌹 Agua de rosas natural de la más alta pureza para suavizar y nutrir la piel ✨ Perfecta para hidratar naturalmente y proporcionar antioxidantes 💆‍♀️ Ideal para crear un ritual de belleza natural y potenciar la energía femenina 💫"
-  },
-  { 
-    id: "aceite-abre", 
-    nombre: "Aceite Abre Caminos", 
-    categoria: "Aceites", 
-    precio: 200,
-    descripcion: "🌿 Aceite artesanal elaborado con extracción de esencias naturales de plantas medicinales mexicanas ✨ Perfecto para abrir nuevos caminos de oportunidades y manifestación 💫 Ideal para rituales de abundancia y limpiar obstáculos energéticos 🌱"
-  },
-  { 
-    id: "aceite-ungir", 
-    nombre: "Aceite para Ungir", 
-    categoria: "Aceites", 
-    precio: 250,
-    descripcion: "🕊️ Aceite artesanal de grado espiritual, elaborado con base de aceite de Oliva, Mirra y Canela ✨ Perfecto para consagrar objetos sagrados y rituales espirituales 🙏 Ideal para ungir personas y crear ambientes de paz y armonía divina 💫"
-  },
-  { 
-    id: "shampoo-artesanal", 
-    nombre: "Shampoo Artesanal", 
-    categoria: "Shampoo", 
-    precio: 120,
-    descripcion: "🌿 Shampoo artesanal elaborado con ingredientes naturales de la más alta calidad ✨ Perfecto para limpiar suavemente y nutrir desde la raíz 💆‍♀️ Proporciona brillo natural y mantiene el equilibrio del cuero cabelludo 🌟"
-  },
-  { 
-    id: "shampoo-miel", 
-    nombre: "Shampoo Extracto de Miel", 
-    categoria: "Shampoo", 
-    precio: 140,
-    descripcion: "🍯 Shampoo artesanal elaborado con extracto de miel natural 100% pura ✨ Perfecto para suavizar y nutrir el cabello profundamente 💆‍♀️ Proporciona brillo natural y fortalece desde la raíz 🌟"
-  },
-  { 
-    id: "shampoo-romero", 
-    nombre: "Shampoo Extracto de Romero", 
-    categoria: "Shampoo", 
-    precio: 140,
-    descripcion: "🌿 Shampoo artesanal elaborado con extracto de romero natural ✨ Perfecto para fortalecer el cabello y estimular el crecimiento 💪 Ideal para cabello débil y quebradizo, proporciona fuerza natural 🌟"
-  },
-  { 
-    id: "mascarilla-capilar", 
-    nombre: "Mascarilla Capilar", 
-    categoria: "Cabello", 
-    precio: 80,
-    descripcion: "💆‍♀️ Mascarilla artesanal elaborada con ingredientes naturales para hidratar y dar brillo al cabello ✨ Perfecta para nutrir desde la raíz y suavizar profundamente 🌟 Ideal para crear un ritual de cuidado capilar hidratante 💫"
-  },
-  { 
-    id: "agua-luna", 
-    nombre: "Agua de Luna", 
-    categoria: "Energéticos", 
-    precio: 180,
-    descripcion: "🌙 Agua energizada con la energía sagrada de la luna para calma y limpieza espiritual ✨ Perfecta para proporcionar tranquilidad y equilibrar emociones 🧘‍♀️ Ideal para purificar espacios y crear ambientes de paz y serenidad 💫"
-  },
-  { 
-    id: "miel-consagrada", 
-    nombre: "Miel Consagrada", 
-    categoria: "Miel", 
-    precio: 200,
-    descripcion: "🍯 Miel consagrada de la más alta pureza para rituales de prosperidad y abundancia ✨ Perfecta para endulzar rituales de manifestación y atraer prosperidad 💰 Ideal para potenciar la ley de atracción y crear dulzura en la vida 🌟"
-  },
-  { 
-    id: "sal-negra", 
-    nombre: "Sal Negra", 
-    categoria: "Protección", 
-    precio: 150,
-    descripcion: "🛡️ Sal negra sagrada para protección y limpieza energética integral ✨ Perfecta para proteger contra energías negativas y purificar espacios 🧘‍♀️ Ideal para crear barreras de protección y eliminar malas vibras 💫"
-  },
-  { 
-    id: "polvo-oro", 
-    nombre: "Polvo de Oro", 
-    categoria: "Rituales", 
-    precio: 180,
-    descripcion: "✨ Polvo de oro sagrado para rituales de abundancia y manifestación 💰 Perfecto para potenciar rituales de riqueza y activar la energía del oro 🌟 Ideal para manifestar abundancia material y crear vibraciones de prosperidad 💫"
-  },
-  { 
-    id: "palo-santo", 
-    nombre: "Palo Santo", 
-    categoria: "Sahumerios", 
-    precio: 120,
-    descripcion: "🌿 Palo santo sagrado para purificación y armonía del ambiente ✨ Perfecto para limpiar energías negativas y crear ambientes de paz 🧘‍♀️ Ideal para facilitar la meditación y potenciar rituales de limpieza espiritual 💫"
-  },
-  { 
-    id: "sahumerios", 
-    nombre: "Sahumerios", 
-    categoria: "Sahumerios", 
-    precio: 100,
-    descripcion: "🕯️ Sahumerios naturales de la más alta pureza para purificación y limpieza energética ✨ Perfectos para limpiar energías negativas con aromas naturales 🧘‍♀️ Ideales para crear ambientes de paz y armonía durante la meditación 💫"
-  },
-  { 
-    id: "bano-amargo", 
-    nombre: "Baño Energético Amargo", 
-    categoria: "Baños Energéticos", 
-    precio: 120,
-    descripcion: "🧘‍♀️ Baño energético amargo consagrado para descarga y limpieza profunda ✨ Perfecto para realizar descarga energética y limpiar energías negativas acumuladas 🧹 Ideal para purificar el campo energético y eliminar bloqueos 💫"
-  },
-  { 
-    id: "bano-amor-propio", 
-    nombre: "Baño Energético Amor Propio", 
-    categoria: "Baños Energéticos", 
-    precio: 120,
-    descripcion: "💖 Baño energético consagrado para aumentar el amor propio y la autoestima ✨ Perfecto para fortalecer la confianza personal y crear energía de amor hacia uno mismo 🌹 Ideal para mejorar la relación con el cuerpo y crear rituales de amor propio 💫"
-  },
-  { 
-    id: "bano-abre-caminos", 
-    nombre: "Baño Energético Abre Caminos", 
-    categoria: "Baños Energéticos", 
-    precio: 120,
-    descripcion: "🌿 Baño energético elaborado con mezcla de plantas sanadoras sagradas: Canela, Naranja y Laureles ✨ Perfecto para abrir nuevos caminos y facilitar la expansión personal 🌱 Ideal para limpiar obstáculos energéticos y potenciar la manifestación de deseos 💫"
-  },
-  { 
-    id: "locion-ellas-ellos", 
-    nombre: "Loción Ellas y Ellos", 
-    categoria: "Lociones", 
-    precio: 220,
-    descripcion: "💕 Loción artesanal elaborada con extracción de flores y esencias naturales ✨ Perfecta para potenciar la autoestima y amor propio 🌹 Ideal para fortalecer la confianza personal y facilitar la conexión de pareja 💫"
-  }
-];
+// All products are now loaded from Firebase with deduplication
 
 const AdminDashboard = ({ user, onClose }) => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -323,18 +118,27 @@ const AdminDashboard = ({ user, onClose }) => {
       // Load products
       const productsQuery = query(collection(db, 'products'));
       const productsSnapshot = await getDocs(productsQuery);
-      const productsData = productsSnapshot.docs.map(doc => {
-        const firestoreData = doc.data();
-        // Find matching product in DEFAULT_PRODUCTS to get updated description
-        const defaultProduct = DEFAULT_PRODUCTS.find(p => p.id === doc.id);
-        return {
-          id: doc.id,
-          ...firestoreData,
-          // Use updated description from DEFAULT_PRODUCTS if available
-          descripcion: defaultProduct?.descripcion || firestoreData.descripcion || ''
-        };
-      });
-      setProducts(productsData);
+      const allProducts = productsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      
+      // Remove duplicates by product name before setting products
+      const uniqueProducts = allProducts.reduce((acc, product) => {
+        const existingProduct = acc.find(p => 
+          p.nombre && product.nombre && 
+          p.nombre.toLowerCase().trim() === product.nombre.toLowerCase().trim()
+        );
+        if (!existingProduct) {
+          acc.push(product);
+        } else {
+          console.log(`Admin Dashboard: Removing duplicate: "${product.nombre}" (ID: ${product.id})`);
+        }
+        return acc;
+      }, []);
+      
+      console.log(`Admin Dashboard: Removed ${allProducts.length - uniqueProducts.length} duplicate products`);
+      setProducts(uniqueProducts);
 
       // Calculate stats
       console.log('Calculating stats...');
