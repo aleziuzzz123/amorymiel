@@ -209,11 +209,16 @@ const AdminDashboard = ({ user, onClose }) => {
         updatedAt: new Date()
       };
       
-      // Validate image data size
-      if (productData.imagen && productData.imagen.length > 1000000) { // 1MB limit
-        alert('La imagen es demasiado grande. Por favor, usa una imagen más pequeña.');
-        setIsAddingProduct(false);
-        return;
+      // Validate image data size (5MB limit for base64 encoded images)
+      if (productData.imagen) {
+        const imageSizeKB = Math.round(productData.imagen.length / 1024);
+        console.log(`Image size: ${imageSizeKB}KB (${Math.round(imageSizeKB / 1024)}MB)`);
+        
+        if (productData.imagen.length > 5000000) { // 5MB limit
+          alert(`La imagen es demasiado grande (${Math.round(imageSizeKB / 1024)}MB). Por favor, usa una imagen más pequeña.`);
+          setIsAddingProduct(false);
+          return;
+        }
       }
       
       await addDoc(collection(db, 'products'), productData);
@@ -299,11 +304,16 @@ const AdminDashboard = ({ user, onClose }) => {
       console.log('Updating product with data:', productData);
       console.log('Product ID:', editingProductId);
       
-      // Validate image data size
-      if (productData.imagen && productData.imagen.length > 1000000) { // 1MB limit
-        alert('La imagen es demasiado grande. Por favor, usa una imagen más pequeña.');
-        setIsAddingProduct(false);
-        return;
+      // Validate image data size (5MB limit for base64 encoded images)
+      if (productData.imagen) {
+        const imageSizeKB = Math.round(productData.imagen.length / 1024);
+        console.log(`Image size: ${imageSizeKB}KB (${Math.round(imageSizeKB / 1024)}MB)`);
+        
+        if (productData.imagen.length > 5000000) { // 5MB limit
+          alert(`La imagen es demasiado grande (${Math.round(imageSizeKB / 1024)}MB). Por favor, usa una imagen más pequeña.`);
+          setIsAddingProduct(false);
+          return;
+        }
       }
       
       await updateDoc(doc(db, 'products', editingProductId), productData);
