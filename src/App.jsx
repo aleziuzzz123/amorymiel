@@ -130,22 +130,33 @@ function App() {
       
       console.log('All products loaded from Firestore:', allProducts.length);
       
+      // Remove duplicates by product name before categorizing
+      const uniqueProducts = allProducts.reduce((acc, product) => {
+        const existingProduct = acc.find(p => p.nombre === product.nombre);
+        if (!existingProduct) {
+          acc.push(product);
+        }
+        return acc;
+      }, []);
+      
+      console.log(`Removed ${allProducts.length - uniqueProducts.length} duplicate products`);
+      
       // Separate products by category
-      const regularProducts = allProducts.filter(p => 
+      const regularProducts = uniqueProducts.filter(p => 
         p.categoria && !['Servicios', 'servicios'].includes(p.categoria) && 
         !p.categoria.toLowerCase().includes('kids') && 
         !p.categoria.toLowerCase().includes('niños')
       );
       
-      const services = allProducts.filter(p => 
+      const services = uniqueProducts.filter(p => 
         p.categoria && ['Servicios', 'servicios'].includes(p.categoria)
       );
       
-      const kidsProducts = allProducts.filter(p => 
+      const kidsProducts = uniqueProducts.filter(p => 
         p.categoria && p.categoria.toLowerCase().includes('kids')
       );
       
-      const kidsServices = allProducts.filter(p => 
+      const kidsServices = uniqueProducts.filter(p => 
         p.categoria && p.categoria.toLowerCase().includes('niños') && 
         ['Servicios', 'servicios'].includes(p.categoria)
       );
@@ -192,22 +203,33 @@ function App() {
           ...doc.data()
         }));
         
+        // Remove duplicates by product name before categorizing
+        const uniqueProducts = allProducts.reduce((acc, product) => {
+          const existingProduct = acc.find(p => p.nombre === product.nombre);
+          if (!existingProduct) {
+            acc.push(product);
+          }
+          return acc;
+        }, []);
+        
+        console.log(`Removed ${allProducts.length - uniqueProducts.length} duplicate products`);
+        
         // Separate products by category
-        const regularProducts = allProducts.filter(p => 
+        const regularProducts = uniqueProducts.filter(p => 
           p.categoria && !['Servicios', 'servicios'].includes(p.categoria) && 
           !p.categoria.toLowerCase().includes('kids') && 
           !p.categoria.toLowerCase().includes('niños')
         );
         
-        const services = allProducts.filter(p => 
+        const services = uniqueProducts.filter(p => 
           p.categoria && ['Servicios', 'servicios'].includes(p.categoria)
         );
         
-        const kidsProducts = allProducts.filter(p => 
+        const kidsProducts = uniqueProducts.filter(p => 
           p.categoria && p.categoria.toLowerCase().includes('kids')
         );
         
-        const kidsServices = allProducts.filter(p => 
+        const kidsServices = uniqueProducts.filter(p => 
           p.categoria && p.categoria.toLowerCase().includes('niños') && 
           ['Servicios', 'servicios'].includes(p.categoria)
         );
