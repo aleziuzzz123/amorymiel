@@ -3475,20 +3475,28 @@ function App() {
 
             <div style={{ 
               display: "grid", 
-              gridTemplateColumns: window.innerWidth <= 768 ? "1fr" : "repeat(auto-fit, minmax(300px, 1fr))", 
-              gap: window.innerWidth <= 768 ? "1rem" : "2rem", 
-              padding: window.innerWidth <= 768 ? "1rem" : "2rem", 
-              minHeight: window.innerWidth <= 768 ? "auto" : "800px"
+              gridTemplateColumns: window.innerWidth <= 768 ? "1fr" : "1fr 1fr", 
+              gap: window.innerWidth <= 768 ? "1rem" : "1.5rem", 
+              padding: window.innerWidth <= 768 ? "1rem" : "1.5rem", 
+              height: "100%",
+              maxHeight: "100vh",
+              overflow: "hidden"
             }}>
               {/* Left Side - Catalog Image */}
-              <div>
+              <div style={{ 
+                display: "flex", 
+                alignItems: "center", 
+                justifyContent: "center",
+                height: "100%",
+                minHeight: window.innerWidth <= 768 ? "300px" : "500px"
+              }}>
                 <img 
                   src={CATALOG_IMAGES[detailedProduct.nombre] || detailedProduct.imagen} 
                   alt={detailedProduct.nombre}
                       style={{ 
                       width: "100%",
-                      height: "auto", 
-                      maxHeight: window.innerWidth <= 768 ? "400px" : "600px",
+                      height: "100%", 
+                      maxHeight: window.innerWidth <= 768 ? "500px" : "700px",
                       objectFit: "contain",
                       borderRadius: "15px",
                       boxShadow: "0 8px 32px rgba(0,0,0,0.1)"
@@ -3500,8 +3508,13 @@ function App() {
                 </div>
 
               {/* Right Side - Product Details */}
-              <div>
-                <div style={{ marginBottom: "1rem" }}>
+              <div style={{ 
+                height: "100%", 
+                overflow: "auto",
+                display: "flex",
+                flexDirection: "column"
+              }}>
+                <div style={{ marginBottom: "0.75rem" }}>
                   <span style={{ 
                         background: PALETAS.D.miel,
                         color: "white",
@@ -3515,7 +3528,7 @@ function App() {
                 </div>
 
                 <h2 style={{ 
-                  fontSize: "1.5rem", 
+                  fontSize: "1.4rem", 
                   fontWeight: "bold", 
                   color: PALETAS.D.carbon, 
                   margin: "0 0 0.5rem 0" 
@@ -3524,9 +3537,9 @@ function App() {
                 </h2>
 
                 <p style={{ 
-                  fontSize: "0.9rem", 
+                  fontSize: "0.85rem", 
                     color: "#666",
-                  margin: "0 0 1rem 0", 
+                  margin: "0 0 0.75rem 0", 
                   lineHeight: "1.4" 
                 }}>
                   {detailedProduct.descripcion}
@@ -3534,160 +3547,162 @@ function App() {
 
                 {/* Product Details */}
                 <div style={{ 
-                  marginBottom: "1rem",
+                  marginBottom: "0.75rem",
                   background: "linear-gradient(145deg, #fafafa 0%, #f5f5f5 100%)",
-                  borderRadius: "15px",
-                  padding: "1.5rem",
-                  border: `2px solid ${PALETAS.D.crema}`
+                  borderRadius: "12px",
+                  padding: "1rem",
+                  border: `2px solid ${PALETAS.D.crema}`,
+                  flex: 1,
+                  overflow: "auto"
                 }}>
                   {detailedProduct.elaboracion && (
-                <div style={{ marginBottom: "1rem" }}>
+                    <div style={{ marginBottom: "0.75rem" }}>
                       <h4 style={{ 
                         color: PALETAS.D.miel, 
-                        margin: "0 0 0.75rem 0", 
-                        fontSize: "1rem", 
+                        margin: "0 0 0.5rem 0", 
+                        fontSize: "0.9rem", 
                         fontWeight: "700",
                         display: "flex",
                         alignItems: "center",
-                        gap: "0.5rem"
+                        gap: "0.4rem"
                       }}>🧪 Elaboración</h4>
                       <p style={{ 
                         color: "#555", 
-                        fontSize: "0.9rem", 
+                        fontSize: "0.8rem", 
                         margin: 0, 
-                        lineHeight: "1.6",
+                        lineHeight: "1.5",
                         background: "white",
-                        padding: "1rem",
-                        borderRadius: "10px",
+                        padding: "0.75rem",
+                        borderRadius: "8px",
                         border: `1px solid ${PALETAS.D.crema}`
                       }}>{detailedProduct.elaboracion}</p>
                     </div>
                   )}
 
                   {detailedProduct.proposito && (
-                    <div style={{ marginBottom: "1rem" }}>
+                    <div style={{ marginBottom: "0.75rem" }}>
                       <h4 style={{ 
                         color: PALETAS.D.miel, 
-                        margin: "0 0 0.75rem 0", 
-                        fontSize: "1rem", 
+                        margin: "0 0 0.5rem 0", 
+                        fontSize: "0.9rem", 
                         fontWeight: "700",
                         display: "flex",
                         alignItems: "center",
-                        gap: "0.5rem"
+                        gap: "0.4rem"
                       }}>🎯 Propósito</h4>
                       <p style={{ 
                         color: "#555", 
-                        fontSize: "0.9rem", 
+                        fontSize: "0.8rem", 
                         margin: 0, 
-                        lineHeight: "1.6",
+                        lineHeight: "1.5",
                         background: "white",
-                        padding: "1rem",
-                        borderRadius: "10px",
+                        padding: "0.75rem",
+                        borderRadius: "8px",
                         border: `1px solid ${PALETAS.D.crema}`
                       }}>{detailedProduct.proposito}</p>
                   </div>
                   )}
 
                   {detailedProduct.beneficios && (
-                    <div style={{ marginBottom: "1rem" }}>
+                    <div style={{ marginBottom: "0.75rem" }}>
                       <h4 style={{ 
                         color: PALETAS.D.miel, 
-                        margin: "0 0 0.75rem 0", 
-                        fontSize: "1rem", 
+                        margin: "0 0 0.5rem 0", 
+                        fontSize: "0.9rem", 
                         fontWeight: "700",
                         display: "flex",
                         alignItems: "center",
-                        gap: "0.5rem"
+                        gap: "0.4rem"
                       }}>✨ Beneficios</h4>
                       <p style={{ 
                         color: "#555", 
-                        fontSize: "0.9rem", 
+                        fontSize: "0.8rem", 
                         margin: 0, 
-                        lineHeight: "1.6",
+                        lineHeight: "1.5",
                         background: "white",
-                        padding: "1rem",
-                        borderRadius: "10px",
+                        padding: "0.75rem",
+                        borderRadius: "8px",
                         border: `1px solid ${PALETAS.D.crema}`
                       }}>{detailedProduct.beneficios}</p>
               </div>
             )}
 
                   {detailedProduct.modoUso && (
-                    <div style={{ marginBottom: "1rem" }}>
+                    <div style={{ marginBottom: "0.75rem" }}>
                       <h4 style={{ 
                         color: PALETAS.D.miel, 
-                        margin: "0 0 0.75rem 0", 
-                        fontSize: "1rem", 
+                        margin: "0 0 0.5rem 0", 
+                        fontSize: "0.9rem", 
                         fontWeight: "700",
                         display: "flex",
                         alignItems: "center",
-                        gap: "0.5rem"
+                        gap: "0.4rem"
                       }}>📖 Modo de Uso</h4>
                       <p style={{ 
                         color: "#555", 
-                        fontSize: "0.9rem", 
+                        fontSize: "0.8rem", 
                         margin: 0, 
-                        lineHeight: "1.6",
+                        lineHeight: "1.5",
                         background: "white",
-                        padding: "1rem",
-                        borderRadius: "10px",
+                        padding: "0.75rem",
+                        borderRadius: "8px",
                         border: `1px solid ${PALETAS.D.crema}`
                       }}>{detailedProduct.modoUso}</p>
         </div>
       )}
 
                   {detailedProduct.ingredientes && (
-                    <div style={{ marginBottom: "1rem" }}>
+                    <div style={{ marginBottom: "0.75rem" }}>
                       <h4 style={{ 
                         color: PALETAS.D.miel, 
-                        margin: "0 0 0.75rem 0", 
-                        fontSize: "1rem", 
+                        margin: "0 0 0.5rem 0", 
+                        fontSize: "0.9rem", 
                         fontWeight: "700",
                         display: "flex",
                         alignItems: "center",
-                        gap: "0.5rem"
+                        gap: "0.4rem"
                       }}>🌿 Ingredientes</h4>
                       <p style={{ 
                         color: "#555", 
-                        fontSize: "0.9rem", 
+                        fontSize: "0.8rem", 
                         margin: 0, 
-                        lineHeight: "1.6",
+                        lineHeight: "1.5",
                         background: "white",
-                        padding: "1rem",
-                        borderRadius: "10px",
+                        padding: "0.75rem",
+                        borderRadius: "8px",
                         border: `1px solid ${PALETAS.D.crema}`
                       }}>{detailedProduct.ingredientes}</p>
           </div>
         )}
 
                   {detailedProduct.duracion && (
-                    <div style={{ marginBottom: "1rem" }}>
+                    <div style={{ marginBottom: "0.75rem" }}>
                       <h4 style={{ 
                         color: PALETAS.D.miel, 
-                        margin: "0 0 0.75rem 0", 
-                        fontSize: "1rem", 
+                        margin: "0 0 0.5rem 0", 
+                        fontSize: "0.9rem", 
                         fontWeight: "700",
                         display: "flex",
                         alignItems: "center",
-                        gap: "0.5rem"
+                        gap: "0.4rem"
                       }}>⏱️ Duración</h4>
                       <p style={{ 
                         color: "#555", 
-                        fontSize: "0.9rem", 
+                        fontSize: "0.8rem", 
                         margin: 0, 
-                        lineHeight: "1.6",
+                        lineHeight: "1.5",
                         background: "white",
-                        padding: "1rem",
-                        borderRadius: "10px",
+                        padding: "0.75rem",
+                        borderRadius: "8px",
                         border: `1px solid ${PALETAS.D.crema}`
                       }}>{detailedProduct.duracion}</p>
           </div>
         )}
 
                   {detailedProduct.cuidados && (
-                    <div style={{ marginBottom: "0.75rem" }}>
-                      <h4 style={{ color: PALETAS.D.carbon, margin: "0 0 0.5rem 0", fontSize: "0.9rem", fontWeight: "600" }}>⚠️ Cuidados</h4>
-                      <p style={{ color: "#666", fontSize: "0.8rem", margin: 0, lineHeight: "1.4" }}>{detailedProduct.cuidados}</p>
+                    <div style={{ marginBottom: "0.5rem" }}>
+                      <h4 style={{ color: PALETAS.D.carbon, margin: "0 0 0.4rem 0", fontSize: "0.85rem", fontWeight: "600" }}>⚠️ Cuidados</h4>
+                      <p style={{ color: "#666", fontSize: "0.75rem", margin: 0, lineHeight: "1.4" }}>{detailedProduct.cuidados}</p>
                 </div>
               )}
         </div>
@@ -3695,17 +3710,18 @@ function App() {
                 {/* Price and Add to Cart */}
           <div style={{
                   borderTop: "1px solid #eee", 
-                  paddingTop: "1rem",
+                  paddingTop: "0.75rem",
             display: "flex",
                   justifyContent: "space-between",
-                  alignItems: "center"
+                  alignItems: "center",
+                  marginTop: "auto"
                 }}>
                   <span style={{ 
-                    fontSize: "1.5rem", 
+                    fontSize: "1.3rem", 
                     fontWeight: "bold", 
                     color: PALETAS.D.miel 
                   }}>
-                    ${openProduct.precio} {openProduct.moneda}
+                    ${detailedProduct.precio} {detailedProduct.moneda}
                   </span>
                 <div style={{ 
                   display: "flex", 
@@ -3715,7 +3731,7 @@ function App() {
                 }}>
                   <button
                     onClick={() => {
-                        addToCart(openProduct);
+                        addToCart(detailedProduct);
                         setOpenProduct(null);
                     }}
                     style={{
