@@ -322,6 +322,53 @@ const AdminDashboard = ({ user, onClose }) => {
     }
   };
 
+  // Migrate existing orders to cart_items (since they're not real purchases)
+  const migrateOrdersToCartItems = async () => {
+    try {
+      // Get all existing orders
+      const ordersQuery = query(collection(db, 'orders'));
+      const ordersSnapshot = await getDocs(ordersQuery);
+      
+      console.log(`Found ${ordersSnapshot.docs.length} orders to migrate`);
+      
+      for (const orderDoc of ordersSnapshot.docs) {
+        const orderData = orderDoc.data();
+        
+        // Create cart items for each product in the order
+        for (const item of orderData.items || []) {
+          const cartItem = {
+            userId: orderData.userId,
+            customerName: orderData.customerName,
+            customerEmail: orderData.customerEmail,
+            productId: item.id,
+            productName: item.nombre,
+            productPrice: item.precio,
+            quantity: item.quantity,
+            addedAt: orderData.createdAt || new Date(),
+            status: 'abandoned' // Mark as abandoned since they didn't complete payment
+          };
+          
+          await addDoc(collection(db, 'cart_items'), cartItem);
+          console.log('Migrated order item to cart_items:', cartItem);
+        }
+        
+        // Delete the original order since it's not a real purchase
+        await deleteDoc(doc(db, 'orders', orderDoc.id));
+        console.log('Deleted order:', orderDoc.id);
+      }
+      
+      console.log('Migration completed successfully');
+      alert('✅ Orders migrated to cart abandonment tracking successfully!');
+      
+      // Refresh data
+      loadDashboardData();
+      
+    } catch (error) {
+      console.error('Error migrating orders:', error);
+      alert('Error migrating orders. Check console for details.');
+    }
+  };
+
   const handleEditProduct = (product) => {
     console.log('Edit button clicked for product:', product);
     setEditingProductId(product.id);
@@ -935,7 +982,27 @@ const AdminDashboard = ({ user, onClose }) => {
         {/* Cart Abandonment Tab */}
         {activeTab === 'cart-abandonment' && (
           <div>
-            <h2 style={{ color: '#D4A574', marginBottom: '1.5rem' }}>Carritos Abandonados</h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h2 style={{ color: '#D4A574', margin: 0 }}>Carritos Abandonados</h2>
+              <button
+                onClick={migrateOrdersToCartItems}
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  background: '#ff6b6b',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  fontWeight: '600',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem'
+                }}
+              >
+                🔄 Migrar Pedidos a Carritos Abandonados
+              </button>
+            </div>
             <div style={{
               background: 'white',
               border: '1px solid #eee',

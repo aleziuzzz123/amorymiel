@@ -541,6 +541,52 @@ function App() {
     }
   };
 
+  // Migrate existing orders to cart_items (since they're not real purchases)
+  const migrateOrdersToCartItems = async () => {
+    try {
+      const { collection, query, getDocs, addDoc, deleteDoc, doc } = await import('firebase/firestore');
+      
+      // Get all existing orders
+      const ordersQuery = query(collection(db, 'orders'));
+      const ordersSnapshot = await getDocs(ordersQuery);
+      
+      console.log(`Found ${ordersSnapshot.docs.length} orders to migrate`);
+      
+      for (const orderDoc of ordersSnapshot.docs) {
+        const orderData = orderDoc.data();
+        
+        // Create cart items for each product in the order
+        for (const item of orderData.items || []) {
+          const cartItem = {
+            userId: orderData.userId,
+            customerName: orderData.customerName,
+            customerEmail: orderData.customerEmail,
+            productId: item.id,
+            productName: item.nombre,
+            productPrice: item.precio,
+            quantity: item.quantity,
+            addedAt: orderData.createdAt || new Date(),
+            status: 'abandoned' // Mark as abandoned since they didn't complete payment
+          };
+          
+          await addDoc(collection(db, 'cart_items'), cartItem);
+          console.log('Migrated order item to cart_items:', cartItem);
+        }
+        
+        // Delete the original order since it's not a real purchase
+        await deleteDoc(doc(db, 'orders', orderDoc.id));
+        console.log('Deleted order:', orderDoc.id);
+      }
+      
+      console.log('Migration completed successfully');
+      alert('✅ Orders migrated to cart abandonment tracking successfully!');
+      
+    } catch (error) {
+      console.error('Error migrating orders:', error);
+      alert('Error migrating orders. Check console for details.');
+    }
+  };
+
   const removeFromCart = (productId) => {
     setCart(prev => prev.filter(item => item.id !== productId));
   };
