@@ -674,16 +674,25 @@ function App() {
     try {
       const { collection, query, getDocs, addDoc, deleteDoc, doc } = await import('firebase/firestore');
       
-      // Debug: Check user authentication
-      console.log('Current user:', user);
-      console.log('User email:', user?.email);
-      console.log('Is admin?', user?.email === 'admin@amorymiel.com');
-      
-      // Check if user is admin
-      if (!user || user.email !== 'admin@amorymiel.com') {
-        alert(`❌ Solo el administrador puede migrar pedidos. Usuario actual: ${user?.email || 'No autenticado'}`);
-        return;
-      }
+          // Debug: Check user authentication
+    console.log('Current user:', user);
+    console.log('User email:', user?.email);
+    console.log('User email verified:', user?.emailVerified);
+    console.log('User UID:', user?.uid);
+    console.log('Is admin?', user?.email === 'admin@amorymiel.com');
+    
+    // Check if user is admin
+    if (!user || user.email !== 'admin@amorymiel.com') {
+      alert(`❌ Solo el administrador puede migrar pedidos. Usuario actual: ${user?.email || 'No autenticado'}`);
+      return;
+    }
+    
+    // Check if email is verified
+    if (!user.emailVerified) {
+      console.warn('⚠️ Admin email is not verified. This might cause permission issues.');
+      alert('⚠️ Tu email de administrador no está verificado. Esto puede causar problemas de permisos. Por favor, verifica tu email en Firebase Authentication.');
+      return;
+    }
       
       // Test admin permissions by trying to read a simple collection first
       console.log('Testing admin permissions...');
