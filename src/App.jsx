@@ -67,6 +67,37 @@ const CATALOG_IMAGES = {
   "Loción Ellas y Ellos": "/images/catalog/locion-ellas-y-ellos.JPG"
 };
 
+// Comprehensive product information for detailed product modals
+const PRODUCT_DETAILS = {
+  "Palo Santo": {
+    elaboracion: "El Palo Santo es una madera sagrada que proviene del árbol Bursera graveolens, nativo de América del Sur. Se recolecta de forma sostenible de árboles que han muerto naturalmente, permitiendo que la madera se cure y desarrolle sus propiedades aromáticas y energéticas únicas durante el proceso de secado natural.",
+    proposito: "El Palo Santo es reconocido por sus propiedades medicinales antirreumáticas, diuréticas, depurativas y antisépticas. Es ampliamente utilizado en prácticas de yoga, reiki y aromaterapia para limpiar y purificar ambientes, eliminar energías negativas y crear espacios de paz y armonía espiritual.",
+    beneficios: "Purifica el aire y elimina bacterias, reduce el estrés y la ansiedad, facilita la meditación y la concentración, mejora la calidad del sueño, equilibra las emociones, fortalece el sistema inmunológico, y crea un ambiente propicio para la sanación espiritual y el bienestar general.",
+    modoUso: "Enciende el Palo Santo con una vela, inclínalo en un ángulo de 45 grados y deja que se consuma durante 1-2 minutos. Apaga la llama y pasa el humo sagrado sobre tu cuerpo y por los espacios que desees purificar. El humo debe circular libremente para limpiar las energías negativas.",
+    ingredientes: "100% Palo Santo (Bursera graveolens) de origen natural, sin aditivos químicos ni conservantes artificiales.",
+    duracion: "Cada barra de Palo Santo puede durar entre 8-12 usos, dependiendo del tamaño y la frecuencia de uso.",
+    cuidados: "Conservar en un lugar seco y fresco, alejado de la humedad. Mantener en su empaque original para preservar sus propiedades aromáticas."
+  },
+  "Velas De Miel": {
+    elaboracion: "Nuestras velas de miel son elaboradas artesanalmente con cera de abeja 100% pura, recolectada de colmenas locales y sostenibles. El proceso incluye la filtración natural de la cera, el moldeado a mano y la consagración ritual para potenciar sus propiedades energéticas de abundancia y prosperidad.",
+    proposito: "Diseñadas específicamente para rituales de abundancia, prosperidad y purificación energética. La cera de abeja natural emite iones negativos que purifican el aire y crean un ambiente propicio para la manifestación de deseos y la atracción de energías positivas.",
+    beneficios: "Purifica el aire de toxinas y alérgenos, mejora la calidad del aire interior, emite iones negativos beneficiosos, crea un ambiente relajante y meditativo, potencia rituales de abundancia, y su aroma natural es relajante y terapéutico.",
+    modoUso: "Enciende la vela en un lugar seguro y estable. Deja que se consuma completamente para activar sus propiedades energéticas. Ideal para usar durante meditaciones, rituales de abundancia o simplemente para crear un ambiente purificado en tu hogar.",
+    ingredientes: "Cera de abeja 100% pura, mecha de algodón natural, sin parafina ni aditivos químicos.",
+    duracion: "Tiempo de combustión: 8-12 horas, dependiendo del tamaño de la vela.",
+    cuidados: "Mantener alejada de corrientes de aire, no mover mientras está encendida, y cortar la mecha a 1cm antes de cada uso para una combustión óptima."
+  },
+  "Miel Consagrada": {
+    elaboracion: "Nuestra miel consagrada es recolectada de colmenas locales y purificadas, sometida a rituales sagrados de consagración bajo la luna llena. El proceso incluye la purificación energética, la bendición ritual y el almacenamiento en recipientes de cristal para preservar su pureza y propiedades energéticas.",
+    proposito: "Especialmente consagrada para rituales de abundancia, prosperidad y manifestación. Su pureza energética la hace ideal para endulzar decretos, rituales de atracción y ceremonias de abundancia, potenciando la ley de atracción y la manifestación de deseos.",
+    beneficios: "Potencia rituales de abundancia y prosperidad, endulza decretos y afirmaciones, atrae energías positivas y oportunidades, fortalece la conexión espiritual, y su pureza energética facilita la manifestación de deseos.",
+    modoUso: "Consumir una cucharadita en ayunas con intención de abundancia, usar para endulzar decretos escritos, agregar a rituales de manifestación, o simplemente consumir con gratitud para atraer prosperidad.",
+    ingredientes: "Miel de abeja 100% pura, sin pasteurizar, sin aditivos químicos ni conservantes artificiales.",
+    duracion: "Conservar en refrigeración hasta 2 años, mantener en recipiente de cristal para preservar sus propiedades energéticas.",
+    cuidados: "Mantener en lugar fresco y seco, alejado de la luz directa del sol, y usar utensilios de madera o cristal para preservar su pureza energética."
+  }
+};
+
 // Kids products data
 // DEFAULT_KIDS_PRODUCTS removed - all products now loaded from Firebase
 
@@ -426,7 +457,7 @@ function App() {
     setQuery(e.target.value);
   };
 
-  const addToCart = (product) => {
+  const addToCart = async (product) => {
     // Require user to be logged in to add items to cart
     if (!user) {
       setShowAuthModal(true);
@@ -460,6 +491,36 @@ function App() {
       }
       return [...prev, { ...product, quantity: 1 }];
     });
+
+    // Track cart addition for abandonment follow-up
+    await trackCartAddition(product);
+  };
+
+  // Track cart addition for abandonment follow-up
+  const trackCartAddition = async (product) => {
+    try {
+      if (!user || !user.uid) return;
+
+      const cartItem = {
+        userId: user.uid,
+        customerName: userProfile?.name || user.email || 'Cliente',
+        customerEmail: user.email || 'no-email@example.com',
+        productId: product.id,
+        productName: product.nombre,
+        productPrice: product.precio,
+        quantity: 1,
+        addedAt: new Date(),
+        status: 'in_cart' // in_cart, abandoned, purchased
+      };
+
+      // Save to Firestore cart_items collection
+      const { collection, addDoc } = await import('firebase/firestore');
+      await addDoc(collection(db, 'cart_items'), cartItem);
+      
+      console.log('Cart addition tracked:', cartItem);
+    } catch (error) {
+      console.error('Error tracking cart addition:', error);
+    }
   };
 
   const removeFromCart = (productId) => {
@@ -509,17 +570,11 @@ function App() {
       console.log('User profile:', userProfile);
       console.log('Shipping address:', shippingAddress);
 
-      // Create order with shipping information
-      const order = await createOrder({
-        paymentMethod: 'Mercado Pago',
-        paymentStatus: 'pending',
-        shippingAddress: shippingAddress
-      });
-
-      console.log('Order created successfully:', order);
-
-    const total = getCartTotal();
-      const mercadoPagoUrl = `https://link.mercadopago.com.mx/amorymiel?amount=${total}&order_id=${order.id}`;
+      // Don't create order yet - just redirect to payment
+      // Order will be created only when payment is completed
+      const total = getCartTotal();
+      const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const mercadoPagoUrl = `https://link.mercadopago.com.mx/amorymiel?amount=${total}&order_id=${orderId}`;
       
       // Close shipping modal
       setShowShippingModal(false);
@@ -528,7 +583,7 @@ function App() {
       window.open(mercadoPagoUrl, '_blank');
       
       // Show success message
-      alert(`¡Orden creada exitosamente! ID: ${order.id}\n\nRedirigiendo a Mercado Pago para completar el pago.`);
+      alert(`¡Redirigiendo a Mercado Pago para completar el pago!\n\nTotal: $${total}\n\nLa orden se creará automáticamente cuando el pago sea confirmado.`);
       
     } catch (error) {
       console.error('Error creating order:', error);
@@ -778,7 +833,7 @@ function App() {
     }
   };
 
-  // Create order function
+  // Create order function (only called when payment is completed)
   const createOrder = async (orderData) => {
     try {
       // Validate user is logged in
@@ -795,7 +850,7 @@ function App() {
         items: cart,
         total: getCartTotal(),
         createdAt: new Date(),
-        status: 'pending'
+        status: 'completed' // Only create orders when payment is actually completed
       };
 
       console.log('Creating order:', order);
@@ -3303,7 +3358,14 @@ function App() {
       </footer>
 
             {/* Product Detail Modal */}
-      {openProduct && (
+      {openProduct && (() => {
+        // Merge product data with detailed information
+        const detailedProduct = {
+          ...openProduct,
+          ...(PRODUCT_DETAILS[openProduct.nombre] || {})
+        };
+        
+        return (
           <div style={{ 
           position: "fixed",
             top: 0, 
@@ -3320,7 +3382,7 @@ function App() {
             <div style={{ 
             background: "white",
             borderRadius: "20px",
-            maxWidth: "1100px",
+            maxWidth: "1200px",
             width: "100%",
             maxHeight: "100vh",
             overflow: "auto",
@@ -3357,14 +3419,15 @@ function App() {
               {/* Left Side - Catalog Image */}
               <div>
                 <img 
-                  src={CATALOG_IMAGES[openProduct.nombre] || openProduct.imagen} 
-                  alt={openProduct.nombre}
+                  src={CATALOG_IMAGES[detailedProduct.nombre] || detailedProduct.imagen} 
+                  alt={detailedProduct.nombre}
                       style={{ 
                       width: "100%",
                       height: "auto", 
-                      maxHeight: "500px",
+                      maxHeight: window.innerWidth <= 768 ? "400px" : "600px",
                       objectFit: "contain",
-                      borderRadius: "15px"
+                      borderRadius: "15px",
+                      boxShadow: "0 8px 32px rgba(0,0,0,0.1)"
                     }}
                   onError={(e) => {
                     e.target.src = "/images/logo/amorymiellogo.png";
@@ -3383,7 +3446,7 @@ function App() {
                       fontSize: "0.8rem",
                     fontWeight: "600"
                   }}>
-                    {openProduct.categoria}
+                    {detailedProduct.categoria}
                       </span>
                 </div>
 
@@ -3393,7 +3456,7 @@ function App() {
                   color: PALETAS.D.carbon, 
                   margin: "0 0 0.5rem 0" 
                 }}>
-                  {openProduct.nombre}
+                  {detailedProduct.nombre}
                 </h2>
 
                 <p style={{ 
@@ -3402,57 +3465,165 @@ function App() {
                   margin: "0 0 1rem 0", 
                   lineHeight: "1.4" 
                 }}>
-                  {openProduct.descripcion}
+                  {detailedProduct.descripcion}
                 </p>
 
                 {/* Product Details */}
+                <div style={{ 
+                  marginBottom: "1rem",
+                  background: "linear-gradient(145deg, #fafafa 0%, #f5f5f5 100%)",
+                  borderRadius: "15px",
+                  padding: "1.5rem",
+                  border: `2px solid ${PALETAS.D.crema}`
+                }}>
+                  {detailedProduct.elaboracion && (
                 <div style={{ marginBottom: "1rem" }}>
-                  {openProduct.elaboracion && (
-                    <div style={{ marginBottom: "0.75rem" }}>
-                      <h4 style={{ color: PALETAS.D.carbon, margin: "0 0 0.5rem 0", fontSize: "0.9rem", fontWeight: "600" }}>🧪 Elaboración</h4>
-                      <p style={{ color: "#666", fontSize: "0.8rem", margin: 0, lineHeight: "1.4" }}>{openProduct.elaboracion}</p>
+                      <h4 style={{ 
+                        color: PALETAS.D.miel, 
+                        margin: "0 0 0.75rem 0", 
+                        fontSize: "1rem", 
+                        fontWeight: "700",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem"
+                      }}>🧪 Elaboración</h4>
+                      <p style={{ 
+                        color: "#555", 
+                        fontSize: "0.9rem", 
+                        margin: 0, 
+                        lineHeight: "1.6",
+                        background: "white",
+                        padding: "1rem",
+                        borderRadius: "10px",
+                        border: `1px solid ${PALETAS.D.crema}`
+                      }}>{detailedProduct.elaboracion}</p>
                     </div>
                   )}
 
-                  {openProduct.proposito && (
-                    <div style={{ marginBottom: "0.75rem" }}>
-                      <h4 style={{ color: PALETAS.D.carbon, margin: "0 0 0.5rem 0", fontSize: "0.9rem", fontWeight: "600" }}>🎯 Propósito</h4>
-                      <p style={{ color: "#666", fontSize: "0.8rem", margin: 0, lineHeight: "1.4" }}>{openProduct.proposito}</p>
+                  {detailedProduct.proposito && (
+                    <div style={{ marginBottom: "1rem" }}>
+                      <h4 style={{ 
+                        color: PALETAS.D.miel, 
+                        margin: "0 0 0.75rem 0", 
+                        fontSize: "1rem", 
+                        fontWeight: "700",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem"
+                      }}>🎯 Propósito</h4>
+                      <p style={{ 
+                        color: "#555", 
+                        fontSize: "0.9rem", 
+                        margin: 0, 
+                        lineHeight: "1.6",
+                        background: "white",
+                        padding: "1rem",
+                        borderRadius: "10px",
+                        border: `1px solid ${PALETAS.D.crema}`
+                      }}>{detailedProduct.proposito}</p>
                   </div>
                   )}
 
-                  {openProduct.beneficios && (
-                    <div style={{ marginBottom: "0.75rem" }}>
-                      <h4 style={{ color: PALETAS.D.carbon, margin: "0 0 0.5rem 0", fontSize: "0.9rem", fontWeight: "600" }}>✨ Beneficios</h4>
-                      <p style={{ color: "#666", fontSize: "0.8rem", margin: 0, lineHeight: "1.4" }}>{openProduct.beneficios}</p>
+                  {detailedProduct.beneficios && (
+                    <div style={{ marginBottom: "1rem" }}>
+                      <h4 style={{ 
+                        color: PALETAS.D.miel, 
+                        margin: "0 0 0.75rem 0", 
+                        fontSize: "1rem", 
+                        fontWeight: "700",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem"
+                      }}>✨ Beneficios</h4>
+                      <p style={{ 
+                        color: "#555", 
+                        fontSize: "0.9rem", 
+                        margin: 0, 
+                        lineHeight: "1.6",
+                        background: "white",
+                        padding: "1rem",
+                        borderRadius: "10px",
+                        border: `1px solid ${PALETAS.D.crema}`
+                      }}>{detailedProduct.beneficios}</p>
               </div>
             )}
 
-                  {openProduct.modoUso && (
-                    <div style={{ marginBottom: "0.75rem" }}>
-                      <h4 style={{ color: PALETAS.D.carbon, margin: "0 0 0.5rem 0", fontSize: "0.9rem", fontWeight: "600" }}>📖 Modo de Uso</h4>
-                      <p style={{ color: "#666", fontSize: "0.8rem", margin: 0, lineHeight: "1.4" }}>{openProduct.modoUso}</p>
+                  {detailedProduct.modoUso && (
+                    <div style={{ marginBottom: "1rem" }}>
+                      <h4 style={{ 
+                        color: PALETAS.D.miel, 
+                        margin: "0 0 0.75rem 0", 
+                        fontSize: "1rem", 
+                        fontWeight: "700",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem"
+                      }}>📖 Modo de Uso</h4>
+                      <p style={{ 
+                        color: "#555", 
+                        fontSize: "0.9rem", 
+                        margin: 0, 
+                        lineHeight: "1.6",
+                        background: "white",
+                        padding: "1rem",
+                        borderRadius: "10px",
+                        border: `1px solid ${PALETAS.D.crema}`
+                      }}>{detailedProduct.modoUso}</p>
         </div>
       )}
 
-                  {openProduct.ingredientes && (
-                    <div style={{ marginBottom: "0.75rem" }}>
-                      <h4 style={{ color: PALETAS.D.carbon, margin: "0 0 0.5rem 0", fontSize: "0.9rem", fontWeight: "600" }}>🌿 Ingredientes</h4>
-                      <p style={{ color: "#666", fontSize: "0.8rem", margin: 0, lineHeight: "1.4" }}>{openProduct.ingredientes}</p>
+                  {detailedProduct.ingredientes && (
+                    <div style={{ marginBottom: "1rem" }}>
+                      <h4 style={{ 
+                        color: PALETAS.D.miel, 
+                        margin: "0 0 0.75rem 0", 
+                        fontSize: "1rem", 
+                        fontWeight: "700",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem"
+                      }}>🌿 Ingredientes</h4>
+                      <p style={{ 
+                        color: "#555", 
+                        fontSize: "0.9rem", 
+                        margin: 0, 
+                        lineHeight: "1.6",
+                        background: "white",
+                        padding: "1rem",
+                        borderRadius: "10px",
+                        border: `1px solid ${PALETAS.D.crema}`
+                      }}>{detailedProduct.ingredientes}</p>
           </div>
         )}
 
-                  {openProduct.duracion && (
-                    <div style={{ marginBottom: "0.75rem" }}>
-                      <h4 style={{ color: PALETAS.D.carbon, margin: "0 0 0.5rem 0", fontSize: "0.9rem", fontWeight: "600" }}>⏱️ Duración</h4>
-                      <p style={{ color: "#666", fontSize: "0.8rem", margin: 0, lineHeight: "1.4" }}>{openProduct.duracion}</p>
+                  {detailedProduct.duracion && (
+                    <div style={{ marginBottom: "1rem" }}>
+                      <h4 style={{ 
+                        color: PALETAS.D.miel, 
+                        margin: "0 0 0.75rem 0", 
+                        fontSize: "1rem", 
+                        fontWeight: "700",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem"
+                      }}>⏱️ Duración</h4>
+                      <p style={{ 
+                        color: "#555", 
+                        fontSize: "0.9rem", 
+                        margin: 0, 
+                        lineHeight: "1.6",
+                        background: "white",
+                        padding: "1rem",
+                        borderRadius: "10px",
+                        border: `1px solid ${PALETAS.D.crema}`
+                      }}>{detailedProduct.duracion}</p>
           </div>
         )}
 
-                  {openProduct.cuidados && (
+                  {detailedProduct.cuidados && (
                     <div style={{ marginBottom: "0.75rem" }}>
                       <h4 style={{ color: PALETAS.D.carbon, margin: "0 0 0.5rem 0", fontSize: "0.9rem", fontWeight: "600" }}>⚠️ Cuidados</h4>
-                      <p style={{ color: "#666", fontSize: "0.8rem", margin: 0, lineHeight: "1.4" }}>{openProduct.cuidados}</p>
+                      <p style={{ color: "#666", fontSize: "0.8rem", margin: 0, lineHeight: "1.4" }}>{detailedProduct.cuidados}</p>
                 </div>
               )}
         </div>
@@ -3542,7 +3713,8 @@ function App() {
           </div>
             </div>
           </div>
-        )}
+        );
+      })()}
 
       {/* Professional Cart Sidebar */}
       {cart.length > 0 && (

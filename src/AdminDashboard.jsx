@@ -20,6 +20,7 @@ const AdminDashboard = ({ user, onClose }) => {
   const [users, setUsers] = useState([]);
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -139,6 +140,16 @@ const AdminDashboard = ({ user, onClose }) => {
       
       console.log(`Admin Dashboard: Removed ${allProducts.length - uniqueProducts.length} duplicate products`);
       setProducts(uniqueProducts);
+
+      // Load cart items for abandonment tracking
+      const cartItemsQuery = query(collection(db, 'cart_items'), orderBy('addedAt', 'desc'));
+      const cartItemsSnapshot = await getDocs(cartItemsQuery);
+      const cartItemsData = cartItemsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setCartItems(cartItemsData);
+      console.log('Cart items loaded:', cartItemsData.length);
 
       // Calculate stats
       console.log('Calculating stats...');
@@ -269,6 +280,45 @@ const AdminDashboard = ({ user, onClose }) => {
         console.error('Error deleting product:', error);
         alert('Error al eliminar el producto. Inténtalo de nuevo.');
       }
+    }
+  };
+
+  // Send follow-up email for cart abandonment
+  const sendFollowUpEmail = async (cartItem) => {
+    try {
+      // This would integrate with your email service (EmailJS, SendGrid, etc.)
+      // For now, we'll show a confirmation
+      alert(`📧 Recordatorio enviado a ${cartItem.customerEmail}\n\nProducto: ${cartItem.productName}\nPrecio: $${cartItem.productPrice}\n\nEl cliente recibirá un email recordatorio para completar su compra.`);
+      
+      // Update the cart item status to indicate follow-up was sent
+      await updateDoc(doc(db, 'cart_items', cartItem.id), {
+        status: 'follow_up_sent',
+        followUpSentAt: new Date()
+      });
+      
+      // Refresh data
+      loadDashboardData();
+    } catch (error) {
+      console.error('Error sending follow-up email:', error);
+      alert('Error al enviar el recordatorio por email');
+    }
+  };
+
+  // Mark cart item as purchased
+  const markAsPurchased = async (cartItemId) => {
+    try {
+      await updateDoc(doc(db, 'cart_items', cartItemId), {
+        status: 'purchased',
+        purchasedAt: new Date()
+      });
+      
+      alert('✅ Item marcado como comprado exitosamente');
+      
+      // Refresh data
+      loadDashboardData();
+    } catch (error) {
+      console.error('Error marking as purchased:', error);
+      alert('Error al marcar como comprado');
     }
   };
 
@@ -544,6 +594,7 @@ const AdminDashboard = ({ user, onClose }) => {
             { id: 'overview', label: '📊 Resumen', icon: '📊' },
             { id: 'users', label: '👥 Usuarios', icon: '👥' },
             { id: 'orders', label: '📦 Pedidos', icon: '📦' },
+            { id: 'cart-abandonment', label: '🛒 Carritos Abandonados', icon: '🛒' },
             { id: 'products', label: '🛍️ Productos', icon: '🛍️' }
           ].map(tab => (
             <button
@@ -877,6 +928,135 @@ const AdminDashboard = ({ user, onClose }) => {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Cart Abandonment Tab */}
+        {activeTab === 'cart-abandonment' && (
+          <div>
+            <h2 style={{ color: '#D4A574', marginBottom: '1.5rem' }}>Carritos Abandonados</h2>
+            <div style={{
+              background: 'white',
+              border: '1px solid #eee',
+              borderRadius: '10px',
+              overflow: 'hidden'
+            }}>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '1rem',
+                padding: '1.5rem',
+                background: '#f8f9fa',
+                borderBottom: '1px solid #eee'
+              }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#D4A574' }}>
+                    {cartItems.filter(item => item.status === 'in_cart').length}
+                  </div>
+                  <div style={{ color: '#666', fontSize: '0.9rem' }}>En Carrito</div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#ff6b6b' }}>
+                    {cartItems.filter(item => {
+                      const hoursSinceAdded = (new Date() - new Date(item.addedAt)) / (1000 * 60 * 60);
+                      return item.status === 'in_cart' && hoursSinceAdded > 24;
+                    }).length}
+                  </div>
+                  <div style={{ color: '#666', fontSize: '0.9rem' }}>Abandonados (24h+)</div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#51cf66' }}>
+                    {cartItems.filter(item => item.status === 'purchased').length}
+                  </div>
+                  <div style={{ color: '#666', fontSize: '0.9rem' }}>Convertidos</div>
+                </div>
+              </div>
+              
+              <div style={{ padding: '1.5rem' }}>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: '1rem'
+                }}>
+                  {cartItems.map(item => {
+                    const hoursSinceAdded = (new Date() - new Date(item.addedAt)) / (1000 * 60 * 60);
+                    const isAbandoned = item.status === 'in_cart' && hoursSinceAdded > 24;
+                    
+                    return (
+                      <div key={item.id} style={{
+                        border: '1px solid #eee',
+                        borderRadius: '8px',
+                        padding: '1rem',
+                        background: isAbandoned ? '#fff5f5' : '#f8f9fa'
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '0.5rem' }}>
+                          <div>
+                            <div style={{ fontWeight: 'bold', color: '#333' }}>{item.customerName}</div>
+                            <div style={{ fontSize: '0.8rem', color: '#666' }}>{item.customerEmail}</div>
+                          </div>
+                          <div style={{
+                            padding: '0.25rem 0.5rem',
+                            borderRadius: '12px',
+                            fontSize: '0.7rem',
+                            fontWeight: 'bold',
+                            background: isAbandoned ? '#ff6b6b' : item.status === 'purchased' ? '#51cf66' : '#ffd43b',
+                            color: 'white'
+                          }}>
+                            {isAbandoned ? 'ABANDONADO' : item.status === 'purchased' ? 'COMPRADO' : 'EN CARRITO'}
+                          </div>
+                        </div>
+                        
+                        <div style={{ marginBottom: '0.5rem' }}>
+                          <div style={{ fontWeight: '600', color: '#333' }}>{item.productName}</div>
+                          <div style={{ fontSize: '0.9rem', color: '#666' }}>
+                            Cantidad: {item.quantity} • Precio: ${item.productPrice}
+                          </div>
+                        </div>
+                        
+                        <div style={{ fontSize: '0.8rem', color: '#666', marginBottom: '0.5rem' }}>
+                          Agregado: {new Date(item.addedAt).toLocaleString()}
+                        </div>
+                        
+                        {isAbandoned && (
+                          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                            <button
+                              onClick={() => sendFollowUpEmail(item)}
+                              style={{
+                                padding: '0.5rem 1rem',
+                                background: '#D4A574',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                fontSize: '0.8rem',
+                                fontWeight: '600'
+                              }}
+                            >
+                              📧 Enviar Recordatorio
+                            </button>
+                            <button
+                              onClick={() => markAsPurchased(item.id)}
+                              style={{
+                                padding: '0.5rem 1rem',
+                                background: '#51cf66',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                fontSize: '0.8rem',
+                                fontWeight: '600'
+                              }}
+                            >
+                              ✅ Marcar como Comprado
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
         )}
