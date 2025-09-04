@@ -161,12 +161,17 @@ function App() {
       console.log('Services found:', services.map(s => s.nombre));
       
       const kidsProducts = uniqueProducts.filter(p => 
-        p.categoria && p.categoria.toLowerCase().includes('kids')
+        p.categoria && (
+          p.categoria.toLowerCase().includes('kids') || 
+          p.categoria.toLowerCase().includes('niños')
+        ) && !['Servicios', 'servicios'].includes(p.categoria)
       );
       
       const kidsServices = uniqueProducts.filter(p => 
-        p.categoria && p.categoria.toLowerCase().includes('niños') && 
-        ['Servicios', 'servicios'].includes(p.categoria)
+        p.categoria && (
+          p.categoria.toLowerCase().includes('kids') || 
+          p.categoria.toLowerCase().includes('niños')
+        ) && ['Servicios', 'servicios'].includes(p.categoria)
       );
       
       console.log('Separated products:', {
@@ -175,6 +180,9 @@ function App() {
         kidsProducts: kidsProducts.length,
         kidsServices: kidsServices.length
       });
+      
+      console.log('Kids Products:', kidsProducts.map(p => `${p.nombre} (${p.categoria})`));
+      console.log('Kids Services:', kidsServices.map(s => `${s.nombre} (${s.categoria})`));
       
       setProducts(regularProducts);
       setServices(services);
@@ -242,13 +250,21 @@ function App() {
         console.log('Services found:', services.map(s => s.nombre));
         
         const kidsProducts = uniqueProducts.filter(p => 
-          p.categoria && p.categoria.toLowerCase().includes('kids')
+          p.categoria && (
+            p.categoria.toLowerCase().includes('kids') || 
+            p.categoria.toLowerCase().includes('niños')
+          ) && !['Servicios', 'servicios'].includes(p.categoria)
         );
         
         const kidsServices = uniqueProducts.filter(p => 
-          p.categoria && p.categoria.toLowerCase().includes('niños') && 
-          ['Servicios', 'servicios'].includes(p.categoria)
+          p.categoria && (
+            p.categoria.toLowerCase().includes('kids') || 
+            p.categoria.toLowerCase().includes('niños')
+          ) && ['Servicios', 'servicios'].includes(p.categoria)
         );
+        
+        console.log('Kids Products:', kidsProducts.map(p => `${p.nombre} (${p.categoria})`));
+        console.log('Kids Services:', kidsServices.map(s => `${s.nombre} (${s.categoria})`));
         
         setProducts(regularProducts);
         setServices(services);
