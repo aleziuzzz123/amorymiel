@@ -637,13 +637,31 @@ function App() {
     try {
       const { collection, query, getDocs, addDoc, deleteDoc, doc } = await import('firebase/firestore');
       
+      // Debug: Check user authentication
+      console.log('Current user:', user);
+      console.log('User email:', user?.email);
+      console.log('Is admin?', user?.email === 'admin@amorymiel.com');
+      
       // Check if user is admin
       if (!user || user.email !== 'admin@amorymiel.com') {
-        alert('❌ Solo el administrador puede migrar pedidos');
+        alert(`❌ Solo el administrador puede migrar pedidos. Usuario actual: ${user?.email || 'No autenticado'}`);
+        return;
+      }
+      
+      // Test admin permissions by trying to read a simple collection first
+      console.log('Testing admin permissions...');
+      try {
+        const testQuery = query(collection(db, 'users'));
+        const testSnapshot = await getDocs(testQuery);
+        console.log('Admin can read users collection:', testSnapshot.docs.length, 'users found');
+      } catch (testError) {
+        console.error('Admin permission test failed:', testError);
+        alert(`Error de permisos de administrador: ${testError.message}`);
         return;
       }
       
       // Get all existing orders
+      console.log('Fetching orders...');
       const ordersQuery = query(collection(db, 'orders'));
       const ordersSnapshot = await getDocs(ordersQuery);
       
@@ -651,6 +669,18 @@ function App() {
       
       if (ordersSnapshot.docs.length === 0) {
         alert('ℹ️ No hay pedidos para migrar');
+        return;
+      }
+      
+      // Test cart_items collection access
+      console.log('Testing cart_items collection access...');
+      try {
+        const cartTestQuery = query(collection(db, 'cart_items'));
+        const cartTestSnapshot = await getDocs(cartTestQuery);
+        console.log('Admin can read cart_items collection:', cartTestSnapshot.docs.length, 'items found');
+      } catch (cartTestError) {
+        console.error('Cart items permission test failed:', cartTestError);
+        alert(`Error de permisos en cart_items: ${cartTestError.message}`);
         return;
       }
       
@@ -671,11 +701,13 @@ function App() {
             status: 'abandoned' // Mark as abandoned since they didn't complete payment
           };
           
+          console.log('Creating cart item:', cartItem);
           await addDoc(collection(db, 'cart_items'), cartItem);
           console.log('Migrated order item to cart_items:', cartItem);
         }
         
         // Delete the original order since it's not a real purchase
+        console.log('Deleting order:', orderDoc.id);
         await deleteDoc(doc(db, 'orders', orderDoc.id));
         console.log('Deleted order:', orderDoc.id);
       }
@@ -685,7 +717,12 @@ function App() {
       
     } catch (error) {
       console.error('Error migrating orders:', error);
-      alert(`Error migrating orders: ${error.message}`);
+      console.error('Error details:', {
+        code: error.code,
+        message: error.message,
+        stack: error.stack
+      });
+      alert(`Error migrating orders: ${error.message}\n\nCheck console for details.`);
     }
   };
 
