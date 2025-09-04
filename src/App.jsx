@@ -132,14 +132,20 @@ function App() {
       
       // Remove duplicates by product name before categorizing
       const uniqueProducts = allProducts.reduce((acc, product) => {
-        const existingProduct = acc.find(p => p.nombre === product.nombre);
+        const existingProduct = acc.find(p => 
+          p.nombre && product.nombre && 
+          p.nombre.toLowerCase().trim() === product.nombre.toLowerCase().trim()
+        );
         if (!existingProduct) {
           acc.push(product);
+        } else {
+          console.log(`Removing duplicate: "${product.nombre}" (ID: ${product.id})`);
         }
         return acc;
       }, []);
       
       console.log(`Removed ${allProducts.length - uniqueProducts.length} duplicate products`);
+      console.log('Unique products after deduplication:', uniqueProducts.map(p => p.nombre));
       
       // Separate products by category
       const regularProducts = uniqueProducts.filter(p => 
@@ -151,6 +157,8 @@ function App() {
       const services = uniqueProducts.filter(p => 
         p.categoria && ['Servicios', 'servicios'].includes(p.categoria)
       );
+      
+      console.log('Services found:', services.map(s => s.nombre));
       
       const kidsProducts = uniqueProducts.filter(p => 
         p.categoria && p.categoria.toLowerCase().includes('kids')
@@ -205,14 +213,20 @@ function App() {
         
         // Remove duplicates by product name before categorizing
         const uniqueProducts = allProducts.reduce((acc, product) => {
-          const existingProduct = acc.find(p => p.nombre === product.nombre);
+          const existingProduct = acc.find(p => 
+            p.nombre && product.nombre && 
+            p.nombre.toLowerCase().trim() === product.nombre.toLowerCase().trim()
+          );
           if (!existingProduct) {
             acc.push(product);
+          } else {
+            console.log(`Removing duplicate: "${product.nombre}" (ID: ${product.id})`);
           }
           return acc;
         }, []);
         
         console.log(`Removed ${allProducts.length - uniqueProducts.length} duplicate products`);
+        console.log('Unique products after deduplication:', uniqueProducts.map(p => p.nombre));
         
         // Separate products by category
         const regularProducts = uniqueProducts.filter(p => 
@@ -224,6 +238,8 @@ function App() {
         const services = uniqueProducts.filter(p => 
           p.categoria && ['Servicios', 'servicios'].includes(p.categoria)
         );
+        
+        console.log('Services found:', services.map(s => s.nombre));
         
         const kidsProducts = uniqueProducts.filter(p => 
           p.categoria && p.categoria.toLowerCase().includes('kids')
