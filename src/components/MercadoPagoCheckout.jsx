@@ -36,52 +36,19 @@ const MercadoPagoCheckout = ({
       setIsLoading(true);
       setError(null);
 
-      // Check if Mercado Pago SDK is loaded
-      if (typeof window.MercadoPago === 'undefined') {
-        throw new Error('Mercado Pago SDK not loaded');
-      }
+      console.log('Creating preference via server function...');
 
-      // Initialize Mercado Pago
-      const mp = new window.MercadoPago('APP_USR-7d650b90-6d99-4793-bd43-9412f0f8934e', {
-        locale: 'es-MX'
-      });
-
-      // Create preference
-      const preference = {
-        items: items.map(item => ({
-          id: item.id,
-          title: item.nombre,
-          quantity: item.quantity,
-          unit_price: item.precio,
-          currency_id: 'MXN'
-        })),
-        payer: {
-          name: customerInfo.name,
-          email: customerInfo.email,
-          phone: {
-            number: customerInfo.phone || ''
-          }
-        },
-        back_urls: {
-          success: `${window.location.origin}?payment=success&order_id=${orderId}`,
-          failure: `${window.location.origin}?payment=failure&order_id=${orderId}`,
-          pending: `${window.location.origin}?payment=pending&order_id=${orderId}`
-        },
-        auto_return: 'approved',
-        external_reference: orderId,
-        notification_url: `${window.location.origin}/.netlify/functions/webhook`
-      };
-
-      console.log('Creating preference:', preference);
-
-      // Create preference using Mercado Pago API
-      const response = await fetch('https://api.mercadopago.com/checkout/preferences', {
+      // Call our server-side function to create preference
+      const response = await fetch('/.netlify/functions/create-preference', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer APP_USR-8520472135455033-090422-22781c888d3434a7e0648e950e65792d-1225593098`
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(preference)
+        body: JSON.stringify({
+          items,
+          customerInfo,
+          orderId
+        })
       });
 
       if (!response.ok) {
@@ -89,32 +56,11 @@ const MercadoPagoCheckout = ({
         throw new Error(`Error creating preference: ${errorData.message || response.statusText}`);
       }
 
-      const preferenceData = await response.json();
-      console.log('Preference created:', preferenceData);
+      const { preferenceId, initPoint } = await response.json();
+      console.log('Preference created successfully:', { preferenceId, initPoint });
 
-      // Initialize checkout
-      const checkout = mp.checkout({
-        preference: {
-          id: preferenceData.id
-        },
-        render: {
-          container: '.mercadopago-checkout',
-          label: 'Pagar con Mercado Pago'
-        }
-      });
-
-      // Handle payment events
-      checkout.on('ready', () => {
-        console.log('Checkout ready');
-        setIsLoading(false);
-      });
-
-      checkout.on('error', (error) => {
-        console.error('Checkout error:', error);
-        setError('Error al procesar el pago. Por favor, inténtalo de nuevo.');
-        setIsLoading(false);
-        onError && onError(error);
-      });
+      // Redirect to Mercado Pago checkout
+      window.location.href = initPoint;
 
     } catch (error) {
       console.error('Error initializing payment:', error);

@@ -419,11 +419,17 @@ function App() {
           shippingAddress: shippingAddress
         });
         
+        // Clear cart
+        setCart([]);
+        
         alert('✅ ¡Pago confirmado! Tu orden ha sido procesada exitosamente.');
       } else if (status === 'failure') {
         // Payment failed - mark cart items as abandoned
         await markPaymentAsAbandoned(orderId);
         alert('❌ El pago no pudo ser procesado. Por favor, inténtalo de nuevo.');
+      } else if (status === 'pending') {
+        // Payment is pending
+        alert('⏳ Tu pago está siendo procesado. Te notificaremos cuando esté confirmado.');
       }
     } catch (error) {
       console.error('Error handling payment return:', error);
