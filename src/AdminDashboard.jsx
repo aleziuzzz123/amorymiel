@@ -513,18 +513,6 @@ const AdminDashboard = ({ user, onClose }) => {
     }
   };
 
-  const updateOrderStatus = async (orderId, newStatus) => {
-    try {
-      await updateDoc(doc(db, 'orders', orderId), {
-        status: newStatus,
-        updatedAt: new Date()
-      });
-      loadDashboardData(); // Refresh data
-    } catch (error) {
-      console.error('Error updating order status:', error);
-    }
-  };
-
   const deleteUser = async (userId) => {
     if (window.confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
       try {
