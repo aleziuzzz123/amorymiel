@@ -1334,7 +1334,7 @@ function App() {
       console.log('🔑 API Key loaded:', resendApiKey ? 'Yes' : 'No');
       
       const result = await resend.emails.send({
-        from: 'Amor y Miel <onboarding@resend.dev>',
+        from: 'onboarding@resend.dev',
         to: [userEmail],
         subject: '¿Olvidaste algo en tu carrito? 🛒',
         html: htmlContent
