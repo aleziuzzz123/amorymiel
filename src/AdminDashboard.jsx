@@ -746,9 +746,55 @@ const AdminDashboard = ({ user, onClose }) => {
     }
   };
 
+  // Test cart items access
+  const testCartItemsAccess = async () => {
+    try {
+      console.log('Testing cart items access...');
+      const { collection, query, getDocs, addDoc, deleteDoc, doc } = await import('firebase/firestore');
+      
+      // Test 1: Try to read from cart_items collection
+      console.log('Test 1: Reading from cart_items collection...');
+      const cartItemsQuery = query(collection(db, 'cart_items'));
+      const cartItemsSnapshot = await getDocs(cartItemsQuery);
+      console.log('✅ Successfully read cart_items collection. Found', cartItemsSnapshot.docs.length, 'documents');
+      
+      // Test 2: Try to create a test document
+      console.log('Test 2: Creating test document...');
+      const testDoc = await addDoc(collection(db, 'cart_items'), {
+        test: true,
+        timestamp: new Date(),
+        userId: 'test-admin',
+        status: 'test'
+      });
+      console.log('✅ Successfully created test document with ID:', testDoc.id);
+      
+      // Test 3: Try to read the test document
+      console.log('Test 3: Reading test document...');
+      const testDocSnap = await getDocs(query(collection(db, 'cart_items')));
+      console.log('✅ Successfully read test document. Total documents:', testDocSnap.docs.length);
+      
+      // Test 4: Try to delete the test document
+      console.log('Test 4: Deleting test document...');
+      await deleteDoc(doc(db, 'cart_items', testDoc.id));
+      console.log('✅ Successfully deleted test document');
+      
+      alert('✅ All tests passed!\n\nCart items access is working correctly.\n\nCheck console for detailed logs.');
+      
+    } catch (error) {
+      console.error('❌ Test failed:', error);
+      console.error('Error details:', {
+        code: error.code,
+        message: error.message,
+        stack: error.stack
+      });
+      alert('❌ Test failed: ' + error.message + '\n\nCheck console for details.');
+    }
+  };
+
   // Create test cart items for demonstration
   const createTestCartItems = async () => {
     try {
+      console.log('Creating test cart items...');
       const { collection, addDoc } = await import('firebase/firestore');
       
       const testCartItems = [
@@ -798,18 +844,26 @@ const AdminDashboard = ({ user, onClose }) => {
         }
       ];
 
+      console.log('Test cart items to create:', testCartItems);
+
       for (const cartItem of testCartItems) {
-        await addDoc(collection(db, 'cart_items'), cartItem);
-        console.log('Test cart item created:', cartItem);
+        const docRef = await addDoc(collection(db, 'cart_items'), cartItem);
+        console.log('Test cart item created successfully! Doc ID:', docRef.id, 'Data:', cartItem);
       }
 
       alert('✅ Datos de prueba creados exitosamente!\n\nSe crearon 4 elementos de carrito de prueba:\n- 3 carritos abandonados (más de 24h)\n- 1 carrito convertido (comprado)\n\nAhora puedes probar el sistema de seguimiento de carritos abandonados.');
       
       // Reload the dashboard data
+      console.log('Reloading dashboard data...');
       loadDashboardData();
       
     } catch (error) {
       console.error('Error creating test cart items:', error);
+      console.error('Error details:', {
+        code: error.code,
+        message: error.message,
+        stack: error.stack
+      });
       alert('Error creando datos de prueba: ' + error.message);
     }
   };
@@ -1445,6 +1499,21 @@ const AdminDashboard = ({ user, onClose }) => {
             <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h2 style={{ color: '#D4A574', margin: 0 }}>Carritos Abandonados</h2>
               <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <button
+                  onClick={testCartItemsAccess}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    background: '#007bff',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    fontWeight: '600'
+                  }}
+                >
+                  🔍 Test Access
+                </button>
                 <button
                   onClick={sendFollowUpToAllAbandoned}
                   style={{
