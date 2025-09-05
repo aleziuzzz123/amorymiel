@@ -1314,21 +1314,35 @@ function App() {
       
       console.log('🚀🚀🚀 FORCE DEPLOYMENT - NEW CODE IS HERE - Attempting to send email via Resend API directly...');
       
-      // Use CORS proxy to bypass browser restrictions
-      const response = await fetch('https://cors-anywhere.herokuapp.com/https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer re_T8PmbfXN_PKf26mPZa8MY1sBmJd52nYJE',
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify({
-          from: 'Amor y Miel <noreply@amorymiel.com>',
-          to: [userEmail],
-          subject: '¿Olvidaste algo en tu carrito? 🛒',
-          html: htmlContent
-        })
-      });
+      // Try direct API call first (might work in some browsers)
+      let response;
+      try {
+        response = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer re_T8PmbfXN_PKf26mPZa8MY1sBmJd52nYJE',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: 'Amor y Miel <noreply@amorymiel.com>',
+            to: [userEmail],
+            subject: '¿Olvidaste algo en tu carrito? 🛒',
+            html: htmlContent
+          })
+        });
+      } catch (corsError) {
+        console.log('❌ Direct API call failed due to CORS, trying alternative approach...');
+        // Fallback: Use a simple form submission approach
+        const formData = new FormData();
+        formData.append('to', userEmail);
+        formData.append('subject', '¿Olvidaste algo en tu carrito? 🛒');
+        formData.append('html', htmlContent);
+        
+        response = await fetch('/api/send-email', {
+          method: 'POST',
+          body: formData
+        });
+      }
       
       const result = await response.json();
       
