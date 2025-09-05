@@ -342,6 +342,7 @@ const AdminDashboard = ({ user, onClose }) => {
       setProducts(productsWithDetails);
 
       // Load cart items for abandonment tracking
+      console.log('Loading cart items...');
       const cartItemsQuery = query(collection(db, 'cart_items'), orderBy('addedAt', 'desc'));
       const cartItemsSnapshot = await getDocs(cartItemsQuery);
       const cartItemsData = cartItemsSnapshot.docs.map(doc => ({
@@ -350,6 +351,19 @@ const AdminDashboard = ({ user, onClose }) => {
       }));
       setCartItems(cartItemsData);
       console.log('Cart items loaded:', cartItemsData.length);
+      console.log('Cart items data:', cartItemsData);
+      
+      // Debug: Check if cart items are being filtered correctly
+      const inCartItems = cartItemsData.filter(item => item.status === 'in_cart');
+      const abandonedItems = cartItemsData.filter(item => {
+        const hoursSinceAdded = (new Date() - new Date(item.addedAt)) / (1000 * 60 * 60);
+        return item.status === 'in_cart' && hoursSinceAdded > 24;
+      });
+      const purchasedItems = cartItemsData.filter(item => item.status === 'purchased');
+      
+      console.log('In cart items:', inCartItems.length);
+      console.log('Abandoned items (24h+):', abandonedItems.length);
+      console.log('Purchased items:', purchasedItems.length);
 
       // Calculate stats
       console.log('Calculating stats...');

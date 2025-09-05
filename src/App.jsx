@@ -663,7 +663,13 @@ function App() {
   // Track cart addition for abandonment follow-up
   const trackCartAddition = async (product) => {
     try {
-      if (!user || !user.uid) return;
+      if (!user || !user.uid) {
+        console.log('No user or UID, skipping cart tracking');
+        return;
+      }
+
+      console.log('Tracking cart addition for product:', product.nombre);
+      console.log('User:', user.email, 'UID:', user.uid);
 
       const cartItem = {
         userId: user.uid,
@@ -677,13 +683,21 @@ function App() {
         status: 'in_cart' // in_cart, abandoned, purchased
       };
 
+      console.log('Cart item to save:', cartItem);
+
       // Save to Firestore cart_items collection
       const { collection, addDoc } = await import('firebase/firestore');
-      await addDoc(collection(db, 'cart_items'), cartItem);
+      const docRef = await addDoc(collection(db, 'cart_items'), cartItem);
       
-      console.log('Cart addition tracked:', cartItem);
+      console.log('Cart addition tracked successfully! Doc ID:', docRef.id);
+      console.log('Cart item saved:', cartItem);
     } catch (error) {
       console.error('Error tracking cart addition:', error);
+      console.error('Error details:', {
+        code: error.code,
+        message: error.message,
+        stack: error.stack
+      });
     }
   };
 
