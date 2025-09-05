@@ -1180,10 +1180,12 @@ function App() {
     try {
       if (!user || user.email !== 'admin@amorymiel.com') return;
       
+      console.log('Ensuring admin permissions for:', user.email, user.uid);
+      
       const { doc, setDoc } = await import('firebase/firestore');
       const adminDocRef = doc(db, 'users', user.uid);
       
-      await setDoc(adminDocRef, {
+      const adminData = {
         uid: user.uid,
         email: user.email,
         name: 'Administrador',
@@ -1191,11 +1193,26 @@ function App() {
         role: 'admin',
         createdAt: new Date(),
         updatedAt: new Date()
-      }, { merge: true });
+      };
       
-      console.log('Admin permissions ensured in Firestore');
+      console.log('Setting admin data:', adminData);
+      
+      await setDoc(adminDocRef, adminData, { merge: true });
+      
+      console.log('✅ Admin permissions ensured in Firestore');
+      
+      // Force reload dashboard data
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+      
     } catch (error) {
-      console.error('Error ensuring admin permissions:', error);
+      console.error('❌ Error ensuring admin permissions:', error);
+      console.error('Error details:', {
+        code: error.code,
+        message: error.message,
+        stack: error.stack
+      });
     }
   };
 
@@ -5513,9 +5530,29 @@ function App() {
         {/* Admin Dashboard */}
         {showAdminDashboard && (
           <AdminDashboard 
-            user={user} 
-            onClose={() => setShowAdminDashboard(false)} 
+            user={user}
+            onClose={() => setShowAdminDashboard(false)}
           />
+        )}
+
+        {/* Manual Admin Setup Button - Only show if admin but no data */}
+        {isAdmin && user && user.email === 'admin@amorymiel.com' && (
+          <div style={{
+            position: 'fixed',
+            top: '10px',
+            right: '10px',
+            zIndex: 9999,
+            background: '#ff6b6b',
+            color: 'white',
+            padding: '10px',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            fontSize: '12px'
+          }}
+          onClick={ensureAdminPermissions}
+          >
+            🔧 Setup Admin Data
+          </div>
         )}
     </div>
   );
