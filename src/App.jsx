@@ -5488,7 +5488,15 @@ function App() {
                 <div style={{ display: "flex", gap: "1rem" }}>
                   <button
                     type="button"
-                    onClick={() => setShowShippingModal(false)}
+                    onClick={async () => {
+                      setShowShippingModal(false);
+                      // Trigger cart abandonment email when user cancels
+                      if (cart.length > 0) {
+                        const orderId = `abandoned_${Date.now()}`;
+                        console.log('🚫 User cancelled payment - triggering cart abandonment');
+                        await markPaymentAsAbandoned(orderId);
+                      }
+                    }}
                     style={{
                       flex: 1,
                       padding: "0.75rem",
@@ -5576,7 +5584,15 @@ function App() {
                   💳 Pago Seguro con Mercado Pago
                 </h2>
                 <button
-                  onClick={() => setShowCheckout(false)}
+                  onClick={async () => {
+                    setShowCheckout(false);
+                    // Trigger cart abandonment email when user closes payment modal
+                    if (cart.length > 0) {
+                      const orderId = `abandoned_${Date.now()}`;
+                      console.log('🚫 User closed payment modal - triggering cart abandonment');
+                      await markPaymentAsAbandoned(orderId);
+                    }
+                  }}
                   style={{
                     background: "none",
                     border: "none",
