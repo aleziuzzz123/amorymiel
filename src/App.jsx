@@ -1043,11 +1043,113 @@ function App() {
     };
 
     try {
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Contact Us - Amor y Miel</title>
+        </head>
+        <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f9fa;">
+            <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+                <!-- Header -->
+                <div style="background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); padding: 30px 20px; text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 10px;">🍯</div>
+                    <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: bold;">Amor y Miel</h1>
+                    <h2 style="color: #ffffff; margin: 10px 0 0 0; font-size: 20px; font-weight: normal;">Nuevo Mensaje de Contacto</h2>
+                </div>
+
+                <!-- Main Content -->
+                <div style="padding: 30px 20px;">
+                    <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                        ¡Hola! 👋
+                    </p>
+                    
+                    <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                        Has recibido un nuevo mensaje a través del formulario de contacto de tu sitio web.
+                    </p>
+
+                    <!-- Contact Details -->
+                    <div style="background-color: #f8f9fa; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                        <h3 style="color: #333333; margin: 0 0 15px 0; font-size: 18px;">📋 Detalles del Contacto</h3>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong style="color: #d4a574; font-size: 14px;">👤 NOMBRE:</strong>
+                            <p style="color: #333333; font-size: 16px; margin: 5px 0 0 0; font-weight: 500;">${templateParams.name}</p>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong style="color: #d4a574; font-size: 14px;">📧 EMAIL:</strong>
+                            <p style="color: #333333; font-size: 16px; margin: 5px 0 0 0;">
+                                <a href="mailto:${templateParams.email}" style="color: #d4a574; text-decoration: none;">${templateParams.email}</a>
+                            </p>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong style="color: #d4a574; font-size: 14px;">📅 FECHA:</strong>
+                            <p style="color: #333333; font-size: 16px; margin: 5px 0 0 0;">${new Date().toLocaleString('es-MX')}</p>
+                        </div>
+                    </div>
+
+                    <!-- Message Content -->
+                    <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%); border: 2px solid #4CAF50; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                        <h3 style="color: #2e7d32; margin: 0 0 15px 0; font-size: 18px;">💬 MENSAJE</h3>
+                        <div style="background-color: #ffffff; border-radius: 6px; padding: 15px; border-left: 4px solid #4CAF50;">
+                            <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0; white-space: pre-wrap;">${templateParams.message}</p>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div style="background-color: #f8f9fa; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                        <h3 style="color: #333333; margin: 0 0 15px 0; font-size: 18px;">⚡ Acciones Rápidas</h3>
+                        
+                        <div style="text-align: center; margin: 20px 0;">
+                            <a href="mailto:${templateParams.email}?subject=Re: Tu consulta en Amor y Miel&body=Hola ${templateParams.name},%0D%0A%0D%0AGracias por contactarnos.%0D%0A%0D%0A" 
+                               style="display: inline-block; background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); color: #ffffff; text-decoration: none; padding: 12px 25px; border-radius: 25px; font-size: 14px; font-weight: bold; margin: 5px; box-shadow: 0 4px 8px rgba(212, 165, 116, 0.3);">
+                                📧 Responder por Email
+                            </a>
+                        </div>
+                        
+                        <div style="text-align: center; margin: 20px 0;">
+                            <a href="https://wa.me/529991320209?text=Hola%20${templateParams.name},%20vi%20tu%20mensaje%20en%20nuestro%20sitio%20web" 
+                               style="display: inline-block; background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); color: #ffffff; text-decoration: none; padding: 12px 25px; border-radius: 25px; font-size: 14px; font-weight: bold; margin: 5px; box-shadow: 0 4px 8px rgba(37, 211, 102, 0.3);">
+                                💬 Responder por WhatsApp
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Footer Info -->
+                    <div style="background-color: #f8f9fa; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
+                        <p style="color: #666666; font-size: 14px; margin: 0 0 10px 0;">
+                            <strong>💡 Tip:</strong> Responde dentro de las primeras 24 horas para una mejor experiencia del cliente
+                        </p>
+                        <p style="color: #999999; font-size: 12px; margin: 0;">
+                            Este mensaje fue enviado desde el formulario de contacto de tu sitio web
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div style="background-color: #f8f9fa; padding: 20px; text-align: center; border-top: 1px solid #e9ecef;">
+                    <p style="color: #666666; font-size: 12px; margin: 0 0 10px 0;">
+                        Amor y Miel - Productos artesanales de miel
+                    </p>
+                    <p style="color: #999999; font-size: 11px; margin: 0;">
+                        <a href="https://amorymiel.com" style="color: #d4a574; text-decoration: none;">Visitar Sitio Web</a> | 
+                        <a href="https://amorymiel.com/contacto" style="color: #d4a574; text-decoration: none;">Contacto</a>
+                    </p>
+                </div>
+            </div>
+        </body>
+        </html>
+      `;
+      
       await resend.emails.send({
         from: 'Amor y Miel <onboarding@resend.dev>',
-        to: 'jacintohand23@gmail.com',
-        subject: `New contact form message from ${templateParams.name}`,
-        html: `<h2>New Contact Form Message</h2><p><strong>Name:</strong> ${templateParams.name}</p><p><strong>Email:</strong> ${templateParams.email}</p><p><strong>Message:</strong> ${templateParams.message}</p>`
+        to: 'info@amorymiel.com',
+        subject: `Nuevo mensaje de contacto de ${templateParams.name}`,
+        html: htmlContent
       });
       
       setSubmitMessage("¡Mensaje enviado exitosamente! Te contactaremos pronto.");
@@ -1079,7 +1181,7 @@ function App() {
     try {
       await resend.emails.send({
         from: 'Amor y Miel <onboarding@resend.dev>',
-        to: 'jacintohand23@gmail.com',
+        to: 'info@amorymiel.com',
         subject: `New newsletter subscriber: ${email}`,
         html: `<h2>New Newsletter Subscriber</h2><p><strong>Email:</strong> ${email}</p>`
       });
