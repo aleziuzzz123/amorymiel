@@ -21,6 +21,7 @@ import {
 } from 'firebase/firestore';
 import { auth, db } from './firebase';
 import AdminDashboard from './AdminDashboard';
+import MercadoPagoCheckout from './components/MercadoPagoCheckout';
 
 // Color palette matching the image
 const PALETAS = { 
@@ -637,6 +638,7 @@ function App() {
   const [trackingEmail, setTrackingEmail] = useState('');
   const [trackedOrder, setTrackedOrder] = useState(null);
   const [trackingError, setTrackingError] = useState('');
+  const [showCheckout, setShowCheckout] = useState(false);
 
   // EmailJS configuration
   const EMAILJS_CONFIG = {
@@ -803,46 +805,24 @@ function App() {
 
   // Process payment after shipping info is collected
   const processPayment = async () => {
-    setIsLoading(true);
-    try {
-      console.log('Starting order creation process...');
-      console.log('User:', user);
-      console.log('Cart:', cart);
-      console.log('User profile:', userProfile);
-      console.log('Shipping address:', shippingAddress);
+    if (!user) {
+      alert('Por favor, inicia sesión para continuar con el pago');
+      return;
+    }
 
-    const total = getCartTotal();
-      const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
-      // Create return URLs for payment confirmation
-      const successUrl = `${window.location.origin}?payment=success&order_id=${orderId}`;
-      const failureUrl = `${window.location.origin}?payment=failure&order_id=${orderId}`;
-      
-      const mercadoPagoUrl = `https://link.mercadopago.com.mx/alexjego?amount=${total}&order_id=${orderId}&success_url=${encodeURIComponent(successUrl)}&failure_url=${encodeURIComponent(failureUrl)}&public_key=APP_USR-7d650b90-6d99-4793-bd43-9412f0f8934e`;
-      
-      // Mark all cart items as "payment_initiated" before redirecting
-      await markCartItemsAsPaymentInitiated();
-      
-      // Close shipping modal
+    if (cart.length === 0) {
+      alert('Tu carrito está vacío');
+      return;
+    }
+
+    try {
+      // Close shipping modal and show checkout
       setShowShippingModal(false);
-      
-      // Open payment window
-      const paymentWindow = window.open(mercadoPagoUrl, '_blank');
-      
-      // Set up abandonment tracking
-      setupPaymentAbandonmentTracking(paymentWindow, orderId);
-      
-      // Show success message
-      alert(`¡Redirigiendo a Mercado Pago para completar el pago!\n\nTotal: $${total}\n\nLa orden se creará automáticamente cuando el pago sea confirmado.`);
+      setShowCheckout(true);
       
     } catch (error) {
-      console.error('Error creating order:', error);
-      console.error('Error details:', error.message, error.code);
-      console.error('Error stack:', error.stack);
-      console.error('User state:', { user, userProfile, cart });
-      alert(`Error al crear la orden: ${error.message}\n\nCódigo de error: ${error.code || 'N/A'}\n\nPor favor, inténtalo de nuevo.`);
-    } finally {
-      setIsLoading(false);
+      console.error('Error processing payment:', error);
+      alert('Error al procesar el pago. Por favor, inténtalo de nuevo.');
     }
   };
 
@@ -4997,6 +4977,100 @@ function App() {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* Mercado Pago Checkout Modal */}
+        {showCheckout && (
+          <div style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0,0,0,0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000
+          }}>
+            <div style={{
+              background: "white",
+              borderRadius: "15px",
+              padding: "2rem",
+              maxWidth: "600px",
+              width: "90%",
+              maxHeight: "90vh",
+              overflow: "auto",
+              boxShadow: "0 20px 60px rgba(0,0,0,0.3)"
+            }}>
+              <div style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "1.5rem"
+              }}>
+                <h2 style={{
+                  color: PALETAS.D.miel,
+                  margin: 0,
+                  fontSize: "1.5rem",
+                  fontWeight: "bold"
+                }}>
+                  💳 Pago Seguro con Mercado Pago
+                </h2>
+                <button
+                  onClick={() => setShowCheckout(false)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    fontSize: "1.5rem",
+                    cursor: "pointer",
+                    color: "#666"
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+              
+              <MercadoPagoCheckout
+                amount={getCartTotal()}
+                orderId={`order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`}
+                items={cart}
+                customerInfo={{
+                  name: userProfile?.name || user?.email || 'Cliente',
+                  email: user?.email || 'no-email@example.com',
+                  phone: shippingAddress.phone || ''
+                }}
+                onSuccess={async (paymentData) => {
+                  console.log('Payment successful:', paymentData);
+                  try {
+                    // Create order
+                    await createOrder({
+                      id: paymentData.external_reference,
+                      shippingAddress: shippingAddress
+                    });
+                    
+                    // Clear cart
+                    setCart([]);
+                    
+                    // Close checkout
+                    setShowCheckout(false);
+                    
+                    alert('✅ ¡Pago confirmado! Tu orden ha sido procesada exitosamente.');
+                  } catch (error) {
+                    console.error('Error creating order after payment:', error);
+                    alert('Error al crear la orden. Por favor, contacta soporte.');
+                  }
+                }}
+                onError={(error) => {
+                  console.error('Payment error:', error);
+                  alert('Error al procesar el pago. Por favor, inténtalo de nuevo.');
+                }}
+                onCancel={() => {
+                  setShowCheckout(false);
+                }}
+              />
             </div>
           </div>
         )}
