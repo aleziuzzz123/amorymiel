@@ -709,7 +709,7 @@ function App() {
   // Migrate existing orders to cart_items (since they're not real purchases)
   const migrateOrdersToCartItems = async () => {
     try {
-      const { collection, query, getDocs, addDoc, deleteDoc, doc } = await import('firebase/firestore');
+      const { collection, query, getDocs, addDoc, deleteDoc, doc, setDoc, getDoc } = await import('firebase/firestore');
       
           // Debug: Check user authentication
     console.log('Current user:', user);
@@ -741,8 +741,32 @@ function App() {
         console.log('Admin can read users collection:', testSnapshot.docs.length, 'users found');
       } catch (testError) {
         console.error('Admin permission test failed:', testError);
-        alert(`Error de permisos de administrador: ${testError.message}`);
-        return;
+        console.error('Test error details:', {
+          code: testError.code,
+          message: testError.message,
+          stack: testError.stack
+        });
+        
+        // Try a different approach - create a simple document first
+        console.log('Trying to create a test document...');
+        try {
+          const testDoc = doc(db, 'test', 'admin-test');
+          await setDoc(testDoc, { test: true, timestamp: new Date().toISOString() });
+          console.log('✅ Successfully created test document');
+          
+          // Now try to read it
+          const testDocSnap = await getDoc(testDoc);
+          console.log('✅ Successfully read test document:', testDocSnap.exists());
+          
+          // Clean up
+          await deleteDoc(testDoc);
+          console.log('✅ Successfully deleted test document');
+          
+        } catch (testDocError) {
+          console.error('Test document creation failed:', testDocError);
+          alert(`Error de permisos de administrador: ${testError.message}\n\nDetalles: ${testError.code}`);
+          return;
+        }
       }
       
       // Get all existing orders
