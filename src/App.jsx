@@ -1294,17 +1294,6 @@ function App() {
                         </p>
                     </div>
 
-                    <!-- Special Offer -->
-                    <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%); border: 2px solid #4CAF50; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
-                        <h3 style="color: #2e7d32; margin: 0 0 10px 0; font-size: 18px;">🎉 ¡Oferta especial!</h3>
-                        <p style="color: #2e7d32; font-size: 16px; margin: 0 0 15px 0;">
-                            Usa el código <strong>RECUPERA10</strong> y obtén un <strong>10% de descuento</strong> en tu compra
-                        </p>
-                        <p style="color: #666666; font-size: 14px; margin: 0;">
-                            Válido por 24 horas
-                        </p>
-                    </div>
-
                     <!-- CTA Button -->
                     <div style="text-align: center; margin: 30px 0;">
                         <a href="https://amorymiel.com" style="display: inline-block; background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); color: #ffffff; text-decoration: none; padding: 15px 30px; border-radius: 25px; font-size: 16px; font-weight: bold; box-shadow: 0 4px 8px rgba(212, 165, 116, 0.3);">
@@ -1321,9 +1310,6 @@ function App() {
                 <div style="background-color: #f8f9fa; padding: 20px; text-align: center; border-top: 1px solid #e9ecef;">
                     <p style="color: #666666; font-size: 12px; margin: 0 0 10px 0;">
                         Amor y Miel - Productos artesanales de miel
-                    </p>
-                    <p style="color: #999999; font-size: 11px; margin: 0;">
-                        Si no deseas recibir estos emails, puedes <a href="#" style="color: #d4a574;">cancelar la suscripción</a>
                     </p>
                 </div>
             </div>
