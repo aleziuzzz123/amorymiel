@@ -904,6 +904,9 @@ function App() {
     }
 
     try {
+      // Mark cart items as payment initiated
+      await markCartItemsAsPaymentInitiated();
+      
       // Close shipping modal and show checkout
       setShowShippingModal(false);
       setShowCheckout(true);
