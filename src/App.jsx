@@ -2092,9 +2092,9 @@ function App() {
                 boxShadow: "0 8px 32px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04)",
                 border: `2px solid ${PALETAS.D.crema}`,
                 borderTop: `4px solid ${PALETAS.D.miel}`,
+                position: "relative",
                 transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
                 cursor: "pointer",
-                position: "relative",
                 backdropFilter: "blur(10px)"
               }}
               onMouseEnter={(e) => {
@@ -2204,9 +2204,10 @@ function App() {
                   <div style={{ 
                     display: "flex", 
                     flexDirection: window.innerWidth <= 768 ? "column" : "row",
-                    gap: window.innerWidth <= 768 ? "0.5rem" : "0.6rem",
+                    gap: window.innerWidth <= 768 ? "0.5rem" : "0.8rem",
                     alignItems: "stretch",
-                    marginTop: "auto"
+                    marginTop: "auto",
+                    marginBottom: "0.5rem"
                   }}>
                     {/* Ver más Button */}
                     <button
@@ -2307,12 +2308,12 @@ function App() {
                     </button>
               </div>
                   
-                  {/* Stock Status - Positioned in bottom right corner */}
+                  {/* Stock Status - Positioned absolutely in bottom right corner */}
                   <div style={{ 
-                    marginTop: "0.75rem",
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    alignItems: "center"
+                    position: "absolute",
+                    bottom: "0.5rem",
+                    right: "0.5rem",
+                    zIndex: 10
                   }}>
                     {(() => {
                       const currentStock = product.stock || 0;
@@ -2509,9 +2510,9 @@ function App() {
                   boxShadow: "0 8px 32px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04)",
                   border: `2px solid ${PALETAS.D.crema}`,
                   borderTop: `4px solid #ffd54f`,
+                  position: "relative",
                   transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-                  cursor: "pointer",
-                  position: "relative"
+                  cursor: "pointer"
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = "translateY(-8px)";
