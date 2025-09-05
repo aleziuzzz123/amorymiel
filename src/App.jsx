@@ -1277,7 +1277,7 @@ function App() {
                 <!-- Main Content -->
                 <div style="padding: 30px 20px;">
                     <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-                        ¡Hola ${userName}! 👋
+                        ¡Hola ` + userName + `! 👋
                     </p>
                     
                     <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
@@ -1288,9 +1288,9 @@ function App() {
                     <!-- Cart Items -->
                     <div style="background-color: #f8f9fa; border-radius: 8px; padding: 20px; margin: 20px 0;">
                         <h3 style="color: #333333; margin: 0 0 15px 0; font-size: 18px;">🛍️ Productos en tu carrito:</h3>
-                        <p style="color: #666666; font-size: 14px; margin: 0 0 10px 0;">${cartItemsText}</p>
+                        <p style="color: #666666; font-size: 14px; margin: 0 0 10px 0;">` + cartItemsText + `</p>
                         <p style="color: #333333; font-size: 16px; font-weight: bold; margin: 0;">
-                            Total: ${cartTotalFormatted}
+                            Total: ` + cartTotalFormatted + `
                         </p>
                     </div>
 
