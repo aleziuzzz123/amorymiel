@@ -316,15 +316,23 @@ function App() {
       }
 
       console.log('Loading products from Firestore...');
+      console.log('User authentication status:', user ? 'Logged in' : 'Not logged in');
+      console.log('Firebase db object:', db);
+      
       const { collection, query, getDocs } = await import('firebase/firestore');
       const productsQuery = query(collection(db, 'products'));
+      
+      console.log('About to call getDocs...');
       const productsSnapshot = await getDocs(productsQuery);
+      console.log('getDocs completed, snapshot:', productsSnapshot);
+      
       const allProducts = productsSnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
       
       console.log('All products loaded from Firestore:', allProducts.length);
+      console.log('Products data:', allProducts);
       
       // Remove duplicates by product name before categorizing
       const uniqueProducts = allProducts.reduce((acc, product) => {
@@ -386,8 +394,20 @@ function App() {
       setKidsServices(kidsServices);
     } catch (error) {
       console.error('Error loading products from Firestore:', error);
+      console.error('Error details:', {
+        code: error.code,
+        message: error.message,
+        stack: error.stack
+      });
+      
       // If Firestore fails, keep empty arrays
       console.log('Firestore failed, keeping empty arrays');
+      
+      // Set empty arrays to ensure UI doesn't break
+      setProducts([]);
+      setServices([]);
+      setKidsProducts([]);
+      setKidsServices([]);
     }
   };
 
