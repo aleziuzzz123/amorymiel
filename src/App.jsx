@@ -2307,11 +2307,11 @@ function App() {
                     </button>
               </div>
                   
-                  {/* Stock Status - Positioned below buttons */}
+                  {/* Stock Status - Positioned in bottom right corner */}
                   <div style={{ 
                     marginTop: "0.75rem",
                     display: "flex",
-                    justifyContent: "center",
+                    justifyContent: "flex-end",
                     alignItems: "center"
                   }}>
                     {(() => {
@@ -2325,15 +2325,16 @@ function App() {
                           <span style={{
                             background: "#f44336",
                             color: "white",
-                            padding: window.innerWidth <= 768 ? "0.3rem 0.6rem" : "0.25rem 0.5rem",
-                            borderRadius: "12px",
-                            fontSize: window.innerWidth <= 768 ? "0.75rem" : "0.7rem",
-                            fontWeight: "bold",
+                            padding: window.innerWidth <= 768 ? "0.2rem 0.4rem" : "0.15rem 0.4rem",
+                            borderRadius: "8px",
+                            fontSize: window.innerWidth <= 768 ? "0.65rem" : "0.6rem",
+                            fontWeight: "600",
                             display: "inline-flex",
                             alignItems: "center",
-                            gap: "0.25rem",
+                            gap: "0.2rem",
                             whiteSpace: "nowrap",
-                            minWidth: "fit-content"
+                            minWidth: "fit-content",
+                            boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
                           }}>
                             ❌ Sin Stock
                           </span>
@@ -2343,15 +2344,16 @@ function App() {
                           <span style={{
                             background: "#FF9800",
                             color: "white",
-                            padding: window.innerWidth <= 768 ? "0.3rem 0.6rem" : "0.25rem 0.5rem",
-                            borderRadius: "12px",
-                            fontSize: window.innerWidth <= 768 ? "0.75rem" : "0.7rem",
-                            fontWeight: "bold",
+                            padding: window.innerWidth <= 768 ? "0.2rem 0.4rem" : "0.15rem 0.4rem",
+                            borderRadius: "8px",
+                            fontSize: window.innerWidth <= 768 ? "0.65rem" : "0.6rem",
+                            fontWeight: "600",
                             display: "inline-flex",
                             alignItems: "center",
-                            gap: "0.25rem",
+                            gap: "0.2rem",
                             whiteSpace: "nowrap",
-                            minWidth: "fit-content"
+                            minWidth: "fit-content",
+                            boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
                           }}>
                             ⚠️ Solo {currentStock} disponibles
                           </span>
@@ -2361,15 +2363,16 @@ function App() {
                           <span style={{
                             background: "#4CAF50",
                             color: "white",
-                            padding: window.innerWidth <= 768 ? "0.3rem 0.6rem" : "0.25rem 0.5rem",
-                            borderRadius: "12px",
-                            fontSize: window.innerWidth <= 768 ? "0.75rem" : "0.7rem",
-                            fontWeight: "bold",
+                            padding: window.innerWidth <= 768 ? "0.2rem 0.4rem" : "0.15rem 0.4rem",
+                            borderRadius: "8px",
+                            fontSize: window.innerWidth <= 768 ? "0.65rem" : "0.6rem",
+                            fontWeight: "600",
                             display: "inline-flex",
                             alignItems: "center",
-                            gap: "0.25rem",
+                            gap: "0.2rem",
                             whiteSpace: "nowrap",
-                            minWidth: "fit-content"
+                            minWidth: "fit-content",
+                            boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
                           }}>
                             ✅ En Stock ({currentStock})
                           </span>
