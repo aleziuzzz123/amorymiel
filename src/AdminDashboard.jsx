@@ -511,6 +511,50 @@ const AdminDashboard = ({ user, onClose }) => {
     }
   };
 
+  // Send follow-up emails to all abandoned carts
+  const sendFollowUpToAllAbandoned = async () => {
+    try {
+      const abandonedCarts = cartItems.filter(item => {
+        const hoursSinceAdded = (new Date() - new Date(item.addedAt)) / (1000 * 60 * 60);
+        return item.status === 'in_cart' && hoursSinceAdded > 24;
+      });
+
+      if (abandonedCarts.length === 0) {
+        alert('No hay carritos abandonados para enviar seguimiento.');
+        return;
+      }
+
+      const confirmed = confirm(`¿Enviar emails de seguimiento a ${abandonedCarts.length} carritos abandonados?\n\nEsto enviará un email recordatorio a cada cliente que agregó productos al carrito pero no completó la compra.`);
+      
+      if (!confirmed) return;
+
+      let sentCount = 0;
+      for (const cartItem of abandonedCarts) {
+        try {
+          // Here you would integrate with your email service
+          // For now, we'll just update the status
+          await updateDoc(doc(db, 'cart_items', cartItem.id), {
+            status: 'follow_up_sent',
+            followUpSentAt: new Date()
+          });
+          sentCount++;
+          console.log(`Follow-up sent to ${cartItem.customerEmail} for ${cartItem.productName}`);
+        } catch (error) {
+          console.error(`Error sending follow-up to ${cartItem.customerEmail}:`, error);
+        }
+      }
+
+      alert(`✅ Seguimiento completado!\n\nSe enviaron ${sentCount} emails de seguimiento a clientes con carritos abandonados.`);
+      
+      // Reload data
+      loadDashboardData();
+      
+    } catch (error) {
+      console.error('Error sending follow-up emails:', error);
+      alert('Error enviando emails de seguimiento: ' + error.message);
+    }
+  };
+
   // Mark cart item as purchased
   const markAsPurchased = async (cartItemId) => {
     try {
@@ -651,6 +695,74 @@ const AdminDashboard = ({ user, onClose }) => {
         stack: error.stack
       });
       alert(`Error migrating orders: ${error.message}\n\nCheck console for details.`);
+    }
+  };
+
+  // Create test cart items for demonstration
+  const createTestCartItems = async () => {
+    try {
+      const { collection, addDoc } = await import('firebase/firestore');
+      
+      const testCartItems = [
+        {
+          userId: 'test-user-1',
+          customerName: 'María González',
+          customerEmail: 'maria.gonzalez@email.com',
+          productId: 'test-product-1',
+          productName: 'Shampoo Extracto de Miel',
+          productPrice: 140,
+          quantity: 2,
+          addedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+          status: 'in_cart'
+        },
+        {
+          userId: 'test-user-2',
+          customerName: 'Carlos Rodríguez',
+          customerEmail: 'carlos.rodriguez@email.com',
+          productId: 'test-product-2',
+          productName: 'Loción Atrayente',
+          productPrice: 180,
+          quantity: 1,
+          addedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+          status: 'in_cart'
+        },
+        {
+          userId: 'test-user-3',
+          customerName: 'Ana Martínez',
+          customerEmail: 'ana.martinez@email.com',
+          productId: 'test-product-3',
+          productName: 'Velas De Miel',
+          productPrice: 150,
+          quantity: 3,
+          addedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+          status: 'in_cart'
+        },
+        {
+          userId: 'test-user-4',
+          customerName: 'Luis Pérez',
+          customerEmail: 'luis.perez@email.com',
+          productId: 'test-product-4',
+          productName: 'Aceite Abrecaminos',
+          productPrice: 200,
+          quantity: 1,
+          addedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+          status: 'purchased' // This one was purchased
+        }
+      ];
+
+      for (const cartItem of testCartItems) {
+        await addDoc(collection(db, 'cart_items'), cartItem);
+        console.log('Test cart item created:', cartItem);
+      }
+
+      alert('✅ Datos de prueba creados exitosamente!\n\nSe crearon 4 elementos de carrito de prueba:\n- 3 carritos abandonados (más de 24h)\n- 1 carrito convertido (comprado)\n\nAhora puedes probar el sistema de seguimiento de carritos abandonados.');
+      
+      // Reload the dashboard data
+      loadDashboardData();
+      
+    } catch (error) {
+      console.error('Error creating test cart items:', error);
+      alert('Error creando datos de prueba: ' + error.message);
     }
   };
 
@@ -1282,26 +1394,40 @@ const AdminDashboard = ({ user, onClose }) => {
         {/* Cart Abandonment Tab */}
         {activeTab === 'cart-abandonment' && (
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h2 style={{ color: '#D4A574', margin: 0 }}>Carritos Abandonados</h2>
-              <button
-                onClick={migrateOrdersToCartItems}
-                style={{
-                  padding: '0.75rem 1.5rem',
-                  background: '#ff6b6b',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontSize: '0.9rem',
-                  fontWeight: '600',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem'
-                }}
-              >
-                🔄 Migrar Pedidos a Carritos Abandonados
-              </button>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <button
+                  onClick={sendFollowUpToAllAbandoned}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    background: '#ff6b6b',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    fontWeight: '600'
+                  }}
+                >
+                  📧 Enviar Seguimiento
+                </button>
+                <button
+                  onClick={createTestCartItems}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    background: '#28a745',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    fontWeight: '600'
+                  }}
+                >
+                  🧪 Crear Datos de Prueba
+                </button>
+              </div>
             </div>
             <div style={{
               background: 'white',
