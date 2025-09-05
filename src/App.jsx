@@ -5517,8 +5517,8 @@ function App() {
           />
         )}
 
-        {/* Manual Admin Setup Button - Only show if admin but no data */}
-        {isAdmin && user && user.email === 'admin@amorymiel.com' && (
+        {/* Manual Admin Setup Button - Always show for admin */}
+        {user && user.email === 'admin@amorymiel.com' && (
           <div style={{
             position: 'fixed',
             top: '10px',
@@ -5526,10 +5526,12 @@ function App() {
             zIndex: 9999,
             background: '#ff6b6b',
             color: 'white',
-            padding: '10px',
-            borderRadius: '5px',
+            padding: '15px',
+            borderRadius: '8px',
             cursor: 'pointer',
-            fontSize: '12px'
+            fontSize: '14px',
+            fontWeight: 'bold',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
           }}
           onClick={ensureAdminPermissions}
           >
