@@ -1101,16 +1101,17 @@ function App() {
         const isAdminUser = user.email === 'admin@amorymiel.com';
         
         if (isAdminUser) {
-          // For admin users, ensure permissions are set
+          // For admin users, set admin status and ensure permissions
+          setIsAdmin(true);
           await ensureAdminPermissions();
         } else {
           // For regular users, load profile from Firestore
-          const userDoc = await getDoc(doc(db, 'users', user.uid));
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
-            setUserProfile(userData);
-            setWishlist(userData.wishlist || []);
-            setOrderHistory(userData.orderHistory || []);
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setUserProfile(userData);
+          setWishlist(userData.wishlist || []);
+          setOrderHistory(userData.orderHistory || []);
             setIsAdmin(userData.isAdmin === true);
           }
         }
@@ -1525,24 +1526,6 @@ function App() {
                   </button>
                 )}
 
-                {/* Create Admin Account Button (for debugging) */}
-                {!isAdmin && (
-                  <button
-                    onClick={createAdminAccount}
-                  style={{
-                    background: "transparent",
-                    color: PALETAS.D.miel,
-                      border: `2px solid ${PALETAS.D.miel}`,
-                    padding: "0.5rem 1rem",
-                    borderRadius: "20px",
-                      cursor: "pointer",
-                    fontSize: "0.9rem",
-                      fontWeight: "bold"
-                    }}
-                  >
-                    🔧 Create Admin
-                  </button>
-                )}
 
                 {/* Order Tracking Button */}
                 <button
