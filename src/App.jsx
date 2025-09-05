@@ -1037,6 +1037,23 @@ function App() {
         console.log('Cart item marked as abandoned:', cartItemDoc.id);
       }
       
+      // If no items found in Firestore, use current cart items (for immediate abandonment)
+      if (abandonedCartItems.length === 0 && cart.length > 0) {
+        console.log('🛒 No Firestore items found, using current cart items');
+        for (const cartItem of cart) {
+          const cartItemData = {
+            productName: cartItem.nombre || cartItem.name,
+            productPrice: cartItem.precio || cartItem.price,
+            quantity: cartItem.quantity || 1,
+            customerName: userProfile?.name || user.email || 'Cliente',
+            customerEmail: user.email
+          };
+          abandonedCartItems.push(cartItemData);
+          cartTotal += cartItemData.productPrice * cartItemData.quantity;
+        }
+        console.log('🛒 Using current cart items:', abandonedCartItems);
+      }
+      
       console.log('📧 Total abandoned items:', abandonedCartItems.length);
       console.log('💰 Cart total:', cartTotal);
       
