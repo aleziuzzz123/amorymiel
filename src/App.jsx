@@ -1649,24 +1649,25 @@ function App() {
                     cursor: "pointer",
               padding: window.innerWidth <= 768 ? "0.4rem 0.6rem" : "0.5rem 0.8rem",
               borderRadius: "8px",
-                  background: "transparent", 
-              border: `1px solid ${PALETAS.D.crema}`,
-              transition: "all 0.3s ease"
+                  background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`, 
+              border: "none",
+              transition: "all 0.3s ease",
+              boxShadow: "0 2px 8px rgba(224, 167, 58, 0.3)"
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = PALETAS.D.crema;
-              e.currentTarget.style.borderColor = PALETAS.D.miel;
+              e.currentTarget.style.transform = "translateY(-2px)";
+              e.currentTarget.style.boxShadow = "0 4px 12px rgba(224, 167, 58, 0.4)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "transparent";
-              e.currentTarget.style.borderColor = PALETAS.D.crema;
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "0 2px 8px rgba(224, 167, 58, 0.3)";
             }}
             >
               <span style={{ fontSize: "20px" }}>🛍️</span>
               <span style={{
-                  color: PALETAS.D.carbon, 
+                  color: "white", 
                 fontSize: window.innerWidth <= 768 ? "0.8rem" : "0.9rem",
-                  fontWeight: "500"
+                  fontWeight: "600"
               }}>
                 {user ? `Carrito (${cart.length})` : 'Inicia sesión para comprar'}
               </span>
@@ -5528,61 +5529,6 @@ function App() {
           />
         )}
 
-        {/* Manual Admin Setup Button - Always show for admin */}
-        {user && user.email === 'admin@amorymiel.com' && (
-          <div style={{
-            position: 'fixed',
-            top: '10px',
-            right: '10px',
-            zIndex: 9999,
-            background: '#ff6b6b',
-            color: 'white',
-            padding: '15px',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontSize: '14px',
-            fontWeight: 'bold',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
-          }}
-          onClick={async () => {
-            try {
-              console.log('🔧 Setup Admin Data button clicked');
-              console.log('User:', user);
-              console.log('DB:', db);
-              
-              const { doc, setDoc } = await import('firebase/firestore');
-              const adminDocRef = doc(db, 'users', user.uid);
-              
-              const adminData = {
-                uid: user.uid,
-                email: user.email,
-                name: 'Administrador',
-                isAdmin: true,
-                role: 'admin',
-                createdAt: new Date(),
-                updatedAt: new Date()
-              };
-              
-              console.log('Setting admin data:', adminData);
-              
-              await setDoc(adminDocRef, adminData, { merge: true });
-              
-              console.log('✅ Admin permissions ensured in Firestore');
-              alert('✅ Admin user created successfully! Reloading page...');
-              
-              setTimeout(() => {
-                window.location.reload();
-              }, 1000);
-              
-            } catch (error) {
-              console.error('❌ Error ensuring admin permissions:', error);
-              alert('❌ Error: ' + error.message);
-            }
-          }}
-          >
-            🔧 Setup Admin Data
-          </div>
-        )}
     </div>
   );
 }
