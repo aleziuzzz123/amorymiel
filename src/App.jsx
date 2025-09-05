@@ -774,7 +774,10 @@ function App() {
   // Ensure admin user has proper permissions in Firestore
   const ensureAdminPermissions = async () => {
     try {
-      if (!user || user.email !== 'admin@amorymiel.com') return;
+      if (!user || user.email !== 'admin@amorymiel.com') {
+        console.log('User not authenticated or not admin:', user?.email);
+        return;
+      }
       
       console.log('Ensuring admin permissions for:', user.email, user.uid);
       
@@ -797,10 +800,11 @@ function App() {
       
       console.log('✅ Admin permissions ensured in Firestore');
       
-      // Force reload dashboard data
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      // Update local state instead of reloading
+      setUserProfile(adminData);
+      setIsAdmin(true);
+      
+      alert('✅ Permisos de administrador configurados correctamente');
       
     } catch (error) {
       console.error('❌ Error ensuring admin permissions:', error);
@@ -809,6 +813,7 @@ function App() {
         message: error.message,
         stack: error.stack
       });
+      alert('Error setting admin permissions: ' + error.message);
     }
   };
 
@@ -1091,21 +1096,22 @@ function App() {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUser(user);
-        // Load user profile from Firestore
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          setUserProfile(userData);
-          setWishlist(userData.wishlist || []);
-          setOrderHistory(userData.orderHistory || []);
-          
-          // Check if user is admin
-          const isAdminUser = userData.isAdmin === true || user.email === 'admin@amorymiel.com';
-          setIsAdmin(isAdminUser);
-          
-          // Ensure admin permissions are set in Firestore
-          if (isAdminUser && user.email === 'admin@amorymiel.com') {
-            ensureAdminPermissions();
+        
+        // Check if user is admin first
+        const isAdminUser = user.email === 'admin@amorymiel.com';
+        
+        if (isAdminUser) {
+          // For admin users, ensure permissions are set
+          await ensureAdminPermissions();
+        } else {
+          // For regular users, load profile from Firestore
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            setUserProfile(userData);
+            setWishlist(userData.wishlist || []);
+            setOrderHistory(userData.orderHistory || []);
+            setIsAdmin(userData.isAdmin === true);
           }
         }
       } else {
