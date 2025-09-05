@@ -934,6 +934,9 @@ function App() {
   // Mark payment as abandoned
   const markPaymentAsAbandoned = async (orderId) => {
     try {
+      console.log('🛒 markPaymentAsAbandoned called for orderId:', orderId);
+      console.log('👤 User:', user?.email, 'UID:', user?.uid);
+      
       const { collection, query, getDocs, updateDoc, doc } = await import('firebase/firestore');
       
       // Get all cart items for this user that are payment_initiated
@@ -943,11 +946,22 @@ function App() {
       );
       const cartItemsSnapshot = await getDocs(cartItemsQuery);
       
+      console.log('📦 Found cart items with payment_initiated status:', cartItemsSnapshot.docs.length);
+      
+      // Also check for items with 'in_cart' status (in case payment wasn't initiated)
+      const inCartQuery = query(collection(db, 'cart_items'), 
+        where('userId', '==', user.uid),
+        where('status', '==', 'in_cart')
+      );
+      const inCartSnapshot = await getDocs(inCartQuery);
+      
+      console.log('🛍️ Found cart items with in_cart status:', inCartSnapshot.docs.length);
+      
       // Collect cart items for email
       const abandonedCartItems = [];
       let cartTotal = 0;
       
-      // Update each cart item to abandoned
+      // Update payment_initiated items to abandoned
       for (const cartItemDoc of cartItemsSnapshot.docs) {
         const cartItemData = cartItemDoc.data();
         abandonedCartItems.push(cartItemData);
@@ -961,10 +975,30 @@ function App() {
         console.log('Cart item marked as abandoned:', cartItemDoc.id);
       }
       
+      // Update in_cart items to abandoned (for cases where payment wasn't initiated)
+      for (const cartItemDoc of inCartSnapshot.docs) {
+        const cartItemData = cartItemDoc.data();
+        abandonedCartItems.push(cartItemData);
+        cartTotal += cartItemData.productPrice * cartItemData.quantity;
+        
+        await updateDoc(doc(db, 'cart_items', cartItemDoc.id), {
+          status: 'abandoned',
+          abandonedAt: new Date(),
+          orderId: orderId
+        });
+        console.log('Cart item marked as abandoned:', cartItemDoc.id);
+      }
+      
+      console.log('📧 Total abandoned items:', abandonedCartItems.length);
+      console.log('💰 Cart total:', cartTotal);
+      
       // Send cart abandonment email if there are items
       if (abandonedCartItems.length > 0 && user) {
         const userName = userProfile?.name || user.email || 'Cliente';
+        console.log('📤 Sending cart abandonment email to:', user.email);
         await sendCartAbandonmentEmail(user.email, userName, abandonedCartItems, cartTotal);
+      } else {
+        console.log('❌ No items to send abandonment email for');
       }
     } catch (error) {
       console.error('Error marking payment as abandoned:', error);
@@ -989,7 +1023,7 @@ function App() {
 
     try {
       await resend.emails.send({
-        from: 'Amor y Miel <noreply@amorymiel.com>',
+        from: 'Amor y Miel <onboarding@resend.dev>',
         to: 'jacintohand23@gmail.com',
         subject: `New contact form message from ${templateParams.name}`,
         html: `<h2>New Contact Form Message</h2><p><strong>Name:</strong> ${templateParams.name}</p><p><strong>Email:</strong> ${templateParams.email}</p><p><strong>Message:</strong> ${templateParams.message}</p>`
@@ -1023,7 +1057,7 @@ function App() {
 
     try {
       await resend.emails.send({
-        from: 'Amor y Miel <noreply@amorymiel.com>',
+        from: 'Amor y Miel <onboarding@resend.dev>',
         to: 'jacintohand23@gmail.com',
         subject: `New newsletter subscriber: ${email}`,
         html: `<h2>New Newsletter Subscriber</h2><p><strong>Email:</strong> ${email}</p>`
@@ -1044,7 +1078,13 @@ function App() {
   // Send cart abandonment email
   const sendCartAbandonmentEmail = async (userEmail, userName, cartItems, cartTotal) => {
     try {
-      const cartItemsText = cartItems.map(item => `${item.nombre} x${item.quantity}`).join(', ');
+      console.log('📧 sendCartAbandonmentEmail called');
+      console.log('📧 User email:', userEmail);
+      console.log('📧 User name:', userName);
+      console.log('📧 Cart items:', cartItems);
+      console.log('📧 Cart total:', cartTotal);
+      
+      const cartItemsText = cartItems.map(item => `${item.productName || item.nombre} x${item.quantity}`).join(', ');
       const cartTotalFormatted = new Intl.NumberFormat('es-MX', {
         style: 'currency',
         currency: 'MXN'
@@ -1125,7 +1165,7 @@ function App() {
       `;
       
       await resend.emails.send({
-        from: 'Amor y Miel <noreply@amorymiel.com>',
+        from: 'Amor y Miel <onboarding@resend.dev>',
         to: userEmail,
         subject: '¿Olvidaste algo en tu carrito? 🛒',
         html: htmlContent
@@ -1155,7 +1195,7 @@ function App() {
       };
 
       await resend.emails.send({
-        from: 'Amor y Miel <noreply@amorymiel.com>',
+        from: 'Amor y Miel <onboarding@resend.dev>',
         to: userEmail,
         subject: `Order Confirmed #${order.id}!`,
         html: `<h1>Order Confirmed!</h1><p>Hello ${userName}, your order ${order.id} has been confirmed!</p>`
@@ -1181,7 +1221,7 @@ function App() {
       };
 
       await resend.emails.send({
-        from: 'Amor y Miel <noreply@amorymiel.com>',
+        from: 'Amor y Miel <onboarding@resend.dev>',
         to: userEmail,
         subject: `Your order ${order.id} is on the way!`,
         html: `<h1>Shipping Update!</h1><p>Hello ${userName}, your order ${order.id} is on the way!</p>`
@@ -1206,7 +1246,7 @@ function App() {
       };
 
       await resend.emails.send({
-        from: 'Amor y Miel <noreply@amorymiel.com>',
+        from: 'Amor y Miel <onboarding@resend.dev>',
         to: userEmail,
         subject: `Your order ${order.id} has been delivered!`,
         html: `<h1>Order Delivered!</h1><p>Hello ${userName}, your order ${order.id} has been delivered!</p>`
