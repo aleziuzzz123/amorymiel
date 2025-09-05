@@ -774,19 +774,41 @@ function App() {
   // Ensure admin user has proper permissions in Firestore
   const ensureAdminPermissions = async () => {
     try {
-      const { doc, setDoc } = await import('firebase/firestore');
+      if (!user || user.email !== 'admin@amorymiel.com') return;
       
-      // Create/update admin user document with admin role
-      await setDoc(doc(db, 'users', user.uid), {
+      console.log('Ensuring admin permissions for:', user.email, user.uid);
+      
+      const { doc, setDoc } = await import('firebase/firestore');
+      const adminDocRef = doc(db, 'users', user.uid);
+      
+      const adminData = {
+        uid: user.uid,
         email: user.email,
+        name: 'Administrador',
         isAdmin: true,
         role: 'admin',
-        lastUpdated: new Date().toISOString()
-      }, { merge: true });
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      
+      console.log('Setting admin data:', adminData);
+      
+      await setDoc(adminDocRef, adminData, { merge: true });
       
       console.log('✅ Admin permissions ensured in Firestore');
+      
+      // Force reload dashboard data
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+      
     } catch (error) {
-      console.error('Error ensuring admin permissions:', error);
+      console.error('❌ Error ensuring admin permissions:', error);
+      console.error('Error details:', {
+        code: error.code,
+        message: error.message,
+        stack: error.stack
+      });
     }
   };
 
@@ -1175,46 +1197,6 @@ function App() {
     return `${prefix}-${timestamp}-${random}`;
   };
 
-  // Ensure admin permissions are set in Firestore
-  const ensureAdminPermissions = async () => {
-    try {
-      if (!user || user.email !== 'admin@amorymiel.com') return;
-      
-      console.log('Ensuring admin permissions for:', user.email, user.uid);
-      
-      const { doc, setDoc } = await import('firebase/firestore');
-      const adminDocRef = doc(db, 'users', user.uid);
-      
-      const adminData = {
-        uid: user.uid,
-        email: user.email,
-        name: 'Administrador',
-        isAdmin: true,
-        role: 'admin',
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-      
-      console.log('Setting admin data:', adminData);
-      
-      await setDoc(adminDocRef, adminData, { merge: true });
-      
-      console.log('✅ Admin permissions ensured in Firestore');
-      
-      // Force reload dashboard data
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-      
-    } catch (error) {
-      console.error('❌ Error ensuring admin permissions:', error);
-      console.error('Error details:', {
-        code: error.code,
-        message: error.message,
-        stack: error.stack
-      });
-    }
-  };
 
   // Create order function (only called when payment is completed)
   const createOrder = async (orderData) => {
