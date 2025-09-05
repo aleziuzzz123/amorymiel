@@ -677,7 +677,22 @@ function App() {
   const [showCheckout, setShowCheckout] = useState(false);
 
   // Resend configuration
-  const resend = new Resend('re_1234567890abcdef');
+  const resend = new Resend('re_T8PmbfXN_PKf26mPZa8MY1sBmJd52nYJE');
+  
+  // Test Resend connection on component mount
+  useEffect(() => {
+    const testResend = async () => {
+      try {
+        console.log('🧪 Testing Resend connection...');
+        console.log('🧪 API Key:', 're_T8PmbfXN_PKf26mPZa8MY1sBmJd52nYJE');
+        // Don't actually send, just test the connection
+        console.log('🧪 Resend object created:', !!resend);
+      } catch (error) {
+        console.error('🧪 Resend connection test failed:', error);
+      }
+    };
+    testResend();
+  }, []);
 
   // Get unique categories
   const categories = ["Todos", ...new Set(products.map(p => p.categoria))];
@@ -772,6 +787,15 @@ function App() {
       const savedItem = await getDoc(docRef);
       console.log('Verification - saved item:', savedItem.exists() ? savedItem.data() : 'NOT FOUND');
       console.log('Cart item saved:', cartItem);
+      
+      // Also check if we can query it back immediately
+      const { query, where, getDocs } = await import('firebase/firestore');
+      const testQuery = query(collection(db, 'cart_items'), where('userId', '==', user.uid));
+      const testSnapshot = await getDocs(testQuery);
+      console.log('🔍 Immediate query test - found items:', testSnapshot.docs.length);
+      if (testSnapshot.docs.length > 0) {
+        console.log('🔍 Items found:', testSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      }
     } catch (error) {
       console.error('Error tracking cart addition:', error);
       console.error('Error details:', {
@@ -1287,13 +1311,19 @@ function App() {
         </html>
       `;
       
-      await resend.emails.send({
+      console.log('📤 Attempting to send email via Resend...');
+      console.log('📤 From:', 'Amor y Miel <noreply@amorymiel.com>');
+      console.log('📤 To:', userEmail);
+      console.log('📤 Subject:', '¿Olvidaste algo en tu carrito? 🛒');
+      
+      const result = await resend.emails.send({
         from: 'Amor y Miel <noreply@amorymiel.com>',
         to: userEmail,
         subject: '¿Olvidaste algo en tu carrito? 🛒',
         html: htmlContent
       });
       
+      console.log('📤 Resend response:', result);
       console.log('Cart abandonment email sent to:', userEmail);
     } catch (error) {
       console.error('Error sending cart abandonment email:', error);
