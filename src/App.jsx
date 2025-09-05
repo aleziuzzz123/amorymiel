@@ -1314,12 +1314,13 @@ function App() {
       
       console.log('🚀 NEW CODE DEPLOYED - Attempting to send email via Resend API directly...');
       
-      // Use a different approach - try to bypass CORS by using a proxy
-      const response = await fetch('https://api.resend.com/emails', {
+      // Use CORS proxy to bypass browser restrictions
+      const response = await fetch('https://cors-anywhere.herokuapp.com/https://api.resend.com/emails', {
         method: 'POST',
         headers: {
           'Authorization': 'Bearer re_T8PmbfXN_PKf26mPZa8MY1sBmJd52nYJE',
           'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
         },
         body: JSON.stringify({
           from: 'Amor y Miel <noreply@amorymiel.com>',
