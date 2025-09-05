@@ -676,25 +676,31 @@ function App() {
   const [trackingError, setTrackingError] = useState('');
   const [showCheckout, setShowCheckout] = useState(false);
 
-  // Resend configuration
-  const resendApiKey = import.meta.env.VITE_RESEND_API_KEY;
-  console.log('🔑 Resend API Key loaded:', resendApiKey ? 'Yes' : 'No');
-  console.log('🔑 API Key value:', resendApiKey ? 'Set' : 'Not set');
-  const resend = new Resend(resendApiKey);
+  // Resend configuration - will be loaded from Firebase
+  const [resendApiKey, setResendApiKey] = useState(null);
+  const [resend, setResend] = useState(null);
   
-  // Test Resend connection on component mount
+  // Load Resend API key from Firebase
   useEffect(() => {
-    const testResend = async () => {
+    const loadResendConfig = async () => {
       try {
-        console.log('🧪 Testing Resend connection...');
-        console.log('🧪 API Key:', import.meta.env.VITE_RESEND_API_KEY ? 'Set' : 'Not set');
-        // Don't actually send, just test the connection
-        console.log('🧪 Resend object created:', !!resend);
+        console.log('🔑 Loading Resend API key from Firebase...');
+        const configDoc = await getDoc(doc(db, 'config', 'resend'));
+        
+        if (configDoc.exists()) {
+          const apiKey = configDoc.data().apiKey;
+          console.log('🔑 Resend API Key loaded from Firebase:', apiKey ? 'Yes' : 'No');
+          setResendApiKey(apiKey);
+          setResend(new Resend(apiKey));
+        } else {
+          console.error('❌ Resend config not found in Firebase');
+        }
       } catch (error) {
-        console.error('🧪 Resend connection test failed:', error);
+        console.error('❌ Failed to load Resend config from Firebase:', error);
       }
     };
-    testResend();
+    
+    loadResendConfig();
   }, []);
 
   // Get unique categories
@@ -1253,6 +1259,12 @@ function App() {
       console.log('📧 User name:', userName);
       console.log('📧 Cart items:', cartItems);
       console.log('📧 Cart total:', cartTotal);
+      
+      // Check if Resend is loaded
+      if (!resend) {
+        console.error('❌ Resend not loaded yet, skipping email');
+        return;
+      }
       
       // Build cart items text
       const cartItemsText = cartItems.map(item => 
