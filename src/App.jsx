@@ -1345,18 +1345,23 @@ function App() {
   // Track order function
   const trackOrder = async () => {
     if (!trackingOrderId.trim() && !trackingEmail.trim()) {
-      setTrackingError('Por favor ingresa el ID de la orden o tu email');
+      setTrackingError('Por favor ingresa el ID de la orden, número de rastreo o tu email');
       return;
     }
 
     try {
       setTrackingError('');
-      const { collection, query, getDocs } = await import('firebase/firestore');
+      const { collection, query, getDocs, or, where } = await import('firebase/firestore');
       
       let ordersQuery;
       if (trackingOrderId.trim()) {
-        // Search by order ID
-        ordersQuery = query(collection(db, 'orders'), where('id', '==', trackingOrderId.trim()));
+        // Search by order ID or tracking number
+        ordersQuery = query(collection(db, 'orders'), 
+          or(
+            where('id', '==', trackingOrderId.trim()),
+            where('trackingNumber', '==', trackingOrderId.trim())
+          )
+        );
       } else {
         // Search by email
         ordersQuery = query(collection(db, 'orders'), where('customerEmail', '==', trackingEmail.trim()));
@@ -2098,7 +2103,7 @@ function App() {
                             );
                           } else {
                             return (
-                              <span style={{
+                              <span                               style={{
                                 background: "#4CAF50",
                                 color: "white",
                                 padding: window.innerWidth <= 768 ? "0.3rem 0.6rem" : "0.25rem 0.5rem",
@@ -2107,7 +2112,9 @@ function App() {
                                 fontWeight: "bold",
                                 display: "inline-flex",
                                 alignItems: "center",
-                                gap: "0.25rem"
+                                gap: "0.25rem",
+                                whiteSpace: "nowrap",
+                                minWidth: "fit-content"
                               }}>
                                 ✅ En Stock ({currentStock})
                               </span>
@@ -5302,7 +5309,7 @@ function App() {
                       type="text"
                       value={trackingOrderId}
                       onChange={(e) => setTrackingOrderId(e.target.value)}
-                      placeholder="Ej: order_123456789"
+                      placeholder="Ej: order_123456789 o AMY-123456-ABC"
                       style={{
                         width: "100%",
                         padding: "0.75rem",
