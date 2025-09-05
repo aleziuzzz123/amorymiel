@@ -18,15 +18,21 @@ exports.handler = async (event, context) => {
     
     if (type === 'payment') {
       const paymentId = data.id;
-      console.log('Payment ID:', paymentId);
+      const paymentStatus = data.status;
+      console.log('Payment ID:', paymentId, 'Status:', paymentStatus);
       
-      // Here you would typically:
-      // 1. Verify the webhook signature
-      // 2. Fetch payment details from Mercado Pago API
-      // 3. Update your database with payment status
-      // 4. Send confirmation emails
+      // Process payment status
+      if (paymentStatus === 'approved') {
+        console.log(`Payment ${paymentId} was approved - order should be marked as paid`);
+        // TODO: Update order status in Firestore to 'paid'
+      } else if (paymentStatus === 'rejected') {
+        console.log(`Payment ${paymentId} was rejected - order should be marked as failed`);
+        // TODO: Update order status in Firestore to 'failed'
+      } else if (paymentStatus === 'pending') {
+        console.log(`Payment ${paymentId} is pending`);
+        // TODO: Update order status in Firestore to 'pending'
+      }
       
-      // For now, just log the payment
       console.log('Payment webhook processed successfully');
     }
     

@@ -811,14 +811,14 @@ function App() {
       console.log('User profile:', userProfile);
       console.log('Shipping address:', shippingAddress);
 
-      const total = getCartTotal();
+    const total = getCartTotal();
       const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       
       // Create return URLs for payment confirmation
       const successUrl = `${window.location.origin}?payment=success&order_id=${orderId}`;
       const failureUrl = `${window.location.origin}?payment=failure&order_id=${orderId}`;
       
-      const mercadoPagoUrl = `https://link.mercadopago.com.mx/amorymiel?amount=${total}&order_id=${orderId}&success_url=${encodeURIComponent(successUrl)}&failure_url=${encodeURIComponent(failureUrl)}`;
+      const mercadoPagoUrl = `https://link.mercadopago.com.mx/amorymiel?amount=${total}&order_id=${orderId}&success_url=${encodeURIComponent(successUrl)}&failure_url=${encodeURIComponent(failureUrl)}&public_key=APP_USR-7d650b90-6d99-4793-bd43-9412f0f8934e`;
       
       // Mark all cart items as "payment_initiated" before redirecting
       await markCartItemsAsPaymentInitiated();
@@ -1589,32 +1589,32 @@ function App() {
                   📦 Rastrear Orden
                 </button>
 
-                <button
-                  onClick={() => {
-                    setShowAuthModal(true);
-                    setAuthMode('login');
-                  }}
-                  style={{
-                    background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
-                    color: "white",
-                    border: "none",
+              <button
+                onClick={() => {
+                  setShowAuthModal(true);
+                  setAuthMode('login');
+                }}
+                style={{
+                  background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                  color: "white",
+                  border: "none",
                     padding: window.innerWidth <= 768 ? "0.4rem 0.8rem" : "0.5rem 1rem",
-                    borderRadius: "20px",
+                  borderRadius: "20px",
                     fontSize: window.innerWidth <= 768 ? "0.8rem" : "0.9rem",
-                    cursor: "pointer",
-                    transition: "all 0.3s ease"
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.transform = "translateY(-2px)";
-                    e.target.style.boxShadow = "0 4px 15px rgba(224, 167, 58, 0.3)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.transform = "translateY(0)";
-                    e.target.style.boxShadow = "none";
-                  }}
-                >
-                  Iniciar Sesión
-                </button>
+                  cursor: "pointer",
+                  transition: "all 0.3s ease"
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.transform = "translateY(-2px)";
+                  e.target.style.boxShadow = "0 4px 15px rgba(224, 167, 58, 0.3)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = "translateY(0)";
+                  e.target.style.boxShadow = "none";
+                }}
+              >
+                Iniciar Sesión
+              </button>
               </div>
             )}
             
