@@ -4280,6 +4280,39 @@ function App() {
               }}>
                 🛍️ Carrito ({cart.length})
               </h3>
+              
+              {/* Action Buttons */}
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                {/* Close Cart Button */}
+                <button
+                  onClick={() => setShowCart(false)}
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    color: PALETAS.D.carbon,
+                    cursor: "pointer",
+                    padding: "0.5rem",
+                    borderRadius: "8px",
+                    fontSize: "1.2rem",
+                    transition: "all 0.3s ease",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = "rgba(0,0,0,0.1)";
+                    e.target.style.transform = "scale(1.1)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = "transparent";
+                    e.target.style.transform = "scale(1)";
+                  }}
+                  title="Cerrar carrito"
+                >
+                  ✕
+                </button>
+                
+                {/* Clear Cart Button */}
                 <button
                 onClick={() => setCart([])}
                   style={{
@@ -4290,14 +4323,25 @@ function App() {
                   padding: "0.5rem",
                     borderRadius: "8px",
                   fontSize: "1.2rem",
-                  transition: "background-color 0.3s ease"
+                  transition: "all 0.3s ease",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
                 }}
-                onMouseEnter={(e) => e.target.style.backgroundColor = "rgba(0,0,0,0.1)"}
-                onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = "rgba(255,0,0,0.1)";
+                  e.target.style.transform = "scale(1.1)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = "transparent";
+                  e.target.style.transform = "scale(1)";
+                }}
+                title="Vaciar carrito"
               >
                 🗑️
-                </button>
+              </button>
               </div>
+            </div>
                         </div>
 
           {/* Cart Items */}
