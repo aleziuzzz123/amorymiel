@@ -1312,7 +1312,8 @@ function App() {
         </html>
       `;
       
-      console.log('🚀🚀🚀 FORCE DEPLOYMENT - NEW CODE IS HERE - Attempting to send email via Resend API directly...');
+      console.log('🚀🚀🚀🚀🚀 ULTRA FORCE DEPLOYMENT - NEW CODE IS HERE - Attempting to send email via Resend API directly...');
+      console.log('🚀🚀🚀🚀🚀 THIS IS THE NEW VERSION - NO MORE NETLIFY FUNCTION!');
       
       // Try direct API call first (might work in some browsers)
       let response;
