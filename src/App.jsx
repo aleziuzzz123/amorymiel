@@ -1531,7 +1531,7 @@ function App() {
                 <button
                   onClick={() => setShowOrderTracking(true)}
                   style={{
-                    background: `linear-gradient(135deg, ${PALETAS.D.azul} 0%, #6B9BD2 100%)`,
+                    background: `linear-gradient(135deg, ${PALETAS.D.verde} 0%, #8EB080 100%)`,
                     color: "white",
                     border: "none",
                     padding: window.innerWidth <= 768 ? "0.4rem 0.8rem" : "0.5rem 1rem",
@@ -1539,15 +1539,16 @@ function App() {
                     fontSize: window.innerWidth <= 768 ? "0.8rem" : "0.9rem",
                     cursor: "pointer",
                     transition: "all 0.3s ease",
-                    fontWeight: "bold"
+                    fontWeight: "bold",
+                    boxShadow: "0 2px 8px rgba(98, 141, 106, 0.3)"
                   }}
                   onMouseEnter={(e) => {
                     e.target.style.transform = "translateY(-2px)";
-                    e.target.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
+                    e.target.style.boxShadow = "0 4px 12px rgba(98, 141, 106, 0.4)";
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.transform = "translateY(0)";
-                    e.target.style.boxShadow = "none";
+                    e.target.style.boxShadow = "0 2px 8px rgba(98, 141, 106, 0.3)";
                   }}
                 >
                   📦 Rastrear Orden
@@ -1591,7 +1592,7 @@ function App() {
                 <button
                   onClick={() => setShowOrderTracking(true)}
                   style={{
-                    background: `linear-gradient(135deg, ${PALETAS.D.azul} 0%, #6B9BD2 100%)`,
+                    background: `linear-gradient(135deg, ${PALETAS.D.verde} 0%, #8EB080 100%)`,
                     color: "white",
                     border: "none",
                     padding: window.innerWidth <= 768 ? "0.4rem 0.8rem" : "0.5rem 1rem",
@@ -1599,15 +1600,16 @@ function App() {
                     fontSize: window.innerWidth <= 768 ? "0.8rem" : "0.9rem",
                     cursor: "pointer",
                     transition: "all 0.3s ease",
-                    fontWeight: "bold"
+                    fontWeight: "bold",
+                    boxShadow: "0 2px 8px rgba(98, 141, 106, 0.3)"
                   }}
                   onMouseEnter={(e) => {
                     e.target.style.transform = "translateY(-2px)";
-                    e.target.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
+                    e.target.style.boxShadow = "0 4px 12px rgba(98, 141, 106, 0.4)";
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.transform = "translateY(0)";
-                    e.target.style.boxShadow = "none";
+                    e.target.style.boxShadow = "0 2px 8px rgba(98, 141, 106, 0.3)";
                   }}
                 >
                   📦 Rastrear Orden
@@ -4248,6 +4250,23 @@ function App() {
 
       {/* Professional Cart Sidebar */}
       {cart.length > 0 && (
+        <>
+          {/* Backdrop - Click outside to close */}
+          <div 
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: "rgba(0,0,0,0.3)",
+              zIndex: 999,
+              cursor: "pointer"
+            }}
+            onClick={() => setShowCart(false)}
+          />
+          
+          {/* Cart Sidebar */}
           <div style={{
             position: "fixed",
           top: "0",
@@ -4559,6 +4578,7 @@ function App() {
                       </button>
             </div>
           </div>
+        </>
         )}
 
         {/* Authentication Modal */}
