@@ -677,7 +677,10 @@ function App() {
   const [showCheckout, setShowCheckout] = useState(false);
 
   // Resend configuration
-  const resend = new Resend(import.meta.env.VITE_RESEND_API_KEY);
+  const resendApiKey = import.meta.env.VITE_RESEND_API_KEY || 're_T8PmbfXN_PKf26mPZa8MY1sBmJd52nYJE';
+  console.log('🔑 Resend API Key loaded:', resendApiKey ? 'Yes' : 'No');
+  console.log('🔑 API Key value:', resendApiKey);
+  const resend = new Resend(resendApiKey);
   
   // Test Resend connection on component mount
   useEffect(() => {
