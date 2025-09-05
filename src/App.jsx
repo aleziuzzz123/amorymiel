@@ -1146,7 +1146,7 @@ function App() {
       `;
       
       await resend.emails.send({
-        from: 'Amor y Miel <onboarding@resend.dev>',
+        from: 'Amor y Miel <noreply@amorymiel.com>',
         to: 'info@amorymiel.com',
         subject: `Nuevo mensaje de contacto de ${templateParams.name}`,
         html: htmlContent
@@ -1180,7 +1180,7 @@ function App() {
 
     try {
       await resend.emails.send({
-        from: 'Amor y Miel <onboarding@resend.dev>',
+        from: 'Amor y Miel <noreply@amorymiel.com>',
         to: 'info@amorymiel.com',
         subject: `New newsletter subscriber: ${email}`,
         html: `<h2>New Newsletter Subscriber</h2><p><strong>Email:</strong> ${email}</p>`
@@ -1288,7 +1288,7 @@ function App() {
       `;
       
       await resend.emails.send({
-        from: 'Amor y Miel <onboarding@resend.dev>',
+        from: 'Amor y Miel <noreply@amorymiel.com>',
         to: userEmail,
         subject: '¿Olvidaste algo en tu carrito? 🛒',
         html: htmlContent
@@ -1318,7 +1318,7 @@ function App() {
       };
 
       await resend.emails.send({
-        from: 'Amor y Miel <onboarding@resend.dev>',
+        from: 'Amor y Miel <noreply@amorymiel.com>',
         to: userEmail,
         subject: `Order Confirmed #${order.id}!`,
         html: `<h1>Order Confirmed!</h1><p>Hello ${userName}, your order ${order.id} has been confirmed!</p>`
@@ -1344,7 +1344,7 @@ function App() {
       };
 
       await resend.emails.send({
-        from: 'Amor y Miel <onboarding@resend.dev>',
+        from: 'Amor y Miel <noreply@amorymiel.com>',
         to: userEmail,
         subject: `Your order ${order.id} is on the way!`,
         html: `<h1>Shipping Update!</h1><p>Hello ${userName}, your order ${order.id} is on the way!</p>`
@@ -1369,7 +1369,7 @@ function App() {
       };
 
       await resend.emails.send({
-        from: 'Amor y Miel <onboarding@resend.dev>',
+        from: 'Amor y Miel <noreply@amorymiel.com>',
         to: userEmail,
         subject: `Your order ${order.id} has been delivered!`,
         html: `<h1>Order Delivered!</h1><p>Hello ${userName}, your order ${order.id} has been delivered!</p>`
