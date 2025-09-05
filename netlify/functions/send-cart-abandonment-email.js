@@ -4,7 +4,7 @@ const { Resend } = require('resend');
 console.log('RESEND_API_KEY exists:', !!process.env.RESEND_API_KEY);
 console.log('RESEND_API_KEY length:', process.env.RESEND_API_KEY ? process.env.RESEND_API_KEY.length : 0);
 
-const resend = new Resend('re_T8PmbfXN_PKf26mPZa8MY1sBmJd52nYJE');
+const resend = new Resend(process.env.RESEND_API_KEY || 're_T8PmbfXN_PKf26mPZa8MY1sBmJd52nYJE');
 
 exports.handler = async (event, context) => {
   // Handle CORS
@@ -31,7 +31,9 @@ exports.handler = async (event, context) => {
   }
 
   try {
+    console.log('📧 Netlify function called with body:', event.body);
     const { userEmail, userName, cartItems, cartTotal } = JSON.parse(event.body);
+    console.log('📧 Parsed data - userEmail:', userEmail, 'userName:', userName, 'cartItems count:', cartItems.length);
 
     // Build cart items text
     const cartItemsText = cartItems.map(item => 
@@ -95,12 +97,14 @@ exports.handler = async (event, context) => {
     `;
 
     // Send email via Resend
+    console.log('📤 Sending email via Resend API...');
     const result = await resend.emails.send({
       from: 'Amor y Miel <noreply@amorymiel.com>',
       to: [userEmail],
       subject: '¿Olvidaste algo en tu carrito? 🛒',
       html: htmlContent
     });
+    console.log('✅ Email sent successfully:', result);
 
     return {
       statusCode: 200,
