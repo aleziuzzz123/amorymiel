@@ -395,6 +395,41 @@ function App() {
     loadProductsFromFirestore();
   }, []);
 
+  // Check for payment return status
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentStatus = urlParams.get('payment');
+    const orderId = urlParams.get('order_id');
+    
+    if (paymentStatus && orderId) {
+      handlePaymentReturn(paymentStatus, orderId);
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
+  // Handle payment return from Mercado Pago
+  const handlePaymentReturn = async (status, orderId) => {
+    try {
+      if (status === 'success') {
+        // Payment was successful - create the order
+        await createOrder({
+          id: orderId,
+          shippingAddress: shippingAddress
+        });
+        
+        alert('✅ ¡Pago confirmado! Tu orden ha sido procesada exitosamente.');
+      } else if (status === 'failure') {
+        // Payment failed - mark cart items as abandoned
+        await markPaymentAsAbandoned(orderId);
+        alert('❌ El pago no pudo ser procesado. Por favor, inténtalo de nuevo.');
+      }
+    } catch (error) {
+      console.error('Error handling payment return:', error);
+      alert('Error procesando el pago. Por favor, contacta soporte.');
+    }
+  };
+
   // Set up real-time listener for products
   useEffect(() => {
     if (!db) {
@@ -778,7 +813,12 @@ function App() {
 
       const total = getCartTotal();
       const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      const mercadoPagoUrl = `https://link.mercadopago.com.mx/amorymiel?amount=${total}&order_id=${orderId}`;
+      
+      // Create return URLs for payment confirmation
+      const successUrl = `${window.location.origin}?payment=success&order_id=${orderId}`;
+      const failureUrl = `${window.location.origin}?payment=failure&order_id=${orderId}`;
+      
+      const mercadoPagoUrl = `https://link.mercadopago.com.mx/amorymiel?amount=${total}&order_id=${orderId}&success_url=${encodeURIComponent(successUrl)}&failure_url=${encodeURIComponent(failureUrl)}`;
       
       // Mark all cart items as "payment_initiated" before redirecting
       await markCartItemsAsPaymentInitiated();
