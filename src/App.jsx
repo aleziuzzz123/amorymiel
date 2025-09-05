@@ -766,6 +766,11 @@ function App() {
       const docRef = await addDoc(collection(db, 'cart_items'), cartItem);
       
       console.log('Cart addition tracked successfully! Doc ID:', docRef.id);
+      
+      // Verify the item was saved by reading it back
+      const { getDoc } = await import('firebase/firestore');
+      const savedItem = await getDoc(docRef);
+      console.log('Verification - saved item:', savedItem.exists() ? savedItem.data() : 'NOT FOUND');
       console.log('Cart item saved:', cartItem);
     } catch (error) {
       console.error('Error tracking cart addition:', error);
@@ -947,6 +952,9 @@ function App() {
       const cartItemsSnapshot = await getDocs(cartItemsQuery);
       
       console.log('📦 Found cart items with payment_initiated status:', cartItemsSnapshot.docs.length);
+      if (cartItemsSnapshot.docs.length > 0) {
+        console.log('📦 Payment initiated items:', cartItemsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      }
       
       // Also check for items with 'in_cart' status (in case payment wasn't initiated)
       const inCartQuery = query(collection(db, 'cart_items'), 
@@ -956,6 +964,19 @@ function App() {
       const inCartSnapshot = await getDocs(inCartQuery);
       
       console.log('🛍️ Found cart items with in_cart status:', inCartSnapshot.docs.length);
+      if (inCartSnapshot.docs.length > 0) {
+        console.log('🛍️ In cart items:', inCartSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      }
+      
+      // Debug: Get ALL cart items for this user to see what's actually there
+      const allCartItemsQuery = query(collection(db, 'cart_items'), 
+        where('userId', '==', user.uid)
+      );
+      const allCartItemsSnapshot = await getDocs(allCartItemsQuery);
+      console.log('🔍 ALL cart items for user:', allCartItemsSnapshot.docs.length);
+      if (allCartItemsSnapshot.docs.length > 0) {
+        console.log('🔍 All items:', allCartItemsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      }
       
       // Collect cart items for email
       const abandonedCartItems = [];
