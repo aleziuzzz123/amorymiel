@@ -402,8 +402,16 @@ const AdminDashboard = ({ user, onClose }) => {
       console.log('User email:', user?.email);
       console.log('Is admin?', user?.email === 'admin@amorymiel.com');
       
-      const usersQuery = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
-      const usersSnapshot = await getDocs(usersQuery);
+      // Try to load users without orderBy first, then with orderBy if that fails
+      let usersSnapshot;
+      try {
+        const usersQuery = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
+        usersSnapshot = await getDocs(usersQuery);
+      } catch (error) {
+        console.log('OrderBy failed, trying without orderBy:', error.message);
+        const usersQuery = query(collection(db, 'users'));
+        usersSnapshot = await getDocs(usersQuery);
+      }
       console.log('Users snapshot:', usersSnapshot);
       console.log('Number of users found:', usersSnapshot.docs.length);
       console.log('Users snapshot empty?', usersSnapshot.empty);
@@ -425,8 +433,15 @@ const AdminDashboard = ({ user, onClose }) => {
       setUsers(usersData);
 
       // Load orders
-      const ordersQuery = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
-      const ordersSnapshot = await getDocs(ordersQuery);
+      let ordersSnapshot;
+      try {
+        const ordersQuery = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
+        ordersSnapshot = await getDocs(ordersQuery);
+      } catch (error) {
+        console.log('Orders orderBy failed, trying without orderBy:', error.message);
+        const ordersQuery = query(collection(db, 'orders'));
+        ordersSnapshot = await getDocs(ordersQuery);
+      }
       const ordersData = ordersSnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
