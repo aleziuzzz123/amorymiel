@@ -400,13 +400,13 @@ const AdminDashboard = ({ user, onClose }) => {
       }
       
       // Debug: Check if cart items are being filtered correctly
-      const inCartItems = cartItemsData.filter(item => item.status === 'in_cart');
-      const paymentInitiatedItems = cartItemsData.filter(item => item.status === 'payment_initiated');
-      const abandonedItems = cartItemsData.filter(item => {
+      const inCartItems = cartItems.filter(item => item.status === 'in_cart');
+      const paymentInitiatedItems = cartItems.filter(item => item.status === 'payment_initiated');
+      const abandonedItems = cartItems.filter(item => {
         const hoursSinceAdded = (new Date() - new Date(item.addedAt)) / (1000 * 60 * 60);
         return (item.status === 'in_cart' && hoursSinceAdded > 24) || item.status === 'abandoned';
       });
-      const purchasedItems = cartItemsData.filter(item => item.status === 'purchased');
+      const purchasedItems = cartItems.filter(item => item.status === 'purchased');
       
       console.log('In cart items:', inCartItems.length);
       console.log('Payment initiated items:', paymentInitiatedItems.length);
