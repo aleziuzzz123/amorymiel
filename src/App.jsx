@@ -677,14 +677,14 @@ function App() {
   const [showCheckout, setShowCheckout] = useState(false);
 
   // Resend configuration
-  const resend = new Resend('re_T8PmbfXN_PKf26mPZa8MY1sBmJd52nYJE');
+  const resend = new Resend(import.meta.env.VITE_RESEND_API_KEY);
   
   // Test Resend connection on component mount
   useEffect(() => {
     const testResend = async () => {
       try {
         console.log('🧪 Testing Resend connection...');
-        console.log('🧪 API Key:', 're_T8PmbfXN_PKf26mPZa8MY1sBmJd52nYJE');
+        console.log('🧪 API Key:', import.meta.env.VITE_RESEND_API_KEY ? 'Set' : 'Not set');
         // Don't actually send, just test the connection
         console.log('🧪 Resend object created:', !!resend);
       } catch (error) {
