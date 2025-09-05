@@ -769,17 +769,21 @@ function App() {
       console.log('User profile:', userProfile);
       console.log('Shipping address:', shippingAddress);
 
-      // Don't create order yet - just redirect to payment
-      // Order will be created only when payment is completed
-    const total = getCartTotal();
+      const total = getCartTotal();
       const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       const mercadoPagoUrl = `https://link.mercadopago.com.mx/amorymiel?amount=${total}&order_id=${orderId}`;
+      
+      // Mark all cart items as "payment_initiated" before redirecting
+      await markCartItemsAsPaymentInitiated();
       
       // Close shipping modal
       setShowShippingModal(false);
       
       // Open payment window
-      window.open(mercadoPagoUrl, '_blank');
+      const paymentWindow = window.open(mercadoPagoUrl, '_blank');
+      
+      // Set up abandonment tracking
+      setupPaymentAbandonmentTracking(paymentWindow, orderId);
       
       // Show success message
       alert(`¡Redirigiendo a Mercado Pago para completar el pago!\n\nTotal: $${total}\n\nLa orden se creará automáticamente cuando el pago sea confirmado.`);
@@ -792,6 +796,78 @@ function App() {
       alert(`Error al crear la orden: ${error.message}\n\nCódigo de error: ${error.code || 'N/A'}\n\nPor favor, inténtalo de nuevo.`);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Mark cart items as payment initiated
+  const markCartItemsAsPaymentInitiated = async () => {
+    try {
+      const { collection, query, getDocs, updateDoc, doc } = await import('firebase/firestore');
+      
+      // Get all cart items for this user
+      const cartItemsQuery = query(collection(db, 'cart_items'), 
+        where('userId', '==', user.uid),
+        where('status', '==', 'in_cart')
+      );
+      const cartItemsSnapshot = await getDocs(cartItemsQuery);
+      
+      // Update each cart item to payment_initiated
+      for (const cartItemDoc of cartItemsSnapshot.docs) {
+        await updateDoc(doc(db, 'cart_items', cartItemDoc.id), {
+          status: 'payment_initiated',
+          paymentInitiatedAt: new Date()
+        });
+        console.log('Cart item marked as payment initiated:', cartItemDoc.id);
+      }
+    } catch (error) {
+      console.error('Error marking cart items as payment initiated:', error);
+    }
+  };
+
+  // Set up payment abandonment tracking
+  const setupPaymentAbandonmentTracking = (paymentWindow, orderId) => {
+    // Check if payment window is closed without completing payment
+    const checkPaymentWindow = setInterval(() => {
+      if (paymentWindow.closed) {
+        console.log('Payment window closed - marking as abandoned');
+        markPaymentAsAbandoned(orderId);
+        clearInterval(checkPaymentWindow);
+      }
+    }, 1000);
+
+    // Set timeout to mark as abandoned after 30 minutes
+    setTimeout(() => {
+      if (!paymentWindow.closed) {
+        console.log('Payment timeout - marking as abandoned');
+        markPaymentAsAbandoned(orderId);
+        clearInterval(checkPaymentWindow);
+      }
+    }, 30 * 60 * 1000); // 30 minutes
+  };
+
+  // Mark payment as abandoned
+  const markPaymentAsAbandoned = async (orderId) => {
+    try {
+      const { collection, query, getDocs, updateDoc, doc } = await import('firebase/firestore');
+      
+      // Get all cart items for this user that are payment_initiated
+      const cartItemsQuery = query(collection(db, 'cart_items'), 
+        where('userId', '==', user.uid),
+        where('status', '==', 'payment_initiated')
+      );
+      const cartItemsSnapshot = await getDocs(cartItemsQuery);
+      
+      // Update each cart item to abandoned
+      for (const cartItemDoc of cartItemsSnapshot.docs) {
+        await updateDoc(doc(db, 'cart_items', cartItemDoc.id), {
+          status: 'abandoned',
+          abandonedAt: new Date(),
+          orderId: orderId
+        });
+        console.log('Cart item marked as abandoned:', cartItemDoc.id);
+      }
+    } catch (error) {
+      console.error('Error marking payment as abandoned:', error);
     }
   };
 

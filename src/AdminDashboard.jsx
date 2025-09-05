@@ -343,26 +343,60 @@ const AdminDashboard = ({ user, onClose }) => {
 
       // Load cart items for abandonment tracking
       console.log('Loading cart items...');
-      const cartItemsQuery = query(collection(db, 'cart_items'), orderBy('addedAt', 'desc'));
-      const cartItemsSnapshot = await getDocs(cartItemsQuery);
-      const cartItemsData = cartItemsSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setCartItems(cartItemsData);
-      console.log('Cart items loaded:', cartItemsData.length);
-      console.log('Cart items data:', cartItemsData);
+      try {
+        const cartItemsQuery = query(collection(db, 'cart_items'), orderBy('addedAt', 'desc'));
+        const cartItemsSnapshot = await getDocs(cartItemsQuery);
+        const cartItemsData = cartItemsSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setCartItems(cartItemsData);
+        console.log('Cart items loaded:', cartItemsData.length);
+        console.log('Cart items data:', cartItemsData);
+        
+        // Debug: Check if we can access the collection at all
+        if (cartItemsData.length === 0) {
+          console.log('No cart items found. Checking if collection exists...');
+          // Try to create a test document to check permissions
+          try {
+            const { addDoc } = await import('firebase/firestore');
+            const testDoc = await addDoc(collection(db, 'cart_items'), {
+              test: true,
+              timestamp: new Date(),
+              userId: 'test-admin',
+              status: 'test'
+            });
+            console.log('Test document created successfully:', testDoc.id);
+            // Delete the test document
+            const { deleteDoc, doc } = await import('firebase/firestore');
+            await deleteDoc(doc(db, 'cart_items', testDoc.id));
+            console.log('Test document deleted');
+          } catch (testError) {
+            console.error('Error creating test document:', testError);
+            console.error('This suggests a permission issue with cart_items collection');
+          }
+        }
+      } catch (error) {
+        console.error('Error loading cart items:', error);
+        console.error('Error details:', {
+          code: error.code,
+          message: error.message,
+          stack: error.stack
+        });
+      }
       
       // Debug: Check if cart items are being filtered correctly
       const inCartItems = cartItemsData.filter(item => item.status === 'in_cart');
+      const paymentInitiatedItems = cartItemsData.filter(item => item.status === 'payment_initiated');
       const abandonedItems = cartItemsData.filter(item => {
         const hoursSinceAdded = (new Date() - new Date(item.addedAt)) / (1000 * 60 * 60);
-        return item.status === 'in_cart' && hoursSinceAdded > 24;
+        return (item.status === 'in_cart' && hoursSinceAdded > 24) || item.status === 'abandoned';
       });
       const purchasedItems = cartItemsData.filter(item => item.status === 'purchased');
       
       console.log('In cart items:', inCartItems.length);
-      console.log('Abandoned items (24h+):', abandonedItems.length);
+      console.log('Payment initiated items:', paymentInitiatedItems.length);
+      console.log('Abandoned items (24h+ or payment abandoned):', abandonedItems.length);
       console.log('Purchased items:', purchasedItems.length);
 
       // Calculate stats
@@ -1467,10 +1501,10 @@ const AdminDashboard = ({ user, onClose }) => {
                   <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#ff6b6b' }}>
                     {cartItems.filter(item => {
                       const hoursSinceAdded = (new Date() - new Date(item.addedAt)) / (1000 * 60 * 60);
-                      return item.status === 'in_cart' && hoursSinceAdded > 24;
+                      return (item.status === 'in_cart' && hoursSinceAdded > 24) || item.status === 'abandoned';
                     }).length}
                   </div>
-                  <div style={{ color: '#666', fontSize: '0.9rem' }}>Abandonados (24h+)</div>
+                  <div style={{ color: '#666', fontSize: '0.9rem' }}>Abandonados</div>
                 </div>
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#51cf66' }}>
