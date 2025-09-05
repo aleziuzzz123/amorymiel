@@ -343,15 +343,29 @@ const AdminDashboard = ({ user, onClose }) => {
 
       // Load cart items for abandonment tracking
       console.log('Loading cart items...');
+      console.log('Current user:', user);
+      console.log('User email:', user?.email);
+      console.log('Is admin?', user?.email === 'admin@amorymiel.com');
+      
       try {
         const cartItemsQuery = query(collection(db, 'cart_items'), orderBy('addedAt', 'desc'));
+        console.log('Executing cart items query...');
         const cartItemsSnapshot = await getDocs(cartItemsQuery);
-        const cartItemsData = cartItemsSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
+        console.log('Cart items query executed successfully');
+        console.log('Cart items snapshot:', cartItemsSnapshot);
+        console.log('Cart items docs length:', cartItemsSnapshot.docs.length);
+        
+        const cartItemsData = cartItemsSnapshot.docs.map(doc => {
+          const data = doc.data();
+          console.log('Processing cart item:', doc.id, data);
+          return {
+            id: doc.id,
+            ...data
+          };
+        });
+        
         setCartItems(cartItemsData);
-        console.log('Cart items loaded:', cartItemsData.length);
+        console.log('Cart items loaded successfully:', cartItemsData.length);
         console.log('Cart items data:', cartItemsData);
         
         // Debug: Check if we can access the collection at all
