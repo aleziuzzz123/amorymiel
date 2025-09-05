@@ -2056,72 +2056,6 @@ function App() {
                         {product.moneda}
                       </span>
                       
-                      {/* Stock Status Indicator */}
-                      <div style={{ 
-                        marginTop: "0.5rem",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.5rem"
-                      }}>
-                        {(() => {
-                          const currentStock = product.stock || 0;
-                          const minStock = product.minStock || 5;
-                          const isOutOfStock = currentStock === 0;
-                          const isLowStock = currentStock <= minStock && currentStock > 0;
-                          
-                          if (isOutOfStock) {
-                            return (
-                              <span style={{
-                                background: "#f44336",
-                                color: "white",
-                                padding: window.innerWidth <= 768 ? "0.3rem 0.6rem" : "0.25rem 0.5rem",
-                                borderRadius: "12px",
-                                fontSize: window.innerWidth <= 768 ? "0.75rem" : "0.7rem",
-                                fontWeight: "bold",
-                                display: "inline-flex",
-                                alignItems: "center",
-                                gap: "0.25rem"
-                              }}>
-                                ❌ Sin Stock
-                              </span>
-                            );
-                          } else if (isLowStock) {
-                            return (
-                              <span style={{
-                                background: "#FF9800",
-                                color: "white",
-                                padding: window.innerWidth <= 768 ? "0.3rem 0.6rem" : "0.25rem 0.5rem",
-                                borderRadius: "12px",
-                                fontSize: window.innerWidth <= 768 ? "0.75rem" : "0.7rem",
-                                fontWeight: "bold",
-                                display: "inline-flex",
-                                alignItems: "center",
-                                gap: "0.25rem"
-                              }}>
-                                ⚠️ Solo {currentStock} disponibles
-                              </span>
-                            );
-                          } else {
-                            return (
-                              <span                               style={{
-                                background: "#4CAF50",
-                                color: "white",
-                                padding: window.innerWidth <= 768 ? "0.3rem 0.6rem" : "0.25rem 0.5rem",
-                                borderRadius: "12px",
-                                fontSize: window.innerWidth <= 768 ? "0.75rem" : "0.7rem",
-                                fontWeight: "bold",
-                                display: "inline-flex",
-                                alignItems: "center",
-                                gap: "0.25rem",
-                                whiteSpace: "nowrap",
-                                minWidth: "fit-content"
-                              }}>
-                                ✅ En Stock ({currentStock})
-                              </span>
-                            );
-                          }
-                        })()}
-                    </div>
                     </div>
                   {/* Professional Button Layout */}
                   <div style={{ 
@@ -2229,6 +2163,77 @@ function App() {
                         })()}
                     </button>
               </div>
+                  
+                  {/* Stock Status - Positioned below buttons */}
+                  <div style={{ 
+                    marginTop: "0.75rem",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center"
+                  }}>
+                    {(() => {
+                      const currentStock = product.stock || 0;
+                      const minStock = product.minStock || 5;
+                      const isOutOfStock = currentStock === 0;
+                      const isLowStock = currentStock <= minStock && currentStock > 0;
+                      
+                      if (isOutOfStock) {
+                        return (
+                          <span style={{
+                            background: "#f44336",
+                            color: "white",
+                            padding: window.innerWidth <= 768 ? "0.3rem 0.6rem" : "0.25rem 0.5rem",
+                            borderRadius: "12px",
+                            fontSize: window.innerWidth <= 768 ? "0.75rem" : "0.7rem",
+                            fontWeight: "bold",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "0.25rem",
+                            whiteSpace: "nowrap",
+                            minWidth: "fit-content"
+                          }}>
+                            ❌ Sin Stock
+                          </span>
+                        );
+                      } else if (isLowStock) {
+                        return (
+                          <span style={{
+                            background: "#FF9800",
+                            color: "white",
+                            padding: window.innerWidth <= 768 ? "0.3rem 0.6rem" : "0.25rem 0.5rem",
+                            borderRadius: "12px",
+                            fontSize: window.innerWidth <= 768 ? "0.75rem" : "0.7rem",
+                            fontWeight: "bold",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "0.25rem",
+                            whiteSpace: "nowrap",
+                            minWidth: "fit-content"
+                          }}>
+                            ⚠️ Solo {currentStock} disponibles
+                          </span>
+                        );
+                      } else {
+                        return (
+                          <span style={{
+                            background: "#4CAF50",
+                            color: "white",
+                            padding: window.innerWidth <= 768 ? "0.3rem 0.6rem" : "0.25rem 0.5rem",
+                            borderRadius: "12px",
+                            fontSize: window.innerWidth <= 768 ? "0.75rem" : "0.7rem",
+                            fontWeight: "bold",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "0.25rem",
+                            whiteSpace: "nowrap",
+                            minWidth: "fit-content"
+                          }}>
+                            ✅ En Stock ({currentStock})
+                          </span>
+                        );
+                      }
+                    })()}
+                  </div>
                   </div>
                 </div>
               </div>
