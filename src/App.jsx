@@ -683,7 +683,7 @@ function App() {
     TEMPLATE_ID: 'template_9aexk4c',
     // New templates for follow-up campaigns
     CART_ABANDONMENT_TEMPLATE: 'template_cart_abandonment',
-    ORDER_CONFIRMATION_TEMPLATE: 'template_order_confirmation',
+    ORDER_CONFIRMATION_TEMPLATE: 'template_0347rkq',
     SHIPPING_UPDATE_TEMPLATE: 'template_shipping_update',
     DELIVERY_CONFIRMATION_TEMPLATE: 'template_delivery_confirmation'
   };
