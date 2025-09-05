@@ -1290,7 +1290,7 @@ function App() {
 
                     <!-- CTA Button -->
                     <div style="text-align: center; margin: 30px 0;">
-                        <a href="${window.location.origin}?cart=true" style="display: inline-block; background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); color: #ffffff; text-decoration: none; padding: 15px 30px; border-radius: 25px; font-size: 16px; font-weight: bold; box-shadow: 0 4px 8px rgba(212, 165, 116, 0.3);">
+                        <a href="https://amorymiel.com" style="display: inline-block; background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); color: #ffffff; text-decoration: none; padding: 15px 30px; border-radius: 25px; font-size: 16px; font-weight: bold; box-shadow: 0 4px 8px rgba(212, 165, 116, 0.3);">
                             🛒 Completar Compra
                         </a>
                     </div>
