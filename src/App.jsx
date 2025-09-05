@@ -690,6 +690,8 @@ function App() {
         if (configDoc.exists()) {
           const apiKey = configDoc.data().apiKey;
           console.log('🔑 Resend API Key loaded from Firebase:', apiKey ? 'Yes' : 'No');
+          console.log('🔑 API Key value:', apiKey);
+          console.log('🔑 API Key length:', apiKey ? apiKey.length : 0);
           setResendApiKey(apiKey);
           setResend(new Resend(apiKey));
         } else {
@@ -1340,6 +1342,19 @@ function App() {
       
       console.log('✅ Cart abandonment email sent successfully!', result);
       console.log('📊 Result details:', JSON.stringify(result, null, 2));
+      
+      // Check if there's an error in the result
+      if (result.error) {
+        console.error('❌ Resend API returned an error:', result.error);
+        throw new Error(`Resend API error: ${result.error.message || JSON.stringify(result.error)}`);
+      }
+      
+      if (!result.data || !result.data.id) {
+        console.error('❌ No email ID returned from Resend:', result);
+        throw new Error('No email ID returned from Resend API');
+      }
+      
+      console.log('✅ Email sent successfully with ID:', result.data.id);
       return true;
       
     } catch (error) {
