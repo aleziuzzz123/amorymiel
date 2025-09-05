@@ -280,6 +280,7 @@ const CATEGORIES = ["Todos", "Velas", "Lociones", "Brisas Áuricas", "Exfoliante
 
 function App() {
   const [cart, setCart] = useState([]);
+  const [showCart, setShowCart] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [products, setProducts] = useState([]);
@@ -415,6 +416,15 @@ function App() {
   useEffect(() => {
     loadProductsFromFirestore();
   }, []);
+
+  // Auto-open cart when items are added, close when empty
+  useEffect(() => {
+    if (cart.length > 0) {
+      setShowCart(true);
+    } else {
+      setShowCart(false);
+    }
+  }, [cart.length]);
 
   // Check for payment return status
   useEffect(() => {
@@ -1644,7 +1654,9 @@ function App() {
               </div>
             )}
             
-                <div style={{
+                <div 
+                onClick={() => setShowCart(true)}
+                style={{
                 display: "flex",
                 alignItems: "center",
               gap: window.innerWidth <= 768 ? "0.3rem" : "0.5rem",
@@ -4249,7 +4261,7 @@ function App() {
       })()}
 
       {/* Professional Cart Sidebar */}
-      {cart.length > 0 && (
+      {showCart && (
         <>
           {/* Backdrop - Click outside to close */}
           <div 
@@ -4278,7 +4290,7 @@ function App() {
           zIndex: 1000,
             display: "flex",
           flexDirection: "column",
-          transform: "translateX(0)",
+          transform: showCart ? "translateX(0)" : "translateX(100%)",
           transition: "transform 0.3s ease-in-out"
         }}>
           {/* Cart Header */}
@@ -4333,7 +4345,10 @@ function App() {
                 
                 {/* Clear Cart Button */}
                 <button
-                onClick={() => setCart([])}
+                onClick={() => {
+                  setCart([]);
+                  setShowCart(false);
+                }}
                   style={{
                     background: "transparent",
                     border: "none",
