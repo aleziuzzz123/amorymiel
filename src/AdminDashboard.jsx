@@ -335,6 +335,64 @@ const AdminDashboard = ({ user, onClose }) => {
     }
   };
 
+  // Create test order for testing
+  const createTestOrder = async () => {
+    try {
+      const { collection, addDoc } = await import('firebase/firestore');
+      
+      const testOrder = {
+        id: `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        userId: 'test-user-123',
+        customerName: 'Test Customer',
+        customerEmail: 'test@example.com',
+        items: [
+          {
+            id: 'test-product-1',
+            nombre: 'Palo Santo',
+            precio: 120,
+            quantity: 2
+          },
+          {
+            id: 'test-product-2', 
+            nombre: 'Velas De Miel',
+            precio: 180,
+            quantity: 1
+          }
+        ],
+        total: 420,
+        shippingAddress: {
+          fullName: 'Test Customer',
+          address: '123 Test Street',
+          city: 'Cancún',
+          state: 'Quintana Roo',
+          zipCode: '77500',
+          phone: '9981234567'
+        },
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        status: 'processing',
+        trackingNumber: `AMY-${Date.now().toString().slice(-6)}-${Math.random().toString(36).substr(2, 3).toUpperCase()}`,
+        statusHistory: [
+          {
+            status: 'processing',
+            timestamp: new Date(),
+            note: 'Orden de prueba creada',
+            updatedBy: 'admin'
+          }
+        ]
+      };
+
+      await addDoc(collection(db, 'orders'), testOrder);
+      alert(`✅ Orden de prueba creada!\n\nID: ${testOrder.id}\nTracking: ${testOrder.trackingNumber}\n\nAhora puedes probar el sistema de rastreo.`);
+      
+      // Reload dashboard data
+      loadDashboardData();
+    } catch (error) {
+      console.error('Error creating test order:', error);
+      alert('❌ Error creando orden de prueba: ' + error.message);
+    }
+  };
+
   const loadDashboardData = async () => {
     setLoading(true);
     try {
@@ -1480,7 +1538,24 @@ const AdminDashboard = ({ user, onClose }) => {
         {/* Orders Tab */}
         {activeTab === 'orders' && (
           <div>
-            <h2 style={{ color: '#D4A574', marginBottom: '1.5rem' }}>Gestión de Pedidos</h2>
+            <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h2 style={{ color: '#D4A574', margin: 0 }}>Gestión de Pedidos</h2>
+              <button
+                onClick={createTestOrder}
+                style={{
+                  padding: '0.5rem 1rem',
+                  background: '#28a745',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  fontWeight: '600'
+                }}
+              >
+                🧪 Crear Orden de Prueba
+              </button>
+            </div>
             <div style={{
               background: 'white',
               border: '1px solid #eee',
