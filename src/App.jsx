@@ -818,7 +818,7 @@ function App() {
       const successUrl = `${window.location.origin}?payment=success&order_id=${orderId}`;
       const failureUrl = `${window.location.origin}?payment=failure&order_id=${orderId}`;
       
-      const mercadoPagoUrl = `https://link.mercadopago.com.mx/amorymiel?amount=${total}&order_id=${orderId}&success_url=${encodeURIComponent(successUrl)}&failure_url=${encodeURIComponent(failureUrl)}&public_key=APP_USR-7d650b90-6d99-4793-bd43-9412f0f8934e`;
+      const mercadoPagoUrl = `https://link.mercadopago.com.mx/alexjego?amount=${total}&order_id=${orderId}&success_url=${encodeURIComponent(successUrl)}&failure_url=${encodeURIComponent(failureUrl)}&public_key=APP_USR-7d650b90-6d99-4793-bd43-9412f0f8934e`;
       
       // Mark all cart items as "payment_initiated" before redirecting
       await markCartItemsAsPaymentInitiated();
