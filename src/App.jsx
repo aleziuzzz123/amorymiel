@@ -2054,12 +2054,15 @@ function App() {
                               <span style={{
                                 background: "#f44336",
                                 color: "white",
-                                padding: "0.25rem 0.5rem",
+                                padding: window.innerWidth <= 768 ? "0.3rem 0.6rem" : "0.25rem 0.5rem",
                                 borderRadius: "12px",
-                                fontSize: "0.7rem",
-                                fontWeight: "bold"
+                                fontSize: window.innerWidth <= 768 ? "0.75rem" : "0.7rem",
+                                fontWeight: "bold",
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "0.25rem"
                               }}>
-                                ⚠️ Sin Stock
+                                ❌ Sin Stock
                               </span>
                             );
                           } else if (isLowStock) {
@@ -2067,10 +2070,13 @@ function App() {
                               <span style={{
                                 background: "#FF9800",
                                 color: "white",
-                                padding: "0.25rem 0.5rem",
+                                padding: window.innerWidth <= 768 ? "0.3rem 0.6rem" : "0.25rem 0.5rem",
                                 borderRadius: "12px",
-                                fontSize: "0.7rem",
-                                fontWeight: "bold"
+                                fontSize: window.innerWidth <= 768 ? "0.75rem" : "0.7rem",
+                                fontWeight: "bold",
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "0.25rem"
                               }}>
                                 ⚠️ Solo {currentStock} disponibles
                               </span>
@@ -2080,38 +2086,45 @@ function App() {
                               <span style={{
                                 background: "#4CAF50",
                                 color: "white",
-                                padding: "0.25rem 0.5rem",
+                                padding: window.innerWidth <= 768 ? "0.3rem 0.6rem" : "0.25rem 0.5rem",
                                 borderRadius: "12px",
-                                fontSize: "0.7rem",
-                                fontWeight: "bold"
+                                fontSize: window.innerWidth <= 768 ? "0.75rem" : "0.7rem",
+                                fontWeight: "bold",
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "0.25rem"
                               }}>
                                 ✅ En Stock ({currentStock})
                               </span>
                             );
                           }
                         })()}
-                      </div>
                     </div>
+                    </div>
+                  {/* Professional Button Layout */}
                   <div style={{ 
                     display: "flex", 
-                      gap: "0.6rem",
-                      flexWrap: "wrap",
-                      alignItems: "center"
+                    flexDirection: window.innerWidth <= 768 ? "column" : "row",
+                    gap: window.innerWidth <= 768 ? "0.5rem" : "0.6rem",
+                    alignItems: "stretch",
+                    marginTop: "auto"
                   }}>
+                    {/* Ver más Button */}
                     <button
                         onClick={() => setOpenProduct(product)}
                       style={{
                         background: "transparent",
                           color: PALETAS.D.miel,
                           border: `2px solid ${PALETAS.D.miel}`,
-                          padding: "0.6rem 1rem",
+                          padding: window.innerWidth <= 768 ? "0.7rem 1rem" : "0.6rem 1rem",
                           borderRadius: "25px",
                         cursor: "pointer",
-                        fontSize: "0.8rem",
+                        fontSize: window.innerWidth <= 768 ? "0.85rem" : "0.8rem",
                           fontWeight: "600",
                           transition: "all 0.3s ease",
-                          minWidth: "80px",
-                          height: "36px",
+                          flex: window.innerWidth <= 768 ? "1" : "0 0 auto",
+                          minWidth: window.innerWidth <= 768 ? "auto" : "90px",
+                          height: window.innerWidth <= 768 ? "44px" : "36px",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center"
@@ -2119,12 +2132,14 @@ function App() {
                         onMouseEnter={(e) => {
                           e.target.style.background = PALETAS.D.miel;
                           e.target.style.color = "white";
-                          e.target.style.transform = "translateY(-1px)";
+                          e.target.style.transform = "translateY(-2px)";
+                          e.target.style.boxShadow = "0 4px 12px rgba(224, 167, 58, 0.3)";
                         }}
                         onMouseLeave={(e) => {
                           e.target.style.background = "transparent";
                           e.target.style.color = PALETAS.D.miel;
                           e.target.style.transform = "translateY(0)";
+                          e.target.style.boxShadow = "none";
                         }}
                       >
                         Ver más
@@ -2145,18 +2160,19 @@ function App() {
                             return isOutOfStock ? '#666666' : 'white';
                           })(),
                           border: "none",
-                          padding: "0.6rem 1rem",
+                          padding: window.innerWidth <= 768 ? "0.7rem 1rem" : "0.6rem 1rem",
                           borderRadius: "25px",
                           cursor: (() => {
                             const currentStock = product.stock || 0;
                             const isOutOfStock = currentStock === 0;
                             return isOutOfStock ? 'not-allowed' : 'pointer';
                           })(),
-                          fontSize: "0.8rem",
+                          fontSize: window.innerWidth <= 768 ? "0.85rem" : "0.8rem",
                           fontWeight: "600",
                           transition: "all 0.3s ease",
-                          minWidth: "80px",
-                          height: "36px",
+                          flex: window.innerWidth <= 768 ? "1" : "0 0 auto",
+                          minWidth: window.innerWidth <= 768 ? "auto" : "110px",
+                          height: window.innerWidth <= 768 ? "44px" : "36px",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -2416,27 +2432,30 @@ function App() {
                       </span>
                     </div>
 
-                    {/* Buttons */}
+                    {/* Professional Button Layout */}
                     <div style={{
                       display: "flex",
-                      gap: "0.6rem",
-                      flexWrap: "wrap",
-                      alignItems: "center"
+                      flexDirection: window.innerWidth <= 768 ? "column" : "row",
+                      gap: window.innerWidth <= 768 ? "0.5rem" : "0.6rem",
+                      alignItems: "stretch",
+                      marginTop: "auto"
                     }}>
+                      {/* Ver más Button */}
                       <button
                         onClick={() => setOpenProduct(product)}
                         style={{
                           background: "transparent",
                           color: PALETAS.D.miel,
                           border: `2px solid ${PALETAS.D.miel}`,
-                          padding: "0.6rem 1rem",
+                          padding: window.innerWidth <= 768 ? "0.7rem 1rem" : "0.6rem 1rem",
                           borderRadius: "25px",
                           cursor: "pointer",
-                          fontSize: "0.8rem",
+                          fontSize: window.innerWidth <= 768 ? "0.85rem" : "0.8rem",
                           fontWeight: "600",
                           transition: "all 0.3s ease",
-                          minWidth: "80px",
-                          height: "36px",
+                          flex: window.innerWidth <= 768 ? "1" : "0 0 auto",
+                          minWidth: window.innerWidth <= 768 ? "auto" : "90px",
+                          height: window.innerWidth <= 768 ? "44px" : "36px",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center"
@@ -2445,11 +2464,13 @@ function App() {
                           e.target.style.background = PALETAS.D.miel;
                           e.target.style.color = "white";
                           e.target.style.transform = "translateY(-2px)";
+                          e.target.style.boxShadow = "0 4px 12px rgba(224, 167, 58, 0.3)";
                         }}
                         onMouseLeave={(e) => {
                           e.target.style.background = "transparent";
                           e.target.style.color = PALETAS.D.miel;
                           e.target.style.transform = "translateY(0)";
+                          e.target.style.boxShadow = "none";
                         }}
                       >
                         Ver más
@@ -2460,14 +2481,15 @@ function App() {
                           background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
                           color: "white",
                           border: "none",
-                          padding: "0.6rem 1rem",
+                          padding: window.innerWidth <= 768 ? "0.7rem 1rem" : "0.6rem 1rem",
                           borderRadius: "25px",
                           cursor: "pointer",
-                          fontSize: "0.8rem",
+                          fontSize: window.innerWidth <= 768 ? "0.85rem" : "0.8rem",
                           fontWeight: "600",
                           transition: "all 0.3s ease",
-                          minWidth: "80px",
-                          height: "36px",
+                          flex: window.innerWidth <= 768 ? "1" : "0 0 auto",
+                          minWidth: window.innerWidth <= 768 ? "auto" : "110px",
+                          height: window.innerWidth <= 768 ? "44px" : "36px",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -5401,7 +5423,7 @@ function App() {
                             </div>
                             <div style={{
                               color: "#666",
-                              fontSize: "0.8rem",
+                              fontSize: window.innerWidth <= 768 ? "0.85rem" : "0.8rem",
                               marginTop: "0.25rem"
                             }}>
                               {new Date(status.timestamp).toLocaleString('es-MX')}
@@ -5409,7 +5431,7 @@ function App() {
                             {status.note && (
                               <div style={{
                                 color: "#666",
-                                fontSize: "0.8rem",
+                                fontSize: window.innerWidth <= 768 ? "0.85rem" : "0.8rem",
                                 marginTop: "0.25rem",
                                 fontStyle: "italic"
                               }}>
