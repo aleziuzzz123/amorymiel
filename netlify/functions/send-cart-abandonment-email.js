@@ -1,6 +1,10 @@
 const { Resend } = require('resend');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Debug environment variable
+console.log('RESEND_API_KEY exists:', !!process.env.RESEND_API_KEY);
+console.log('RESEND_API_KEY length:', process.env.RESEND_API_KEY ? process.env.RESEND_API_KEY.length : 0);
+
+const resend = new Resend(process.env.RESEND_API_KEY || 're_T8PmbfXN_PKf26mPZa8MY1sBmJd52nYJE');
 
 exports.handler = async (event, context) => {
   // Handle CORS
