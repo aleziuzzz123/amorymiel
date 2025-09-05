@@ -596,6 +596,13 @@ function App() {
     notes: ''
   });
 
+  // Order tracking state
+  const [showOrderTracking, setShowOrderTracking] = useState(false);
+  const [trackingOrderId, setTrackingOrderId] = useState('');
+  const [trackingEmail, setTrackingEmail] = useState('');
+  const [trackedOrder, setTrackedOrder] = useState(null);
+  const [trackingError, setTrackingError] = useState('');
+
   // EmailJS configuration
   const EMAILJS_CONFIG = {
     PUBLIC_KEY: 'N9a2Ar4ONVT5fRerl',
@@ -1108,6 +1115,14 @@ function App() {
     }
   };
 
+  // Generate unique tracking number
+  const generateTrackingNumber = () => {
+    const prefix = 'AMY';
+    const timestamp = Date.now().toString().slice(-6);
+    const random = Math.random().toString(36).substr(2, 3).toUpperCase();
+    return `${prefix}-${timestamp}-${random}`;
+  };
+
   // Create order function (only called when payment is completed)
   const createOrder = async (orderData) => {
     try {
@@ -1116,16 +1131,31 @@ function App() {
         throw new Error('User not authenticated');
       }
 
+      const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const trackingNumber = generateTrackingNumber();
+      const now = new Date();
+
       const order = {
         ...orderData,
-        id: `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        id: orderId,
         userId: user.uid,
         customerName: userProfile?.name || user.email || 'Cliente',
         customerEmail: user.email || 'no-email@example.com',
         items: cart,
         total: getCartTotal(),
-        createdAt: new Date(),
-        status: 'completed' // Only create orders when payment is actually completed
+        shippingAddress: shippingAddress,
+        createdAt: now,
+        updatedAt: now,
+        status: 'processing', // Start with processing status
+        trackingNumber: trackingNumber,
+        statusHistory: [
+          {
+            status: 'processing',
+            timestamp: now,
+            note: 'Orden recibida y siendo preparada',
+            updatedBy: 'system'
+          }
+        ]
       };
 
       console.log('Creating order:', order);
@@ -1176,6 +1206,88 @@ function App() {
     } catch (error) {
       console.error('Error creating order:', error);
       throw error;
+    }
+  };
+
+  // Update order status function
+  const updateOrderStatus = async (orderId, newStatus, note = '', updatedBy = 'admin') => {
+    try {
+      const { collection, query, getDocs, updateDoc, doc } = await import('firebase/firestore');
+      
+      // Find the order by ID
+      const ordersQuery = query(collection(db, 'orders'), where('id', '==', orderId));
+      const ordersSnapshot = await getDocs(ordersQuery);
+      
+      if (ordersSnapshot.empty) {
+        throw new Error('Order not found');
+      }
+      
+      const orderDoc = ordersSnapshot.docs[0];
+      const orderData = orderDoc.data();
+      
+      // Add new status to history
+      const newStatusEntry = {
+        status: newStatus,
+        timestamp: new Date(),
+        note: note,
+        updatedBy: updatedBy
+      };
+      
+      const updatedStatusHistory = [...orderData.statusHistory, newStatusEntry];
+      
+      // Update the order
+      await updateDoc(doc(db, 'orders', orderDoc.id), {
+        status: newStatus,
+        updatedAt: new Date(),
+        statusHistory: updatedStatusHistory
+      });
+      
+      console.log(`Order ${orderId} status updated to ${newStatus}`);
+      return true;
+    } catch (error) {
+      console.error('Error updating order status:', error);
+      throw error;
+    }
+  };
+
+  // Track order function
+  const trackOrder = async () => {
+    if (!trackingOrderId.trim() && !trackingEmail.trim()) {
+      setTrackingError('Por favor ingresa el ID de la orden o tu email');
+      return;
+    }
+
+    try {
+      setTrackingError('');
+      const { collection, query, getDocs } = await import('firebase/firestore');
+      
+      let ordersQuery;
+      if (trackingOrderId.trim()) {
+        // Search by order ID
+        ordersQuery = query(collection(db, 'orders'), where('id', '==', trackingOrderId.trim()));
+      } else {
+        // Search by email
+        ordersQuery = query(collection(db, 'orders'), where('customerEmail', '==', trackingEmail.trim()));
+      }
+      
+      const ordersSnapshot = await getDocs(ordersQuery);
+      
+      if (ordersSnapshot.empty) {
+        setTrackingError('No se encontró ninguna orden con los datos proporcionados');
+        setTrackedOrder(null);
+        return;
+      }
+      
+      // If searching by email, get the most recent order
+      const orders = ordersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const order = trackingOrderId.trim() ? orders[0] : orders.sort((a, b) => b.createdAt - a.createdAt)[0];
+      
+      setTrackedOrder(order);
+      console.log('Order found:', order);
+    } catch (error) {
+      console.error('Error tracking order:', error);
+      setTrackingError('Error al buscar la orden. Por favor, inténtalo de nuevo.');
+      setTrackedOrder(null);
     }
   };
 
@@ -1351,6 +1463,32 @@ function App() {
                   </button>
                 )}
 
+                {/* Order Tracking Button */}
+                <button
+                  onClick={() => setShowOrderTracking(true)}
+                  style={{
+                    background: `linear-gradient(135deg, ${PALETAS.D.azul} 0%, #6B9BD2 100%)`,
+                    color: "white",
+                    border: "none",
+                    padding: window.innerWidth <= 768 ? "0.4rem 0.8rem" : "0.5rem 1rem",
+                    borderRadius: "20px",
+                    fontSize: window.innerWidth <= 768 ? "0.8rem" : "0.9rem",
+                    cursor: "pointer",
+                    transition: "all 0.3s ease",
+                    fontWeight: "bold"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = "translateY(-2px)";
+                    e.target.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = "translateY(0)";
+                    e.target.style.boxShadow = "none";
+                  }}
+                >
+                  📦 Rastrear Orden
+                </button>
+
                 {/* Add Products button removed - all products now loaded from Firebase */}
 
                 
@@ -1379,32 +1517,65 @@ function App() {
                 </button>
               </div>
             ) : (
-              <button
-                onClick={() => {
-                  setShowAuthModal(true);
-                  setAuthMode('login');
-                }}
-                style={{
-                  background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
-                  color: "white",
-                  border: "none",
-                  padding: window.innerWidth <= 768 ? "0.4rem 0.8rem" : "0.5rem 1rem",
-                  borderRadius: "20px",
-                  fontSize: window.innerWidth <= 768 ? "0.8rem" : "0.9rem",
-                  cursor: "pointer",
-                  transition: "all 0.3s ease"
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.transform = "translateY(-2px)";
-                  e.target.style.boxShadow = "0 4px 15px rgba(224, 167, 58, 0.3)";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.transform = "translateY(0)";
-                  e.target.style.boxShadow = "none";
-                }}
-              >
-                Iniciar Sesión
-              </button>
+              <div style={{ 
+                display: "flex", 
+                alignItems: "center", 
+                gap: window.innerWidth <= 768 ? "0.5rem" : "1rem",
+                flexWrap: "wrap"
+              }}>
+                {/* Order Tracking Button for non-logged users */}
+                <button
+                  onClick={() => setShowOrderTracking(true)}
+                  style={{
+                    background: `linear-gradient(135deg, ${PALETAS.D.azul} 0%, #6B9BD2 100%)`,
+                    color: "white",
+                    border: "none",
+                    padding: window.innerWidth <= 768 ? "0.4rem 0.8rem" : "0.5rem 1rem",
+                    borderRadius: "20px",
+                    fontSize: window.innerWidth <= 768 ? "0.8rem" : "0.9rem",
+                    cursor: "pointer",
+                    transition: "all 0.3s ease",
+                    fontWeight: "bold"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = "translateY(-2px)";
+                    e.target.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = "translateY(0)";
+                    e.target.style.boxShadow = "none";
+                  }}
+                >
+                  📦 Rastrear Orden
+                </button>
+
+                <button
+                  onClick={() => {
+                    setShowAuthModal(true);
+                    setAuthMode('login');
+                  }}
+                  style={{
+                    background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                    color: "white",
+                    border: "none",
+                    padding: window.innerWidth <= 768 ? "0.4rem 0.8rem" : "0.5rem 1rem",
+                    borderRadius: "20px",
+                    fontSize: window.innerWidth <= 768 ? "0.8rem" : "0.9rem",
+                    cursor: "pointer",
+                    transition: "all 0.3s ease"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = "translateY(-2px)";
+                    e.target.style.boxShadow = "0 4px 15px rgba(224, 167, 58, 0.3)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = "translateY(0)";
+                    e.target.style.boxShadow = "none";
+                  }}
+                >
+                  Iniciar Sesión
+                </button>
+              </div>
             )}
             
                 <div style={{
@@ -4786,6 +4957,385 @@ function App() {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* Order Tracking Modal */}
+        {showOrderTracking && (
+          <div style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0,0,0,0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000
+          }}>
+            <div style={{
+              background: "white",
+              borderRadius: "15px",
+              padding: "2rem",
+              maxWidth: "600px",
+              width: "90%",
+              maxHeight: "90vh",
+              overflow: "auto",
+              boxShadow: "0 20px 60px rgba(0,0,0,0.3)"
+            }}>
+              <div style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "1.5rem"
+              }}>
+                <h2 style={{
+                  color: PALETAS.D.miel,
+                  margin: 0,
+                  fontSize: "1.5rem",
+                  fontWeight: "bold"
+                }}>
+                  📦 Rastrear Orden
+                </h2>
+                <button
+                  onClick={() => {
+                    setShowOrderTracking(false);
+                    setTrackedOrder(null);
+                    setTrackingError('');
+                    setTrackingOrderId('');
+                    setTrackingEmail('');
+                  }}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    fontSize: "1.5rem",
+                    cursor: "pointer",
+                    color: "#666"
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+
+              {!trackedOrder ? (
+                <div>
+                  <p style={{
+                    color: PALETAS.D.carbon,
+                    marginBottom: "1.5rem",
+                    fontSize: "1rem"
+                  }}>
+                    Ingresa tu ID de orden o email para rastrear tu pedido
+                  </p>
+
+                  <div style={{ marginBottom: "1rem" }}>
+                    <label style={{
+                      display: "block",
+                      marginBottom: "0.5rem",
+                      color: PALETAS.D.carbon,
+                      fontWeight: "500"
+                    }}>
+                      ID de Orden
+                    </label>
+                    <input
+                      type="text"
+                      value={trackingOrderId}
+                      onChange={(e) => setTrackingOrderId(e.target.value)}
+                      placeholder="Ej: order_123456789"
+                      style={{
+                        width: "100%",
+                        padding: "0.75rem",
+                        border: `2px solid ${PALETAS.D.crema}`,
+                        borderRadius: "8px",
+                        fontSize: "1rem",
+                        outline: "none",
+                        transition: "border-color 0.3s ease"
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = PALETAS.D.miel}
+                      onBlur={(e) => e.target.style.borderColor = PALETAS.D.crema}
+                    />
+                  </div>
+
+                  <div style={{ marginBottom: "1rem" }}>
+                    <label style={{
+                      display: "block",
+                      marginBottom: "0.5rem",
+                      color: PALETAS.D.carbon,
+                      fontWeight: "500"
+                    }}>
+                      O Email
+                    </label>
+                    <input
+                      type="email"
+                      value={trackingEmail}
+                      onChange={(e) => setTrackingEmail(e.target.value)}
+                      placeholder="tu@email.com"
+                      style={{
+                        width: "100%",
+                        padding: "0.75rem",
+                        border: `2px solid ${PALETAS.D.crema}`,
+                        borderRadius: "8px",
+                        fontSize: "1rem",
+                        outline: "none",
+                        transition: "border-color 0.3s ease"
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = PALETAS.D.miel}
+                      onBlur={(e) => e.target.style.borderColor = PALETAS.D.crema}
+                    />
+                  </div>
+
+                  {trackingError && (
+                    <div style={{
+                      background: "#fee",
+                      color: "#c33",
+                      padding: "0.75rem",
+                      borderRadius: "8px",
+                      marginBottom: "1rem",
+                      fontSize: "0.9rem"
+                    }}>
+                      {trackingError}
+                    </div>
+                  )}
+
+                  <button
+                    onClick={trackOrder}
+                    style={{
+                      width: "100%",
+                      padding: "0.75rem",
+                      background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                      border: "none",
+                      color: "white",
+                      borderRadius: "8px",
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                      transition: "all 0.3s ease"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = "translateY(-2px)";
+                      e.target.style.boxShadow = "0 5px 15px rgba(0,0,0,0.2)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = "translateY(0)";
+                      e.target.style.boxShadow = "none";
+                    }}
+                  >
+                    🔍 Rastrear Orden
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <div style={{
+                    background: PALETAS.D.crema,
+                    padding: "1rem",
+                    borderRadius: "8px",
+                    marginBottom: "1.5rem"
+                  }}>
+                    <h3 style={{
+                      color: PALETAS.D.carbon,
+                      margin: "0 0 0.5rem 0",
+                      fontSize: "1.1rem"
+                    }}>
+                      Orden #{trackedOrder.id}
+                    </h3>
+                    <p style={{
+                      color: PALETAS.D.carbon,
+                      margin: "0 0 0.5rem 0",
+                      fontSize: "0.9rem"
+                    }}>
+                      Cliente: {trackedOrder.customerName}
+                    </p>
+                    <p style={{
+                      color: PALETAS.D.carbon,
+                      margin: "0 0 0.5rem 0",
+                      fontSize: "0.9rem"
+                    }}>
+                      Email: {trackedOrder.customerEmail}
+                    </p>
+                    <p style={{
+                      color: PALETAS.D.carbon,
+                      margin: "0 0 0.5rem 0",
+                      fontSize: "0.9rem"
+                    }}>
+                      Total: ${trackedOrder.total}
+                    </p>
+                    <p style={{
+                      color: PALETAS.D.carbon,
+                      margin: "0 0 0.5rem 0",
+                      fontSize: "0.9rem"
+                    }}>
+                      Número de Rastreo: <strong>{trackedOrder.trackingNumber}</strong>
+                    </p>
+                    <p style={{
+                      color: PALETAS.D.carbon,
+                      margin: "0",
+                      fontSize: "0.9rem"
+                    }}>
+                      Fecha: {new Date(trackedOrder.createdAt).toLocaleDateString('es-MX')}
+                    </p>
+                  </div>
+
+                  <div style={{ marginBottom: "1.5rem" }}>
+                    <h4 style={{
+                      color: PALETAS.D.carbon,
+                      margin: "0 0 1rem 0",
+                      fontSize: "1rem"
+                    }}>
+                      Estado Actual: 
+                      <span style={{
+                        color: trackedOrder.status === 'delivered' ? '#28a745' : 
+                               trackedOrder.status === 'shipped' ? '#007bff' : 
+                               trackedOrder.status === 'processing' ? '#ffc107' : '#dc3545',
+                        marginLeft: "0.5rem",
+                        textTransform: "uppercase",
+                        fontWeight: "bold"
+                      }}>
+                        {trackedOrder.status === 'processing' ? 'En Proceso' :
+                         trackedOrder.status === 'shipped' ? 'Enviado' :
+                         trackedOrder.status === 'delivered' ? 'Entregado' :
+                         trackedOrder.status === 'cancelled' ? 'Cancelado' : trackedOrder.status}
+                      </span>
+                    </h4>
+                  </div>
+
+                  <div style={{ marginBottom: "1.5rem" }}>
+                    <h4 style={{
+                      color: PALETAS.D.carbon,
+                      margin: "0 0 1rem 0",
+                      fontSize: "1rem"
+                    }}>
+                      Historial de Estado
+                    </h4>
+                    <div style={{
+                      background: "#f8f9fa",
+                      borderRadius: "8px",
+                      padding: "1rem"
+                    }}>
+                      {trackedOrder.statusHistory?.map((status, index) => (
+                        <div key={index} style={{
+                          display: "flex",
+                          alignItems: "center",
+                          marginBottom: index < trackedOrder.statusHistory.length - 1 ? "1rem" : "0",
+                          paddingBottom: index < trackedOrder.statusHistory.length - 1 ? "1rem" : "0",
+                          borderBottom: index < trackedOrder.statusHistory.length - 1 ? "1px solid #e9ecef" : "none"
+                        }}>
+                          <div style={{
+                            width: "12px",
+                            height: "12px",
+                            borderRadius: "50%",
+                            background: status.status === 'delivered' ? '#28a745' : 
+                                       status.status === 'shipped' ? '#007bff' : 
+                                       status.status === 'processing' ? '#ffc107' : '#dc3545',
+                            marginRight: "1rem",
+                            flexShrink: 0
+                          }} />
+                          <div style={{ flex: 1 }}>
+                            <div style={{
+                              color: PALETAS.D.carbon,
+                              fontWeight: "500",
+                              fontSize: "0.9rem"
+                            }}>
+                              {status.status === 'processing' ? 'En Proceso' :
+                               status.status === 'shipped' ? 'Enviado' :
+                               status.status === 'delivered' ? 'Entregado' :
+                               status.status === 'cancelled' ? 'Cancelado' : status.status}
+                            </div>
+                            <div style={{
+                              color: "#666",
+                              fontSize: "0.8rem",
+                              marginTop: "0.25rem"
+                            }}>
+                              {new Date(status.timestamp).toLocaleString('es-MX')}
+                            </div>
+                            {status.note && (
+                              <div style={{
+                                color: "#666",
+                                fontSize: "0.8rem",
+                                marginTop: "0.25rem",
+                                fontStyle: "italic"
+                              }}>
+                                {status.note}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div style={{ marginBottom: "1.5rem" }}>
+                    <h4 style={{
+                      color: PALETAS.D.carbon,
+                      margin: "0 0 1rem 0",
+                      fontSize: "1rem"
+                    }}>
+                      Productos
+                    </h4>
+                    <div style={{
+                      background: "#f8f9fa",
+                      borderRadius: "8px",
+                      padding: "1rem"
+                    }}>
+                      {trackedOrder.items?.map((item, index) => (
+                        <div key={index} style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginBottom: index < trackedOrder.items.length - 1 ? "0.5rem" : "0",
+                          paddingBottom: index < trackedOrder.items.length - 1 ? "0.5rem" : "0",
+                          borderBottom: index < trackedOrder.items.length - 1 ? "1px solid #e9ecef" : "none"
+                        }}>
+                          <span style={{
+                            color: PALETAS.D.carbon,
+                            fontSize: "0.9rem"
+                          }}>
+                            {item.nombre} x{item.quantity}
+                          </span>
+                          <span style={{
+                            color: PALETAS.D.carbon,
+                            fontWeight: "500",
+                            fontSize: "0.9rem"
+                          }}>
+                            ${item.precio * item.quantity}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setTrackedOrder(null);
+                      setTrackingError('');
+                      setTrackingOrderId('');
+                      setTrackingEmail('');
+                    }}
+                    style={{
+                      width: "100%",
+                      padding: "0.75rem",
+                      background: "transparent",
+                      border: `2px solid ${PALETAS.D.miel}`,
+                      color: PALETAS.D.miel,
+                      borderRadius: "8px",
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                      transition: "all 0.3s ease"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.background = PALETAS.D.miel;
+                      e.target.style.color = "white";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.background = "transparent";
+                      e.target.style.color = PALETAS.D.miel;
+                    }}
+                  >
+                    🔍 Rastrear Otra Orden
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}

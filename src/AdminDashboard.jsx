@@ -269,6 +269,72 @@ const AdminDashboard = ({ user, onClose }) => {
     }
   }, [user]);
 
+  // Update order status function
+  const updateOrderStatus = async (orderId, newStatus) => {
+    try {
+      // Find the order by ID
+      const ordersQuery = query(collection(db, 'orders'), where('id', '==', orderId));
+      const ordersSnapshot = await getDocs(ordersQuery);
+      
+      if (ordersSnapshot.empty) {
+        throw new Error('Order not found');
+      }
+      
+      const orderDoc = ordersSnapshot.docs[0];
+      const orderData = orderDoc.data();
+      
+      // Add new status to history
+      const newStatusEntry = {
+        status: newStatus,
+        timestamp: new Date(),
+        note: getStatusNote(newStatus),
+        updatedBy: 'admin'
+      };
+      
+      const updatedStatusHistory = [...(orderData.statusHistory || []), newStatusEntry];
+      
+      // Update the order
+      await updateDoc(doc(db, 'orders', orderDoc.id), {
+        status: newStatus,
+        updatedAt: new Date(),
+        statusHistory: updatedStatusHistory
+      });
+      
+      console.log(`Order ${orderId} status updated to ${newStatus}`);
+      
+      // Reload dashboard data to reflect changes
+      loadDashboardData();
+      
+      alert(`✅ Estado de la orden actualizado a: ${getStatusDisplayName(newStatus)}`);
+    } catch (error) {
+      console.error('Error updating order status:', error);
+      alert(`❌ Error actualizando estado: ${error.message}`);
+    }
+  };
+
+  // Get status note
+  const getStatusNote = (status) => {
+    switch (status) {
+      case 'processing': return 'Orden recibida y siendo preparada';
+      case 'shipped': return 'Orden enviada con número de rastreo';
+      case 'delivered': return 'Orden entregada exitosamente';
+      case 'cancelled': return 'Orden cancelada';
+      default: return 'Estado actualizado';
+    }
+  };
+
+  // Get status display name
+  const getStatusDisplayName = (status) => {
+    switch (status) {
+      case 'processing': return 'En Proceso';
+      case 'shipped': return 'Enviado';
+      case 'delivered': return 'Entregado';
+      case 'cancelled': return 'Cancelado';
+      case 'completed': return 'Completado';
+      default: return status;
+    }
+  };
+
   const loadDashboardData = async () => {
     setLoading(true);
     try {
@@ -1465,7 +1531,7 @@ const AdminDashboard = ({ user, onClose }) => {
                   <div>{formatDate(order.createdAt)}</div>
                   <div>
                     <select
-                      value={order.status || 'pending'}
+                      value={order.status || 'processing'}
                       onChange={(e) => updateOrderStatus(order.id, e.target.value)}
                       style={{
                         padding: '0.25rem 0.5rem',
@@ -1474,10 +1540,9 @@ const AdminDashboard = ({ user, onClose }) => {
                         fontSize: '0.8rem'
                       }}
                     >
-                      <option value="pending">Pendiente</option>
-                      <option value="processing">Procesando</option>
+                      <option value="processing">En Proceso</option>
                       <option value="shipped">Enviado</option>
-                      <option value="completed">Completado</option>
+                      <option value="delivered">Entregado</option>
                       <option value="cancelled">Cancelado</option>
                     </select>
                   </div>
@@ -2733,18 +2798,32 @@ const AdminDashboard = ({ user, onClose }) => {
                     <p><strong>Fecha:</strong> {formatDate(selectedOrder.createdAt)}</p>
                     <p><strong>Estado:</strong> 
                       <span style={{
-                        background: selectedOrder.status === 'completed' ? '#4CAF50' : 
-                                   selectedOrder.status === 'pending' ? '#FF9800' : '#9E9E9E',
+                        background: selectedOrder.status === 'delivered' ? '#4CAF50' : 
+                                   selectedOrder.status === 'shipped' ? '#2196F3' : 
+                                   selectedOrder.status === 'processing' ? '#FF9800' : '#9E9E9E',
                         color: 'white',
                         padding: '0.25rem 0.75rem',
                         borderRadius: '15px',
                         fontSize: '0.8rem',
                         marginLeft: '0.5rem'
                       }}>
-                        {selectedOrder.status === 'completed' ? 'Completado' : 
-                         selectedOrder.status === 'pending' ? 'Pendiente' : 'Cancelado'}
+                        {getStatusDisplayName(selectedOrder.status)}
                       </span>
                     </p>
+                    {selectedOrder.trackingNumber && (
+                      <p><strong>Número de Rastreo:</strong> 
+                        <span style={{
+                          fontFamily: 'monospace',
+                          background: '#e3f2fd',
+                          padding: '0.25rem 0.5rem',
+                          borderRadius: '4px',
+                          fontSize: '0.9rem',
+                          marginLeft: '0.5rem'
+                        }}>
+                          {selectedOrder.trackingNumber}
+                        </span>
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -2770,6 +2849,68 @@ const AdminDashboard = ({ user, onClose }) => {
                   </div>
                 </div>
               </div>
+
+              {/* Status History */}
+              {selectedOrder.statusHistory && selectedOrder.statusHistory.length > 0 && (
+                <div style={{ marginBottom: '2rem' }}>
+                  <h3 style={{ color: '#D4A574', marginBottom: '1rem' }}>Historial de Estado</h3>
+                  <div style={{ background: '#f8f9fa', padding: '1rem', borderRadius: '8px' }}>
+                    {selectedOrder.statusHistory.map((status, index) => (
+                      <div key={index} style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        marginBottom: index < selectedOrder.statusHistory.length - 1 ? '1rem' : '0',
+                        paddingBottom: index < selectedOrder.statusHistory.length - 1 ? '1rem' : '0',
+                        borderBottom: index < selectedOrder.statusHistory.length - 1 ? '1px solid #e9ecef' : 'none'
+                      }}>
+                        <div style={{
+                          width: '12px',
+                          height: '12px',
+                          borderRadius: '50%',
+                          background: status.status === 'delivered' ? '#4CAF50' : 
+                                     status.status === 'shipped' ? '#2196F3' : 
+                                     status.status === 'processing' ? '#FF9800' : '#9E9E9E',
+                          marginRight: '1rem',
+                          flexShrink: 0
+                        }} />
+                        <div style={{ flex: 1 }}>
+                          <div style={{
+                            color: '#333',
+                            fontWeight: '500',
+                            fontSize: '0.9rem'
+                          }}>
+                            {getStatusDisplayName(status.status)}
+                          </div>
+                          <div style={{
+                            color: '#666',
+                            fontSize: '0.8rem',
+                            marginTop: '0.25rem'
+                          }}>
+                            {new Date(status.timestamp).toLocaleString('es-MX')}
+                          </div>
+                          {status.note && (
+                            <div style={{
+                              color: '#666',
+                              fontSize: '0.8rem',
+                              marginTop: '0.25rem',
+                              fontStyle: 'italic'
+                            }}>
+                              {status.note}
+                            </div>
+                          )}
+                          <div style={{
+                            color: '#999',
+                            fontSize: '0.7rem',
+                            marginTop: '0.25rem'
+                          }}>
+                            Actualizado por: {status.updatedBy}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Order Items */}
               <div>
