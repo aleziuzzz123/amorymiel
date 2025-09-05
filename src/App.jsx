@@ -1078,7 +1078,13 @@ function App() {
           setOrderHistory(userData.orderHistory || []);
           
           // Check if user is admin
-          setIsAdmin(userData.isAdmin === true || user.email === 'admin@amorymiel.com');
+          const isAdminUser = userData.isAdmin === true || user.email === 'admin@amorymiel.com';
+          setIsAdmin(isAdminUser);
+          
+          // Ensure admin permissions are set in Firestore
+          if (isAdminUser && user.email === 'admin@amorymiel.com') {
+            ensureAdminPermissions();
+          }
         }
       } else {
         setUser(null);
@@ -1167,6 +1173,30 @@ function App() {
     const timestamp = Date.now().toString().slice(-6);
     const random = Math.random().toString(36).substr(2, 3).toUpperCase();
     return `${prefix}-${timestamp}-${random}`;
+  };
+
+  // Ensure admin permissions are set in Firestore
+  const ensureAdminPermissions = async () => {
+    try {
+      if (!user || user.email !== 'admin@amorymiel.com') return;
+      
+      const { doc, setDoc } = await import('firebase/firestore');
+      const adminDocRef = doc(db, 'users', user.uid);
+      
+      await setDoc(adminDocRef, {
+        uid: user.uid,
+        email: user.email,
+        name: 'Administrador',
+        isAdmin: true,
+        role: 'admin',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }, { merge: true });
+      
+      console.log('Admin permissions ensured in Firestore');
+    } catch (error) {
+      console.error('Error ensuring admin permissions:', error);
+    }
   };
 
   // Create order function (only called when payment is completed)
