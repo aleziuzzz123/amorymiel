@@ -1312,7 +1312,7 @@ function App() {
         </html>
       `;
       
-      console.log('🚀 NEW CODE DEPLOYED - Attempting to send email via Resend API directly...');
+      console.log('🚀🚀🚀 FORCE DEPLOYMENT - NEW CODE IS HERE - Attempting to send email via Resend API directly...');
       
       // Use CORS proxy to bypass browser restrictions
       const response = await fetch('https://cors-anywhere.herokuapp.com/https://api.resend.com/emails', {
