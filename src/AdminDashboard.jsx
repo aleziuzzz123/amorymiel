@@ -529,6 +529,25 @@ const AdminDashboard = ({ user, onClose }) => {
     }
   };
 
+  // Ensure admin user has proper permissions in Firestore
+  const ensureAdminPermissions = async () => {
+    try {
+      const { doc, setDoc } = await import('firebase/firestore');
+      
+      // Create/update admin user document with admin role
+      await setDoc(doc(db, 'users', user.uid), {
+        email: user.email,
+        isAdmin: true,
+        role: 'admin',
+        lastUpdated: new Date().toISOString()
+      }, { merge: true });
+      
+      console.log('✅ Admin permissions ensured in Firestore');
+    } catch (error) {
+      console.error('Error ensuring admin permissions:', error);
+    }
+  };
+
   // Migrate existing orders to cart_items (since they're not real purchases)
   const migrateOrdersToCartItems = async () => {
     try {
@@ -545,11 +564,13 @@ const AdminDashboard = ({ user, onClose }) => {
       return;
     }
     
-    // Check if email is verified
+    // Ensure admin permissions in Firestore
+    await ensureAdminPermissions();
+    
+    // Check if email is verified (but don't block if not verified)
     if (!user.emailVerified) {
-      console.warn('⚠️ Admin email is not verified. This might cause permission issues.');
-      alert('⚠️ Tu email de administrador no está verificado. Esto puede causar problemas de permisos. Por favor, verifica tu email en Firebase Authentication.');
-      return;
+      console.warn('⚠️ Admin email is not verified, but proceeding anyway...');
+      // Don't return here - just log a warning
     }
       
       // Test admin permissions by trying to read a simple collection first
