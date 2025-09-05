@@ -5533,7 +5533,41 @@ function App() {
             fontWeight: 'bold',
             boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
           }}
-          onClick={ensureAdminPermissions}
+          onClick={async () => {
+            try {
+              console.log('🔧 Setup Admin Data button clicked');
+              console.log('User:', user);
+              console.log('DB:', db);
+              
+              const { doc, setDoc } = await import('firebase/firestore');
+              const adminDocRef = doc(db, 'users', user.uid);
+              
+              const adminData = {
+                uid: user.uid,
+                email: user.email,
+                name: 'Administrador',
+                isAdmin: true,
+                role: 'admin',
+                createdAt: new Date(),
+                updatedAt: new Date()
+              };
+              
+              console.log('Setting admin data:', adminData);
+              
+              await setDoc(adminDocRef, adminData, { merge: true });
+              
+              console.log('✅ Admin permissions ensured in Firestore');
+              alert('✅ Admin user created successfully! Reloading page...');
+              
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000);
+              
+            } catch (error) {
+              console.error('❌ Error ensuring admin permissions:', error);
+              alert('❌ Error: ' + error.message);
+            }
+          }}
           >
             🔧 Setup Admin Data
           </div>
