@@ -680,7 +680,12 @@ function App() {
   const EMAILJS_CONFIG = {
     PUBLIC_KEY: 'N9a2Ar4ONVT5fRerl',
     SERVICE_ID: 'service_ih1vhyb',
-    TEMPLATE_ID: 'template_9aexk4c'
+    TEMPLATE_ID: 'template_9aexk4c',
+    // New templates for follow-up campaigns
+    CART_ABANDONMENT_TEMPLATE: 'template_cart_abandonment',
+    ORDER_CONFIRMATION_TEMPLATE: 'template_order_confirmation',
+    SHIPPING_UPDATE_TEMPLATE: 'template_shipping_update',
+    DELIVERY_CONFIRMATION_TEMPLATE: 'template_delivery_confirmation'
   };
 
   // Get unique categories
@@ -947,14 +952,28 @@ function App() {
       );
       const cartItemsSnapshot = await getDocs(cartItemsQuery);
       
+      // Collect cart items for email
+      const abandonedCartItems = [];
+      let cartTotal = 0;
+      
       // Update each cart item to abandoned
       for (const cartItemDoc of cartItemsSnapshot.docs) {
+        const cartItemData = cartItemDoc.data();
+        abandonedCartItems.push(cartItemData);
+        cartTotal += cartItemData.productPrice * cartItemData.quantity;
+        
         await updateDoc(doc(db, 'cart_items', cartItemDoc.id), {
           status: 'abandoned',
           abandonedAt: new Date(),
           orderId: orderId
         });
         console.log('Cart item marked as abandoned:', cartItemDoc.id);
+      }
+      
+      // Send cart abandonment email if there are items
+      if (abandonedCartItems.length > 0 && user) {
+        const userName = userProfile?.name || user.email || 'Cliente';
+        await sendCartAbandonmentEmail(user.email, userName, abandonedCartItems, cartTotal);
       }
     } catch (error) {
       console.error('Error marking payment as abandoned:', error);
@@ -1026,6 +1045,144 @@ function App() {
       setNewsletterMessage("Error al suscribirse. Por favor, inténtalo de nuevo.");
     } finally {
       setIsNewsletterSubmitting(false);
+    }
+  };
+
+  // ===== EMAIL FOLLOW-UP SYSTEM =====
+
+  // Send cart abandonment email
+  const sendCartAbandonmentEmail = async (userEmail, userName, cartItems, cartTotal) => {
+    try {
+      const templateParams = {
+        to_email: userEmail,
+        customer_name: userName,
+        cart_items: cartItems.map(item => `${item.nombre} x${item.quantity}`).join(', '),
+        cart_total: new Intl.NumberFormat('es-MX', {
+          style: 'currency',
+          currency: 'MXN'
+        }).format(cartTotal),
+        cart_url: `${window.location.origin}?cart=true`,
+        discount_code: 'RECUPERA10',
+        discount_percent: '10'
+      };
+
+      await emailjs.send(
+        EMAILJS_CONFIG.SERVICE_ID,
+        EMAILJS_CONFIG.CART_ABANDONMENT_TEMPLATE,
+        templateParams,
+        EMAILJS_CONFIG.PUBLIC_KEY
+      );
+      
+      console.log('Cart abandonment email sent to:', userEmail);
+    } catch (error) {
+      console.error('Error sending cart abandonment email:', error);
+    }
+  };
+
+  // Send order confirmation email
+  const sendOrderConfirmationEmail = async (userEmail, userName, order) => {
+    try {
+      const templateParams = {
+        to_email: userEmail,
+        customer_name: userName,
+        order_id: order.id,
+        order_total: new Intl.NumberFormat('es-MX', {
+          style: 'currency',
+          currency: 'MXN'
+        }).format(order.total),
+        order_items: order.items.map(item => `${item.nombre} x${item.quantity}`).join(', '),
+        tracking_number: order.trackingNumber,
+        order_date: new Date(order.createdAt).toLocaleDateString('es-MX'),
+        estimated_delivery: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString('es-MX')
+      };
+
+      await emailjs.send(
+        EMAILJS_CONFIG.SERVICE_ID,
+        EMAILJS_CONFIG.ORDER_CONFIRMATION_TEMPLATE,
+        templateParams,
+        EMAILJS_CONFIG.PUBLIC_KEY
+      );
+      
+      console.log('Order confirmation email sent to:', userEmail);
+    } catch (error) {
+      console.error('Error sending order confirmation email:', error);
+    }
+  };
+
+  // Send shipping update email
+  const sendShippingUpdateEmail = async (userEmail, userName, order) => {
+    try {
+      const templateParams = {
+        to_email: userEmail,
+        customer_name: userName,
+        order_id: order.id,
+        tracking_number: order.trackingNumber,
+        shipping_date: new Date().toLocaleDateString('es-MX'),
+        estimated_delivery: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toLocaleDateString('es-MX'),
+        tracking_url: `https://amorymiel.com/rastrear?order=${order.trackingNumber}`
+      };
+
+      await emailjs.send(
+        EMAILJS_CONFIG.SERVICE_ID,
+        EMAILJS_CONFIG.SHIPPING_UPDATE_TEMPLATE,
+        templateParams,
+        EMAILJS_CONFIG.PUBLIC_KEY
+      );
+      
+      console.log('Shipping update email sent to:', userEmail);
+    } catch (error) {
+      console.error('Error sending shipping update email:', error);
+    }
+  };
+
+  // Send delivery confirmation email
+  const sendDeliveryConfirmationEmail = async (userEmail, userName, order) => {
+    try {
+      const templateParams = {
+        to_email: userEmail,
+        customer_name: userName,
+        order_id: order.id,
+        delivery_date: new Date().toLocaleDateString('es-MX'),
+        feedback_url: `https://amorymiel.com/feedback?order=${order.id}`,
+        reorder_url: `https://amorymiel.com/productos`
+      };
+
+      await emailjs.send(
+        EMAILJS_CONFIG.SERVICE_ID,
+        EMAILJS_CONFIG.DELIVERY_CONFIRMATION_TEMPLATE,
+        templateParams,
+        EMAILJS_CONFIG.PUBLIC_KEY
+      );
+      
+      console.log('Delivery confirmation email sent to:', userEmail);
+    } catch (error) {
+      console.error('Error sending delivery confirmation email:', error);
+    }
+  };
+
+  // Admin function to send follow-up emails
+  const sendFollowUpEmail = async (emailType, userEmail, userName, orderData) => {
+    try {
+      switch (emailType) {
+        case 'cart_abandonment':
+          await sendCartAbandonmentEmail(userEmail, userName, orderData.cartItems, orderData.cartTotal);
+          break;
+        case 'order_confirmation':
+          await sendOrderConfirmationEmail(userEmail, userName, orderData.order);
+          break;
+        case 'shipping_update':
+          await sendShippingUpdateEmail(userEmail, userName, orderData.order);
+          break;
+        case 'delivery_confirmation':
+          await sendDeliveryConfirmationEmail(userEmail, userName, orderData.order);
+          break;
+        default:
+          console.error('Unknown email type:', emailType);
+      }
+      return { success: true, message: `${emailType} email sent successfully` };
+    } catch (error) {
+      console.error(`Error sending ${emailType} email:`, error);
+      return { success: false, message: `Failed to send ${emailType} email` };
     }
   };
 
@@ -1271,26 +1428,12 @@ function App() {
       setCart([]);
       console.log('Cart cleared');
       
-      // Send confirmation email
+      // Send order confirmation email
       try {
-        await emailjs.send(
-          EMAILJS_CONFIG.SERVICE_ID,
-          EMAILJS_CONFIG.TEMPLATE_ID,
-          {
-            to_email: user.email,
-            customer_name: userProfile?.name || user.email,
-            order_id: order.id,
-            order_total: new Intl.NumberFormat('es-CO', {
-              style: 'currency',
-              currency: 'COP'
-            }).format(order.total),
-            order_items: cart.map(item => `${item.nombre} x${item.quantity}`).join(', ')
-          },
-          EMAILJS_CONFIG.PUBLIC_KEY
-        );
-        console.log('Confirmation email sent');
+        await sendOrderConfirmationEmail(user.email, userProfile?.name || user.email, order);
+        console.log('Order confirmation email sent');
       } catch (emailError) {
-        console.warn('Failed to send confirmation email:', emailError);
+        console.warn('Failed to send order confirmation email:', emailError);
         // Don't throw error for email failure
       }
 
