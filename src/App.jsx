@@ -1312,7 +1312,7 @@ function App() {
         </html>
       `;
       
-      console.log('📤 Attempting to send email via Resend...');
+      console.log('📤 Attempting to send email via Resend API directly...');
       
       // Use a different approach - try to bypass CORS by using a proxy
       const response = await fetch('https://api.resend.com/emails', {
