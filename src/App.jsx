@@ -1327,29 +1327,14 @@ function App() {
         </html>
       `;
       
-      console.log('📤 Sending cart abandonment email via Netlify function...');
+      console.log('📤 Sending cart abandonment email via Resend directly...');
       
-      const response = await fetch('/.netlify/functions/send-cart-abandonment-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userEmail,
-          userName,
-          cartItems,
-          cartTotal,
-          htmlContent,
-          subject: '¿Olvidaste algo en tu carrito? 🛒'
-        })
+      const result = await resend.emails.send({
+        from: 'Amor y Miel <noreply@amorymiel.com>',
+        to: [userEmail],
+        subject: '¿Olvidaste algo en tu carrito? 🛒',
+        html: htmlContent
       });
-      
-      const result = await response.json();
-      
-      if (!response.ok) {
-        console.error('❌ Resend API error:', result);
-        return false;
-      }
       
       console.log('✅ Cart abandonment email sent successfully!', result);
       return true;
