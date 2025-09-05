@@ -1328,15 +1328,18 @@ function App() {
       `;
       
       console.log('📤 Sending cart abandonment email via Resend directly...');
+      console.log('🔑 Resend object:', resend);
+      console.log('🔑 API Key loaded:', resendApiKey ? 'Yes' : 'No');
       
       const result = await resend.emails.send({
-        from: 'Amor y Miel <noreply@amorymiel.com>',
+        from: 'Amor y Miel <onboarding@resend.dev>',
         to: [userEmail],
         subject: '¿Olvidaste algo en tu carrito? 🛒',
         html: htmlContent
       });
       
       console.log('✅ Cart abandonment email sent successfully!', result);
+      console.log('📊 Result details:', JSON.stringify(result, null, 2));
       return true;
       
     } catch (error) {
