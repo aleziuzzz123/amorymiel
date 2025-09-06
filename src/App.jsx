@@ -353,6 +353,31 @@ function App() {
   });
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
 
+  // Analytics tracking
+  const trackEvent = async (eventType, eventData = {}) => {
+    if (!user || !db) return;
+    
+    try {
+      const { addDoc, collection } = await import('firebase/firestore');
+      
+      const analyticsEvent = {
+        userId: user.uid,
+        userEmail: user.email,
+        eventType,
+        eventData,
+        timestamp: new Date(),
+        date: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
+        hour: new Date().getHours(),
+        userAgent: navigator.userAgent,
+        url: window.location.href
+      };
+      
+      await addDoc(collection(db, 'analytics_events'), analyticsEvent);
+    } catch (error) {
+      console.error('Error tracking event:', error);
+    }
+  };
+
   // Admin dashboard state
   const [showAdminDashboard, setShowAdminDashboard] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -793,7 +818,16 @@ function App() {
 
   // Handle search input
   const handleSearch = (e) => {
-    setQuery(e.target.value);
+    const searchTerm = e.target.value;
+    setQuery(searchTerm);
+    
+    // Track search event for analytics
+    if (searchTerm.length > 2) {
+      trackEvent('search', {
+        searchTerm: searchTerm,
+        searchLength: searchTerm.length
+      });
+    }
   };
 
   // Wishlist functions
@@ -803,8 +837,22 @@ function App() {
       let newWishlist;
       if (isInWishlist) {
         newWishlist = prev.filter(item => item.id !== product.id);
+        // Track wishlist removal
+        trackEvent('remove_from_wishlist', {
+          productId: product.id,
+          productName: product.nombre,
+          productPrice: product.precio,
+          productCategory: product.categoria
+        });
       } else {
         newWishlist = [...prev, product];
+        // Track wishlist addition
+        trackEvent('add_to_wishlist', {
+          productId: product.id,
+          productName: product.nombre,
+          productPrice: product.precio,
+          productCategory: product.categoria
+        });
       }
       
       // Save to localStorage
@@ -970,6 +1018,14 @@ function App() {
       setUserProfile(null);
     }
   }, [user]);
+
+  // Track page view on component mount
+  useEffect(() => {
+    trackEvent('page_view', {
+      page: window.location.pathname,
+      referrer: document.referrer
+    });
+  }, []);
 
   // Load user profile from Firebase
   const loadUserProfile = async () => {
@@ -1375,6 +1431,14 @@ function App() {
 
     // Track cart addition for abandonment follow-up
     await trackCartAddition(product);
+
+    // Track add to cart event for analytics
+    trackEvent('add_to_cart', {
+      productId: product.id,
+      productName: product.nombre,
+      productPrice: product.precio,
+      productCategory: product.categoria
+    });
   };
 
   // Track cart addition for abandonment follow-up
@@ -2318,6 +2382,24 @@ function App() {
         console.warn('Failed to send order confirmation email:', emailError);
         // Don't throw error for email failure
       }
+
+      // Track purchase event for analytics
+      trackEvent('purchase', {
+        orderId: order.id,
+        orderTotal: order.total,
+        orderSubtotal: order.subtotal,
+        orderDiscount: order.discount,
+        orderShipping: order.shipping,
+        itemCount: order.items.length,
+        appliedCoupon: order.appliedCoupon?.code || null,
+        items: order.items.map(item => ({
+          productId: item.id,
+          productName: item.nombre,
+          productPrice: item.precio,
+          quantity: item.quantity,
+          category: item.categoria
+        }))
+      });
 
       return order;
     } catch (error) {
@@ -3452,7 +3534,16 @@ function App() {
                     
                     {/* Ver más Button */}
                     <button
-                        onClick={() => setOpenProduct(product)}
+                        onClick={() => {
+                          setOpenProduct(product);
+                          // Track product view event for analytics
+                          trackEvent('product_view', {
+                            productId: product.id,
+                            productName: product.nombre,
+                            productPrice: product.precio,
+                            productCategory: product.categoria
+                          });
+                        }}
                       style={{
                         background: "transparent",
                           color: PALETAS.D.miel,
@@ -4043,7 +4134,16 @@ function App() {
                     }}>
                       {/* Ver más Button */}
                       <button
-                        onClick={() => setOpenProduct(product)}
+                        onClick={() => {
+                          setOpenProduct(product);
+                          // Track product view event for analytics
+                          trackEvent('product_view', {
+                            productId: product.id,
+                            productName: product.nombre,
+                            productPrice: product.precio,
+                            productCategory: product.categoria
+                          });
+                        }}
                         style={{
                           background: "transparent",
                           color: PALETAS.D.miel,

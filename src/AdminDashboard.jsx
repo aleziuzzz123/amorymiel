@@ -12,6 +12,7 @@ import {
   addDoc
 } from 'firebase/firestore';
 import { db } from './firebase';
+import AnalyticsDashboard from './AnalyticsDashboard';
 
 // All products are now loaded from Firebase with deduplication
 
@@ -272,6 +273,7 @@ const AdminDashboard = ({ user, onClose }) => {
   const [reviewSearchTerm, setReviewSearchTerm] = useState('');
   const [reviewFilterStatus, setReviewFilterStatus] = useState('all');
   const [selectedReviews, setSelectedReviews] = useState([]);
+  const [showAnalytics, setShowAnalytics] = useState(false);
   
   // Order details state
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -1909,6 +1911,22 @@ const AdminDashboard = ({ user, onClose }) => {
             </p>
           </div>
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            <button
+              onClick={() => setShowAnalytics(true)}
+              style={{
+                background: 'linear-gradient(135deg, #6c757d 0%, #495057 100%)',
+                color: 'white',
+                border: 'none',
+                padding: '0.5rem 1rem',
+                borderRadius: '20px',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                fontWeight: 'bold',
+                marginRight: '1rem'
+              }}
+            >
+              📊 Analytics
+            </button>
             <button
               onClick={loadDashboardData}
               style={{
@@ -5249,6 +5267,11 @@ const AdminDashboard = ({ user, onClose }) => {
           100% { transform: rotate(360deg); }
         }
       `}</style>
+
+      {/* Analytics Dashboard Modal */}
+      {showAnalytics && (
+        <AnalyticsDashboard onClose={() => setShowAnalytics(false)} />
+      )}
     </div>
   );
 };
