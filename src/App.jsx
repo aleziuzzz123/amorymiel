@@ -806,24 +806,44 @@ function App() {
     setCouponSuccess('');
 
     try {
-      const coupon = coupons.find(c => c.code.toUpperCase() === couponCode.toUpperCase());
+      // First, refresh coupons from database to get latest data
+      console.log('🔄 Refreshing coupons from database...');
+      const couponsQuery = query(collection(db, 'coupons'), where('active', '==', true));
+      const couponsSnapshot = await getDocs(couponsQuery);
+      const freshCoupons = couponsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      
+      console.log('📋 Fresh coupons from database:', freshCoupons.map(c => c.code));
+      console.log('🔍 Looking for coupon code:', couponCode.toUpperCase());
+      
+      const coupon = freshCoupons.find(c => c.code.toUpperCase() === couponCode.toUpperCase());
       
       if (!coupon) {
+        console.log('❌ Coupon not found in database');
         setCouponError('Código de cupón no válido');
         return;
       }
 
+      console.log('✅ Coupon found:', coupon);
       const cartTotal = cart.reduce((total, item) => total + (item.precio * item.quantity), 0);
       const validation = validateCoupon(coupon, cartTotal);
       
       if (!validation.valid) {
+        console.log('❌ Coupon validation failed:', validation.message);
         setCouponError(validation.message);
         return;
       }
 
+      console.log('✅ Coupon applied successfully');
       setAppliedCoupon(coupon);
       setCouponSuccess('¡Cupón aplicado exitosamente!');
       setCouponCode('');
+      
+      // Update the coupons state with fresh data
+      setCoupons(freshCoupons);
+      
     } catch (error) {
       console.error('Error applying coupon:', error);
       setCouponError('Error al aplicar el cupón');
@@ -5384,14 +5404,39 @@ function App() {
               borderTop: "2px solid #f0f0f0",
               marginTop: "1rem"
             }}>
-              <h3 style={{
-                fontSize: "1.1rem",
-                fontWeight: "600",
-                color: "#333",
+              <div style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
                 marginBottom: "1rem"
               }}>
-                🎫 Código de Descuento
-              </h3>
+                <h3 style={{
+                  fontSize: "1.1rem",
+                  fontWeight: "600",
+                  color: "#333",
+                  margin: 0
+                }}>
+                  🎫 Código de Descuento
+                </h3>
+                <button
+                  onClick={loadCoupons}
+                  style={{
+                    background: "transparent",
+                    border: "1px solid #D4A574",
+                    color: "#D4A574",
+                    padding: "0.25rem 0.5rem",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    fontSize: "0.8rem",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.25rem"
+                  }}
+                  title="Actualizar cupones"
+                >
+                  🔄 Actualizar
+                </button>
+              </div>
               
               {appliedCoupon ? (
                 <div style={{
