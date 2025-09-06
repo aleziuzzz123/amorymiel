@@ -84,10 +84,33 @@ exports.handler = async (event, context) => {
                         ¡Hola ${userName}! 👋
                     </p>
 
-                    <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 25px 0;">
+                    <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
                         Notamos que agregaste productos a tu carrito pero no completaste la compra. 
                         <strong>¡No te preocupes! Tus productos siguen esperándote.</strong>
                     </p>
+
+                    <!-- Product Benefits -->
+                    <div style="background-color: #f8f9fa; border-radius: 10px; padding: 20px; margin: 20px 0; border-left: 4px solid #d4a574;">
+                        <h4 style="color: #2c3e50; margin: 0 0 15px 0; font-size: 18px; text-align: center;">✨ ¿Por qué elegir nuestros productos?</h4>
+                        <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 15px; text-align: center;">
+                            <div style="flex: 1; min-width: 120px;">
+                                <div style="font-size: 24px; margin-bottom: 8px;">🌿</div>
+                                <p style="color: #2c3e50; font-size: 14px; margin: 0; font-weight: 600;">100% Natural</p>
+                            </div>
+                            <div style="flex: 1; min-width: 120px;">
+                                <div style="font-size: 24px; margin-bottom: 8px;">💝</div>
+                                <p style="color: #2c3e50; font-size: 14px; margin: 0; font-weight: 600;">Hecho con Amor</p>
+                            </div>
+                            <div style="flex: 1; min-width: 120px;">
+                                <div style="font-size: 24px; margin-bottom: 8px;">🚚</div>
+                                <p style="color: #2c3e50; font-size: 14px; margin: 0; font-weight: 600;">Envío Gratis</p>
+                            </div>
+                            <div style="flex: 1; min-width: 120px;">
+                                <div style="font-size: 24px; margin-bottom: 8px;">⭐</div>
+                                <p style="color: #2c3e50; font-size: 14px; margin: 0; font-weight: 600;">Calidad Premium</p>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Special Offer Banner -->
                     <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); border-radius: 15px; padding: 30px; margin: 30px 0; text-align: center; box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4); border: 3px solid #fff;">
