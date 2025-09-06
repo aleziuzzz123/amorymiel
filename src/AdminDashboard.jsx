@@ -238,6 +238,14 @@ const AdminDashboard = ({ user, onClose }) => {
     imagen: ''
   });
   
+  // Enhanced product management features
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [bulkAction, setBulkAction] = useState('');
+  const [productSearchTerm, setProductSearchTerm] = useState('');
+  const [productSortBy, setProductSortBy] = useState('nombre');
+  const [productFilterCategory, setProductFilterCategory] = useState('all');
+  const [showBulkActions, setShowBulkActions] = useState(false);
+  
   // Order details state
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showOrderDetails, setShowOrderDetails] = useState(false);
@@ -1126,6 +1134,113 @@ const AdminDashboard = ({ user, onClose }) => {
     });
   };
 
+  // Enhanced product management functions
+  const duplicateProduct = async (product) => {
+    try {
+      const duplicatedProduct = {
+        ...product,
+        nombre: `${product.nombre} (Copia)`,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      
+      // Remove the id field so Firebase creates a new one
+      delete duplicatedProduct.id;
+      
+      await addDoc(collection(db, 'products'), duplicatedProduct);
+      loadDashboardData();
+      alert('Producto duplicado exitosamente!');
+    } catch (error) {
+      console.error('Error duplicating product:', error);
+      alert('Error al duplicar el producto. Inténtalo de nuevo.');
+    }
+  };
+
+  const handleBulkAction = async () => {
+    if (selectedProducts.length === 0) {
+      alert('Por favor selecciona al menos un producto.');
+      return;
+    }
+
+    if (!bulkAction) {
+      alert('Por favor selecciona una acción.');
+      return;
+    }
+
+    try {
+      const promises = selectedProducts.map(async (productId) => {
+        const productRef = doc(db, 'products', productId);
+        
+        switch (bulkAction) {
+          case 'activate':
+            return updateDoc(productRef, { activo: true, updatedAt: new Date() });
+          case 'deactivate':
+            return updateDoc(productRef, { activo: false, updatedAt: new Date() });
+          case 'delete':
+            return deleteDoc(productRef);
+          case 'setLowStock':
+            return updateDoc(productRef, { minStock: 10, updatedAt: new Date() });
+          default:
+            return Promise.resolve();
+        }
+      });
+
+      await Promise.all(promises);
+      loadDashboardData();
+      setSelectedProducts([]);
+      setBulkAction('');
+      setShowBulkActions(false);
+      alert(`${selectedProducts.length} productos actualizados exitosamente!`);
+    } catch (error) {
+      console.error('Error performing bulk action:', error);
+      alert('Error al realizar la acción masiva. Inténtalo de nuevo.');
+    }
+  };
+
+  const toggleProductSelection = (productId) => {
+    setSelectedProducts(prev => 
+      prev.includes(productId) 
+        ? prev.filter(id => id !== productId)
+        : [...prev, productId]
+    );
+  };
+
+  const selectAllProducts = () => {
+    setSelectedProducts(filteredProducts.map(p => p.id));
+  };
+
+  const clearSelection = () => {
+    setSelectedProducts([]);
+  };
+
+  // Filter and sort products
+  const filteredProducts = products
+    .filter(product => {
+      const matchesSearch = product.nombre.toLowerCase().includes(productSearchTerm.toLowerCase()) ||
+                           product.descripcion.toLowerCase().includes(productSearchTerm.toLowerCase());
+      const matchesCategory = productFilterCategory === 'all' || product.categoria === productFilterCategory;
+      return matchesSearch && matchesCategory;
+    })
+    .sort((a, b) => {
+      switch (productSortBy) {
+        case 'nombre':
+          return a.nombre.localeCompare(b.nombre);
+        case 'precio':
+          return (a.precio || 0) - (b.precio || 0);
+        case 'stock':
+          return (a.stock || 0) - (b.stock || 0);
+        case 'categoria':
+          return (a.categoria || '').localeCompare(b.categoria || '');
+        case 'fecha':
+          return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+        default:
+          return 0;
+      }
+    });
+
+  // Get unique categories
+  const categories = [...new Set(products.map(p => p.categoria).filter(Boolean))];
+
   // Check for low stock alerts
   const checkLowStockAlerts = () => {
     const lowStockProducts = products.filter(product => {
@@ -1837,41 +1952,242 @@ const AdminDashboard = ({ user, onClose }) => {
               alignItems: 'center',
               marginBottom: '1.5rem'
             }}>
-              <h2 style={{ color: '#D4A574', margin: 0 }}>Gestión de Productos</h2>
-              <button
-                onClick={() => {
-                  setIsEditingProduct(false);
-                  setEditingProductId(null);
-                  setNewProduct({
-                    nombre: '',
-                    descripcion: '',
-                    precio: '',
-                    categoria: 'Productos',
-                    stock: '',
-                    stockMinimo: '',
-                    stockMaximo: '',
-                    estado: 'Activo',
-                    imagen: ''
-                  });
-                  setActiveTab('add-product');
-                }}
-                style={{
-                  background: `linear-gradient(135deg, ${PALETAS.A.miel} 0%, ${PALETAS.B.miel} 100%)`,
-                  color: 'white',
-                  border: 'none',
-                  padding: '0.75rem 1.5rem',
-                  borderRadius: '25px',
-                  cursor: 'pointer',
-                  fontSize: '1rem',
-                  fontWeight: 'bold',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem'
-                }}
-              >
-                ➕ Agregar Producto
-              </button>
+              <h2 style={{ color: '#D4A574', margin: 0 }}>Gestión de Productos ({filteredProducts.length})</h2>
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <button
+                  onClick={() => setShowBulkActions(!showBulkActions)}
+                  style={{
+                    background: selectedProducts.length > 0 
+                      ? `linear-gradient(135deg, ${PALETAS.A.verde} 0%, ${PALETAS.B.verde} 100%)`
+                      : `linear-gradient(135deg, ${PALETAS.A.azul} 0%, ${PALETAS.B.azul} 100%)`,
+                    color: 'white',
+                    border: 'none',
+                    padding: '0.75rem 1.5rem',
+                    borderRadius: '25px',
+                    cursor: 'pointer',
+                    fontSize: '1rem',
+                    fontWeight: 'bold',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem'
+                  }}
+                >
+                  {selectedProducts.length > 0 ? `⚡ ${selectedProducts.length} Seleccionados` : '⚡ Acciones Masivas'}
+                </button>
+                <button
+                  onClick={() => {
+                    setIsEditingProduct(false);
+                    setEditingProductId(null);
+                    setNewProduct({
+                      nombre: '',
+                      descripcion: '',
+                      precio: '',
+                      categoria: 'Productos',
+                      stock: '',
+                      stockMinimo: '',
+                      stockMaximo: '',
+                      estado: 'Activo',
+                      imagen: ''
+                    });
+                    setActiveTab('add-product');
+                  }}
+                  style={{
+                    background: `linear-gradient(135deg, ${PALETAS.A.miel} 0%, ${PALETAS.B.miel} 100%)`,
+                    color: 'white',
+                    border: 'none',
+                    padding: '0.75rem 1.5rem',
+                    borderRadius: '25px',
+                    cursor: 'pointer',
+                    fontSize: '1rem',
+                    fontWeight: 'bold',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem'
+                  }}
+                >
+                  ➕ Agregar Producto
+                </button>
+              </div>
             </div>
+
+            {/* Enhanced Search and Filter Controls */}
+            <div style={{
+              background: 'white',
+              border: '1px solid #eee',
+              borderRadius: '10px',
+              padding: '1.5rem',
+              marginBottom: '1.5rem',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+            }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr auto', gap: '1rem', alignItems: 'end' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', color: '#333', fontWeight: '500' }}>
+                    🔍 Buscar Productos
+                  </label>
+                  <input
+                    type="text"
+                    value={productSearchTerm}
+                    onChange={(e) => setProductSearchTerm(e.target.value)}
+                    placeholder="Buscar por nombre o descripción..."
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      border: '2px solid #eee',
+                      borderRadius: '8px',
+                      fontSize: '1rem',
+                      outline: 'none'
+                    }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', color: '#333', fontWeight: '500' }}>
+                    🏷️ Categoría
+                  </label>
+                  <select
+                    value={productFilterCategory}
+                    onChange={(e) => setProductFilterCategory(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      border: '2px solid #eee',
+                      borderRadius: '8px',
+                      fontSize: '1rem',
+                      outline: 'none'
+                    }}
+                  >
+                    <option value="all">Todas las categorías</option>
+                    {categories.map(category => (
+                      <option key={category} value={category}>{category}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', color: '#333', fontWeight: '500' }}>
+                    📊 Ordenar por
+                  </label>
+                  <select
+                    value={productSortBy}
+                    onChange={(e) => setProductSortBy(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      border: '2px solid #eee',
+                      borderRadius: '8px',
+                      fontSize: '1rem',
+                      outline: 'none'
+                    }}
+                  >
+                    <option value="nombre">Nombre</option>
+                    <option value="precio">Precio</option>
+                    <option value="stock">Stock</option>
+                    <option value="categoria">Categoría</option>
+                    <option value="fecha">Fecha de creación</option>
+                  </select>
+                </div>
+                <div>
+                  <button
+                    onClick={() => {
+                      setProductSearchTerm('');
+                      setProductFilterCategory('all');
+                      setProductSortBy('nombre');
+                    }}
+                    style={{
+                      background: 'transparent',
+                      color: '#D4A574',
+                      border: '2px solid #D4A574',
+                      padding: '0.75rem 1rem',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '1rem',
+                      fontWeight: '500'
+                    }}
+                  >
+                    🔄 Limpiar
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Bulk Actions Panel */}
+            {showBulkActions && (
+              <div style={{
+                background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+                border: '2px solid #D4A574',
+                borderRadius: '10px',
+                padding: '1.5rem',
+                marginBottom: '1.5rem'
+              }}>
+                <h3 style={{ color: '#D4A574', marginBottom: '1rem' }}>⚡ Acciones Masivas</h3>
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                  <select
+                    value={bulkAction}
+                    onChange={(e) => setBulkAction(e.target.value)}
+                    style={{
+                      padding: '0.75rem',
+                      border: '2px solid #D4A574',
+                      borderRadius: '8px',
+                      fontSize: '1rem',
+                      outline: 'none',
+                      minWidth: '200px'
+                    }}
+                  >
+                    <option value="">Seleccionar acción...</option>
+                    <option value="activate">✅ Activar productos</option>
+                    <option value="deactivate">❌ Desactivar productos</option>
+                    <option value="setLowStock">⚠️ Establecer alerta de stock bajo</option>
+                    <option value="delete">🗑️ Eliminar productos</option>
+                  </select>
+                  <button
+                    onClick={handleBulkAction}
+                    disabled={!bulkAction || selectedProducts.length === 0}
+                    style={{
+                      background: bulkAction && selectedProducts.length > 0 
+                        ? `linear-gradient(135deg, ${PALETAS.A.verde} 0%, ${PALETAS.B.verde} 100%)`
+                        : '#ccc',
+                      color: 'white',
+                      border: 'none',
+                      padding: '0.75rem 1.5rem',
+                      borderRadius: '8px',
+                      cursor: bulkAction && selectedProducts.length > 0 ? 'pointer' : 'not-allowed',
+                      fontSize: '1rem',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    Ejecutar Acción
+                  </button>
+                  <button
+                    onClick={selectAllProducts}
+                    style={{
+                      background: 'transparent',
+                      color: '#D4A574',
+                      border: '2px solid #D4A574',
+                      padding: '0.75rem 1rem',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '1rem',
+                      fontWeight: '500'
+                    }}
+                  >
+                    ☑️ Seleccionar Todos
+                  </button>
+                  <button
+                    onClick={clearSelection}
+                    style={{
+                      background: 'transparent',
+                      color: '#D4A574',
+                      border: '2px solid #D4A574',
+                      padding: '0.75rem 1rem',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '1rem',
+                      fontWeight: '500'
+                    }}
+                  >
+                    ☐ Limpiar Selección
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Products List */}
             <div style={{
@@ -1882,7 +2198,7 @@ const AdminDashboard = ({ user, onClose }) => {
             }}>
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: '80px 2fr 1fr 1fr 1fr 1fr 1fr auto',
+                gridTemplateColumns: '40px 80px 2fr 1fr 1fr 1fr 1fr 1fr auto',
                 background: 'linear-gradient(135deg, #D4A574 0%, #C9A96E 100%)',
                 color: 'white',
                 padding: '1rem',
@@ -1890,6 +2206,7 @@ const AdminDashboard = ({ user, onClose }) => {
                 borderBottom: '2px solid #B8860B',
                 borderRadius: '8px 8px 0 0'
               }}>
+                <div style={{ textAlign: 'center' }}>☑️</div>
                 <div style={{ textAlign: 'center' }}>🖼️ Imagen</div>
                 <div>📦 Producto</div>
                 <div>🏷️ Categoría</div>
@@ -1899,21 +2216,39 @@ const AdminDashboard = ({ user, onClose }) => {
                 <div>✅ Estado</div>
                 <div style={{ textAlign: 'center' }}>⚙️ Acciones</div>
               </div>
-              {products.map(product => {
+              {filteredProducts.map(product => {
                 const currentStock = product.stock || 0;
                 const minStock = product.minStock || 5;
                 const isLowStock = currentStock <= minStock;
                 const isOutOfStock = currentStock === 0;
+                const isSelected = selectedProducts.includes(product.id);
                 
                 return (
                   <div key={product.id} style={{
                     display: 'grid',
-                    gridTemplateColumns: '80px 2fr 1fr 1fr 1fr 1fr 1fr auto',
+                    gridTemplateColumns: '40px 80px 2fr 1fr 1fr 1fr 1fr 1fr auto',
                     padding: '1rem',
                     borderBottom: '1px solid #f0f0f0',
                     alignItems: 'center',
-                    background: isOutOfStock ? '#ffebee' : isLowStock ? '#fff3e0' : 'white'
+                    background: isSelected 
+                      ? 'linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%)'
+                      : isOutOfStock ? '#ffebee' : isLowStock ? '#fff3e0' : 'white',
+                    borderLeft: isSelected ? '4px solid #D4A574' : 'none'
                   }}>
+                    {/* Selection Checkbox */}
+                    <div style={{ textAlign: 'center' }}>
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => toggleProductSelection(product.id)}
+                        style={{
+                          width: '18px',
+                          height: '18px',
+                          cursor: 'pointer',
+                          accentColor: '#D4A574'
+                        }}
+                      />
+                    </div>
                     <div style={{ 
                       width: '60px', 
                       height: '60px',
@@ -2048,7 +2383,7 @@ const AdminDashboard = ({ user, onClose }) => {
                     }}>
                       {product.activo !== false ? 'Activo' : 'Inactivo'}
                     </div>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                       <button
                         onClick={() => handleEditProduct(product)}
                         style={{
@@ -2059,10 +2394,29 @@ const AdminDashboard = ({ user, onClose }) => {
                           borderRadius: '4px',
                           cursor: 'pointer',
                           fontSize: '0.8rem',
-                          marginRight: '0.5rem'
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.25rem'
                         }}
                       >
-                        Editar
+                        ✏️ Editar
+                      </button>
+                      <button
+                        onClick={() => duplicateProduct(product)}
+                        style={{
+                          background: '#FF9800',
+                          color: 'white',
+                          border: 'none',
+                          padding: '0.5rem 1rem',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontSize: '0.8rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.25rem'
+                        }}
+                      >
+                        📋 Duplicar
                       </button>
                       <button
                         onClick={() => deleteProduct(product.id)}
@@ -2071,12 +2425,15 @@ const AdminDashboard = ({ user, onClose }) => {
                           color: 'white',
                           border: 'none',
                           padding: '0.5rem 1rem',
-                          borderRadius: '5px',
+                          borderRadius: '4px',
                           cursor: 'pointer',
-                          fontSize: '0.8rem'
+                          fontSize: '0.8rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.25rem'
                         }}
                       >
-                        Eliminar
+                        🗑️ Eliminar
                       </button>
                     </div>
                   </div>
