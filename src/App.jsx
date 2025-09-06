@@ -377,6 +377,20 @@ function App() {
     }
   };
 
+  // Google Analytics tracking
+  const trackGAEvent = (eventName, parameters = {}) => {
+    if (typeof gtag !== 'undefined') {
+      gtag('event', eventName, parameters);
+    }
+  };
+
+  // Facebook Pixel tracking
+  const trackFacebookEvent = (eventName, parameters = {}) => {
+    if (typeof fbq !== 'undefined') {
+      fbq('track', eventName, parameters);
+    }
+  };
+
   // Analytics tracking
   const trackEvent = async (eventType, eventData = {}) => {
     if (!db) return;
@@ -431,6 +445,32 @@ function App() {
       console.log('Tracking event:', eventType, analyticsEvent); // Debug log
       await addDoc(collection(db, 'analytics_events'), analyticsEvent);
       console.log('Event tracked successfully:', eventType); // Debug log
+      
+      // Track in Google Analytics
+      trackGAEvent(eventType, {
+        event_category: 'E-commerce',
+        event_label: eventData.productName || eventData.searchTerm || 'General',
+        value: eventData.productPrice || 0,
+        currency: 'MXN'
+      });
+      
+      // Track in Facebook Pixel
+      if (eventType === 'purchase') {
+        trackFacebookEvent('Purchase', {
+          value: eventData.orderTotal || 0,
+          currency: 'MXN',
+          content_type: 'product'
+        });
+      } else if (eventType === 'add_to_cart') {
+        trackFacebookEvent('AddToCart', {
+          value: eventData.productPrice || 0,
+          currency: 'MXN',
+          content_type: 'product',
+          content_ids: [eventData.productId]
+        });
+      } else if (eventType === 'page_view') {
+        trackFacebookEvent('PageView');
+      }
     } catch (error) {
       console.error('Error tracking event:', error);
     }
@@ -1126,6 +1166,26 @@ function App() {
     };
   }, []);
 
+
+  // Social sharing functions
+  const shareOnWhatsApp = (product) => {
+    const text = `¡Mira este producto de Amor Y Miel! ${product.nombre} - $${product.precio}`;
+    const url = `https://wa.me/529991320209?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+  };
+
+  const shareOnFacebook = (product) => {
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(`¡Mira este producto de Amor Y Miel! ${product.nombre}`)}`;
+    window.open(url, '_blank');
+  };
+
+  const shareOnInstagram = (product) => {
+    // Instagram doesn't support direct sharing, so we'll copy to clipboard
+    const text = `¡Mira este producto de Amor Y Miel! ${product.nombre} - $${product.precio}\n\nVisita: ${window.location.href}`;
+    navigator.clipboard.writeText(text).then(() => {
+      alert('¡Texto copiado! Puedes pegarlo en tu historia de Instagram');
+    });
+  };
 
   // Load user profile from Firebase
   const loadUserProfile = async () => {

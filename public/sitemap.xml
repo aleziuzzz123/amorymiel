@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  
+  <!-- Homepage -->
+  <url>
+    <loc>https://amorymiel.com/</loc>
+    <lastmod>2024-09-06</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://amorymiel.com/public/images/logo/logo3.png</image:loc>
+      <image:title>Amor Y Miel - Productos Holísticos Artesanales</image:title>
+      <image:caption>Productos holísticos artesanales para el bienestar espiritual y físico</image:caption>
+    </image:image>
+  </url>
+  
+  <!-- Productos -->
+  <url>
+    <loc>https://amorymiel.com/#productos</loc>
+    <lastmod>2024-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Servicios -->
+  <url>
+    <loc>https://amorymiel.com/#servicios</loc>
+    <lastmod>2024-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Para Niños -->
+  <url>
+    <loc>https://amorymiel.com/#ninos</loc>
+    <lastmod>2024-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Quiénes Somos -->
+  <url>
+    <loc>https://amorymiel.com/#quienes-somos</loc>
+    <lastmod>2024-09-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Contacto -->
+  <url>
+    <loc>https://amorymiel.com/#contacto</loc>
+    <lastmod>2024-09-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+</urlset>

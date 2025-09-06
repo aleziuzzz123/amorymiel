@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://amorymiel.com/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1
+
+# Disallow admin areas
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+
+# Allow important pages
+Allow: /productos/
+Allow: /servicios/
+Allow: /ninos/
+Allow: /quienes-somos/
+Allow: /contacto/
