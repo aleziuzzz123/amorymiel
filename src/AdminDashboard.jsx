@@ -292,13 +292,14 @@ const AdminDashboard = ({ user, onClose }) => {
     }
   }, [user]);
 
-  // Force refresh data every 30 seconds
+  // Force refresh data every 5 minutes (less intrusive)
   useEffect(() => {
     if (user) {
       const interval = setInterval(() => {
         console.log('Auto-refreshing dashboard data...');
-        loadDashboardData();
-      }, 30000); // Refresh every 30 seconds
+        // Refresh data without showing loading modal
+        refreshDashboardData();
+      }, 300000); // Refresh every 5 minutes
 
       return () => clearInterval(interval);
     }
@@ -428,16 +429,11 @@ const AdminDashboard = ({ user, onClose }) => {
     }
   };
 
-  const loadDashboardData = async () => {
-    setLoading(true);
+
+  const refreshDashboardData = async () => {
     try {
       // Load users
-      console.log('Loading users from Firestore...');
-      console.log('Current user:', user);
-      console.log('User email:', user?.email);
-      console.log('Is admin?', user?.email === 'admin@amorymiel.com');
-      
-      // Try to load users without orderBy first, then with orderBy if that fails
+      console.log('Refreshing users from Firestore...');
       let usersSnapshot;
       try {
         const usersQuery = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
@@ -447,23 +443,13 @@ const AdminDashboard = ({ user, onClose }) => {
         const usersQuery = query(collection(db, 'users'));
         usersSnapshot = await getDocs(usersQuery);
       }
-      console.log('Users snapshot:', usersSnapshot);
-      console.log('Number of users found:', usersSnapshot.docs.length);
-      console.log('Users snapshot empty?', usersSnapshot.empty);
       
       let usersData = [];
-      if (usersSnapshot.empty) {
-        console.log('No users found in Firestore');
-        usersData = [];
-      } else {
-        usersData = usersSnapshot.docs.map(doc => {
-          console.log('User doc:', doc.id, doc.data());
-          return {
-            id: doc.id,
-            ...doc.data()
-          };
-        });
-        console.log('Processed users data:', usersData);
+      if (!usersSnapshot.empty) {
+        usersData = usersSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
       }
       setUsers(usersData);
 
@@ -473,7 +459,6 @@ const AdminDashboard = ({ user, onClose }) => {
         const ordersQuery = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
         ordersSnapshot = await getDocs(ordersQuery);
       } catch (error) {
-        console.log('Orders orderBy failed, trying without orderBy:', error.message);
         const ordersQuery = query(collection(db, 'orders'));
         ordersSnapshot = await getDocs(ordersQuery);
       }
@@ -491,7 +476,7 @@ const AdminDashboard = ({ user, onClose }) => {
         ...doc.data()
       }));
       
-      // Remove duplicates by product name before setting products
+      // Remove duplicates
       const uniqueProducts = allProducts.reduce((acc, product) => {
         const existingProduct = acc.find(p => 
           p.nombre && product.nombre && 
@@ -499,15 +484,10 @@ const AdminDashboard = ({ user, onClose }) => {
         );
         if (!existingProduct) {
           acc.push(product);
-        } else {
-          console.log(`Admin Dashboard: Removing duplicate: "${product.nombre}" (ID: ${product.id})`);
         }
         return acc;
       }, []);
       
-      console.log(`Admin Dashboard: Removed ${allProducts.length - uniqueProducts.length} duplicate products`);
-      
-      // Merge products with detailed descriptions from PRODUCT_DETAILS
       const productsWithDetails = uniqueProducts.map(product => ({
         ...product,
         ...(PRODUCT_DETAILS[product.nombre] || {})
@@ -515,90 +495,24 @@ const AdminDashboard = ({ user, onClose }) => {
       
       setProducts(productsWithDetails);
 
-      // Load cart items for abandonment tracking
-      console.log('Loading cart items...');
-      console.log('Current user:', user);
-      console.log('User email:', user?.email);
-      
-      // Load coupons
-      loadCoupons();
-      
-      // Load reviews
-      loadReviews();
-      
-      console.log('Is admin?', user?.email === 'admin@amorymiel.com');
-      
+      // Load cart items
       try {
         const cartItemsQuery = query(collection(db, 'cart_items'), orderBy('addedAt', 'desc'));
-        console.log('Executing cart items query...');
         const cartItemsSnapshot = await getDocs(cartItemsQuery);
-        console.log('Cart items query executed successfully');
-        console.log('Cart items snapshot:', cartItemsSnapshot);
-        console.log('Cart items docs length:', cartItemsSnapshot.docs.length);
-        
-        const cartItemsData = cartItemsSnapshot.docs.map(doc => {
-          const data = doc.data();
-          console.log('Processing cart item:', doc.id, data);
-          return {
-            id: doc.id,
-            ...data
-          };
-        });
-        
+        const cartItemsData = cartItemsSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
         setCartItems(cartItemsData);
-        console.log('Cart items loaded successfully:', cartItemsData.length);
-        console.log('Cart items data:', cartItemsData);
-        
-        // Debug: Check if we can access the collection at all
-        if (cartItemsData.length === 0) {
-          console.log('No cart items found. Checking if collection exists...');
-          // Try to create a test document to check permissions
-          try {
-            const { addDoc } = await import('firebase/firestore');
-            const testDoc = await addDoc(collection(db, 'cart_items'), {
-              test: true,
-              timestamp: new Date(),
-              userId: 'test-admin',
-              status: 'test'
-            });
-            console.log('Test document created successfully:', testDoc.id);
-            // Delete the test document
-            const { deleteDoc, doc } = await import('firebase/firestore');
-            await deleteDoc(doc(db, 'cart_items', testDoc.id));
-            console.log('Test document deleted');
-          } catch (testError) {
-            console.error('Error creating test document:', testError);
-            console.error('This suggests a permission issue with cart_items collection');
-          }
-        }
       } catch (error) {
         console.error('Error loading cart items:', error);
-        console.error('Error details:', {
-          code: error.code,
-          message: error.message,
-          stack: error.stack
-        });
       }
       
-      // Debug: Check if cart items are being filtered correctly
-      const inCartItems = cartItems.filter(item => item.status === 'in_cart');
-      const paymentInitiatedItems = cartItems.filter(item => item.status === 'payment_initiated');
-      const abandonedItems = cartItems.filter(item => {
-        const hoursSinceAdded = (new Date() - new Date(item.addedAt)) / (1000 * 60 * 60);
-        return (item.status === 'in_cart' && hoursSinceAdded > 24) || item.status === 'abandoned';
-      });
-      const purchasedItems = cartItems.filter(item => item.status === 'purchased');
-      
-      console.log('In cart items:', inCartItems.length);
-      console.log('Payment initiated items:', paymentInitiatedItems.length);
-      console.log('Abandoned items (24h+ or payment abandoned):', abandonedItems.length);
-      console.log('Purchased items:', purchasedItems.length);
+      // Load coupons and reviews
+      loadCoupons();
+      loadReviews();
 
       // Calculate stats
-      console.log('Calculating stats...');
-      console.log('Users data length:', usersData.length);
-      console.log('Orders data length:', ordersData.length);
-      
       const totalRevenue = ordersData
         .filter(order => order.status === 'completed')
         .reduce((sum, order) => sum + (order.total || 0), 0);
@@ -618,13 +532,10 @@ const AdminDashboard = ({ user, onClose }) => {
         activeUsers: activeUsers
       };
       
-      console.log('New stats calculated:', newStats);
       setStats(newStats);
 
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
-    } finally {
-      setLoading(false);
+      console.error('Error refreshing dashboard data:', error);
     }
   };
 
