@@ -834,7 +834,17 @@ function App() {
       }
 
       console.log('✅ Coupon found:', coupon);
+      
+      // Validate coupon object structure
+      if (!coupon.code || !coupon.type || typeof coupon.value !== 'number') {
+        console.error('❌ Invalid coupon structure:', coupon);
+        setCouponError('Estructura de cupón inválida');
+        return;
+      }
+      
       const cartTotal = cart.reduce((total, item) => total + (item.precio * item.quantity), 0);
+      console.log('💰 Cart total for validation:', cartTotal);
+      
       const validation = validateCoupon(coupon, cartTotal);
       
       if (!validation.valid) {
@@ -843,10 +853,17 @@ function App() {
         return;
       }
 
-      console.log('✅ Coupon applied successfully');
+      console.log('✅ Coupon validation passed, applying coupon...');
+      
+      // Set the applied coupon first
       setAppliedCoupon(coupon);
-      setCouponSuccess('¡Cupón aplicado exitosamente!');
-      setCouponCode('');
+      
+      // Wait a moment for state to update, then show success
+      setTimeout(() => {
+        setCouponSuccess('¡Cupón aplicado exitosamente!');
+        setCouponCode('');
+        console.log('✅ Coupon applied successfully');
+      }, 100);
       
       // Update the coupons state with fresh data
       setCoupons(freshCoupons);
@@ -897,33 +914,48 @@ function App() {
   };
 
   const calculateDiscount = (cartTotal) => {
-    if (!appliedCoupon) return 0;
+    try {
+      if (!appliedCoupon) return 0;
 
-    switch (appliedCoupon.type) {
-      case 'percentage':
-        return (cartTotal * appliedCoupon.value) / 100;
-      case 'fixed':
-        return Math.min(appliedCoupon.value, cartTotal);
-      case 'freeshipping':
-        return 0; // Free shipping is handled separately
-      default:
-        return 0;
+      switch (appliedCoupon.type) {
+        case 'percentage':
+          return (cartTotal * appliedCoupon.value) / 100;
+        case 'fixed':
+          return Math.min(appliedCoupon.value, cartTotal);
+        case 'freeshipping':
+          return 0; // Free shipping is handled separately
+        default:
+          return 0;
+      }
+    } catch (error) {
+      console.error('❌ Error calculating discount:', error);
+      return 0;
     }
   };
 
   const calculateShipping = (cartTotal) => {
-    if (appliedCoupon && appliedCoupon.type === 'freeshipping') {
-      return 0;
+    try {
+      if (appliedCoupon && appliedCoupon.type === 'freeshipping') {
+        return 0;
+      }
+      // Default shipping cost (you can adjust this)
+      return cartTotal > 100 ? 0 : 10;
+    } catch (error) {
+      console.error('❌ Error calculating shipping:', error);
+      return 10;
     }
-    // Default shipping cost (you can adjust this)
-    return cartTotal > 100 ? 0 : 10;
   };
 
   const calculateTotal = () => {
-    const cartTotal = cart.reduce((total, item) => total + (item.precio * item.quantity), 0);
-    const discount = calculateDiscount(cartTotal);
-    const shipping = calculateShipping(cartTotal);
-    return Math.max(0, cartTotal - discount + shipping);
+    try {
+      const cartTotal = cart.reduce((total, item) => total + (item.precio * item.quantity), 0);
+      const discount = calculateDiscount(cartTotal);
+      const shipping = calculateShipping(cartTotal);
+      return Math.max(0, cartTotal - discount + shipping);
+    } catch (error) {
+      console.error('❌ Error calculating total:', error);
+      return cart.reduce((total, item) => total + (item.precio * item.quantity), 0);
+    }
   };
 
   const addToCart = async (product) => {
@@ -2313,8 +2345,8 @@ function App() {
                   borderRadius: "50%",
                   width: "20px",
                   height: "20px",
-                  display: "flex",
-                  alignItems: "center",
+                display: "flex",
+                alignItems: "center",
                   justifyContent: "center",
                   fontSize: "12px",
                   fontWeight: "bold",
@@ -5660,8 +5692,8 @@ function App() {
               </div>
             </div>
 
-            <div style={{ 
-              display: "flex",
+              <div style={{ 
+            display: "flex",
               justifyContent: "space-between", 
             alignItems: "center",
               marginBottom: "1rem"
