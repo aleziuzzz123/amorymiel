@@ -39,6 +39,105 @@ export const REVIEW_DATA = {
       comment: "Las mejores velas que he comprado. Se nota la diferencia con las comerciales. El servicio al cliente también es excelente.",
       date: "2024-01-05",
       verified: true
+    },
+    {
+      id: "rev-velas-5",
+      userName: "Patricia López",
+      userEmail: "patricia.lopez@email.com",
+      rating: 5,
+      comment: "Excelente calidad! El aroma de miel es auténtico y duradero. Perfectas para crear un ambiente relajante en casa.",
+      date: "2024-01-20",
+      verified: true
+    },
+    {
+      id: "rev-velas-6",
+      userName: "Miguel Torres",
+      userEmail: "miguel.torres@email.com",
+      rating: 5,
+      comment: "Increíbles velas! Se nota que están hechas artesanalmente. El aroma es muy natural y relajante. Compraré más.",
+      date: "2024-01-18",
+      verified: true
+    },
+    {
+      id: "rev-velas-7",
+      userName: "Carmen Vega",
+      userEmail: "carmen.vega@email.com",
+      rating: 4,
+      comment: "Muy buenas velas, el aroma es agradable. La duración es buena y se nota la calidad de los ingredientes.",
+      date: "2024-01-16",
+      verified: true
+    },
+    {
+      id: "rev-velas-8",
+      userName: "Fernando Castro",
+      userEmail: "fernando.castro@email.com",
+      rating: 5,
+      comment: "Perfectas para mis rituales de meditación. El aroma de miel es muy relajante y la cera es de excelente calidad.",
+      date: "2024-01-14",
+      verified: true
+    },
+    {
+      id: "rev-velas-9",
+      userName: "Isabel Morales",
+      userEmail: "isabel.morales@email.com",
+      rating: 5,
+      comment: "Las mejores velas de miel que he probado. El aroma es delicioso y la duración es excelente. Muy recomendadas!",
+      date: "2024-01-12",
+      verified: true
+    },
+    {
+      id: "rev-velas-10",
+      userName: "Jorge Mendoza",
+      userEmail: "jorge.mendoza@email.com",
+      rating: 4,
+      comment: "Muy buenas velas, aunque esperaba un aroma un poco más intenso. Pero la calidad general es muy buena.",
+      date: "2024-01-09",
+      verified: true
+    },
+    {
+      id: "rev-velas-11",
+      userName: "Sofia Jiménez",
+      userEmail: "sofia.jimenez@email.com",
+      rating: 5,
+      comment: "Excelentes velas! El aroma es muy natural y se siente la energía positiva. Perfectas para relajarse.",
+      date: "2024-01-07",
+      verified: true
+    },
+    {
+      id: "rev-velas-12",
+      userName: "Valentina Cruz",
+      userEmail: "valentina.cruz@email.com",
+      rating: 5,
+      comment: "Increíble calidad! Las velas duran mucho tiempo y el aroma es muy auténtico. Definitivamente las recomiendo.",
+      date: "2024-01-25",
+      verified: true
+    },
+    {
+      id: "rev-velas-13",
+      userName: "Diego Navarro",
+      userEmail: "diego.navarro@email.com",
+      rating: 3,
+      comment: "Están bien, pero prefiero velas con aromas más fuertes. La calidad es buena pero no es lo que esperaba.",
+      date: "2024-01-22",
+      verified: true
+    },
+    {
+      id: "rev-velas-14",
+      userName: "Gabriela Ríos",
+      userEmail: "gabriela.rios@email.com",
+      rating: 5,
+      comment: "Perfectas para crear un ambiente cálido en casa. El aroma de miel es muy agradable y natural.",
+      date: "2024-01-19",
+      verified: true
+    },
+    {
+      id: "rev-velas-15",
+      userName: "Alejandra Flores",
+      userEmail: "alejandra.flores@email.com",
+      rating: 5,
+      comment: "Excelentes velas! Se nota que están hechas con ingredientes naturales de calidad. Muy recomendadas.",
+      date: "2024-01-17",
+      verified: true
     }
   ],
 
@@ -69,6 +168,114 @@ export const REVIEW_DATA = {
       rating: 4,
       comment: "Muy bueno, el aroma es agradable y la presentación es hermosa. Se nota que está hecho con ingredientes naturales.",
       date: "2024-01-06",
+      verified: true
+    },
+    {
+      id: "rev-aceite-4",
+      userName: "Roberto Silva",
+      userEmail: "roberto.silva@email.com",
+      rating: 5,
+      comment: "Increíble aceite! Realmente abre caminos. He notado cambios positivos en mi trabajo y relaciones. Muy recomendado.",
+      date: "2024-01-20",
+      verified: true
+    },
+    {
+      id: "rev-aceite-5",
+      userName: "Elena Ramírez",
+      userEmail: "elena.ramirez@email.com",
+      rating: 5,
+      comment: "Excelente para limpiar energías y abrir nuevos caminos. El aroma es muy agradable y la calidad es excepcional.",
+      date: "2024-01-18",
+      verified: true
+    },
+    {
+      id: "rev-aceite-6",
+      userName: "Jorge Mendoza",
+      userEmail: "jorge.mendoza@email.com",
+      rating: 4,
+      comment: "Muy bueno para rituales de abundancia. Se nota la calidad de los ingredientes y el aroma es muy natural.",
+      date: "2024-01-15",
+      verified: true
+    },
+    {
+      id: "rev-aceite-7",
+      userName: "Sofia Jiménez",
+      userEmail: "sofia.jimenez@email.com",
+      rating: 5,
+      comment: "Perfecto para mis rituales de prosperidad. He notado cambios positivos desde que lo uso. Muy poderoso!",
+      date: "2024-01-13",
+      verified: true
+    },
+    {
+      id: "rev-aceite-8",
+      userName: "Valentina Cruz",
+      userEmail: "valentina.cruz@email.com",
+      rating: 5,
+      comment: "Excelente aceite! Realmente funciona para abrir caminos. El aroma es delicioso y la calidad es excepcional.",
+      date: "2024-01-11",
+      verified: true
+    },
+    {
+      id: "rev-aceite-9",
+      userName: "Diego Navarro",
+      userEmail: "diego.navarro@email.com",
+      rating: 4,
+      comment: "Muy bueno para limpiar energías negativas. Se nota que está hecho con ingredientes de calidad.",
+      date: "2024-01-08",
+      verified: true
+    },
+    {
+      id: "rev-aceite-10",
+      userName: "Gabriela Ríos",
+      userEmail: "gabriela.rios@email.com",
+      rating: 5,
+      comment: "Increíble aceite! He notado cambios positivos en mi vida desde que lo uso. Muy recomendado para rituales.",
+      date: "2024-01-25",
+      verified: true
+    },
+    {
+      id: "rev-aceite-11",
+      userName: "Alejandra Flores",
+      userEmail: "alejandra.flores@email.com",
+      rating: 5,
+      comment: "Excelente para abrir caminos y atraer oportunidades. El aroma es muy agradable y la calidad es excepcional.",
+      date: "2024-01-22",
+      verified: true
+    },
+    {
+      id: "rev-aceite-12",
+      userName: "Ricardo Peña",
+      userEmail: "ricardo.pena@email.com",
+      rating: 3,
+      comment: "Está bien, pero esperaba un aroma más intenso. La calidad es buena pero no es lo que esperaba.",
+      date: "2024-01-19",
+      verified: true
+    },
+    {
+      id: "rev-aceite-13",
+      userName: "Monica Delgado",
+      userEmail: "monica.delgado@email.com",
+      rating: 5,
+      comment: "Perfecto para mis rituales de abundancia. He notado cambios positivos desde que lo uso. Muy recomendado!",
+      date: "2024-01-16",
+      verified: true
+    },
+    {
+      id: "rev-aceite-14",
+      userName: "Andrea Vargas",
+      userEmail: "andrea.vargas@email.com",
+      rating: 5,
+      comment: "Excelente aceite! Realmente abre caminos y atrae oportunidades. El aroma es muy agradable.",
+      date: "2024-01-14",
+      verified: true
+    },
+    {
+      id: "rev-aceite-15",
+      userName: "Héctor Morales",
+      userEmail: "hector.morales@email.com",
+      rating: 4,
+      comment: "Muy bueno para rituales de prosperidad. Se nota la calidad de los ingredientes naturales.",
+      date: "2024-01-10",
       verified: true
     }
   ],
@@ -500,6 +707,286 @@ export const REVIEW_DATA = {
       rating: 4,
       comment: "Muy bueno para enseñar a los niños a relajarse. Las clases son divertidas y los instructores son muy pacientes.",
       date: "2024-01-14",
+      verified: true
+    }
+  ],
+
+  // Main Services Reviews
+  "numerologia": [
+    {
+      id: "rev-serv-numerologia-1",
+      userName: "María Elena",
+      userEmail: "maria.elena@email.com",
+      rating: 5,
+      comment: "Excelente sesión de numerología. La lectura fue muy precisa y me ayudó a entender mejor mi camino de vida. Muy recomendada!",
+      date: "2024-01-25",
+      verified: true
+    },
+    {
+      id: "rev-serv-numerologia-2",
+      userName: "Carlos Mendoza",
+      userEmail: "carlos.mendoza@email.com",
+      rating: 5,
+      comment: "Increíble experiencia! La numeróloga es muy profesional y la lectura fue muy reveladora. Definitivamente volveré.",
+      date: "2024-01-22",
+      verified: true
+    },
+    {
+      id: "rev-serv-numerologia-3",
+      userName: "Ana Patricia",
+      userEmail: "ana.patricia@email.com",
+      rating: 4,
+      comment: "Muy buena sesión, la lectura fue interesante y me dio nuevas perspectivas. La profesional es muy amable.",
+      date: "2024-01-19",
+      verified: true
+    },
+    {
+      id: "rev-serv-numerologia-4",
+      userName: "Roberto Silva",
+      userEmail: "roberto.silva@email.com",
+      rating: 5,
+      comment: "Excelente servicio de numerología. La lectura fue muy detallada y me ayudó a tomar mejores decisiones. Muy recomendado!",
+      date: "2024-01-16",
+      verified: true
+    },
+    {
+      id: "rev-serv-numerologia-5",
+      userName: "Patricia López",
+      userEmail: "patricia.lopez@email.com",
+      rating: 5,
+      comment: "Increíble experiencia! La numeróloga es muy profesional y la lectura fue muy reveladora. Definitivamente volveré.",
+      date: "2024-01-13",
+      verified: true
+    },
+    {
+      id: "rev-serv-numerologia-6",
+      userName: "Miguel Torres",
+      userEmail: "miguel.torres@email.com",
+      rating: 4,
+      comment: "Muy buena sesión, la lectura fue interesante y me dio nuevas perspectivas. La profesional es muy amable.",
+      date: "2024-01-10",
+      verified: true
+    },
+    {
+      id: "rev-serv-numerologia-7",
+      userName: "Carmen Vega",
+      userEmail: "carmen.vega@email.com",
+      rating: 5,
+      comment: "Excelente servicio de numerología. La lectura fue muy detallada y me ayudó a entender mejor mi propósito de vida.",
+      date: "2024-01-07",
+      verified: true
+    },
+    {
+      id: "rev-serv-numerologia-8",
+      userName: "Fernando Castro",
+      userEmail: "fernando.castro@email.com",
+      rating: 5,
+      comment: "Increíble experiencia! La numeróloga es muy profesional y la lectura fue muy reveladora. Definitivamente volveré.",
+      date: "2024-01-28",
+      verified: true
+    },
+    {
+      id: "rev-serv-numerologia-9",
+      userName: "Isabel Morales",
+      userEmail: "isabel.morales@email.com",
+      rating: 3,
+      comment: "Está bien, pero esperaba una lectura más profunda. La profesional es amable pero la sesión fue muy básica.",
+      date: "2024-01-24",
+      verified: true
+    },
+    {
+      id: "rev-serv-numerologia-10",
+      userName: "Jorge Mendoza",
+      userEmail: "jorge.mendoza@email.com",
+      rating: 5,
+      comment: "Excelente servicio de numerología. La lectura fue muy detallada y me ayudó a tomar mejores decisiones. Muy recomendado!",
+      date: "2024-01-21",
+      verified: true
+    }
+  ],
+
+  "tarot-angelical": [
+    {
+      id: "rev-serv-tarot-1",
+      userName: "Laura González",
+      userEmail: "laura.gonzalez@email.com",
+      rating: 5,
+      comment: "Excelente sesión de tarot angelical. Las cartas fueron muy reveladoras y me dieron mucha claridad sobre mi situación actual.",
+      date: "2024-01-26",
+      verified: true
+    },
+    {
+      id: "rev-serv-tarot-2",
+      userName: "Roberto Silva",
+      userEmail: "roberto.silva@email.com",
+      rating: 5,
+      comment: "Increíble experiencia! La tarotista es muy profesional y la lectura fue muy precisa. Definitivamente volveré.",
+      date: "2024-01-23",
+      verified: true
+    },
+    {
+      id: "rev-serv-tarot-3",
+      userName: "Carmen Vega",
+      userEmail: "carmen.vega@email.com",
+      rating: 4,
+      comment: "Muy buena sesión, las cartas fueron interesantes y me dieron nuevas perspectivas. La profesional es muy amable.",
+      date: "2024-01-20",
+      verified: true
+    },
+    {
+      id: "rev-serv-tarot-4",
+      userName: "Elena Ramírez",
+      userEmail: "elena.ramirez@email.com",
+      rating: 5,
+      comment: "Excelente servicio de tarot angelical. La lectura fue muy detallada y me ayudó a entender mejor mi situación.",
+      date: "2024-01-17",
+      verified: true
+    },
+    {
+      id: "rev-serv-tarot-5",
+      userName: "Jorge Mendoza",
+      userEmail: "jorge.mendoza@email.com",
+      rating: 5,
+      comment: "Increíble experiencia! La tarotista es muy profesional y la lectura fue muy reveladora. Definitivamente volveré.",
+      date: "2024-01-14",
+      verified: true
+    },
+    {
+      id: "rev-serv-tarot-6",
+      userName: "Sofia Jiménez",
+      userEmail: "sofia.jimenez@email.com",
+      rating: 4,
+      comment: "Muy buena sesión, las cartas fueron interesantes y me dieron nuevas perspectivas. La profesional es muy amable.",
+      date: "2024-01-11",
+      verified: true
+    },
+    {
+      id: "rev-serv-tarot-7",
+      userName: "Valentina Cruz",
+      userEmail: "valentina.cruz@email.com",
+      rating: 5,
+      comment: "Excelente servicio de tarot angelical. La lectura fue muy detallada y me ayudó a tomar mejores decisiones.",
+      date: "2024-01-08",
+      verified: true
+    },
+    {
+      id: "rev-serv-tarot-8",
+      userName: "Diego Navarro",
+      userEmail: "diego.navarro@email.com",
+      rating: 5,
+      comment: "Increíble experiencia! La tarotista es muy profesional y la lectura fue muy reveladora. Definitivamente volveré.",
+      date: "2024-01-29",
+      verified: true
+    },
+    {
+      id: "rev-serv-tarot-9",
+      userName: "Gabriela Ríos",
+      userEmail: "gabriela.rios@email.com",
+      rating: 3,
+      comment: "Está bien, pero esperaba una lectura más profunda. La profesional es amable pero la sesión fue muy básica.",
+      date: "2024-01-25",
+      verified: true
+    },
+    {
+      id: "rev-serv-tarot-10",
+      userName: "Alejandra Flores",
+      userEmail: "alejandra.flores@email.com",
+      rating: 5,
+      comment: "Excelente servicio de tarot angelical. La lectura fue muy detallada y me ayudó a entender mejor mi situación.",
+      date: "2024-01-22",
+      verified: true
+    }
+  ],
+
+  "sonoterapia": [
+    {
+      id: "rev-serv-sonoterapia-1",
+      userName: "Patricia López",
+      userEmail: "patricia.lopez@email.com",
+      rating: 5,
+      comment: "Excelente sesión de sonoterapia. Los cuencos tibetanos me relajaron completamente. Muy recomendada!",
+      date: "2024-01-27",
+      verified: true
+    },
+    {
+      id: "rev-serv-sonoterapia-2",
+      userName: "Miguel Torres",
+      userEmail: "miguel.torres@email.com",
+      rating: 5,
+      comment: "Increíble experiencia! La sonoterapia me ayudó a liberar mucha tensión. Definitivamente volveré.",
+      date: "2024-01-24",
+      verified: true
+    },
+    {
+      id: "rev-serv-sonoterapia-3",
+      userName: "Carmen Vega",
+      userEmail: "carmen.vega@email.com",
+      rating: 4,
+      comment: "Muy buena sesión, los sonidos fueron relajantes y me ayudaron a desconectar. La profesional es muy amable.",
+      date: "2024-01-21",
+      verified: true
+    },
+    {
+      id: "rev-serv-sonoterapia-4",
+      userName: "Elena Ramírez",
+      userEmail: "elena.ramirez@email.com",
+      rating: 5,
+      comment: "Excelente servicio de sonoterapia. Los cuencos tibetanos me relajaron completamente. Muy recomendada!",
+      date: "2024-01-18",
+      verified: true
+    },
+    {
+      id: "rev-serv-sonoterapia-5",
+      userName: "Jorge Mendoza",
+      userEmail: "jorge.mendoza@email.com",
+      rating: 5,
+      comment: "Increíble experiencia! La sonoterapia me ayudó a liberar mucha tensión. Definitivamente volveré.",
+      date: "2024-01-15",
+      verified: true
+    },
+    {
+      id: "rev-serv-sonoterapia-6",
+      userName: "Sofia Jiménez",
+      userEmail: "sofia.jimenez@email.com",
+      rating: 4,
+      comment: "Muy buena sesión, los sonidos fueron relajantes y me ayudaron a desconectar. La profesional es muy amable.",
+      date: "2024-01-12",
+      verified: true
+    },
+    {
+      id: "rev-serv-sonoterapia-7",
+      userName: "Valentina Cruz",
+      userEmail: "valentina.cruz@email.com",
+      rating: 5,
+      comment: "Excelente servicio de sonoterapia. Los cuencos tibetanos me relajaron completamente. Muy recomendada!",
+      date: "2024-01-09",
+      verified: true
+    },
+    {
+      id: "rev-serv-sonoterapia-8",
+      userName: "Diego Navarro",
+      userEmail: "diego.navarro@email.com",
+      rating: 5,
+      comment: "Increíble experiencia! La sonoterapia me ayudó a liberar mucha tensión. Definitivamente volveré.",
+      date: "2024-01-30",
+      verified: true
+    },
+    {
+      id: "rev-serv-sonoterapia-9",
+      userName: "Gabriela Ríos",
+      userEmail: "gabriela.rios@email.com",
+      rating: 3,
+      comment: "Está bien, pero esperaba una sesión más larga. La profesional es amable pero la sesión fue muy corta.",
+      date: "2024-01-26",
+      verified: true
+    },
+    {
+      id: "rev-serv-sonoterapia-10",
+      userName: "Alejandra Flores",
+      userEmail: "alejandra.flores@email.com",
+      rating: 5,
+      comment: "Excelente servicio de sonoterapia. Los cuencos tibetanos me relajaron completamente. Muy recomendada!",
+      date: "2024-01-23",
       verified: true
     }
   ]
