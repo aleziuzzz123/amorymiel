@@ -3356,8 +3356,8 @@ function App() {
               Descubre el poder de la sanación holística y el bienestar integral
             </p>
             
-            <div style={{
-              display: "grid",
+          <div style={{ 
+            display: "grid", 
               gridTemplateColumns: window.innerWidth <= 768 ? "1fr" : "repeat(3, 1fr)",
               gap: "1.5rem",
               marginTop: "1.5rem"
@@ -3919,35 +3919,35 @@ function App() {
                       <span style={{ fontSize: "1.3rem", fontWeight: "bold", color: PALETAS.D.miel }}>
                         ${service.precio} {service.moneda}
                       </span>
-                        <a 
+                      <a 
                           href={getWhatsAppLink(service)} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          style={{ 
-                            background: "#ffd54f",
-                            color: "white",
-                            border: "none",
-                            padding: "0.75rem 1.5rem",
-                            borderRadius: "25px",
-                            cursor: "pointer",
-                            fontSize: "0.9rem",
-                            fontWeight: "600",
-                            textDecoration: "none",
-                            transition: "all 0.3s ease"
-                          }}
-                          onMouseEnter={(e) => {
-                            e.target.style.background = "#ffc107";
-                            e.target.style.transform = "translateY(-2px)";
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        style={{ 
+                          background: "#ffd54f",
+                          color: "white",
+                          border: "none",
+                          padding: "0.75rem 1.5rem",
+                          borderRadius: "25px",
+                          cursor: "pointer",
+                          fontSize: "0.9rem",
+                          fontWeight: "600",
+                          textDecoration: "none",
+                          transition: "all 0.3s ease"
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.background = "#ffc107";
+                          e.target.style.transform = "translateY(-2px)";
                             e.target.style.boxShadow = "0 4px 12px rgba(255, 193, 7, 0.3)";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.target.style.background = "#ffd54f";
-                            e.target.style.transform = "translateY(0)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.background = "#ffd54f";
+                          e.target.style.transform = "translateY(0)";
                             e.target.style.boxShadow = "none";
-                          }}
-                        >
+                        }}
+                      >
                           📱 Agendar
-                        </a>
+                      </a>
                     </div>
                     </div>
                   </div>
@@ -6037,44 +6037,6 @@ function App() {
                 }}>
                   🎫 Código de Descuento
                 </h3>
-                <div style={{ display: "flex", gap: "0.5rem" }}>
-                  <button
-                    onClick={loadCoupons}
-                    style={{
-                      background: "transparent",
-                      border: "1px solid #D4A574",
-                      color: "#D4A574",
-                      padding: "0.25rem 0.5rem",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                      fontSize: "0.8rem",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.25rem"
-                    }}
-                    title="Actualizar cupones"
-                  >
-                    🔄 Actualizar
-                  </button>
-                  <button
-                    onClick={() => testCouponExists('WELCOME10')}
-                    style={{
-                      background: "transparent",
-                      border: "1px solid #2196F3",
-                      color: "#2196F3",
-                      padding: "0.25rem 0.5rem",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                      fontSize: "0.8rem",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.25rem"
-                    }}
-                    title="Probar cupón WELCOME10"
-                  >
-                    🧪 Probar
-                  </button>
-                </div>
               </div>
               
               {appliedCoupon ? (
