@@ -124,19 +124,12 @@ exports.handler = async (event, context) => {
                 </html>
               `;
               
-              return {
-                statusCode: 200,
-                body: JSON.stringify({
-                  success: true,
-                  message: 'Holiday email sent successfully',
-                  result: await resend.emails.send({
-                    from: 'info@amorymiel.com',
-                    to: userEmail,
-                    subject: `🎉 ${holidayName} - ${discountPercent}% OFF en Amor y Miel`,
-                    html: htmlContent,
-                  })
-                })
-              };
+              result = await resend.emails.send({
+                from: 'info@amorymiel.com',
+                to: userEmail,
+                subject: `🎉 ${holidayName} - ${discountPercent}% OFF en Amor y Miel`,
+                html: htmlContent,
+              });
             }
 
             if (emailType === 'cart-abandonment') {
