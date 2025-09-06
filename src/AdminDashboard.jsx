@@ -1329,6 +1329,7 @@ const AdminDashboard = ({ user, onClose }) => {
 
   const handleUpdateCoupon = async (e) => {
     e.preventDefault();
+    console.log('💾 Updating coupon:', editingCouponId, newCoupon);
     setIsAddingCoupon(true);
     
     try {
@@ -1337,7 +1338,9 @@ const AdminDashboard = ({ user, onClose }) => {
         updatedAt: new Date()
       };
       
+      console.log('💾 Updating coupon data:', couponData);
       await updateDoc(doc(db, 'coupons', editingCouponId), couponData);
+      console.log('✅ Coupon updated successfully');
       
       // Reset form
       setNewCoupon({
@@ -1357,6 +1360,9 @@ const AdminDashboard = ({ user, onClose }) => {
       
       loadCoupons();
       alert('Cupón actualizado exitosamente!');
+      
+      // Switch back to coupons list
+      setActiveTab('coupons');
     } catch (error) {
       console.error('Error updating coupon:', error);
       alert('Error al actualizar el cupón. Inténtalo de nuevo.');
@@ -1366,19 +1372,25 @@ const AdminDashboard = ({ user, onClose }) => {
   };
 
   const deleteCoupon = async (couponId) => {
+    console.log('🗑️ Attempting to delete coupon:', couponId);
     if (window.confirm('¿Estás seguro de que quieres eliminar este cupón?')) {
       try {
+        console.log('🗑️ Deleting coupon from database...');
         await deleteDoc(doc(db, 'coupons', couponId));
+        console.log('✅ Coupon deleted successfully');
         loadCoupons();
         alert('Cupón eliminado exitosamente!');
       } catch (error) {
-        console.error('Error deleting coupon:', error);
-        alert('Error al eliminar el cupón. Inténtalo de nuevo.');
+        console.error('❌ Error deleting coupon:', error);
+        alert(`Error al eliminar el cupón: ${error.message}`);
       }
+    } else {
+      console.log('❌ Coupon deletion cancelled by user');
     }
   };
 
   const handleEditCoupon = (coupon) => {
+    console.log('✏️ Editing coupon:', coupon);
     setEditingCouponId(coupon.id);
     setIsEditingCoupon(true);
     setNewCoupon({
@@ -1393,6 +1405,8 @@ const AdminDashboard = ({ user, onClose }) => {
       active: coupon.active !== false,
       description: coupon.description || ''
     });
+    // Switch to the add-coupon tab to show the edit form
+    setActiveTab('add-coupon');
   };
 
   const toggleCouponSelection = (couponId) => {
