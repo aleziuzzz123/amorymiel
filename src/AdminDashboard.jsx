@@ -1480,13 +1480,65 @@ const AdminDashboard = ({ user, onClose }) => {
   // Review management functions
   const loadReviews = async () => {
     try {
-      const reviewsQuery = query(collection(db, 'reviews'), orderBy('createdAt', 'desc'));
-      const reviewsSnapshot = await getDocs(reviewsQuery);
-      const reviewsData = reviewsSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setReviews(reviewsData);
+      let allReviews = [];
+      
+      // Load reviews from Firebase
+      try {
+        const reviewsQuery = query(collection(db, 'reviews'), orderBy('createdAt', 'desc'));
+        const reviewsSnapshot = await getDocs(reviewsQuery);
+        const firebaseReviews = reviewsSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        allReviews = [...allReviews, ...firebaseReviews];
+      } catch (error) {
+        console.log('No Firebase reviews found or error loading:', error);
+      }
+      
+      // Load static reviews from reviewData.js (these are all pre-approved)
+      try {
+        const { getProductReviews } = await import('../src/reviewData.js');
+        
+        // Get all products to load their reviews
+        const productsQuery = query(collection(db, 'products'));
+        const productsSnapshot = await getDocs(productsQuery);
+        const products = productsSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        
+        // Load reviews for each product
+        for (const product of products) {
+          const productReviews = getProductReviews(product.id, product.nombre);
+          if (productReviews && productReviews.length > 0) {
+            // Convert static reviews to admin format
+            const staticReviews = productReviews.map((review, index) => ({
+              id: `static-${product.id}-${index}`,
+              productId: product.id,
+              productName: product.nombre,
+              userName: review.userName,
+              userEmail: review.userEmail,
+              rating: review.rating,
+              comment: review.comment,
+              date: review.date,
+              verified: review.verified,
+              approved: true, // All static reviews are pre-approved
+              pending: false,
+              status: 'approved',
+              createdAt: new Date(review.date),
+              isStatic: true // Flag to identify static reviews
+            }));
+            allReviews = [...allReviews, ...staticReviews];
+          }
+        }
+      } catch (error) {
+        console.log('Error loading static reviews:', error);
+      }
+      
+      // Sort all reviews by date (newest first)
+      allReviews.sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date));
+      
+      setReviews(allReviews);
     } catch (error) {
       console.error('Error loading reviews:', error);
     }
@@ -1494,6 +1546,12 @@ const AdminDashboard = ({ user, onClose }) => {
 
   const approveReview = async (reviewId) => {
     try {
+      // Check if it's a static review
+      if (reviewId.startsWith('static-')) {
+        alert('Esta reseña ya está aprobada (es una reseña pre-aprobada del sistema)');
+        return;
+      }
+      
       const { updateDoc, doc } = await import('firebase/firestore');
       await updateDoc(doc(db, 'reviews', reviewId), {
         approved: true,
@@ -1511,6 +1569,12 @@ const AdminDashboard = ({ user, onClose }) => {
 
   const rejectReview = async (reviewId) => {
     try {
+      // Check if it's a static review
+      if (reviewId.startsWith('static-')) {
+        alert('No se pueden rechazar las reseñas pre-aprobadas del sistema');
+        return;
+      }
+      
       const { updateDoc, doc } = await import('firebase/firestore');
       await updateDoc(doc(db, 'reviews', reviewId), {
         approved: false,
@@ -1527,6 +1591,12 @@ const AdminDashboard = ({ user, onClose }) => {
   };
 
   const deleteReview = async (reviewId) => {
+    // Check if it's a static review
+    if (reviewId.startsWith('static-')) {
+      alert('No se pueden eliminar las reseñas pre-aprobadas del sistema');
+      return;
+    }
+    
     if (window.confirm('¿Estás seguro de que quieres eliminar esta reseña?')) {
       try {
         const { deleteDoc, doc } = await import('firebase/firestore');
@@ -1565,7 +1635,16 @@ const AdminDashboard = ({ user, onClose }) => {
     try {
       const { updateDoc, doc, deleteDoc } = await import('firebase/firestore');
       
+      let processedCount = 0;
+      let staticCount = 0;
+      
       for (const reviewId of selectedReviews) {
+        // Skip static reviews
+        if (reviewId.startsWith('static-')) {
+          staticCount++;
+          continue;
+        }
+        
         if (action === 'approve') {
           await updateDoc(doc(db, 'reviews', reviewId), {
             approved: true,
@@ -1583,11 +1662,17 @@ const AdminDashboard = ({ user, onClose }) => {
         } else if (action === 'delete') {
           await deleteDoc(doc(db, 'reviews', reviewId));
         }
+        processedCount++;
       }
       
       await loadReviews();
       setSelectedReviews([]);
-      alert(`${selectedReviews.length} reseña(s) ${action === 'approve' ? 'aprobada(s)' : action === 'reject' ? 'rechazada(s)' : 'eliminada(s)'} exitosamente`);
+      
+      let message = `${processedCount} reseña(s) ${action === 'approve' ? 'aprobada(s)' : action === 'reject' ? 'rechazada(s)' : 'eliminada(s)'} exitosamente`;
+      if (staticCount > 0) {
+        message += ` (${staticCount} reseñas pre-aprobadas del sistema fueron omitidas)`;
+      }
+      alert(message);
     } catch (error) {
       console.error('Error performing bulk action:', error);
       alert('Error al realizar la acción');
@@ -4682,8 +4767,9 @@ const AdminDashboard = ({ user, onClose }) => {
               
               {filteredReviews.map(review => {
                 const isSelected = selectedReviews.includes(review.id);
+                const isStatic = review.isStatic || review.id.startsWith('static-');
                 const statusColor = review.approved ? '#51cf66' : review.status === 'rejected' ? '#ff6b6b' : '#ffa726';
-                const statusText = review.approved ? 'Aprobada' : review.status === 'rejected' ? 'Rechazada' : 'Pendiente';
+                const statusText = review.approved ? (isStatic ? 'Pre-aprobada' : 'Aprobada') : review.status === 'rejected' ? 'Rechazada' : 'Pendiente';
                 
                 return (
                   <div key={review.id} style={{
@@ -4692,7 +4778,8 @@ const AdminDashboard = ({ user, onClose }) => {
                     padding: '1rem',
                     borderBottom: '1px solid #f0f0f0',
                     alignItems: 'center',
-                    background: isSelected ? '#f8f9fa' : 'white'
+                    background: isSelected ? '#f8f9fa' : 'white',
+                    opacity: isStatic ? 0.9 : 1
                   }}>
                     <div>
                       <input
@@ -4700,10 +4787,14 @@ const AdminDashboard = ({ user, onClose }) => {
                         checked={isSelected}
                         onChange={() => toggleReviewSelection(review.id)}
                         style={{ transform: 'scale(1.2)' }}
+                        disabled={isStatic}
                       />
                     </div>
                     <div>
-                      <div style={{ fontWeight: '600', color: '#333' }}>{review.userName}</div>
+                      <div style={{ fontWeight: '600', color: '#333' }}>
+                        {review.userName}
+                        {isStatic && <span style={{ fontSize: '0.7rem', color: '#666', marginLeft: '0.5rem' }}>(Sistema)</span>}
+                      </div>
                       <div style={{ fontSize: '0.8rem', color: '#666' }}>{review.userEmail}</div>
                     </div>
                     <div>
@@ -4741,52 +4832,68 @@ const AdminDashboard = ({ user, onClose }) => {
                       </span>
                     </div>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      {!review.approved && review.status !== 'rejected' && (
-                        <button
-                          onClick={() => approveReview(review.id)}
-                          style={{
-                            padding: '0.25rem 0.5rem',
-                            background: '#51cf66',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            fontSize: '0.8rem'
-                          }}
-                        >
-                          ✅
-                        </button>
-                      )}
-                      {review.status !== 'rejected' && (
-                        <button
-                          onClick={() => rejectReview(review.id)}
-                          style={{
-                            padding: '0.25rem 0.5rem',
-                            background: '#ff6b6b',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            fontSize: '0.8rem'
-                          }}
-                        >
-                          ❌
-                        </button>
-                      )}
-                      <button
-                        onClick={() => deleteReview(review.id)}
-                        style={{
+                      {isStatic ? (
+                        <span style={{
                           padding: '0.25rem 0.5rem',
-                          background: '#ff4757',
+                          background: '#6c757d',
                           color: 'white',
                           border: 'none',
                           borderRadius: '4px',
-                          cursor: 'pointer',
-                          fontSize: '0.8rem'
-                        }}
-                      >
-                        🗑️
-                      </button>
+                          fontSize: '0.8rem',
+                          cursor: 'not-allowed'
+                        }}>
+                          🔒 Sistema
+                        </span>
+                      ) : (
+                        <>
+                          {!review.approved && review.status !== 'rejected' && (
+                            <button
+                              onClick={() => approveReview(review.id)}
+                              style={{
+                                padding: '0.25rem 0.5rem',
+                                background: '#51cf66',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontSize: '0.8rem'
+                              }}
+                            >
+                              ✅
+                            </button>
+                          )}
+                          {review.status !== 'rejected' && (
+                            <button
+                              onClick={() => rejectReview(review.id)}
+                              style={{
+                                padding: '0.25rem 0.5rem',
+                                background: '#ff6b6b',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontSize: '0.8rem'
+                              }}
+                            >
+                              ❌
+                            </button>
+                          )}
+                          <button
+                            onClick={() => deleteReview(review.id)}
+                            style={{
+                              padding: '0.25rem 0.5rem',
+                              background: '#ff4757',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              fontSize: '0.8rem'
+                            }}
+                          >
+                            🗑️
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 );
