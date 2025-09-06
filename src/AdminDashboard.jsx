@@ -12,7 +12,6 @@ import {
   addDoc
 } from 'firebase/firestore';
 import { db } from './firebase';
-import AnalyticsDashboard from './AnalyticsDashboard';
 
 // All products are now loaded from Firebase with deduplication
 
@@ -273,7 +272,16 @@ const AdminDashboard = ({ user, onClose }) => {
   const [reviewSearchTerm, setReviewSearchTerm] = useState('');
   const [reviewFilterStatus, setReviewFilterStatus] = useState('all');
   const [selectedReviews, setSelectedReviews] = useState([]);
-  const [showAnalytics, setShowAnalytics] = useState(false);
+  
+  // Analytics state
+  const [analytics, setAnalytics] = useState({
+    sales: { totalRevenue: 0, totalOrders: 0, averageOrderValue: 0, revenueGrowth: 0 },
+    products: { bestSellers: [], lowPerformers: [], totalProducts: 0 },
+    customers: { totalCustomers: 0, newCustomers: 0, returningCustomers: 0, customerLifetimeValue: 0 },
+    events: { pageViews: 0, productViews: 0, addToCart: 0, purchases: 0, searches: 0 }
+  });
+  const [analyticsDateRange, setAnalyticsDateRange] = useState('30');
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
   
   // Order details state
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -306,6 +314,13 @@ const AdminDashboard = ({ user, onClose }) => {
       return () => clearInterval(interval);
     }
   }, [user]);
+
+  // Load analytics when analytics tab is selected
+  useEffect(() => {
+    if (activeTab === 'analytics') {
+      loadAnalytics();
+    }
+  }, [activeTab, analyticsDateRange]);
 
   // Update order status function
   const updateOrderStatus = async (orderId, newStatus) => {
@@ -523,11 +538,222 @@ const AdminDashboard = ({ user, onClose }) => {
         abandonedCarts
       });
       
+      // Load analytics if on analytics tab
+      if (activeTab === 'analytics') {
+        await loadAnalytics();
+      }
+      
       console.log('Dashboard data loaded successfully');
     } catch (error) {
       console.error('Error loading dashboard data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Load analytics data
+  const loadAnalytics = async () => {
+    setAnalyticsLoading(true);
+    try {
+      // Calculate date range
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - parseInt(analyticsDateRange));
+
+      // Load sales data
+      const salesData = await loadSalesData(startDate, endDate);
+      
+      // Load product data
+      const productData = await loadProductData();
+      
+      // Load customer data
+      const customerData = await loadCustomerData(startDate, endDate);
+      
+      // Load event data
+      const eventData = await loadEventData(startDate, endDate);
+
+      setAnalytics({
+        sales: salesData,
+        products: productData,
+        customers: customerData,
+        events: eventData
+      });
+    } catch (error) {
+      console.error('Error loading analytics:', error);
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  };
+
+  // Analytics data loading functions
+  const loadSalesData = async (startDate, endDate) => {
+    try {
+      const ordersQuery = query(
+        collection(db, 'orders'),
+        where('createdAt', '>=', startDate),
+        where('createdAt', '<=', endDate)
+      );
+      const ordersSnapshot = await getDocs(ordersQuery);
+      const orders = ordersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      const totalRevenue = orders.reduce((sum, order) => sum + (order.total || 0), 0);
+      const totalOrders = orders.length;
+      const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+
+      // Calculate growth (simplified - compare with previous period)
+      const previousStartDate = new Date(startDate);
+      previousStartDate.setDate(previousStartDate.getDate() - parseInt(analyticsDateRange));
+      const previousEndDate = new Date(startDate);
+      
+      const previousOrdersQuery = query(
+        collection(db, 'orders'),
+        where('createdAt', '>=', previousStartDate),
+        where('createdAt', '<=', previousEndDate)
+      );
+      const previousOrdersSnapshot = await getDocs(previousOrdersQuery);
+      const previousOrders = previousOrdersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const previousRevenue = previousOrders.reduce((sum, order) => sum + (order.total || 0), 0);
+      
+      const revenueGrowth = previousRevenue > 0 ? ((totalRevenue - previousRevenue) / previousRevenue) * 100 : 0;
+
+      return { totalRevenue, totalOrders, averageOrderValue, revenueGrowth };
+    } catch (error) {
+      console.error('Error loading sales data:', error);
+      return { totalRevenue: 0, totalOrders: 0, averageOrderValue: 0, revenueGrowth: 0 };
+    }
+  };
+
+  const loadProductData = async () => {
+    try {
+      const productsQuery = query(collection(db, 'products'));
+      const productsSnapshot = await getDocs(productsQuery);
+      const products = productsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      // Get product performance from analytics events
+      const eventsQuery = query(
+        collection(db, 'analytics_events'),
+        where('eventType', '==', 'purchase')
+      );
+      const eventsSnapshot = await getDocs(eventsQuery);
+      const purchaseEvents = eventsSnapshot.docs.map(doc => doc.data());
+
+      // Calculate product sales
+      const productSales = {};
+      purchaseEvents.forEach(event => {
+        if (event.eventData && event.eventData.items) {
+          event.eventData.items.forEach(item => {
+            if (!productSales[item.productId]) {
+              productSales[item.productId] = {
+                productId: item.productId,
+                productName: item.productName,
+                totalSold: 0,
+                totalRevenue: 0
+              };
+            }
+            productSales[item.productId].totalSold += item.quantity;
+            productSales[item.productId].totalRevenue += item.productPrice * item.quantity;
+          });
+        }
+      });
+
+      const bestSellers = Object.values(productSales)
+        .sort((a, b) => b.totalRevenue - a.totalRevenue)
+        .slice(0, 10);
+
+      const lowPerformers = Object.values(productSales)
+        .sort((a, b) => a.totalRevenue - b.totalRevenue)
+        .slice(0, 5);
+
+      return { bestSellers, lowPerformers, totalProducts: products.length };
+    } catch (error) {
+      console.error('Error loading product data:', error);
+      return { bestSellers: [], lowPerformers: [], totalProducts: 0 };
+    }
+  };
+
+  const loadCustomerData = async (startDate, endDate) => {
+    try {
+      const usersQuery = query(collection(db, 'users'));
+      const usersSnapshot = await getDocs(usersQuery);
+      const users = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      const newCustomers = users.filter(user => 
+        user.createdAt && new Date(user.createdAt) >= startDate
+      ).length;
+
+      // Get customer purchase data
+      const ordersQuery = query(
+        collection(db, 'orders'),
+        where('createdAt', '>=', startDate),
+        where('createdAt', '<=', endDate)
+      );
+      const ordersSnapshot = await getDocs(ordersQuery);
+      const orders = ordersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      const customerOrders = {};
+      orders.forEach(order => {
+        if (!customerOrders[order.userId]) {
+          customerOrders[order.userId] = [];
+        }
+        customerOrders[order.userId].push(order);
+      });
+
+      const returningCustomers = Object.keys(customerOrders).length;
+      const totalCustomers = users.length;
+
+      // Calculate average customer lifetime value
+      const totalRevenue = orders.reduce((sum, order) => sum + (order.total || 0), 0);
+      const customerLifetimeValue = totalCustomers > 0 ? totalRevenue / totalCustomers : 0;
+
+      return { totalCustomers, newCustomers, returningCustomers, customerLifetimeValue };
+    } catch (error) {
+      console.error('Error loading customer data:', error);
+      return { totalCustomers: 0, newCustomers: 0, returningCustomers: 0, customerLifetimeValue: 0 };
+    }
+  };
+
+  const loadEventData = async (startDate, endDate) => {
+    try {
+      const eventsQuery = query(
+        collection(db, 'analytics_events'),
+        where('timestamp', '>=', startDate),
+        where('timestamp', '<=', endDate)
+      );
+      const eventsSnapshot = await getDocs(eventsQuery);
+      const events = eventsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      const eventCounts = {
+        pageViews: 0,
+        productViews: 0,
+        addToCart: 0,
+        purchases: 0,
+        searches: 0
+      };
+
+      events.forEach(event => {
+        switch (event.eventType) {
+          case 'page_view':
+            eventCounts.pageViews++;
+            break;
+          case 'product_view':
+            eventCounts.productViews++;
+            break;
+          case 'add_to_cart':
+            eventCounts.addToCart++;
+            break;
+          case 'purchase':
+            eventCounts.purchases++;
+            break;
+          case 'search':
+            eventCounts.searches++;
+            break;
+        }
+      });
+
+      return eventCounts;
+    } catch (error) {
+      console.error('Error loading event data:', error);
+      return { pageViews: 0, productViews: 0, addToCart: 0, purchases: 0, searches: 0 };
     }
   };
 
@@ -1912,22 +2138,6 @@ const AdminDashboard = ({ user, onClose }) => {
           </div>
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
             <button
-              onClick={() => setShowAnalytics(true)}
-              style={{
-                background: 'linear-gradient(135deg, #6c757d 0%, #495057 100%)',
-                color: 'white',
-                border: 'none',
-                padding: '0.5rem 1rem',
-                borderRadius: '20px',
-                cursor: 'pointer',
-                fontSize: '0.9rem',
-                fontWeight: 'bold',
-                marginRight: '1rem'
-              }}
-            >
-              📊 Analytics
-            </button>
-            <button
               onClick={loadDashboardData}
               style={{
                 background: 'transparent',
@@ -1971,6 +2181,7 @@ const AdminDashboard = ({ user, onClose }) => {
         }}>
           {[
             { id: 'overview', label: '📊 Resumen', icon: '📊' },
+            { id: 'analytics', label: '📈 Analytics', icon: '📈' },
             { id: 'users', label: '👥 Usuarios', icon: '👥' },
             { id: 'orders', label: '📦 Pedidos', icon: '📦' },
             { id: 'cart-abandonment', label: '🛒 Carritos Abandonados', icon: '🛒' },
@@ -1999,6 +2210,192 @@ const AdminDashboard = ({ user, onClose }) => {
             </button>
           ))}
         </div>
+
+        {/* Analytics Tab */}
+        {activeTab === 'analytics' && (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+              <h2 style={{ color: '#D4A574', margin: 0 }}>Analytics Dashboard</h2>
+              <select
+                value={analyticsDateRange}
+                onChange={(e) => setAnalyticsDateRange(e.target.value)}
+                style={{
+                  padding: '0.5rem 1rem',
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  background: 'white',
+                  color: '#333'
+                }}
+              >
+                <option value="7">Últimos 7 días</option>
+                <option value="30">Últimos 30 días</option>
+                <option value="90">Últimos 90 días</option>
+                <option value="365">Último año</option>
+              </select>
+            </div>
+
+            {analyticsLoading ? (
+              <div style={{ textAlign: 'center', padding: '2rem' }}>
+                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⏳</div>
+                <div>Cargando analytics...</div>
+              </div>
+            ) : (
+              <>
+                {/* Analytics Summary Cards */}
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '1.5rem',
+                  marginBottom: '2rem'
+                }}>
+                  <div style={{
+                    background: `linear-gradient(135deg, ${PALETAS.A.miel} 0%, ${PALETAS.B.miel} 100%)`,
+                    color: 'white',
+                    padding: '1.5rem',
+                    borderRadius: '15px',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>💰</div>
+                    <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>
+                      ${analytics.sales.totalRevenue.toFixed(2)}
+                    </div>
+                    <div>Ingresos Totales</div>
+                    <div style={{ fontSize: '0.9rem', opacity: 0.9, marginTop: '0.5rem' }}>
+                      {analytics.sales.revenueGrowth >= 0 ? '+' : ''}{analytics.sales.revenueGrowth.toFixed(1)}% vs período anterior
+                    </div>
+                  </div>
+
+                  <div style={{
+                    background: `linear-gradient(135deg, ${PALETAS.A.verde} 0%, ${PALETAS.B.verde} 100%)`,
+                    color: 'white',
+                    padding: '1.5rem',
+                    borderRadius: '15px',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📦</div>
+                    <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{analytics.sales.totalOrders}</div>
+                    <div>Órdenes Totales</div>
+                    <div style={{ fontSize: '0.9rem', opacity: 0.9, marginTop: '0.5rem' }}>
+                      ${analytics.sales.averageOrderValue.toFixed(2)} promedio
+                    </div>
+                  </div>
+
+                  <div style={{
+                    background: `linear-gradient(135deg, ${PALETAS.A.rosa} 0%, ${PALETAS.B.rosa} 100%)`,
+                    color: 'white',
+                    padding: '1.5rem',
+                    borderRadius: '15px',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>👥</div>
+                    <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{analytics.customers.totalCustomers}</div>
+                    <div>Clientes Totales</div>
+                    <div style={{ fontSize: '0.9rem', opacity: 0.9, marginTop: '0.5rem' }}>
+                      {analytics.customers.newCustomers} nuevos
+                    </div>
+                  </div>
+
+                  <div style={{
+                    background: `linear-gradient(135deg, ${PALETAS.A.azul} 0%, ${PALETAS.B.azul} 100%)`,
+                    color: 'white',
+                    padding: '1.5rem',
+                    borderRadius: '15px',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🛍️</div>
+                    <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{analytics.products.totalProducts}</div>
+                    <div>Productos</div>
+                    <div style={{ fontSize: '0.9rem', opacity: 0.9, marginTop: '0.5rem' }}>
+                      {analytics.products.bestSellers.length} top sellers
+                    </div>
+                  </div>
+                </div>
+
+                {/* Event Analytics */}
+                <div style={{
+                  background: 'white',
+                  padding: '1.5rem',
+                  borderRadius: '15px',
+                  marginBottom: '2rem',
+                  boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+                }}>
+                  <h3 style={{ color: '#D4A574', marginBottom: '1rem' }}>Actividad de Usuarios</h3>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                    gap: '1rem'
+                  }}>
+                    <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#D4A574' }}>
+                        {analytics.events.pageViews}
+                      </div>
+                      <div style={{ fontSize: '0.9rem', color: '#666' }}>Vistas de Página</div>
+                    </div>
+                    <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#D4A574' }}>
+                        {analytics.events.productViews}
+                      </div>
+                      <div style={{ fontSize: '0.9rem', color: '#666' }}>Vistas de Producto</div>
+                    </div>
+                    <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#D4A574' }}>
+                        {analytics.events.addToCart}
+                      </div>
+                      <div style={{ fontSize: '0.9rem', color: '#666' }}>Agregar al Carrito</div>
+                    </div>
+                    <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#D4A574' }}>
+                        {analytics.events.purchases}
+                      </div>
+                      <div style={{ fontSize: '0.9rem', color: '#666' }}>Compras</div>
+                    </div>
+                    <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#D4A574' }}>
+                        {analytics.events.searches}
+                      </div>
+                      <div style={{ fontSize: '0.9rem', color: '#666' }}>Búsquedas</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Best Sellers */}
+                {analytics.products.bestSellers.length > 0 && (
+                  <div style={{
+                    background: 'white',
+                    padding: '1.5rem',
+                    borderRadius: '15px',
+                    marginBottom: '2rem',
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+                  }}>
+                    <h3 style={{ color: '#D4A574', marginBottom: '1rem' }}>Productos Más Vendidos</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                      {analytics.products.bestSellers.slice(0, 5).map((product, index) => (
+                        <div key={product.productId} style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          padding: '0.75rem',
+                          background: '#f8f9fa',
+                          borderRadius: '8px'
+                        }}>
+                          <div>
+                            <div style={{ fontWeight: 'bold' }}>{product.productName}</div>
+                            <div style={{ fontSize: '0.9rem', color: '#666' }}>
+                              {product.totalSold} vendidos
+                            </div>
+                          </div>
+                          <div style={{ fontWeight: 'bold', color: '#D4A574' }}>
+                            ${product.totalRevenue.toFixed(2)}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
 
         {/* Overview Tab */}
         {activeTab === 'overview' && (
@@ -5268,10 +5665,6 @@ const AdminDashboard = ({ user, onClose }) => {
         }
       `}</style>
 
-      {/* Analytics Dashboard Modal */}
-      {showAnalytics && (
-        <AnalyticsDashboard onClose={() => setShowAnalytics(false)} />
-      )}
     </div>
   );
 };
