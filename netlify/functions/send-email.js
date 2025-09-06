@@ -72,8 +72,10 @@ exports.handler = async (event, context) => {
             <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
                         <!-- Header -->
                         <div style="background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); padding: 30px 20px; text-align: center; box-shadow: 0 4px 15px rgba(212, 165, 116, 0.3);">
-                            <h2 style="color: #ffffff; margin: 0 0 10px 0; font-size: 24px; font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.4);">¿Olvidaste algo en tu carrito?</h2>
-                            <p style="color: #ffffff; margin: 0; font-size: 16px; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">Amor y Miel</p>
+                            <div style="margin-bottom: 15px;">
+                                <img src="https://amorymiel.com/images/logo/logo3.png" alt="Amor y Miel" style="height: 50px; max-width: 100%;" />
+                            </div>
+                            <h2 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.4);">¿Olvidaste algo en tu carrito?</h2>
                         </div>
 
                 <!-- Main Content -->
@@ -95,13 +97,13 @@ exports.handler = async (event, context) => {
                     </div>
 
                     <!-- Special Offer Banner -->
-                    <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); border-radius: 12px; padding: 25px; margin: 25px 0; text-align: center; box-shadow: 0 6px 20px rgba(231, 76, 60, 0.3);">
+                    <div style="background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); border-radius: 12px; padding: 25px; margin: 25px 0; text-align: center; box-shadow: 0 6px 20px rgba(212, 165, 116, 0.3);">
                         <h3 style="color: #ffffff; margin: 0 0 15px 0; font-size: 22px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.4);">
                             🎉 ¡OFERTA ESPECIAL! 🔥
                         </h3>
                         <div style="background-color: #ffffff; border-radius: 8px; padding: 20px; margin: 15px 0;">
                             <p style="color: #2c3e50; font-size: 18px; margin: 0 0 10px 0; font-weight: 600;">
-                                Usa el código: <span style="background-color: #e74c3c; color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 18px; font-weight: bold;">WELCOME10</span>
+                                Usa el código: <span style="background-color: #d4a574; color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 18px; font-weight: bold;">WELCOME10</span>
                             </p>
                             <p style="color: #27ae60; font-size: 24px; margin: 0; font-weight: bold;">
                                 10% DE DESCUENTO
@@ -126,11 +128,11 @@ exports.handler = async (event, context) => {
 
                     <!-- CTA Button -->
                     <div style="text-align: center; margin: 30px 0;">
-                        <a href="https://amorymiel.com" class="cta-button" style="display: inline-block; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: #ffffff; text-decoration: none; padding: 18px 40px; border-radius: 8px; font-size: 18px; font-weight: bold; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);">
+                        <a href="https://amorymiel.com" class="cta-button" style="display: inline-block; background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); color: #ffffff; text-decoration: none; padding: 18px 40px; border-radius: 8px; font-size: 18px; font-weight: bold; box-shadow: 0 4px 15px rgba(212, 165, 116, 0.4);">
                             🛒 ¡COMPLETAR COMPRA CON DESCUENTO! 🛒
                         </a>
                         <p style="color: #666666; font-size: 14px; margin: 15px 0 0 0;">
-                            💡 Ingresa el código <strong style="background-color: #e74c3c; color: #fff; padding: 2px 6px; border-radius: 4px;">WELCOME10</strong> en tu carrito
+                            💡 Ingresa el código <strong style="background-color: #d4a574; color: #fff; padding: 2px 6px; border-radius: 4px;">WELCOME10</strong> en tu carrito
                         </p>
                     </div>
 
