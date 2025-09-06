@@ -756,6 +756,10 @@ function App() {
       }
       
       console.log('🔄 Loading coupons from database...');
+      
+      // Import Firebase functions dynamically to avoid issues
+      const { collection, query, getDocs, where } = await import('firebase/firestore');
+      
       const couponsQuery = query(collection(db, 'coupons'), where('active', '==', true));
       const couponsSnapshot = await getDocs(couponsQuery);
       const couponsData = couponsSnapshot.docs.map(doc => {
@@ -905,15 +909,26 @@ function App() {
 
       console.log('🧪 Testing if coupon exists:', testCode);
       
-      // Load coupons first
-      await loadCoupons();
+      // Import Firebase functions dynamically
+      const { collection, query, getDocs, where } = await import('firebase/firestore');
       
-      // Wait for state to update
-      await new Promise(resolve => setTimeout(resolve, 200));
+      // Get all coupons (not just active ones) for testing
+      const couponsQuery = query(collection(db, 'coupons'));
+      const couponsSnapshot = await getDocs(couponsQuery);
+      const allCoupons = couponsSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          code: data.code || '',
+          type: data.type || 'percentage',
+          value: data.value || 0,
+          active: data.active !== false
+        };
+      });
       
-      console.log('📋 Current coupons state:', coupons);
+      console.log('📋 All coupons in database:', allCoupons);
       
-      const coupon = coupons.find(c => c && c.code && c.code.toUpperCase() === testCode.toUpperCase());
+      const coupon = allCoupons.find(c => c && c.code && c.code.toUpperCase() === testCode.toUpperCase());
       console.log('🔍 Found coupon:', coupon);
       
       return coupon;
