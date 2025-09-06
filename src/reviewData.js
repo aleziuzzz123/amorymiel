@@ -1349,7 +1349,7 @@ export const getProductReviews = (productId, productName = '') => {
           return questionReviews[Math.floor(Math.random() * questionReviews.length)];
         }
         
-        // For longer reviews, apply various styles
+        // For longer reviews, apply various unique styles with different starts and ends
         const styles = [
           // Style 1: Simple, no punctuation
           baseComment,
@@ -1369,28 +1369,188 @@ export const getProductReviews = (productId, productName = '') => {
           baseComment + "?",
           // Style 9: With period
           baseComment + ".",
-          // Style 10: With parentheses
-          baseComment + " (muy bueno)",
-          // Style 11: With emojis and dots
+          // Style 10: With emojis and dots
           baseComment + " :)...",
-          // Style 12: With emojis and exclamation
+          // Style 11: With emojis and exclamation
           baseComment + " :D!",
-          // Style 13: With emojis and question
+          // Style 12: With emojis and question
           baseComment + " :P?",
-          // Style 14: With dots and parentheses
-          baseComment + "... (recomendado)",
-          // Style 15: With emojis at start
+          // Style 13: With emojis at start
           ":) " + baseComment,
-          // Style 16: With emojis at start and end
+          // Style 14: With emojis at start and end
           ":D " + baseComment + " :P",
-          // Style 17: With multiple dots
+          // Style 15: With multiple dots
           baseComment + ".....",
-          // Style 18: With emojis and multiple dots
+          // Style 16: With emojis and multiple dots
           baseComment + " :D.....",
-          // Style 19: With question and emojis
+          // Style 17: With question and emojis
           baseComment + "? :P",
-          // Style 20: With exclamation and emojis
-          baseComment + "! :D"
+          // Style 18: With exclamation and emojis
+          baseComment + "! :D",
+          // Style 19: With emojis at start only
+          ":D " + baseComment,
+          // Style 20: With emojis at end only
+          baseComment + " :)",
+          // Style 21: With exclamation at start
+          "Wow! " + baseComment,
+          // Style 22: With exclamation at end
+          baseComment + "! Amazing!",
+          // Style 23: With question at start
+          "Why " + baseComment + "?",
+          // Style 24: With question at end
+          baseComment + "? Really?",
+          // Style 25: With dots at start
+          "Well... " + baseComment,
+          // Style 26: With dots at end
+          baseComment + "... I think",
+          // Style 27: With exclamation at start and end
+          "Wow! " + baseComment + "!",
+          // Style 28: With question at start and end
+          "Why " + baseComment + "? Really?",
+          // Style 29: With dots at start and end
+          "Well... " + baseComment + "... I think",
+          // Style 30: With emojis at start and exclamation at end
+          ":D " + baseComment + "!",
+          // Style 31: With exclamation at start and emojis at end
+          "Wow! " + baseComment + " :)",
+          // Style 32: With question at start and emojis at end
+          "Why " + baseComment + "? :P",
+          // Style 33: With emojis at start and question at end
+          ":D " + baseComment + "?",
+          // Style 34: With dots at start and emojis at end
+          "Well... " + baseComment + " :)",
+          // Style 35: With emojis at start and dots at end
+          ":D " + baseComment + "...",
+          // Style 36: With exclamation at start and dots at end
+          "Wow! " + baseComment + "...",
+          // Style 37: With dots at start and exclamation at end
+          "Well... " + baseComment + "!",
+          // Style 38: With question at start and exclamation at end
+          "Why " + baseComment + "!",
+          // Style 39: With exclamation at start and question at end
+          "Wow! " + baseComment + "?",
+          // Style 40: With dots at start and question at end
+          "Well... " + baseComment + "?",
+          // Style 41: With question at start and dots at end
+          "Why " + baseComment + "...",
+          // Style 42: With emojis at start and exclamation at end
+          ":P " + baseComment + "!",
+          // Style 43: With exclamation at start and emojis at end
+          "Wow! " + baseComment + " :D",
+          // Style 44: With question at start and emojis at end
+          "Why " + baseComment + "? :)",
+          // Style 45: With emojis at start and question at end
+          ":P " + baseComment + "?",
+          // Style 46: With dots at start and emojis at end
+          "Well... " + baseComment + " :D",
+          // Style 47: With emojis at start and dots at end
+          ":P " + baseComment + "...",
+          // Style 48: With exclamation at start and dots at end
+          "Wow! " + baseComment + "...",
+          // Style 49: With dots at start and exclamation at end
+          "Well... " + baseComment + "!",
+          // Style 50: With question at start and exclamation at end
+          "Why " + baseComment + "!",
+          // Style 51: With exclamation at start and question at end
+          "Wow! " + baseComment + "?",
+          // Style 52: With dots at start and question at end
+          "Well... " + baseComment + "?",
+          // Style 53: With question at start and dots at end
+          "Why " + baseComment + "...",
+          // Style 54: With emojis at start and exclamation at end
+          ":) " + baseComment + "!",
+          // Style 55: With exclamation at start and emojis at end
+          "Wow! " + baseComment + " :P",
+          // Style 56: With question at start and emojis at end
+          "Why " + baseComment + "? :D",
+          // Style 57: With emojis at start and question at end
+          ":) " + baseComment + "?",
+          // Style 58: With dots at start and emojis at end
+          "Well... " + baseComment + " :P",
+          // Style 59: With emojis at start and dots at end
+          ":) " + baseComment + "...",
+          // Style 60: With exclamation at start and dots at end
+          "Wow! " + baseComment + "...",
+          // Style 61: With dots at start and exclamation at end
+          "Well... " + baseComment + "!",
+          // Style 62: With question at start and exclamation at end
+          "Why " + baseComment + "!",
+          // Style 63: With exclamation at start and question at end
+          "Wow! " + baseComment + "?",
+          // Style 64: With dots at start and question at end
+          "Well... " + baseComment + "?",
+          // Style 65: With question at start and dots at end
+          "Why " + baseComment + "...",
+          // Style 66: With emojis at start and exclamation at end
+          ":P " + baseComment + "!",
+          // Style 67: With exclamation at start and emojis at end
+          "Wow! " + baseComment + " :)",
+          // Style 68: With question at start and emojis at end
+          "Why " + baseComment + "? :P",
+          // Style 69: With emojis at start and question at end
+          ":P " + baseComment + "?",
+          // Style 70: With dots at start and emojis at end
+          "Well... " + baseComment + " :)",
+          // Style 71: With emojis at start and dots at end
+          ":P " + baseComment + "...",
+          // Style 72: With exclamation at start and dots at end
+          "Wow! " + baseComment + "...",
+          // Style 73: With dots at start and exclamation at end
+          "Well... " + baseComment + "!",
+          // Style 74: With question at start and exclamation at end
+          "Why " + baseComment + "!",
+          // Style 75: With exclamation at start and question at end
+          "Wow! " + baseComment + "?",
+          // Style 76: With dots at start and question at end
+          "Well... " + baseComment + "?",
+          // Style 77: With question at start and dots at end
+          "Why " + baseComment + "...",
+          // Style 78: With emojis at start and exclamation at end
+          ":D " + baseComment + "!",
+          // Style 79: With exclamation at start and emojis at end
+          "Wow! " + baseComment + " :D",
+          // Style 80: With question at start and emojis at end
+          "Why " + baseComment + "? :)",
+          // Style 81: With emojis at start and question at end
+          ":D " + baseComment + "?",
+          // Style 82: With dots at start and emojis at end
+          "Well... " + baseComment + " :D",
+          // Style 83: With emojis at start and dots at end
+          ":D " + baseComment + "...",
+          // Style 84: With exclamation at start and dots at end
+          "Wow! " + baseComment + "...",
+          // Style 85: With dots at start and exclamation at end
+          "Well... " + baseComment + "!",
+          // Style 86: With question at start and exclamation at end
+          "Why " + baseComment + "!",
+          // Style 87: With exclamation at start and question at end
+          "Wow! " + baseComment + "?",
+          // Style 88: With dots at start and question at end
+          "Well... " + baseComment + "?",
+          // Style 89: With question at start and dots at end
+          "Why " + baseComment + "...",
+          // Style 90: With emojis at start and exclamation at end
+          ":P " + baseComment + "!",
+          // Style 91: With exclamation at start and emojis at end
+          "Wow! " + baseComment + " :P",
+          // Style 92: With question at start and emojis at end
+          "Why " + baseComment + "? :D",
+          // Style 93: With emojis at start and question at end
+          ":P " + baseComment + "?",
+          // Style 94: With dots at start and emojis at end
+          "Well... " + baseComment + " :P",
+          // Style 95: With emojis at start and dots at end
+          ":P " + baseComment + "...",
+          // Style 96: With exclamation at start and dots at end
+          "Wow! " + baseComment + "...",
+          // Style 97: With dots at start and exclamation at end
+          "Well... " + baseComment + "!",
+          // Style 98: With question at start and exclamation at end
+          "Why " + baseComment + "!",
+          // Style 99: With exclamation at start and question at end
+          "Wow! " + baseComment + "?",
+          // Style 100: With dots at start and question at end
+          "Well... " + baseComment + "?"
         ];
         
         return styles[Math.floor(Math.random() * styles.length)];
