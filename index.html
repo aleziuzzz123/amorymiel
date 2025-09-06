@@ -96,6 +96,13 @@
           'custom_parameter_2': 'user_type'
         }
       });
+      
+      // Debug: Log when GA4 loads
+      console.log('Google Analytics 4 loaded with ID: G-6J7QCG478Z');
+      gtag('event', 'page_view', {
+        page_title: 'Amor Y Miel - Productos Holísticos Artesanales',
+        page_location: window.location.href
+      });
     </script>
     
     <!-- Facebook Pixel (Replace with your actual Pixel ID) -->
