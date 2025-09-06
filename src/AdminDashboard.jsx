@@ -266,6 +266,12 @@ const AdminDashboard = ({ user, onClose }) => {
   const [couponSearchTerm, setCouponSearchTerm] = useState('');
   const [couponFilterStatus, setCouponFilterStatus] = useState('all');
   const [selectedCoupons, setSelectedCoupons] = useState([]);
+
+  // Review management state
+  const [reviews, setReviews] = useState([]);
+  const [reviewSearchTerm, setReviewSearchTerm] = useState('');
+  const [reviewFilterStatus, setReviewFilterStatus] = useState('all');
+  const [selectedReviews, setSelectedReviews] = useState([]);
   
   // Order details state
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -516,6 +522,10 @@ const AdminDashboard = ({ user, onClose }) => {
       
       // Load coupons
       loadCoupons();
+      
+      // Load reviews
+      loadReviews();
+      
       console.log('Is admin?', user?.email === 'admin@amorymiel.com');
       
       try {
@@ -1467,6 +1477,123 @@ const AdminDashboard = ({ user, onClose }) => {
     setSelectedCoupons([]);
   };
 
+  // Review management functions
+  const loadReviews = async () => {
+    try {
+      const reviewsQuery = query(collection(db, 'reviews'), orderBy('createdAt', 'desc'));
+      const reviewsSnapshot = await getDocs(reviewsQuery);
+      const reviewsData = reviewsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setReviews(reviewsData);
+    } catch (error) {
+      console.error('Error loading reviews:', error);
+    }
+  };
+
+  const approveReview = async (reviewId) => {
+    try {
+      const { updateDoc, doc } = await import('firebase/firestore');
+      await updateDoc(doc(db, 'reviews', reviewId), {
+        approved: true,
+        pending: false,
+        status: 'approved',
+        approvedAt: new Date()
+      });
+      await loadReviews();
+      alert('Reseña aprobada exitosamente');
+    } catch (error) {
+      console.error('Error approving review:', error);
+      alert('Error al aprobar la reseña');
+    }
+  };
+
+  const rejectReview = async (reviewId) => {
+    try {
+      const { updateDoc, doc } = await import('firebase/firestore');
+      await updateDoc(doc(db, 'reviews', reviewId), {
+        approved: false,
+        pending: false,
+        status: 'rejected',
+        rejectedAt: new Date()
+      });
+      await loadReviews();
+      alert('Reseña rechazada exitosamente');
+    } catch (error) {
+      console.error('Error rejecting review:', error);
+      alert('Error al rechazar la reseña');
+    }
+  };
+
+  const deleteReview = async (reviewId) => {
+    if (window.confirm('¿Estás seguro de que quieres eliminar esta reseña?')) {
+      try {
+        const { deleteDoc, doc } = await import('firebase/firestore');
+        await deleteDoc(doc(db, 'reviews', reviewId));
+        await loadReviews();
+        alert('Reseña eliminada exitosamente');
+      } catch (error) {
+        console.error('Error deleting review:', error);
+        alert('Error al eliminar la reseña');
+      }
+    }
+  };
+
+  const toggleReviewSelection = (reviewId) => {
+    setSelectedReviews(prev => 
+      prev.includes(reviewId) 
+        ? prev.filter(id => id !== reviewId)
+        : [...prev, reviewId]
+    );
+  };
+
+  const selectAllReviews = () => {
+    setSelectedReviews(filteredReviews.map(review => review.id));
+  };
+
+  const clearReviewSelection = () => {
+    setSelectedReviews([]);
+  };
+
+  const handleReviewBulkAction = async (action) => {
+    if (selectedReviews.length === 0) {
+      alert('Por favor selecciona al menos una reseña');
+      return;
+    }
+
+    try {
+      const { updateDoc, doc, deleteDoc } = await import('firebase/firestore');
+      
+      for (const reviewId of selectedReviews) {
+        if (action === 'approve') {
+          await updateDoc(doc(db, 'reviews', reviewId), {
+            approved: true,
+            pending: false,
+            status: 'approved',
+            approvedAt: new Date()
+          });
+        } else if (action === 'reject') {
+          await updateDoc(doc(db, 'reviews', reviewId), {
+            approved: false,
+            pending: false,
+            status: 'rejected',
+            rejectedAt: new Date()
+          });
+        } else if (action === 'delete') {
+          await deleteDoc(doc(db, 'reviews', reviewId));
+        }
+      }
+      
+      await loadReviews();
+      setSelectedReviews([]);
+      alert(`${selectedReviews.length} reseña(s) ${action === 'approve' ? 'aprobada(s)' : action === 'reject' ? 'rechazada(s)' : 'eliminada(s)'} exitosamente`);
+    } catch (error) {
+      console.error('Error performing bulk action:', error);
+      alert('Error al realizar la acción');
+    }
+  };
+
   const handleCouponBulkAction = async (action) => {
     if (selectedCoupons.length === 0) {
       alert('Por favor selecciona al menos un cupón.');
@@ -1511,6 +1638,19 @@ const AdminDashboard = ({ user, onClose }) => {
       return matchesSearch && matchesStatus;
     })
     .sort((a, b) => b.createdAt - a.createdAt);
+
+  const filteredReviews = reviews
+    .filter(review => {
+      const matchesSearch = review.userName.toLowerCase().includes(reviewSearchTerm.toLowerCase()) ||
+                           review.comment.toLowerCase().includes(reviewSearchTerm.toLowerCase()) ||
+                           review.productName.toLowerCase().includes(reviewSearchTerm.toLowerCase());
+      const matchesStatus = reviewFilterStatus === 'all' || 
+                           (reviewFilterStatus === 'pending' && review.pending) ||
+                           (reviewFilterStatus === 'approved' && review.approved) ||
+                           (reviewFilterStatus === 'rejected' && review.status === 'rejected');
+      return matchesSearch && matchesStatus;
+    })
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   // Check for low stock alerts
   const checkLowStockAlerts = () => {
@@ -1684,7 +1824,8 @@ const AdminDashboard = ({ user, onClose }) => {
             { id: 'orders', label: '📦 Pedidos', icon: '📦' },
             { id: 'cart-abandonment', label: '🛒 Carritos Abandonados', icon: '🛒' },
             { id: 'products', label: '🛍️ Productos', icon: '🛍️' },
-            { id: 'coupons', label: '🎫 Cupones', icon: '🎫' }
+            { id: 'coupons', label: '🎫 Cupones', icon: '🎫' },
+            { id: 'reviews', label: '⭐ Reseñas', icon: '⭐' }
           ].map(tab => (
             <button
               key={tab.id}
@@ -4361,6 +4502,309 @@ const AdminDashboard = ({ user, onClose }) => {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* Reviews Tab */}
+        {activeTab === 'reviews' && (
+          <div>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '1.5rem'
+            }}>
+              <h2 style={{ color: '#D4A574', margin: 0 }}>Gestión de Reseñas ({filteredReviews.length})</h2>
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                {selectedReviews.length > 0 && (
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button
+                      onClick={() => handleReviewBulkAction('approve')}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        background: '#51cf66',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '0.8rem',
+                        fontWeight: '600'
+                      }}
+                    >
+                      ✅ Aprobar Seleccionadas
+                    </button>
+                    <button
+                      onClick={() => handleReviewBulkAction('reject')}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        background: '#ff6b6b',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '0.8rem',
+                        fontWeight: '600'
+                      }}
+                    >
+                      ❌ Rechazar Seleccionadas
+                    </button>
+                    <button
+                      onClick={() => handleReviewBulkAction('delete')}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        background: '#ff4757',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '0.8rem',
+                        fontWeight: '600'
+                      }}
+                    >
+                      🗑️ Eliminar Seleccionadas
+                    </button>
+                    <button
+                      onClick={clearReviewSelection}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        background: '#6c757d',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '0.8rem',
+                        fontWeight: '600'
+                      }}
+                    >
+                      Limpiar Selección
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Search and Filter Controls */}
+            <div style={{
+              background: 'white',
+              padding: '1.5rem',
+              borderRadius: '12px',
+              marginBottom: '1.5rem',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+            }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr auto', gap: '1rem', alignItems: 'end' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', color: '#333', fontWeight: '500' }}>
+                    🔍 Buscar Reseñas
+                  </label>
+                  <input
+                    type="text"
+                    value={reviewSearchTerm}
+                    onChange={(e) => setReviewSearchTerm(e.target.value)}
+                    placeholder="Buscar por usuario, comentario o producto..."
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      border: '2px solid #e9ecef',
+                      borderRadius: '8px',
+                      fontSize: '1rem',
+                      transition: 'border-color 0.2s ease'
+                    }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', color: '#333', fontWeight: '500' }}>
+                    📊 Filtrar por Estado
+                  </label>
+                  <select
+                    value={reviewFilterStatus}
+                    onChange={(e) => setReviewFilterStatus(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      border: '2px solid #e9ecef',
+                      borderRadius: '8px',
+                      fontSize: '1rem',
+                      background: 'white'
+                    }}
+                  >
+                    <option value="all">Todas las Reseñas</option>
+                    <option value="pending">Pendientes de Aprobación</option>
+                    <option value="approved">Aprobadas</option>
+                    <option value="rejected">Rechazadas</option>
+                  </select>
+                </div>
+                <div>
+                  <button
+                    onClick={selectAllReviews}
+                    style={{
+                      padding: '0.75rem 1.5rem',
+                      background: '#D4A574',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '1rem',
+                      fontWeight: '600'
+                    }}
+                  >
+                    Seleccionar Todas
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Reviews List */}
+            <div style={{
+              background: 'white',
+              borderRadius: '12px',
+              overflow: 'hidden',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+            }}>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '40px 1fr 1fr 1fr 1fr 1fr auto',
+                padding: '1rem',
+                background: '#f8f9fa',
+                borderBottom: '1px solid #e9ecef',
+                fontWeight: '600',
+                fontSize: '0.9rem',
+                color: '#495057'
+              }}>
+                <div>✓</div>
+                <div>Usuario</div>
+                <div>Producto</div>
+                <div>Calificación</div>
+                <div>Comentario</div>
+                <div>Estado</div>
+                <div>Acciones</div>
+              </div>
+              
+              {filteredReviews.map(review => {
+                const isSelected = selectedReviews.includes(review.id);
+                const statusColor = review.approved ? '#51cf66' : review.status === 'rejected' ? '#ff6b6b' : '#ffa726';
+                const statusText = review.approved ? 'Aprobada' : review.status === 'rejected' ? 'Rechazada' : 'Pendiente';
+                
+                return (
+                  <div key={review.id} style={{
+                    display: 'grid',
+                    gridTemplateColumns: '40px 1fr 1fr 1fr 1fr 1fr auto',
+                    padding: '1rem',
+                    borderBottom: '1px solid #f0f0f0',
+                    alignItems: 'center',
+                    background: isSelected ? '#f8f9fa' : 'white'
+                  }}>
+                    <div>
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => toggleReviewSelection(review.id)}
+                        style={{ transform: 'scale(1.2)' }}
+                      />
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: '600', color: '#333' }}>{review.userName}</div>
+                      <div style={{ fontSize: '0.8rem', color: '#666' }}>{review.userEmail}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: '500', color: '#333' }}>{review.productName}</div>
+                      <div style={{ fontSize: '0.8rem', color: '#666' }}>
+                        {new Date(review.createdAt || review.date).toLocaleDateString()}
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                        {'⭐'.repeat(review.rating)}
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ 
+                        maxWidth: '200px', 
+                        overflow: 'hidden', 
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        color: '#333'
+                      }}>
+                        {review.comment}
+                      </div>
+                    </div>
+                    <div>
+                      <span style={{
+                        padding: '0.25rem 0.5rem',
+                        borderRadius: '12px',
+                        fontSize: '0.8rem',
+                        fontWeight: '600',
+                        background: statusColor,
+                        color: 'white'
+                      }}>
+                        {statusText}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      {!review.approved && review.status !== 'rejected' && (
+                        <button
+                          onClick={() => approveReview(review.id)}
+                          style={{
+                            padding: '0.25rem 0.5rem',
+                            background: '#51cf66',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontSize: '0.8rem'
+                          }}
+                        >
+                          ✅
+                        </button>
+                      )}
+                      {review.status !== 'rejected' && (
+                        <button
+                          onClick={() => rejectReview(review.id)}
+                          style={{
+                            padding: '0.25rem 0.5rem',
+                            background: '#ff6b6b',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontSize: '0.8rem'
+                          }}
+                        >
+                          ❌
+                        </button>
+                      )}
+                      <button
+                        onClick={() => deleteReview(review.id)}
+                        style={{
+                          padding: '0.25rem 0.5rem',
+                          background: '#ff4757',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontSize: '0.8rem'
+                        }}
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+              
+              {filteredReviews.length === 0 && (
+                <div style={{
+                  padding: '3rem',
+                  textAlign: 'center',
+                  color: '#666',
+                  fontSize: '1.1rem'
+                }}>
+                  {reviewSearchTerm || reviewFilterStatus !== 'all' 
+                    ? 'No se encontraron reseñas con los filtros aplicados' 
+                    : 'No hay reseñas disponibles'
+                  }
+                </div>
+              )}
             </div>
           </div>
         )}

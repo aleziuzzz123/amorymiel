@@ -1238,7 +1238,7 @@ export const REVIEW_DATA = {
 export const getProductReviews = (productId, productName = '') => {
   // First try by ID
   if (REVIEW_DATA[productId]) {
-    return REVIEW_DATA[productId];
+    return REVIEW_DATA[productId].filter(review => review.approved !== false);
   }
   
   // If not found by ID, try to find by common product names
@@ -1264,7 +1264,7 @@ export const getProductReviews = (productId, productName = '') => {
   
   const mappedName = productNameMap[productId];
   if (mappedName && REVIEW_DATA[mappedName]) {
-    return REVIEW_DATA[mappedName];
+    return REVIEW_DATA[mappedName].filter(review => review.approved !== false);
   }
   
     // Generate product-specific reviews based on product type and benefits
@@ -2219,7 +2219,9 @@ export const getProductReviews = (productId, productName = '') => {
         rating: rating,
         comment: finalComment,
         date: reviewDate.toISOString().split('T')[0],
-        verified: Math.random() > 0.15 // 85% verified purchases
+        verified: Math.random() > 0.15, // 85% verified purchases
+        approved: true, // All generated reviews are pre-approved
+        pending: false
       });
     }
     

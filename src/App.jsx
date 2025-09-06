@@ -350,6 +350,8 @@ function App() {
   const [reviewingProduct, setReviewingProduct] = useState(null);
   const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [productReviews, setProductReviews] = useState({});
+  const [productRatings, setProductRatings] = useState({});
 
   // Load products from Firestore and separate by category
   const loadProductsFromFirestore = async () => {
@@ -861,6 +863,85 @@ function App() {
     setNewReview({ rating: 5, comment: '' });
   };
 
+  // Load reviews for a specific product
+  const loadProductReviews = async (productId, productName) => {
+    try {
+      if (!db) {
+        // Fallback to static reviews
+        const staticReviews = getProductReviews(productId, productName);
+        setProductReviews(prev => ({ ...prev, [productId]: staticReviews }));
+        setProductRatings(prev => ({ 
+          ...prev, 
+          [productId]: {
+            average: calculateAverageRating(productId),
+            count: getReviewCount(productId)
+          }
+        }));
+        return;
+      }
+
+      // Import Firebase functions dynamically
+      const { collection, query, where, getDocs, orderBy } = await import('firebase/firestore');
+      
+      // Get approved reviews from Firebase
+      const reviewsQuery = query(
+        collection(db, 'reviews'),
+        where('productId', '==', productId),
+        where('approved', '==', true),
+        orderBy('createdAt', 'desc')
+      );
+      
+      const reviewsSnapshot = await getDocs(reviewsQuery);
+      const firebaseReviews = reviewsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      
+      // Get static reviews
+      const staticReviews = getProductReviews(productId, productName);
+      
+      // Combine and sort by date
+      const allReviews = [...firebaseReviews, ...staticReviews].sort((a, b) => 
+        new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt)
+      );
+      
+      setProductReviews(prev => ({ ...prev, [productId]: allReviews }));
+      
+      // Calculate average rating
+      if (allReviews.length > 0) {
+        const totalRating = allReviews.reduce((sum, review) => sum + review.rating, 0);
+        const average = totalRating / allReviews.length;
+        setProductRatings(prev => ({ 
+          ...prev, 
+          [productId]: {
+            average: average,
+            count: allReviews.length
+          }
+        }));
+      } else {
+        setProductRatings(prev => ({ 
+          ...prev, 
+          [productId]: {
+            average: 0,
+            count: 0
+          }
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading reviews:', error);
+      // Fallback to static reviews
+      const staticReviews = getProductReviews(productId, productName);
+      setProductReviews(prev => ({ ...prev, [productId]: staticReviews }));
+      setProductRatings(prev => ({ 
+        ...prev, 
+        [productId]: {
+          average: calculateAverageRating(productId),
+          count: getReviewCount(productId)
+        }
+      }));
+    }
+  };
+
   const submitReview = async () => {
     if (!user || !reviewingProduct || !newReview.comment.trim()) {
       alert('Por favor completa tu comentario');
@@ -870,10 +951,36 @@ function App() {
     setIsSubmittingReview(true);
     
     try {
-      // In a real app, you would save this to Firebase
-      // For now, we'll just show a success message
-      alert('¡Gracias por tu reseña! Será publicada después de la revisión.');
+      // Save review to Firebase as pending approval
+      const reviewData = {
+        productId: reviewingProduct.id,
+        productName: reviewingProduct.nombre,
+        userName: user.displayName || user.email.split('@')[0],
+        userEmail: user.email,
+        userId: user.uid,
+        rating: newReview.rating,
+        comment: newReview.comment.trim(),
+        date: new Date().toISOString().split('T')[0],
+        verified: true,
+        approved: false, // New reviews need approval
+        pending: true,
+        createdAt: new Date(),
+        status: 'pending'
+      };
+
+      // Import Firebase functions dynamically
+      const { addDoc, collection } = await import('firebase/firestore');
+      
+      await addDoc(collection(db, 'reviews'), reviewData);
+      
+      alert('¡Gracias por tu reseña! Será publicada después de la revisión del administrador.');
       closeReviewModal();
+      
+      // Reset form
+      setNewReview({
+        rating: 5,
+        comment: ''
+      });
     } catch (error) {
       console.error('Error submitting review:', error);
       alert('Error al enviar la reseña. Inténtalo de nuevo.');
@@ -5271,6 +5378,17 @@ function App() {
           ...openProduct,
           ...(PRODUCT_DETAILS[openProduct.nombre] || {})
         };
+
+        // Load reviews when product is opened
+        React.useEffect(() => {
+          if (detailedProduct) {
+            loadProductReviews(detailedProduct.id, detailedProduct.nombre);
+          }
+        }, [detailedProduct]);
+
+        // Get reviews and ratings for this product
+        const reviews = productReviews[detailedProduct.id] || [];
+        const rating = productRatings[detailedProduct.id] || { average: 0, count: 0 };
         
         return (
           <div style={{ 
@@ -5573,7 +5691,7 @@ function App() {
                       alignItems: "center",
                       gap: "0.5rem"
                     }}>
-                      ⭐ Reseñas ({getReviewCount(detailedProduct.id)})
+                      ⭐ Reseñas ({rating.count})
                     </h4>
                     <div style={{
                       display: "flex",
@@ -5589,13 +5707,13 @@ function App() {
                       e.currentTarget.style.opacity = "1";
                     }}
                     >
-                      {renderStars(calculateAverageRating(detailedProduct.id), "16px")}
+                      {renderStars(rating.average, "16px")}
                       <span style={{
                         fontSize: "0.9rem",
                         color: "#666",
                         fontWeight: "600"
                       }}>
-                        {calculateAverageRating(detailedProduct.id).toFixed(1)}
+                        {rating.average.toFixed(1)}
                       </span>
                     </div>
                   </div>
@@ -5606,7 +5724,7 @@ function App() {
                     overflowY: "auto",
                     paddingRight: "0.5rem"
                   }}>
-                    {getProductReviews(detailedProduct.id, detailedProduct.nombre).map((review, index) => (
+                    {reviews.map((review, index) => (
                       <div key={review.id} style={{
                         background: "white",
                         padding: "0.75rem",
