@@ -1294,14 +1294,36 @@ const AdminDashboard = ({ user, onClose }) => {
     setIsAddingCoupon(true);
     
     try {
+      // Validate required fields
+      if (!newCoupon.code || !newCoupon.type || newCoupon.value <= 0) {
+        alert('Por favor completa todos los campos requeridos');
+        return;
+      }
+      
+      // Check if coupon code already exists
+      const existingCoupons = coupons.filter(c => c.code.toUpperCase() === newCoupon.code.toUpperCase());
+      if (existingCoupons.length > 0) {
+        alert('Ya existe un cupón con este código');
+        return;
+      }
+      
+      console.log('🔄 Creating coupon with data:', newCoupon);
+      
       const couponData = {
         ...newCoupon,
+        code: newCoupon.code.toUpperCase(), // Ensure uppercase
         usedCount: 0,
         createdAt: new Date(),
         updatedAt: new Date()
       };
       
-      await addDoc(collection(db, 'coupons'), couponData);
+      console.log('📝 Final coupon data:', couponData);
+      
+      // Use dynamic import to avoid Firebase bundling issues
+      const { addDoc, collection } = await import('firebase/firestore');
+      
+      const docRef = await addDoc(collection(db, 'coupons'), couponData);
+      console.log('✅ Coupon created with ID:', docRef.id);
       
       // Reset form
       setNewCoupon({
@@ -1320,8 +1342,9 @@ const AdminDashboard = ({ user, onClose }) => {
       loadCoupons();
       alert('Cupón creado exitosamente!');
     } catch (error) {
-      console.error('Error adding coupon:', error);
-      alert('Error al crear el cupón. Inténtalo de nuevo.');
+      console.error('❌ Error adding coupon:', error);
+      console.error('❌ Error details:', error.message, error.code);
+      alert(`Error al crear el cupón: ${error.message}`);
     } finally {
       setIsAddingCoupon(false);
     }
@@ -1339,6 +1362,10 @@ const AdminDashboard = ({ user, onClose }) => {
       };
       
       console.log('💾 Updating coupon data:', couponData);
+      
+      // Use dynamic import to avoid Firebase bundling issues
+      const { updateDoc, doc } = await import('firebase/firestore');
+      
       await updateDoc(doc(db, 'coupons', editingCouponId), couponData);
       console.log('✅ Coupon updated successfully');
       
@@ -1376,12 +1403,17 @@ const AdminDashboard = ({ user, onClose }) => {
     if (window.confirm('¿Estás seguro de que quieres eliminar este cupón?')) {
       try {
         console.log('🗑️ Deleting coupon from database...');
+        
+        // Use dynamic import to avoid Firebase bundling issues
+        const { deleteDoc, doc } = await import('firebase/firestore');
+        
         await deleteDoc(doc(db, 'coupons', couponId));
         console.log('✅ Coupon deleted successfully');
         loadCoupons();
         alert('Cupón eliminado exitosamente!');
       } catch (error) {
         console.error('❌ Error deleting coupon:', error);
+        console.error('❌ Error details:', error.message, error.code);
         alert(`Error al eliminar el cupón: ${error.message}`);
       }
     } else {
