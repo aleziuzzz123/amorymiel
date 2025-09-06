@@ -788,7 +788,7 @@ function App() {
   const getWhatsAppLink = (service) => {
     const message = `Hola! Me interesa agendar el servicio: ${service.nombre}`;
     const encodedMessage = encodeURIComponent(message);
-    return `https://wa.me/523317361884?text=${encodedMessage}`;
+    return `https://wa.me/529991320209?text=${encodedMessage}`;
   };
 
   const closeReviewModal = () => {
@@ -3332,12 +3332,136 @@ function App() {
           <h2 style={{ 
             textAlign: "center", 
             color: PALETAS.D.carbon, 
-            marginBottom: "1.5rem", 
+            marginBottom: "1rem", 
             fontSize: "clamp(2rem, 5vw, 2.5rem)",
             fontWeight: "700"
           }}>
             Nuestros Servicios
           </h2>
+          
+          {/* Services Description */}
+          <div style={{
+            textAlign: "center",
+            maxWidth: "900px",
+            margin: "0 auto 2.5rem auto",
+            padding: "0 1rem"
+          }}>
+            <p style={{
+              fontSize: "clamp(1.1rem, 3vw, 1.3rem)",
+              color: "#2c3e50",
+              lineHeight: "1.6",
+              marginBottom: "1.5rem",
+              fontWeight: "500"
+            }}>
+              Descubre el poder de la sanación holística y el bienestar integral
+            </p>
+            
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: window.innerWidth <= 768 ? "1fr" : "repeat(3, 1fr)",
+              gap: "1.5rem",
+              marginTop: "1.5rem"
+            }}>
+              <div style={{
+                background: "white",
+                padding: "1.2rem",
+                borderRadius: "12px",
+                boxShadow: "0 4px 15px rgba(0,0,0,0.08)",
+                border: "1px solid rgba(212, 165, 116, 0.2)"
+              }}>
+                <div style={{
+                  fontSize: "1.8rem",
+                  marginBottom: "0.8rem"
+                }}>✨</div>
+                <h3 style={{
+                  color: PALETAS.D.miel,
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                  marginBottom: "0.6rem"
+                }}>Sanación Profunda</h3>
+                <p style={{
+                  color: "#666",
+                  fontSize: "0.9rem",
+                  lineHeight: "1.4",
+                  margin: "0"
+                }}>
+                  Técnicas ancestrales que trabajan a nivel físico, emocional y espiritual
+                </p>
+              </div>
+              
+              <div style={{
+                background: "white",
+                padding: "1.2rem",
+                borderRadius: "12px",
+                boxShadow: "0 4px 15px rgba(0,0,0,0.08)",
+                border: "1px solid rgba(212, 165, 116, 0.2)"
+              }}>
+                <div style={{
+                  fontSize: "1.8rem",
+                  marginBottom: "0.8rem"
+                }}>🌿</div>
+                <h3 style={{
+                  color: PALETAS.D.miel,
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                  marginBottom: "0.6rem"
+                }}>100% Natural</h3>
+                <p style={{
+                  color: "#666",
+                  fontSize: "0.9rem",
+                  lineHeight: "1.4",
+                  margin: "0"
+                }}>
+                  Métodos orgánicos que respetan tu cuerpo y el medio ambiente
+                </p>
+              </div>
+              
+              <div style={{
+                background: "white",
+                padding: "1.2rem",
+                borderRadius: "12px",
+                boxShadow: "0 4px 15px rgba(0,0,0,0.08)",
+                border: "1px solid rgba(212, 165, 116, 0.2)"
+              }}>
+                <div style={{
+                  fontSize: "1.8rem",
+                  marginBottom: "0.8rem"
+                }}>👩‍⚕️</div>
+                <h3 style={{
+                  color: PALETAS.D.miel,
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                  marginBottom: "0.6rem"
+                }}>Expertos Certificados</h3>
+                <p style={{
+                  color: "#666",
+                  fontSize: "0.9rem",
+                  lineHeight: "1.4",
+                  margin: "0"
+                }}>
+                  Profesionales con años de experiencia en terapias holísticas
+                </p>
+              </div>
+            </div>
+            
+            <div style={{
+              background: "linear-gradient(135deg, #d4a574 0%, #c9a876 100%)",
+              padding: "1.2rem",
+              borderRadius: "12px",
+              marginTop: "1.5rem",
+              boxShadow: "0 6px 20px rgba(212, 165, 116, 0.3)"
+            }}>
+              <p style={{
+                color: "white",
+                fontSize: "clamp(0.95rem, 2.5vw, 1.05rem)",
+                fontWeight: "600",
+                margin: "0",
+                textShadow: "0 1px 2px rgba(0,0,0,0.2)"
+              }}>
+                💝 "Tu bienestar es nuestra prioridad. Cada sesión está diseñada para nutrir tu alma y restaurar tu equilibrio natural"
+              </p>
+            </div>
+          </div>
           <div style={{ 
             display: "grid", 
             gridTemplateColumns: window.innerWidth <= 768 ? "repeat(auto-fill, minmax(250px, 1fr))" : "repeat(auto-fill, minmax(280px, 1fr))", 
