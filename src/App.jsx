@@ -806,6 +806,13 @@ function App() {
     setCouponSuccess('');
 
     try {
+      // Check if Firebase is initialized
+      if (!db) {
+        console.error('❌ Firebase not initialized');
+        setCouponError('Error: Base de datos no inicializada');
+        return;
+      }
+
       // First, refresh coupons from database to get latest data
       console.log('🔄 Refreshing coupons from database...');
       const couponsQuery = query(collection(db, 'coupons'), where('active', '==', true));
@@ -845,8 +852,13 @@ function App() {
       setCoupons(freshCoupons);
       
     } catch (error) {
-      console.error('Error applying coupon:', error);
-      setCouponError('Error al aplicar el cupón');
+      console.error('❌ Error applying coupon:', error);
+      console.error('❌ Error details:', {
+        message: error.message,
+        code: error.code,
+        stack: error.stack
+      });
+      setCouponError(`Error al aplicar el cupón: ${error.message}`);
     }
   };
 
@@ -854,6 +866,34 @@ function App() {
     setAppliedCoupon(null);
     setCouponError('');
     setCouponSuccess('');
+  };
+
+  // Test function to check if coupon exists
+  const testCouponExists = async (couponCode) => {
+    try {
+      if (!db) {
+        console.error('❌ Firebase not initialized');
+        return false;
+      }
+
+      console.log('🧪 Testing if coupon exists:', couponCode);
+      const couponsQuery = query(collection(db, 'coupons'));
+      const couponsSnapshot = await getDocs(couponsQuery);
+      const allCoupons = couponsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      
+      console.log('📋 All coupons in database:', allCoupons.map(c => ({ code: c.code, active: c.active })));
+      
+      const coupon = allCoupons.find(c => c.code.toUpperCase() === couponCode.toUpperCase());
+      console.log('🔍 Found coupon:', coupon);
+      
+      return coupon;
+    } catch (error) {
+      console.error('❌ Error testing coupon:', error);
+      return false;
+    }
   };
 
   const calculateDiscount = (cartTotal) => {
@@ -5418,24 +5458,44 @@ function App() {
                 }}>
                   🎫 Código de Descuento
                 </h3>
-                <button
-                  onClick={loadCoupons}
-                  style={{
-                    background: "transparent",
-                    border: "1px solid #D4A574",
-                    color: "#D4A574",
-                    padding: "0.25rem 0.5rem",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontSize: "0.8rem",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.25rem"
-                  }}
-                  title="Actualizar cupones"
-                >
-                  🔄 Actualizar
-                </button>
+                <div style={{ display: "flex", gap: "0.5rem" }}>
+                  <button
+                    onClick={loadCoupons}
+                    style={{
+                      background: "transparent",
+                      border: "1px solid #D4A574",
+                      color: "#D4A574",
+                      padding: "0.25rem 0.5rem",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      fontSize: "0.8rem",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.25rem"
+                    }}
+                    title="Actualizar cupones"
+                  >
+                    🔄 Actualizar
+                  </button>
+                  <button
+                    onClick={() => testCouponExists('WELCOME10')}
+                    style={{
+                      background: "transparent",
+                      border: "1px solid #2196F3",
+                      color: "#2196F3",
+                      padding: "0.25rem 0.5rem",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      fontSize: "0.8rem",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.25rem"
+                    }}
+                    title="Probar cupón WELCOME10"
+                  >
+                    🧪 Probar
+                  </button>
+                </div>
               </div>
               
               {appliedCoupon ? (
