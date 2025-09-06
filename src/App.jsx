@@ -2080,12 +2080,11 @@ function App() {
                 borderRadius: "8px",
                 background: wishlist.length > 0 
                   ? `linear-gradient(135deg, ${PALETAS.D.verde} 0%, #8EB080 100%)` 
-                  : `linear-gradient(135deg, ${PALETAS.D.crema} 0%, #f5f5f5 100%)`,
+                  : `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
                 border: `2px solid ${PALETAS.D.verde}`,
                 transition: "all 0.3s ease",
-                boxShadow: wishlist.length > 0 
-                  ? "0 2px 8px rgba(98, 141, 106, 0.3)"
-                  : "0 2px 8px rgba(0,0,0,0.1)"
+                boxShadow: "0 2px 8px rgba(212, 165, 116, 0.3)",
+                fontWeight: "600"
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "translateY(-2px)";
@@ -2102,11 +2101,11 @@ function App() {
             >
               <span style={{ fontSize: "20px" }}>{wishlist.length > 0 ? "❤️" : "🤍"}</span>
               <span style={{
-                color: wishlist.length > 0 ? "white" : PALETAS.D.verde,
+                color: "white",
                 fontSize: window.innerWidth <= 768 ? "0.8rem" : "0.9rem",
                 fontWeight: "600"
               }}>
-                {wishlist.length > 0 ? `Guardados (${wishlist.length})` : "Guardar"}
+                {wishlist.length > 0 ? `❤️ Guardados (${wishlist.length})` : "🤍 Guardar"}
               </span>
             </div>
             
@@ -2727,8 +2726,8 @@ function App() {
                       style={{
                         background: isInWishlist(product.id) 
                           ? `linear-gradient(135deg, ${PALETAS.D.verde} 0%, #8EB080 100%)` 
-                          : "transparent",
-                        color: isInWishlist(product.id) ? "white" : PALETAS.D.verde,
+                          : `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                        color: "white",
                         border: `2px solid ${PALETAS.D.verde}`,
                         padding: window.innerWidth <= 768 ? "0.7rem 1rem" : "0.6rem 1rem",
                         borderRadius: "25px",
