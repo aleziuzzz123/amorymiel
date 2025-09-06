@@ -1267,10 +1267,38 @@ export const getProductReviews = (productId, productName = '') => {
     return REVIEW_DATA[mappedName];
   }
   
-  // Generate product-specific reviews based on product type and benefits
-  const generateProductSpecificReviews = (productId, productName = '') => {
-    const reviewCount = Math.floor(Math.random() * 27) + 12; // 12-38 reviews
-    const reviews = [];
+    // Generate product-specific reviews based on product type and benefits
+    const generateProductSpecificReviews = (productId, productName = '') => {
+      const reviewCount = Math.floor(Math.random() * 27) + 12; // 12-38 reviews
+      const reviews = [];
+      
+      // Create unique review styles - some with emojis, some without, some with parentheses, some with dots
+      const createUniqueReview = (baseComment, rating) => {
+        const styles = [
+          // Style 1: Simple, no emojis, no parentheses
+          baseComment,
+          // Style 2: With emojis only
+          baseComment + " ✨",
+          // Style 3: With dots
+          baseComment + "...",
+          // Style 4: With parentheses
+          baseComment + " (muy bueno)",
+          // Style 5: With emojis and dots
+          baseComment + " ✨...",
+          // Style 6: With parentheses and emojis
+          baseComment + " (increible) ✨",
+          // Style 7: With dots and parentheses
+          baseComment + "... (recomendado)",
+          // Style 8: All three
+          baseComment + " ✨... (amazing)",
+          // Style 9: Just emojis at start
+          "✨ " + baseComment,
+          // Style 10: Just emojis at end
+          baseComment + " 🔥"
+        ];
+        
+        return styles[Math.floor(Math.random() * styles.length)];
+      };
     
     // Diverse names with varying lengths (2, 3, and 4 names) from different cultures
     const names = [
@@ -1391,26 +1419,26 @@ export const getProductReviews = (productId, productName = '') => {
       if (productType.includes('vela') || productNameLower.includes('vela')) {
         return {
           5: [
-            "omg estas velas estan increibles!! 🕯️✨ el olor es tan rico que no puedo parar de olerlas jajaja... mi mama me dice que estoy obsesionada 😅",
-            "las compre para mi altar y wowwwww se siente la energia desde el primer dia! 🔥 mi mama tambien las ama (y ella es muy picky) 💕",
-            "candles are sooo good! 🕯️ i use them every night now... the honey smell is like real honey not fake stuff (you know what i mean?) 🍯",
-            "estan geniales las velas! 😍 mi esposo dice que huele muy rico en toda la casa... ya voy a comprar mas (probablemente 5 mas) 🛒",
-            "perfect for my meditation! 🧘‍♀️ the wax burns so clean and the scent is amazing... totally worth it (even tho its a bit pricey) 💸",
-            "me encantan estas velas!! 🕯️✨ el aroma de miel es tan natural que parece que estoy en un panal de abejas... (literalmente) 🐝",
-            "increible calidad! 😱 estas velas han cambiado mi espacio de meditacion... la energia es tan positiva que no puedo explicarlo ✨",
-            "las velas estan perfectas! 🕯️ el olor es delicioso y duran mucho tiempo... definitivamente las recomiendo (ya le dije a 3 amigas) 👯‍♀️",
-            "so good! 🕯️ i bought 3 more after trying the first one... my whole family loves them (even my dad who never likes anything) 😂",
-            "estan increibles! ✨ el aroma es tan relajante que me duermo mejor cuando las uso... (mi terapeuta me recomendo aromaterapia) 🛏️",
-            "amazing candles! 🕯️ the natural wax is so pure and the honey scent is divine... perfect for rituals (i do them every full moon) 🌕",
-            "me fascinan estas velas! 😍 la cera es de excelente calidad y se nota que estan hechas con amor... (se siente la diferencia) 💕",
-            "wow estas velas son increibles! 🕯️✨ el olor es tan rico que no puedo parar de olerlas... (mi esposo me dice que estoy loca) 😅",
-            "las compre para mi altar y se siente la energia! 🔥 mi mama tambien las ama... (y ella es muy picky con estas cosas) 💕",
-            "candles are sooo good! 🕯️ i use them every night now... the honey smell is like real honey not fake stuff 🍯",
-            "estan geniales las velas! 😍 mi esposo dice que huele muy rico en toda la casa... ya voy a comprar mas 🛒",
-            "perfect for my meditation! 🧘‍♀️ the wax burns so clean and the scent is amazing... totally worth it 💸",
-            "me encantan estas velas!! 🕯️✨ el aroma de miel es tan natural que parece que estoy en un panal de abejas 🐝",
-            "increible calidad! 😱 estas velas han cambiado mi espacio de meditacion... la energia es tan positiva ✨",
-            "las velas estan perfectas! 🕯️ el olor es delicioso y duran mucho tiempo... definitivamente las recomiendo 👯‍♀️"
+            "omg estas velas estan increibles el olor es tan rico que no puedo parar de olerlas jajaja",
+            "las compre para mi altar y wowwwww se siente la energia desde el primer dia mi mama tambien las ama",
+            "candles are sooo good i use them every night now the honey smell is like real honey not fake stuff",
+            "estan geniales las velas mi esposo dice que huele muy rico en toda la casa ya voy a comprar mas",
+            "perfect for my meditation the wax burns so clean and the scent is amazing totally worth it",
+            "me encantan estas velas el aroma de miel es tan natural que parece que estoy en un panal de abejas",
+            "increible calidad estas velas han cambiado mi espacio de meditacion la energia es tan positiva que no puedo explicarlo",
+            "las velas estan perfectas el olor es delicioso y duran mucho tiempo definitivamente las recomiendo",
+            "so good i bought 3 more after trying the first one my whole family loves them",
+            "estan increibles el aroma es tan relajante que me duermo mejor cuando las uso",
+            "amazing candles the natural wax is so pure and the honey scent is divine perfect for rituals",
+            "me fascinan estas velas la cera es de excelente calidad y se nota que estan hechas con amor",
+            "wow estas velas son increibles el olor es tan rico que no puedo parar de olerlas",
+            "las compre para mi altar y se siente la energia mi mama tambien las ama",
+            "candles are sooo good i use them every night now the honey smell is like real honey not fake stuff",
+            "estan geniales las velas mi esposo dice que huele muy rico en toda la casa ya voy a comprar mas",
+            "perfect for my meditation the wax burns so clean and the scent is amazing totally worth it",
+            "me encantan estas velas el aroma de miel es tan natural que parece que estoy en un panal de abejas",
+            "increible calidad estas velas han cambiado mi espacio de meditacion la energia es tan positiva",
+            "las velas estan perfectas el olor es delicioso y duran mucho tiempo definitivamente las recomiendo"
           ],
           4: [
             "muy buenas velas! 🕯️ el aroma esta rico pero esperaba que fueran mas grandes... (la calidad es buena tho) 👍",
@@ -1858,7 +1886,8 @@ export const getProductReviews = (productId, productName = '') => {
       let commentAttempts = 0;
       const availableComments = productComments[rating] || productComments[5];
       do {
-        randomComment = availableComments[Math.floor(Math.random() * availableComments.length)];
+        const baseComment = availableComments[Math.floor(Math.random() * availableComments.length)];
+        randomComment = createUniqueReview(baseComment, rating);
         commentAttempts++;
       } while (usedComments.has(randomComment) && commentAttempts < 50);
       usedComments.add(randomComment);
