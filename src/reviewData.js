@@ -1270,7 +1270,7 @@ export const getProductReviews = (productId) => {
   // Fallback: Generate natural, varied reviews for any product that doesn't have specific reviews
   // This ensures all products have some reviews with realistic distribution
   const generateNaturalReviews = (productId) => {
-    const reviewCount = Math.floor(Math.random() * 26) + 8; // 8-34 reviews
+    const reviewCount = Math.floor(Math.random() * 27) + 12; // 12-38 reviews
     const reviews = [];
     
     // Spanish names for variety
@@ -1284,57 +1284,86 @@ export const getProductReviews = (productId) => {
       "Rafael Silva", "Monica Torres", "Héctor López", "Beatriz Ruiz", "Oscar Martínez"
     ];
     
-    // Realistic comments with varied lengths and styles
-    const commentTemplates = [
+    // Realistic comments organized by rating
+    const fiveStarComments = [
       "¡Excelente producto! La calidad es excepcional y se nota que está hecho con mucho amor. Muy recomendado!",
       "Increíble calidad! He notado cambios positivos desde que lo uso. Definitivamente volveré a comprar.",
-      "Muy bueno, aunque esperaba un poco más de cantidad. Pero la calidad general es excelente.",
-      "Perfecto para mis rituales. El aroma es muy agradable y la calidad es excepcional. Muy recomendado!",
-      "Excelente producto! Realmente funciona y se nota la diferencia. Definitivamente lo recomiendo.",
       "¡Increíble! Las velas tienen un aroma tan natural y relajante. Se siente la energía positiva desde el primer momento.",
       "Perfectas para mis rituales de abundancia. La cera es de excelente calidad y se nota que están hechas con amor.",
-      "Muy buenas velas, el aroma es delicioso. Solo me gustaría que fueran un poco más grandes, pero la calidad es excelente.",
       "Este aceite realmente funciona. Desde que lo uso siento que las oportunidades llegan más fácilmente. Muy poderoso.",
       "Excelente calidad. Lo uso en mis rituales y he notado cambios positivos en mi vida. Definitivamente lo recomiendo.",
-      "Muy bueno, el aroma es agradable y la presentación es hermosa. Se nota que está hecho con ingredientes naturales.",
       "El agua Florida más pura que he encontrado. Perfecta para limpieza espiritual. El aroma es auténtico y duradero.",
       "Excelente producto. Lo uso diariamente y siento la diferencia energética. Muy recomendado para limpieza.",
-      "Muy buena calidad, el aroma es tradicional y auténtico. Perfecto para mis rituales de limpieza.",
       "¡Fantástico! El producto superó mis expectativas. La calidad es increíble y el servicio excelente.",
-      "Buen producto, cumple con lo esperado. La entrega fue rápida y el empaque muy cuidado.",
       "Me encanta este producto. Lo he estado usando por semanas y ya veo resultados. Muy recomendado!",
-      "Calidad excelente, aunque el precio es un poco alto. Pero vale la pena por la calidad.",
       "¡Perfecto! Exactamente lo que necesitaba. El aroma es delicioso y la duración es excelente.",
+      "¡Increíble! No puedo creer lo bien que funciona. Definitivamente voy a comprar más productos de esta marca.",
+      "¡Increíble calidad! He probado muchos productos similares y este es definitivamente el mejor.",
+      "¡Fantástico! El producto superó todas mis expectativas. Definitivamente lo recomiendo.",
+      "¡Perfecto para mis necesidades! El aroma es muy agradable y la calidad es excepcional."
+    ];
+
+    const fourStarComments = [
+      "Muy bueno, aunque esperaba un poco más de cantidad. Pero la calidad general es excelente.",
+      "Muy bueno, el aroma es agradable y la presentación es hermosa. Se nota que está hecho con ingredientes naturales.",
+      "Muy buena calidad, el aroma es tradicional y auténtico. Perfecto para mis rituales de limpieza.",
+      "Buen producto, cumple con lo esperado. La entrega fue rápida y el empaque muy cuidado.",
+      "Calidad excelente, aunque el precio es un poco alto. Pero vale la pena por la calidad.",
       "Muy satisfecha con la compra. El producto llegó en perfectas condiciones y funciona muy bien.",
       "Buen producto en general, aunque esperaba un aroma un poco más intenso. Pero la calidad es buena.",
-      "¡Increíble! No puedo creer lo bien que funciona. Definitivamente voy a comprar más productos de esta marca.",
       "Excelente relación calidad-precio. El producto es muy bueno y el servicio al cliente es excelente.",
       "Muy contenta con mi compra. El producto es exactamente como se describe y la entrega fue rápida.",
       "Buen producto, aunque me gustaría que fuera un poco más grande. Pero la calidad es excelente.",
-      "¡Perfecto para mis necesidades! El aroma es muy agradable y la calidad es excepcional.",
       "Muy satisfecho con la compra. El producto funciona muy bien y la presentación es hermosa.",
       "Excelente producto! La calidad es excepcional y se nota que está hecho con mucho cuidado.",
       "Buen producto en general, aunque el aroma podría ser un poco más fuerte. Pero funciona bien.",
-      "¡Increíble calidad! He probado muchos productos similares y este es definitivamente el mejor.",
       "Muy contenta con mi compra. El producto es exactamente lo que esperaba y más.",
       "Excelente servicio y producto. La entrega fue rápida y el producto llegó en perfectas condiciones.",
       "Buen producto, cumple con su función. Aunque esperaba algo un poco diferente, funciona bien.",
-      "¡Fantástico! El producto superó todas mis expectativas. Definitivamente lo recomiendo.",
       "Muy satisfecha con la compra. El producto es de excelente calidad y el aroma es delicioso."
+    ];
+
+    const threeStarComments = [
+      "Está bien, pero esperaba algo más intenso. La calidad es buena pero no es lo que esperaba.",
+      "Buen producto, aunque el aroma podría ser más fuerte. Funciona bien pero no es excepcional.",
+      "Muy satisfecho con la compra. El producto funciona muy bien y la presentación es hermosa.",
+      "Está bien, cumple su función básica. No es extraordinario pero funciona.",
+      "Buen producto en general, aunque esperaba más duración. Pero cumple con lo básico.",
+      "Está bien, aunque el precio es un poco alto para lo que ofrece. Pero funciona.",
+      "Buen producto, aunque me gustaría que fuera un poco más grande. Pero la calidad es buena.",
+      "Está bien, aunque el aroma podría ser más intenso. Pero funciona bien para el uso básico."
+    ];
+
+    const twoStarComments = [
+      "No es lo que esperaba. El aroma es muy suave y la duración es corta.",
+      "Está bien pero no cumple con mis expectativas. El precio es alto para lo que ofrece.",
+      "No me convenció del todo. El producto funciona pero no es excepcional.",
+      "Esperaba más del producto. No es malo pero tampoco es extraordinario."
     ];
     
     // Generate reviews with natural distribution
     for (let i = 0; i < reviewCount; i++) {
       const randomName = names[Math.floor(Math.random() * names.length)];
-      const randomComment = commentTemplates[Math.floor(Math.random() * commentTemplates.length)];
       
-      // Natural rating distribution: 70% 5-star, 20% 4-star, 8% 3-star, 2% 2-star
+      // Natural rating distribution: 75% 5-star, 18% 4-star, 5% 3-star, 2% 2-star
       let rating;
       const rand = Math.random();
-      if (rand < 0.70) rating = 5;
-      else if (rand < 0.90) rating = 4;
+      if (rand < 0.75) rating = 5;
+      else if (rand < 0.93) rating = 4;
       else if (rand < 0.98) rating = 3;
       else rating = 2;
+      
+      // Select appropriate comment based on rating
+      let randomComment;
+      if (rating === 5) {
+        randomComment = fiveStarComments[Math.floor(Math.random() * fiveStarComments.length)];
+      } else if (rating === 4) {
+        randomComment = fourStarComments[Math.floor(Math.random() * fourStarComments.length)];
+      } else if (rating === 3) {
+        randomComment = threeStarComments[Math.floor(Math.random() * threeStarComments.length)];
+      } else {
+        randomComment = twoStarComments[Math.floor(Math.random() * twoStarComments.length)];
+      }
       
       // Generate random date within last 6 months
       const randomDays = Math.floor(Math.random() * 180);
