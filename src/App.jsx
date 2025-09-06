@@ -3532,11 +3532,41 @@ function App() {
                     <p style={{
                       fontSize: "0.9rem",
                       color: "#666",
-                      margin: "0 0 1.2rem 0",
+                      margin: "0 0 1rem 0",
                       lineHeight: "1.5"
                     }}>
                       {product.descripcion}
                     </p>
+                    
+                    {/* Rating Display */}
+                    <div style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      marginBottom: "1rem"
+                    }}>
+                      <div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.2rem"
+                      }}>
+                        {[...Array(5)].map((_, i) => (
+                          <span key={i} style={{
+                            color: i < Math.floor(calculateAverageRating(product.id)) ? "#FFD700" : "#E0E0E0",
+                            fontSize: "14px"
+                          }}>
+                            ⭐
+                          </span>
+                        ))}
+                      </div>
+                      <span style={{
+                        fontSize: "0.8rem",
+                        color: "#666",
+                        fontWeight: "500"
+                      }}>
+                        {calculateAverageRating(product.id).toFixed(1)} ({getReviewCount(product.id)})
+                      </span>
+                    </div>
 
                     {/* Price */}
                     <div style={{
@@ -3636,6 +3666,45 @@ function App() {
                       >
                         {user ? 'Agregar al Carrito' : 'Inicia sesión para comprar'}
                       </button>
+                      
+                      {/* Write Review Button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openReviewModal(product);
+                        }}
+                        style={{
+                          background: "transparent",
+                          color: PALETAS.D.verde,
+                          border: `2px solid ${PALETAS.D.verde}`,
+                          padding: window.innerWidth <= 768 ? "0.7rem 1rem" : "0.6rem 1rem",
+                          borderRadius: "25px",
+                          cursor: "pointer",
+                          fontSize: window.innerWidth <= 768 ? "0.85rem" : "0.8rem",
+                          fontWeight: "600",
+                          transition: "all 0.3s ease",
+                          flex: window.innerWidth <= 768 ? "1" : "0 0 auto",
+                          minWidth: window.innerWidth <= 768 ? "auto" : "100px",
+                          height: window.innerWidth <= 768 ? "44px" : "36px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center"
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.background = PALETAS.D.verde;
+                          e.target.style.color = "white";
+                          e.target.style.transform = "translateY(-2px)";
+                          e.target.style.boxShadow = "0 4px 12px rgba(98, 141, 106, 0.3)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.background = "transparent";
+                          e.target.style.color = PALETAS.D.verde;
+                          e.target.style.transform = "translateY(0)";
+                          e.target.style.boxShadow = "none";
+                        }}
+                      >
+                        ⭐ Reseñar
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -3687,40 +3756,106 @@ function App() {
                   />
                   <div style={{ padding: "1.5rem" }}>
                     <h3 style={{ margin: "0 0 0.5rem 0", color: PALETAS.D.carbon }}>{service.nombre}</h3>
-                    <p style={{ color: "#666", fontSize: "0.9rem", margin: "0 0 1rem 0" }}>
+                    <p style={{ color: "#666", fontSize: "0.9rem", margin: "0 0 0.8rem 0" }}>
                       {service.duracion} • {service.modalidad}
                     </p>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <span style={{ fontSize: "1.3rem", fontWeight: "bold", color: PALETAS.D.miel }}>
-                        ${service.precio} {service.moneda}
+                    
+                    {/* Rating Display */}
+                    <div style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      marginBottom: "1rem"
+                    }}>
+                      <div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.2rem"
+                      }}>
+                        {[...Array(5)].map((_, i) => (
+                          <span key={i} style={{
+                            color: i < Math.floor(calculateAverageRating(service.id)) ? "#FFD700" : "#E0E0E0",
+                            fontSize: "14px"
+                          }}>
+                            ⭐
+                          </span>
+                        ))}
+                      </div>
+                      <span style={{
+                        fontSize: "0.8rem",
+                        color: "#666",
+                        fontWeight: "500"
+                      }}>
+                        {calculateAverageRating(service.id).toFixed(1)} ({getReviewCount(service.id)})
                       </span>
-                      <a 
-                        href={service.bookingLink} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        style={{ 
-                          background: "#ffd54f",
-                          color: "white",
-                          border: "none",
-                          padding: "0.75rem 1.5rem",
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <span style={{ fontSize: "1.3rem", fontWeight: "bold", color: PALETAS.D.miel }}>
+                          ${service.precio} {service.moneda}
+                        </span>
+                        <a 
+                          href={service.bookingLink} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          style={{ 
+                            background: "#ffd54f",
+                            color: "white",
+                            border: "none",
+                            padding: "0.75rem 1.5rem",
+                            borderRadius: "25px",
+                            cursor: "pointer",
+                            fontSize: "0.9rem",
+                            fontWeight: "600",
+                            textDecoration: "none",
+                            transition: "all 0.3s ease"
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.background = "#ffc107";
+                            e.target.style.transform = "translateY(-2px)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.background = "#ffd54f";
+                            e.target.style.transform = "translateY(0)";
+                          }}
+                        >
+                          Agendar
+                        </a>
+                      </div>
+                      
+                      {/* Write Review Button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openReviewModal(service);
+                        }}
+                        style={{
+                          background: "transparent",
+                          color: PALETAS.D.verde,
+                          border: `2px solid ${PALETAS.D.verde}`,
+                          padding: "0.6rem 1rem",
                           borderRadius: "25px",
                           cursor: "pointer",
-                          fontSize: "0.9rem",
+                          fontSize: "0.8rem",
                           fontWeight: "600",
-                          textDecoration: "none",
-                          transition: "all 0.3s ease"
+                          transition: "all 0.3s ease",
+                          width: "100%"
                         }}
                         onMouseEnter={(e) => {
-                          e.target.style.background = "#ffc107";
+                          e.target.style.background = PALETAS.D.verde;
+                          e.target.style.color = "white";
                           e.target.style.transform = "translateY(-2px)";
+                          e.target.style.boxShadow = "0 4px 12px rgba(98, 141, 106, 0.3)";
                         }}
                         onMouseLeave={(e) => {
-                          e.target.style.background = "#ffd54f";
+                          e.target.style.background = "transparent";
+                          e.target.style.color = PALETAS.D.verde;
                           e.target.style.transform = "translateY(0)";
+                          e.target.style.boxShadow = "none";
                         }}
                       >
-                        Agendar
-                      </a>
+                        ⭐ Reseñar Servicio
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -5449,7 +5584,7 @@ function App() {
                       </div>
                     ))}
                   </div>
-                </div>
+        </div>
 
                 {/* Price and Add to Cart */}
           <div style={{

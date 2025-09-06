@@ -350,6 +350,158 @@ export const REVIEW_DATA = {
       date: "2024-01-09",
       verified: true
     }
+  ],
+
+  // Kids Products Reviews
+  "locion-calmante-ninos": [
+    {
+      id: "rev-kids-locion-1",
+      userName: "María Elena",
+      userEmail: "maria.elena@email.com",
+      rating: 5,
+      comment: "Perfecta para mi hija de 5 años. La loción es muy suave y el aroma es relajante. La uso antes de dormir y funciona muy bien.",
+      date: "2024-01-16",
+      verified: true
+    },
+    {
+      id: "rev-kids-locion-2",
+      userName: "Carlos Mendoza",
+      userEmail: "carlos.mendoza@email.com",
+      rating: 5,
+      comment: "Excelente para niños con piel sensible. Mi hijo se duerme más fácilmente después de aplicarla. Muy recomendada.",
+      date: "2024-01-13",
+      verified: true
+    },
+    {
+      id: "rev-kids-locion-3",
+      userName: "Ana Patricia",
+      userEmail: "ana.patricia@email.com",
+      rating: 4,
+      comment: "Muy buena loción, el aroma es suave y no irrita la piel de mi bebé. Se nota que está hecha con ingredientes naturales.",
+      date: "2024-01-10",
+      verified: true
+    }
+  ],
+
+  "spray-dormir-tranquilo": [
+    {
+      id: "rev-kids-spray-1",
+      userName: "Laura González",
+      userEmail: "laura.gonzalez@email.com",
+      rating: 5,
+      comment: "Increíble para crear un ambiente relajante. Mi hija se duerme mucho más rápido y profundo. El aroma es muy suave.",
+      date: "2024-01-17",
+      verified: true
+    },
+    {
+      id: "rev-kids-spray-2",
+      userName: "Roberto Silva",
+      userEmail: "roberto.silva@email.com",
+      rating: 5,
+      comment: "Perfecto para las noches difíciles. El spray crea un ambiente muy tranquilo y mi hijo se relaja inmediatamente.",
+      date: "2024-01-14",
+      verified: true
+    },
+    {
+      id: "rev-kids-spray-3",
+      userName: "Carmen Vega",
+      userEmail: "carmen.vega@email.com",
+      rating: 4,
+      comment: "Muy bueno para ayudar a los niños a dormir. El aroma es agradable y no es muy fuerte. Recomendado.",
+      date: "2024-01-11",
+      verified: true
+    }
+  ],
+
+  "meditacion-guiada-ninos": [
+    {
+      id: "rev-kids-meditacion-1",
+      userName: "Isabel Morales",
+      userEmail: "isabel.morales@email.com",
+      rating: 5,
+      comment: "Excelente servicio de meditación para niños. Mi hija aprendió a relajarse y manejar sus emociones. Muy profesional.",
+      date: "2024-01-18",
+      verified: true
+    },
+    {
+      id: "rev-kids-meditacion-2",
+      userName: "Fernando Castro",
+      userEmail: "fernando.castro@email.com",
+      rating: 5,
+      comment: "Perfecto para niños ansiosos. Las técnicas son muy efectivas y mi hijo se siente más tranquilo. Altamente recomendado.",
+      date: "2024-01-15",
+      verified: true
+    },
+    {
+      id: "rev-kids-meditacion-3",
+      userName: "Lucía Herrera",
+      userEmail: "lucia.herrera@email.com",
+      rating: 4,
+      comment: "Muy bueno para enseñar a los niños a meditar. Las sesiones son divertidas y educativas. Mi hija las disfruta mucho.",
+      date: "2024-01-12",
+      verified: true
+    }
+  ],
+
+  // Kids Services Reviews
+  "serv-meditacion-ninos": [
+    {
+      id: "rev-kids-serv-meditacion-1",
+      userName: "Patricia López",
+      userEmail: "patricia.lopez@email.com",
+      rating: 5,
+      comment: "Servicio excepcional de meditación para niños. La instructora es muy paciente y las técnicas son muy efectivas.",
+      date: "2024-01-19",
+      verified: true
+    },
+    {
+      id: "rev-kids-serv-meditacion-2",
+      userName: "Miguel Torres",
+      userEmail: "miguel.torres@email.com",
+      rating: 5,
+      comment: "Mi hijo ha mejorado mucho su concentración y calma. El servicio es muy profesional y los resultados son notables.",
+      date: "2024-01-16",
+      verified: true
+    },
+    {
+      id: "rev-kids-serv-meditacion-3",
+      userName: "Carmen Vega",
+      userEmail: "carmen.vega@email.com",
+      rating: 4,
+      comment: "Muy bueno para niños inquietos. Las sesiones son divertidas y educativas. Recomendado para padres que buscan alternativas naturales.",
+      date: "2024-01-13",
+      verified: true
+    }
+  ],
+
+  "serv-yoga-ninos": [
+    {
+      id: "rev-kids-serv-yoga-1",
+      userName: "Elena Ramírez",
+      userEmail: "elena.ramirez@email.com",
+      rating: 5,
+      comment: "Excelente clase de yoga para niños. Mi hija se divierte mucho y ha mejorado su flexibilidad y concentración.",
+      date: "2024-01-20",
+      verified: true
+    },
+    {
+      id: "rev-kids-serv-yoga-2",
+      userName: "Jorge Mendoza",
+      userEmail: "jorge.mendoza@email.com",
+      rating: 5,
+      comment: "Perfecto para niños activos. Las posturas son adaptadas para niños y mi hijo las disfruta mucho. Muy recomendado.",
+      date: "2024-01-17",
+      verified: true
+    },
+    {
+      id: "rev-kids-serv-yoga-3",
+      userName: "Sofia Jiménez",
+      userEmail: "sofia.jimenez@email.com",
+      rating: 4,
+      comment: "Muy bueno para enseñar a los niños a relajarse. Las clases son divertidas y los instructores son muy pacientes.",
+      date: "2024-01-14",
+      verified: true
+    }
   ]
 };
 
