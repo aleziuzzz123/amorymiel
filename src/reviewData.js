@@ -1267,57 +1267,95 @@ export const getProductReviews = (productId) => {
     return REVIEW_DATA[mappedName];
   }
   
-  // Fallback: Generate reviews for any product that doesn't have specific reviews
-  // This ensures all products have some reviews
-  const fallbackReviews = [
-    {
-      id: `rev-${productId}-fallback-1`,
-      userName: "María González",
-      userEmail: "maria.gonzalez@email.com",
-      rating: 5,
-      comment: "¡Excelente producto! La calidad es excepcional y se nota que está hecho con mucho amor. Muy recomendado!",
-      date: "2024-01-20",
-      verified: true
-    },
-    {
-      id: `rev-${productId}-fallback-2`,
-      userName: "Carlos Ruiz",
-      userEmail: "carlos.ruiz@email.com",
-      rating: 5,
-      comment: "Increíble calidad! He notado cambios positivos desde que lo uso. Definitivamente volveré a comprar.",
-      date: "2024-01-18",
-      verified: true
-    },
-    {
-      id: `rev-${productId}-fallback-3`,
-      userName: "Ana Martínez",
-      userEmail: "ana.martinez@email.com",
-      rating: 4,
-      comment: "Muy bueno, aunque esperaba un poco más de cantidad. Pero la calidad general es excelente.",
-      date: "2024-01-15",
-      verified: true
-    },
-    {
-      id: `rev-${productId}-fallback-4`,
-      userName: "Roberto Silva",
-      userEmail: "roberto.silva@email.com",
-      rating: 5,
-      comment: "Perfecto para mis rituales. El aroma es muy agradable y la calidad es excepcional. Muy recomendado!",
-      date: "2024-01-22",
-      verified: true
-    },
-    {
-      id: `rev-${productId}-fallback-5`,
-      userName: "Patricia López",
-      userEmail: "patricia.lopez@email.com",
-      rating: 5,
-      comment: "Excelente producto! Realmente funciona y se nota la diferencia. Definitivamente lo recomiendo.",
-      date: "2024-01-19",
-      verified: true
+  // Fallback: Generate natural, varied reviews for any product that doesn't have specific reviews
+  // This ensures all products have some reviews with realistic distribution
+  const generateNaturalReviews = (productId) => {
+    const reviewCount = Math.floor(Math.random() * 26) + 8; // 8-34 reviews
+    const reviews = [];
+    
+    // Spanish names for variety
+    const names = [
+      "María González", "Carlos Ruiz", "Ana Martínez", "Roberto Silva", "Patricia López",
+      "Miguel Torres", "Carmen Vega", "Fernando Castro", "Isabel Morales", "Diego Navarro",
+      "Sofia Jiménez", "Valentina Cruz", "Gabriela Ríos", "Alejandra Flores", "Ricardo Peña",
+      "Elena Ramírez", "Jorge Mendoza", "Lucía Herrera", "Andrés Vega", "Natalia Castro",
+      "Pablo Morales", "Camila Silva", "Sebastián López", "Valeria Torres", "Daniel Ruiz",
+      "Andrea Martínez", "Luis González", "Paola Herrera", "Mario Castro", "Claudia Vega",
+      "Rafael Silva", "Monica Torres", "Héctor López", "Beatriz Ruiz", "Oscar Martínez"
+    ];
+    
+    // Realistic comments with varied lengths and styles
+    const commentTemplates = [
+      "¡Excelente producto! La calidad es excepcional y se nota que está hecho con mucho amor. Muy recomendado!",
+      "Increíble calidad! He notado cambios positivos desde que lo uso. Definitivamente volveré a comprar.",
+      "Muy bueno, aunque esperaba un poco más de cantidad. Pero la calidad general es excelente.",
+      "Perfecto para mis rituales. El aroma es muy agradable y la calidad es excepcional. Muy recomendado!",
+      "Excelente producto! Realmente funciona y se nota la diferencia. Definitivamente lo recomiendo.",
+      "¡Increíble! Las velas tienen un aroma tan natural y relajante. Se siente la energía positiva desde el primer momento.",
+      "Perfectas para mis rituales de abundancia. La cera es de excelente calidad y se nota que están hechas con amor.",
+      "Muy buenas velas, el aroma es delicioso. Solo me gustaría que fueran un poco más grandes, pero la calidad es excelente.",
+      "Este aceite realmente funciona. Desde que lo uso siento que las oportunidades llegan más fácilmente. Muy poderoso.",
+      "Excelente calidad. Lo uso en mis rituales y he notado cambios positivos en mi vida. Definitivamente lo recomiendo.",
+      "Muy bueno, el aroma es agradable y la presentación es hermosa. Se nota que está hecho con ingredientes naturales.",
+      "El agua Florida más pura que he encontrado. Perfecta para limpieza espiritual. El aroma es auténtico y duradero.",
+      "Excelente producto. Lo uso diariamente y siento la diferencia energética. Muy recomendado para limpieza.",
+      "Muy buena calidad, el aroma es tradicional y auténtico. Perfecto para mis rituales de limpieza.",
+      "¡Fantástico! El producto superó mis expectativas. La calidad es increíble y el servicio excelente.",
+      "Buen producto, cumple con lo esperado. La entrega fue rápida y el empaque muy cuidado.",
+      "Me encanta este producto. Lo he estado usando por semanas y ya veo resultados. Muy recomendado!",
+      "Calidad excelente, aunque el precio es un poco alto. Pero vale la pena por la calidad.",
+      "¡Perfecto! Exactamente lo que necesitaba. El aroma es delicioso y la duración es excelente.",
+      "Muy satisfecha con la compra. El producto llegó en perfectas condiciones y funciona muy bien.",
+      "Buen producto en general, aunque esperaba un aroma un poco más intenso. Pero la calidad es buena.",
+      "¡Increíble! No puedo creer lo bien que funciona. Definitivamente voy a comprar más productos de esta marca.",
+      "Excelente relación calidad-precio. El producto es muy bueno y el servicio al cliente es excelente.",
+      "Muy contenta con mi compra. El producto es exactamente como se describe y la entrega fue rápida.",
+      "Buen producto, aunque me gustaría que fuera un poco más grande. Pero la calidad es excelente.",
+      "¡Perfecto para mis necesidades! El aroma es muy agradable y la calidad es excepcional.",
+      "Muy satisfecho con la compra. El producto funciona muy bien y la presentación es hermosa.",
+      "Excelente producto! La calidad es excepcional y se nota que está hecho con mucho cuidado.",
+      "Buen producto en general, aunque el aroma podría ser un poco más fuerte. Pero funciona bien.",
+      "¡Increíble calidad! He probado muchos productos similares y este es definitivamente el mejor.",
+      "Muy contenta con mi compra. El producto es exactamente lo que esperaba y más.",
+      "Excelente servicio y producto. La entrega fue rápida y el producto llegó en perfectas condiciones.",
+      "Buen producto, cumple con su función. Aunque esperaba algo un poco diferente, funciona bien.",
+      "¡Fantástico! El producto superó todas mis expectativas. Definitivamente lo recomiendo.",
+      "Muy satisfecha con la compra. El producto es de excelente calidad y el aroma es delicioso."
+    ];
+    
+    // Generate reviews with natural distribution
+    for (let i = 0; i < reviewCount; i++) {
+      const randomName = names[Math.floor(Math.random() * names.length)];
+      const randomComment = commentTemplates[Math.floor(Math.random() * commentTemplates.length)];
+      
+      // Natural rating distribution: 70% 5-star, 20% 4-star, 8% 3-star, 2% 2-star
+      let rating;
+      const rand = Math.random();
+      if (rand < 0.70) rating = 5;
+      else if (rand < 0.90) rating = 4;
+      else if (rand < 0.98) rating = 3;
+      else rating = 2;
+      
+      // Generate random date within last 6 months
+      const randomDays = Math.floor(Math.random() * 180);
+      const reviewDate = new Date();
+      reviewDate.setDate(reviewDate.getDate() - randomDays);
+      
+      reviews.push({
+        id: `rev-${productId}-natural-${i + 1}`,
+        userName: randomName,
+        userEmail: `${randomName.toLowerCase().replace(' ', '.')}@email.com`,
+        rating: rating,
+        comment: randomComment,
+        date: reviewDate.toISOString().split('T')[0],
+        verified: Math.random() > 0.1 // 90% verified purchases
+      });
     }
-  ];
+    
+    return reviews;
+  };
   
-  return fallbackReviews;
+  return generateNaturalReviews(productId);
 };
 
 // Helper function to calculate average rating

@@ -764,17 +764,49 @@ function App() {
   const toggleWishlist = (product) => {
     setWishlist(prev => {
       const isInWishlist = prev.some(item => item.id === product.id);
+      let newWishlist;
       if (isInWishlist) {
-        return prev.filter(item => item.id !== product.id);
+        newWishlist = prev.filter(item => item.id !== product.id);
       } else {
-        return [...prev, product];
+        newWishlist = [...prev, product];
       }
+      
+      // Save to localStorage
+      localStorage.setItem('amor-y-miel-wishlist', JSON.stringify(newWishlist));
+      return newWishlist;
     });
   };
 
   const isInWishlist = (productId) => {
     return wishlist.some(item => item.id === productId);
   };
+
+  // Load wishlist and cart from localStorage on component mount
+  useEffect(() => {
+    // Load wishlist
+    const savedWishlist = localStorage.getItem('amor-y-miel-wishlist');
+    if (savedWishlist) {
+      try {
+        const parsedWishlist = JSON.parse(savedWishlist);
+        setWishlist(parsedWishlist);
+      } catch (error) {
+        console.error('Error loading wishlist from localStorage:', error);
+        localStorage.removeItem('amor-y-miel-wishlist');
+      }
+    }
+
+    // Load cart
+    const savedCart = localStorage.getItem('amor-y-miel-cart');
+    if (savedCart) {
+      try {
+        const parsedCart = JSON.parse(savedCart);
+        setCart(parsedCart);
+      } catch (error) {
+        console.error('Error loading cart from localStorage:', error);
+        localStorage.removeItem('amor-y-miel-cart');
+      }
+    }
+  }, []);
 
   // Review system functions
   const openReviewModal = (product) => {
@@ -1090,14 +1122,20 @@ function App() {
 
     setCart(prev => {
       const existingItem = prev.find(item => item.id === product.id);
+      let newCart;
       if (existingItem) {
-        return prev.map(item => 
+        newCart = prev.map(item => 
           item.id === product.id 
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
+      } else {
+        newCart = [...prev, { ...product, quantity: 1 }];
       }
-      return [...prev, { ...product, quantity: 1 }];
+      
+      // Save to localStorage
+      localStorage.setItem('amor-y-miel-cart', JSON.stringify(newCart));
+      return newCart;
     });
 
     // Track cart addition for abandonment follow-up
@@ -1208,7 +1246,11 @@ function App() {
   // Migration function removed - no longer needed
 
   const removeFromCart = (productId) => {
-    setCart(prev => prev.filter(item => item.id !== productId));
+    setCart(prev => {
+      const newCart = prev.filter(item => item.id !== productId);
+      localStorage.setItem('amor-y-miel-cart', JSON.stringify(newCart));
+      return newCart;
+    });
   };
 
   const updateQuantity = (productId, newQuantity) => {
@@ -1216,11 +1258,15 @@ function App() {
       removeFromCart(productId);
       return;
     }
-    setCart(prev => prev.map(item => 
-      item.id === productId 
-        ? { ...item, quantity: newQuantity }
-        : item
-    ));
+    setCart(prev => {
+      const newCart = prev.map(item => 
+        item.id === productId 
+          ? { ...item, quantity: newQuantity }
+          : item
+      );
+      localStorage.setItem('amor-y-miel-cart', JSON.stringify(newCart));
+      return newCart;
+    });
   };
 
   const getCartTotal = () => {
