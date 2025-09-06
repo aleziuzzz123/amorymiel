@@ -292,6 +292,13 @@ function App() {
   const [showFilters, setShowFilters] = useState(false);
   const [wishlist, setWishlist] = useState([]);
   const [showWishlist, setShowWishlist] = useState(false);
+  
+  // Coupon system state
+  const [coupons, setCoupons] = useState([]);
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponCode, setCouponCode] = useState('');
+  const [couponError, setCouponError] = useState('');
+  const [couponSuccess, setCouponSuccess] = useState('');
   const [products, setProducts] = useState([]);
   const [services, setServices] = useState([]);
   const [kidsProducts, setKidsProducts] = useState([]);
@@ -423,6 +430,7 @@ function App() {
   // Load products when component mounts
   useEffect(() => {
     loadProductsFromFirestore();
+    loadCoupons();
   }, []);
 
   // Auto-open cart when items are added, close when empty
@@ -737,6 +745,125 @@ function App() {
 
   const isInWishlist = (productId) => {
     return wishlist.some(item => item.id === productId);
+  };
+
+  // Coupon system functions
+  const loadCoupons = async () => {
+    try {
+      const couponsQuery = query(collection(db, 'coupons'), where('active', '==', true));
+      const couponsSnapshot = await getDocs(couponsQuery);
+      const couponsData = couponsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setCoupons(couponsData);
+    } catch (error) {
+      console.error('Error loading coupons:', error);
+    }
+  };
+
+  const validateCoupon = (coupon, cartTotal) => {
+    const now = new Date();
+    
+    // Check if coupon is active
+    if (!coupon.active) {
+      return { valid: false, message: 'Este cupón no está activo' };
+    }
+    
+    // Check if coupon has expired
+    if (coupon.endDate && new Date(coupon.endDate) < now) {
+      return { valid: false, message: 'Este cupón ha expirado' };
+    }
+    
+    // Check if coupon has started
+    if (coupon.startDate && new Date(coupon.startDate) > now) {
+      return { valid: false, message: 'Este cupón aún no está disponible' };
+    }
+    
+    // Check minimum purchase requirement
+    if (coupon.minPurchase && cartTotal < coupon.minPurchase) {
+      return { 
+        valid: false, 
+        message: `Compra mínima requerida: $${coupon.minPurchase}` 
+      };
+    }
+    
+    // Check usage limits
+    if (coupon.usedCount >= coupon.maxUses) {
+      return { valid: false, message: 'Este cupón ha alcanzado su límite de usos' };
+    }
+    
+    return { valid: true };
+  };
+
+  const applyCoupon = async () => {
+    if (!couponCode.trim()) {
+      setCouponError('Por favor ingresa un código de cupón');
+      return;
+    }
+
+    setCouponError('');
+    setCouponSuccess('');
+
+    try {
+      const coupon = coupons.find(c => c.code.toUpperCase() === couponCode.toUpperCase());
+      
+      if (!coupon) {
+        setCouponError('Código de cupón no válido');
+        return;
+      }
+
+      const cartTotal = cart.reduce((total, item) => total + (item.precio * item.quantity), 0);
+      const validation = validateCoupon(coupon, cartTotal);
+      
+      if (!validation.valid) {
+        setCouponError(validation.message);
+        return;
+      }
+
+      setAppliedCoupon(coupon);
+      setCouponSuccess('¡Cupón aplicado exitosamente!');
+      setCouponCode('');
+    } catch (error) {
+      console.error('Error applying coupon:', error);
+      setCouponError('Error al aplicar el cupón');
+    }
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponError('');
+    setCouponSuccess('');
+  };
+
+  const calculateDiscount = (cartTotal) => {
+    if (!appliedCoupon) return 0;
+
+    switch (appliedCoupon.type) {
+      case 'percentage':
+        return (cartTotal * appliedCoupon.value) / 100;
+      case 'fixed':
+        return Math.min(appliedCoupon.value, cartTotal);
+      case 'freeshipping':
+        return 0; // Free shipping is handled separately
+      default:
+        return 0;
+    }
+  };
+
+  const calculateShipping = (cartTotal) => {
+    if (appliedCoupon && appliedCoupon.type === 'freeshipping') {
+      return 0;
+    }
+    // Default shipping cost (you can adjust this)
+    return cartTotal > 100 ? 0 : 10;
+  };
+
+  const calculateTotal = () => {
+    const cartTotal = cart.reduce((total, item) => total + (item.precio * item.quantity), 0);
+    const discount = calculateDiscount(cartTotal);
+    const shipping = calculateShipping(cartTotal);
+    return Math.max(0, cartTotal - discount + shipping);
   };
 
   const addToCart = async (product) => {
@@ -1657,7 +1784,15 @@ function App() {
         customerName: userProfile?.name || user.email || 'Cliente',
         customerEmail: user.email || 'no-email@example.com',
         items: cart,
-        total: getCartTotal(),
+        total: calculateTotal(),
+        subtotal: getCartTotal(),
+        discount: appliedCoupon ? calculateDiscount(getCartTotal()) : 0,
+        shipping: calculateShipping(getCartTotal()),
+        appliedCoupon: appliedCoupon ? {
+          code: appliedCoupon.code,
+          type: appliedCoupon.type,
+          value: appliedCoupon.value
+        } : null,
         shippingAddress: shippingAddress,
         createdAt: now,
         updatedAt: now,
@@ -5243,8 +5378,176 @@ function App() {
             borderTop: `1px solid ${PALETAS.D.crema}`,
             background: `linear-gradient(135deg, ${PALETAS.D.crema} 0%, #f8f5f0 100%)`
           }}>
-              <div style={{ 
-            display: "flex",
+            {/* Coupon Section */}
+            <div style={{
+              padding: "1rem 0",
+              borderTop: "2px solid #f0f0f0",
+              marginTop: "1rem"
+            }}>
+              <h3 style={{
+                fontSize: "1.1rem",
+                fontWeight: "600",
+                color: "#333",
+                marginBottom: "1rem"
+              }}>
+                🎫 Código de Descuento
+              </h3>
+              
+              {appliedCoupon ? (
+                <div style={{
+                  background: "linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%)",
+                  border: "2px solid #4CAF50",
+                  borderRadius: "12px",
+                  padding: "1rem",
+                  marginBottom: "1rem"
+                }}>
+                  <div style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "0.5rem"
+                  }}>
+                    <span style={{
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      color: "#2E7D32"
+                    }}>
+                      ✅ {appliedCoupon.code}
+                    </span>
+                    <button
+                      onClick={removeCoupon}
+                      style={{
+                        background: "transparent",
+                        border: "none",
+                        color: "#f44336",
+                        cursor: "pointer",
+                        fontSize: "1.2rem",
+                        padding: "0.25rem"
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <div style={{
+                    fontSize: "0.9rem",
+                    color: "#2E7D32"
+                  }}>
+                    {appliedCoupon.type === 'percentage' ? `${appliedCoupon.value}% de descuento` :
+                     appliedCoupon.type === 'fixed' ? `$${appliedCoupon.value} de descuento` :
+                     'Envío gratis'}
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    placeholder="Ingresa tu código"
+                    style={{
+                      flex: 1,
+                      padding: "0.75rem",
+                      border: "2px solid #eee",
+                      borderRadius: "8px",
+                      fontSize: "1rem",
+                      outline: "none"
+                    }}
+                  />
+                  <button
+                    onClick={applyCoupon}
+                    style={{
+                      background: `linear-gradient(135deg, ${PALETAS.D.verde} 0%, #8EB080 100%)`,
+                      color: "white",
+                      border: "none",
+                      padding: "0.75rem 1.5rem",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                      fontSize: "1rem",
+                      fontWeight: "600"
+                    }}
+                  >
+                    Aplicar
+                  </button>
+                </div>
+              )}
+              
+              {couponError && (
+                <div style={{
+                  background: "#ffebee",
+                  color: "#c62828",
+                  padding: "0.75rem",
+                  borderRadius: "8px",
+                  fontSize: "0.9rem",
+                  marginBottom: "1rem"
+                }}>
+                  ❌ {couponError}
+                </div>
+              )}
+              
+              {couponSuccess && (
+                <div style={{
+                  background: "#e8f5e8",
+                  color: "#2e7d32",
+                  padding: "0.75rem",
+                  borderRadius: "8px",
+                  fontSize: "0.9rem",
+                  marginBottom: "1rem"
+                }}>
+                  ✅ {couponSuccess}
+                </div>
+              )}
+            </div>
+
+            {/* Order Summary */}
+            <div style={{
+              background: "#f8f9fa",
+              borderRadius: "12px",
+              padding: "1rem",
+              marginBottom: "1rem"
+            }}>
+              <div style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "0.5rem"
+              }}>
+                <span style={{ fontSize: "1rem", color: "#666" }}>Subtotal:</span>
+                <span style={{ fontSize: "1rem", fontWeight: "600" }}>
+                  ${getCartTotal()} MXN
+                </span>
+              </div>
+              
+              {appliedCoupon && (
+                <div style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: "0.5rem"
+                }}>
+                  <span style={{ fontSize: "1rem", color: "#666" }}>
+                    Descuento ({appliedCoupon.code}):
+                  </span>
+                  <span style={{ fontSize: "1rem", fontWeight: "600", color: "#4CAF50" }}>
+                    -${calculateDiscount(getCartTotal())} MXN
+                  </span>
+                </div>
+              )}
+              
+              <div style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "0.5rem"
+              }}>
+                <span style={{ fontSize: "1rem", color: "#666" }}>Envío:</span>
+                <span style={{ fontSize: "1rem", fontWeight: "600" }}>
+                  {calculateShipping(getCartTotal()) === 0 ? "Gratis" : `$${calculateShipping(getCartTotal())} MXN`}
+                </span>
+              </div>
+            </div>
+
+            <div style={{ 
+              display: "flex",
               justifyContent: "space-between", 
             alignItems: "center",
               marginBottom: "1rem"
@@ -5261,7 +5564,7 @@ function App() {
                 fontWeight: "700", 
                 color: PALETAS.D.miel 
               }}>
-                ${getCartTotal()} MXN
+                ${calculateTotal()} MXN
                     </span>
               </div>
               <button
@@ -5925,7 +6228,7 @@ function App() {
               </div>
               
               <MercadoPagoCheckout
-                amount={getCartTotal()}
+                amount={calculateTotal()}
                 orderId={`order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`}
                 items={cart}
                 customerInfo={{
