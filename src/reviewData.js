@@ -1235,7 +1235,7 @@ export const REVIEW_DATA = {
 };
 
 // Helper function to get reviews for a product
-export const getProductReviews = (productId) => {
+export const getProductReviews = (productId, productName = '') => {
   // First try by ID
   if (REVIEW_DATA[productId]) {
     return REVIEW_DATA[productId];
@@ -1267,9 +1267,8 @@ export const getProductReviews = (productId) => {
     return REVIEW_DATA[mappedName];
   }
   
-  // Fallback: Generate natural, varied reviews for any product that doesn't have specific reviews
-  // This ensures all products have some reviews with realistic distribution
-  const generateNaturalReviews = (productId) => {
+  // Generate product-specific reviews based on product type and benefits
+  const generateProductSpecificReviews = (productId, productName = '') => {
     const reviewCount = Math.floor(Math.random() * 27) + 12; // 12-38 reviews
     const reviews = [];
     
@@ -1302,6 +1301,194 @@ export const getProductReviews = (productId) => {
       "Star Johnson", "Forest Green", "Crystal Clear", "Dawn Light", "Storm Cloud",
       "Willow Tree", "Mountain Peak", "Desert Rose", "Thunder Bolt", "Rainbow Sky"
     ];
+
+    // Product-specific comment templates based on product type
+    const getProductSpecificComments = (productId, productName) => {
+      const productType = productId.toLowerCase();
+      const productNameLower = productName.toLowerCase();
+      
+      // Candle-specific comments
+      if (productType.includes('vela') || productNameLower.includes('vela')) {
+        return {
+          5: [
+            "¡Increíble! Las velas tienen un aroma tan natural y relajante. Se siente la energía positiva desde el primer momento.",
+            "Perfectas para mis rituales de abundancia. La cera es de excelente calidad y se nota que están hechas con amor.",
+            "Amazing candles! The natural wax burns so cleanly and the scent is absolutely divine. Perfect for meditation!",
+            "¡Excelente! Estas velas realmente ayudan a crear un ambiente de paz y tranquilidad en mi hogar.",
+            "Perfect for my evening rituals. The honey scent is so authentic and the energy is incredible!",
+            "¡Fantástico! Las velas duran mucho tiempo y el aroma de miel es delicioso. Muy recomendado!",
+            "Incredible quality! These candles have transformed my meditation space. The energy is so positive!",
+            "¡Perfecto! El aroma de miel es tan natural y relajante. Definitivamente volveré a comprar más velas."
+          ],
+          4: [
+            "Muy buenas velas, el aroma es delicioso. Solo me gustaría que fueran un poco más grandes, pero la calidad es excelente.",
+            "Good candles! The scent is pleasant and they burn well, aunque esperaba un aroma más intenso.",
+            "¡Buenas velas! La calidad es buena, aunque el precio es un poco alto. Pero vale la pena!",
+            "Nice candles! The honey scent is lovely, aunque me gustaría que duraran más tiempo.",
+            "Muy bueno! Las velas funcionan bien, aunque esperaba un aroma más fuerte. But overall I'm happy!"
+          ],
+          3: [
+            "Está bien, las velas funcionan pero el aroma podría ser más intenso. La calidad es decente.",
+            "It's okay, the candles work but I expected more scent. La calidad es buena pero no es excepcional.",
+            "Buenas velas, aunque esperaba más duración. Cumple su función básica pero no es extraordinario."
+          ],
+          2: [
+            "No es lo que esperaba. El aroma es muy suave y las velas se consumen muy rápido.",
+            "It's okay but the scent is too weak. No vale la pena el precio para lo que ofrece."
+          ]
+        };
+      }
+      
+      // Oil-specific comments
+      if (productType.includes('aceite') || productNameLower.includes('aceite')) {
+        return {
+          5: [
+            "Este aceite realmente funciona. Desde que lo uso siento que las oportunidades llegan más fácilmente. Muy poderoso.",
+            "Incredible oil! I've noticed positive changes in my life since using it. The energy is amazing!",
+            "¡Excelente aceite! La calidad es excepcional y se nota que está hecho con ingredientes naturales de alta calidad.",
+            "Perfect oil for my rituals! The scent is authentic and the spiritual benefits are incredible.",
+            "¡Fantástico! Este aceite ha cambiado mi vida. Las oportunidades llegan más fácilmente desde que lo uso.",
+            "Amazing oil! The spiritual properties are incredible and the scent is so pure and natural.",
+            "¡Increíble! El aceite funciona de verdad. He notado cambios positivos en mi vida desde que lo uso.",
+            "Perfect! This oil has opened so many doors for me. The energy and spiritual benefits are incredible!"
+          ],
+          4: [
+            "Muy bueno, el aceite es agradable y funciona bien. Aunque esperaba un aroma un poco más intenso.",
+            "Good oil! It works well, aunque el precio es un poco alto. But the quality is excellent.",
+            "¡Buen aceite! La calidad es buena, aunque me gustaría que fuera más concentrado.",
+            "Nice oil! The spiritual benefits are good, aunque esperaba más intensidad en el aroma."
+          ],
+          3: [
+            "Está bien, el aceite funciona pero no es lo que esperaba. La calidad es decente.",
+            "It's okay, the oil works but I expected more spiritual benefits. La calidad es regular."
+          ],
+          2: [
+            "No es lo que esperaba. El aceite es muy suave y no siento los beneficios espirituales.",
+            "It's okay but doesn't meet my expectations. The spiritual properties are too weak."
+          ]
+        };
+      }
+      
+      // Water/Florida Water comments
+      if (productType.includes('agua') || productNameLower.includes('agua') || productType.includes('florida')) {
+        return {
+          5: [
+            "El agua Florida más pura que he encontrado. Perfecta para limpieza espiritual. El aroma es auténtico y duradero.",
+            "Perfect Florida Water! The spiritual cleansing properties are incredible and the scent is authentic.",
+            "¡Excelente agua Florida! La calidad es excepcional y se nota que está hecha con ingredientes tradicionales.",
+            "Amazing spiritual water! I use it daily for cleansing and the energy difference is incredible.",
+            "¡Fantástico! Esta agua Florida es la más pura que he usado. Perfecta para mis rituales de limpieza.",
+            "Incredible Florida Water! The traditional recipe and spiritual properties are exactly what I needed.",
+            "¡Perfecto! El agua Florida funciona de maravilla para limpiar energías negativas. Muy recomendado!",
+            "Excellent spiritual water! The cleansing properties are powerful and the scent is traditional."
+          ],
+          4: [
+            "Muy buena agua Florida, el aroma es tradicional y auténtico. Perfecto para mis rituales de limpieza.",
+            "Good Florida Water! The cleansing properties work well, aunque esperaba un aroma más intenso.",
+            "¡Buen agua! La calidad es buena, aunque me gustaría que fuera más concentrada.",
+            "Nice spiritual water! It works well, aunque el precio es un poco alto para la cantidad."
+          ],
+          3: [
+            "Está bien, el agua Florida funciona pero el aroma podría ser más fuerte. La calidad es decente.",
+            "It's okay, the spiritual water works but I expected more cleansing power. La calidad es regular."
+          ],
+          2: [
+            "No es lo que esperaba. El agua Florida es muy suave y no siento los beneficios de limpieza.",
+            "It's okay but the spiritual cleansing properties are too weak. No vale la pena el precio."
+          ]
+        };
+      }
+      
+      // Bath/Energy Bath comments
+      if (productType.includes('baño') || productNameLower.includes('baño') || productType.includes('energetico')) {
+        return {
+          5: [
+            "¡Excelente baño energético! La limpieza espiritual es increíble y me siento renovada después de usarlo.",
+            "Amazing energy bath! The spiritual cleansing properties are incredible and I feel so refreshed.",
+            "¡Fantástico! Este baño energético ha transformado mi bienestar. La calidad de los ingredientes es excepcional.",
+            "Perfect energy bath! The spiritual benefits are incredible and the ingredients are so pure and natural.",
+            "¡Increíble! El baño energético funciona de verdad. Me siento más equilibrada y en paz después de usarlo.",
+            "Excellent spiritual bath! The cleansing and healing properties are exactly what I needed.",
+            "¡Perfecto! Este baño energético es perfecto para limpiar energías negativas. Muy recomendado!",
+            "Incredible energy bath! The spiritual cleansing and healing benefits are life-changing."
+          ],
+          4: [
+            "Muy buen baño energético, funciona bien para la limpieza espiritual. Aunque esperaba más cantidad.",
+            "Good energy bath! The spiritual benefits work well, aunque el precio es un poco alto.",
+            "¡Buen baño! La calidad es buena, aunque me gustaría que fuera más concentrado.",
+            "Nice spiritual bath! It works well, aunque esperaba más ingredientes naturales."
+          ],
+          3: [
+            "Está bien, el baño energético funciona pero no es lo que esperaba. La calidad es decente.",
+            "It's okay, the energy bath works but I expected more spiritual benefits. La calidad es regular."
+          ],
+          2: [
+            "No es lo que esperaba. El baño energético es muy suave y no siento los beneficios espirituales.",
+            "It's okay but the spiritual cleansing properties are too weak. No vale la pena el precio."
+          ]
+        };
+      }
+      
+      // Service-specific comments (massage, therapy, etc.)
+      if (productType.includes('masaje') || productType.includes('terapia') || productType.includes('numerologia') || 
+          productType.includes('tarot') || productType.includes('sonoterapia') || productType.includes('cacao')) {
+        return {
+          5: [
+            "¡Excelente servicio! La terapeuta es muy profesional y la experiencia fue transformadora. Muy recomendado!",
+            "Amazing service! The therapist is incredibly skilled and the session was life-changing. Highly recommended!",
+            "¡Fantástico! El servicio superó mis expectativas. Me siento más equilibrada y en paz después de la sesión.",
+            "Perfect service! The spiritual benefits are incredible and the practitioner is so knowledgeable.",
+            "¡Increíble! Este servicio ha cambiado mi vida. La calidad de la atención es excepcional.",
+            "Excellent therapy! The healing and spiritual benefits are exactly what I needed.",
+            "¡Perfecto! El servicio es profesional y los beneficios espirituales son increíbles. Muy recomendado!",
+            "Incredible service! The spiritual healing and guidance are life-changing."
+          ],
+          4: [
+            "Muy buen servicio, la terapeuta es profesional y la experiencia fue buena. Aunque esperaba más tiempo.",
+            "Good service! The therapist is skilled, aunque el precio es un poco alto para la duración.",
+            "¡Buen servicio! La calidad es buena, aunque me gustaría que fuera más personalizado.",
+            "Nice therapy! It works well, aunque esperaba más profundidad en la sesión."
+          ],
+          3: [
+            "Está bien, el servicio funciona pero no es lo que esperaba. La calidad es decente.",
+            "It's okay, the service works but I expected more spiritual benefits. La calidad es regular."
+          ],
+          2: [
+            "No es lo que esperaba. El servicio es básico y no siento los beneficios espirituales.",
+            "It's okay but the spiritual benefits are too weak. No vale la pena el precio."
+          ]
+        };
+      }
+      
+      // Default comments for other products
+      return {
+        5: [
+          "¡Excelente producto! La calidad es excepcional y se nota que está hecho con mucho amor. Muy recomendado!",
+          "Amazing product! The quality is outstanding and you can tell it's made with love. Highly recommended!",
+          "¡Fantástico! El producto superó mis expectativas. La calidad es increíble y el servicio excelente.",
+          "Perfect! This product has transformed my spiritual practice. The energy and benefits are incredible!",
+          "¡Increíble! Este producto realmente funciona. He notado cambios positivos desde que lo uso.",
+          "Excellent product! The spiritual properties are incredible and the quality is exceptional.",
+          "¡Perfecto! Exactamente lo que necesitaba. La calidad es excepcional y los beneficios son increíbles.",
+          "Incredible product! The spiritual benefits are life-changing and the quality is outstanding."
+        ],
+        4: [
+          "Muy bueno, aunque esperaba un poco más de cantidad. Pero la calidad general es excelente.",
+          "Good product! The quality is good, aunque esperaba más beneficios espirituales. But overall I'm happy!",
+          "¡Buen producto! La calidad es buena, aunque el precio es un poco alto. But vale la pena!",
+          "Nice product! It works well, aunque esperaba más intensidad. But I'm satisfied!"
+        ],
+        3: [
+          "Está bien, pero esperaba algo más intenso. La calidad es buena pero no es lo que esperaba.",
+          "It's okay, but I expected more. La calidad es decente pero no es lo que esperaba.",
+          "Good producto, aunque el aroma podría ser mejor. It works but not exceptional."
+        ],
+        2: [
+          "No es lo que esperaba. El producto es muy suave y no siento los beneficios espirituales.",
+          "It's okay but no cumple con mis expectativas. La calidad es regular."
+        ]
+      };
+    };
     
     // Diverse, natural comments with mixed languages, typos, and unique content
     const allComments = [
@@ -1451,6 +1638,9 @@ export const getProductReviews = (productId) => {
       "Esperaba más. The quality is regular y no cumple con mis expectativas."
     ];
     
+    // Get product-specific comments
+    const productComments = getProductSpecificComments(productId, productName);
+    
     // Track used names and comments to avoid repetition
     const usedNames = new Set();
     const usedComments = new Set();
@@ -1474,11 +1664,12 @@ export const getProductReviews = (productId) => {
       else if (rand < 0.98) rating = 3;
       else rating = 2;
       
-      // Select unique comment
+      // Select product-specific comment based on rating
       let randomComment;
       let commentAttempts = 0;
+      const availableComments = productComments[rating] || productComments[5];
       do {
-        randomComment = allComments[Math.floor(Math.random() * allComments.length)];
+        randomComment = availableComments[Math.floor(Math.random() * availableComments.length)];
         commentAttempts++;
       } while (usedComments.has(randomComment) && commentAttempts < 50);
       usedComments.add(randomComment);
@@ -1536,7 +1727,7 @@ export const getProductReviews = (productId) => {
     return reviews;
   };
   
-  return generateNaturalReviews(productId);
+  return generateProductSpecificReviews(productId, productName);
 };
 
 // Helper function to calculate average rating

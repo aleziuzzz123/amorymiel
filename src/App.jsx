@@ -5606,7 +5606,7 @@ function App() {
                     overflowY: "auto",
                     paddingRight: "0.5rem"
                   }}>
-                    {getProductReviews(detailedProduct.id).map((review, index) => (
+                    {getProductReviews(detailedProduct.id, detailedProduct.nombre).map((review, index) => (
                       <div key={review.id} style={{
                         background: "white",
                         padding: "0.75rem",
