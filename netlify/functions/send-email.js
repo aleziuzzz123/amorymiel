@@ -11,7 +11,7 @@ exports.handler = async (event, context) => {
 
   try {
     // Parse the request body
-    const { emailType, userEmail, userName, cartItems, cartTotal, orderId } = JSON.parse(event.body);
+    const { emailType, userEmail, userName, cartItems, cartTotal, orderId, message, subject, htmlContent } = JSON.parse(event.body);
 
     // Initialize Resend with API key from environment
     const resend = new Resend(process.env.RESEND_API_KEY);
@@ -105,6 +105,20 @@ exports.handler = async (event, context) => {
         from: 'info@amorymiel.com',
         to: [userEmail],
         subject: '¿Olvidaste algo en tu carrito? 🛒',
+        html: htmlContent
+      });
+    } else if (emailType === 'contact-form') {
+      result = await resend.emails.send({
+        from: 'info@amorymiel.com',
+        to: [userEmail],
+        subject: subject,
+        html: htmlContent
+      });
+    } else if (emailType === 'newsletter') {
+      result = await resend.emails.send({
+        from: 'info@amorymiel.com',
+        to: [userEmail],
+        subject: subject,
         html: htmlContent
       });
     }

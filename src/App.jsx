@@ -676,34 +676,8 @@ function App() {
   const [trackingError, setTrackingError] = useState('');
   const [showCheckout, setShowCheckout] = useState(false);
 
-  // Resend configuration - will be loaded from Firebase
-  const [resendApiKey, setResendApiKey] = useState(null);
-  const [resend, setResend] = useState(null);
-  
-  // Load Resend API key from Firebase
-  useEffect(() => {
-    const loadResendConfig = async () => {
-      try {
-        console.log('🔑 Loading Resend API key from Firebase...');
-        const configDoc = await getDoc(doc(db, 'config', 'resend'));
-        
-        if (configDoc.exists()) {
-          const apiKey = configDoc.data().apiKey;
-          console.log('🔑 Resend API Key loaded from Firebase:', apiKey ? 'Yes' : 'No');
-          console.log('🔑 API Key value:', apiKey);
-          console.log('🔑 API Key length:', apiKey ? apiKey.length : 0);
-          setResendApiKey(apiKey);
-          setResend(new Resend(apiKey));
-        } else {
-          console.error('❌ Resend config not found in Firebase');
-        }
-      } catch (error) {
-        console.error('❌ Failed to load Resend config from Firebase:', error);
-      }
-    };
-    
-    loadResendConfig();
-  }, []);
+  // Note: We no longer need Resend in the frontend since we use Netlify functions
+  // The Netlify function handles all email sending with its own API key
 
   // Get unique categories
   const categories = ["Todos", ...new Set(products.map(p => p.categoria))];
@@ -1200,11 +1174,18 @@ function App() {
         </html>
       `;
       
-      await resend.emails.send({
-        from: 'info@amorymiel.com',
-        to: 'info@amorymiel.com',
-        subject: `Nuevo mensaje de contacto de ${templateParams.name}`,
-        html: htmlContent
+      // Send via Netlify function
+      await fetch('/.netlify/functions/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          emailType: 'contact-form',
+          userEmail: 'info@amorymiel.com',
+          userName: templateParams.name,
+          message: templateParams.message,
+          subject: `Nuevo mensaje de contacto de ${templateParams.name}`,
+          htmlContent: htmlContent
+        })
       });
       
       setSubmitMessage("¡Mensaje enviado exitosamente! Te contactaremos pronto.");
@@ -1234,11 +1215,18 @@ function App() {
     };
 
     try {
-      await resend.emails.send({
-        from: 'info@amorymiel.com',
-        to: 'info@amorymiel.com',
-        subject: `New newsletter subscriber: ${email}`,
-        html: `<h2>New Newsletter Subscriber</h2><p><strong>Email:</strong> ${email}</p>`
+      // Send via Netlify function
+      await fetch('/.netlify/functions/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          emailType: 'newsletter',
+          userEmail: 'info@amorymiel.com',
+          userName: 'Newsletter Subscriber',
+          message: `New newsletter subscriber: ${email}`,
+          subject: `New newsletter subscriber: ${email}`,
+          htmlContent: `<h2>New Newsletter Subscriber</h2><p><strong>Email:</strong> ${email}</p>`
+        })
       });
       
       setNewsletterMessage("¡Te has suscrito exitosamente! Recibirás nuestros tips de bienestar.");
