@@ -339,6 +339,19 @@ function App() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState('login'); // 'login' or 'register'
   const [authMessage, setAuthMessage] = useState("");
+  
+  // User profile management
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [profileData, setProfileData] = useState({
+    name: '',
+    phone: '',
+    address: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    country: 'México'
+  });
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
 
   // Admin dashboard state
   const [showAdminDashboard, setShowAdminDashboard] = useState(false);
@@ -949,6 +962,93 @@ function App() {
     }
   }, [openProduct?.id, openProduct?.nombre]);
 
+  // Load user profile when user logs in
+  useEffect(() => {
+    if (user) {
+      loadUserProfile();
+    } else {
+      setUserProfile(null);
+    }
+  }, [user]);
+
+  // Load user profile from Firebase
+  const loadUserProfile = async () => {
+    if (!user || !db) return;
+    
+    try {
+      const { doc, getDoc } = await import('firebase/firestore');
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        setUserProfile(userData);
+        setProfileData({
+          name: userData.name || user.displayName || '',
+          phone: userData.phone || '',
+          address: userData.address || '',
+          city: userData.city || '',
+          state: userData.state || '',
+          zipCode: userData.zipCode || '',
+          country: userData.country || 'México'
+        });
+      } else {
+        // Create new user profile
+        const newProfile = {
+          name: user.displayName || user.email.split('@')[0],
+          email: user.email,
+          phone: '',
+          address: '',
+          city: '',
+          state: '',
+          zipCode: '',
+          country: 'México',
+          createdAt: new Date(),
+          lastLogin: new Date()
+        };
+        
+        const { setDoc } = await import('firebase/firestore');
+        await setDoc(doc(db, 'users', user.uid), newProfile);
+        setUserProfile(newProfile);
+        setProfileData({
+          name: newProfile.name,
+          phone: newProfile.phone,
+          address: newProfile.address,
+          city: newProfile.city,
+          state: newProfile.state,
+          zipCode: newProfile.zipCode,
+          country: newProfile.country
+        });
+      }
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+    }
+  };
+
+  // Update user profile
+  const updateUserProfile = async () => {
+    if (!user || !db) return;
+    
+    setIsUpdatingProfile(true);
+    try {
+      const { updateDoc, doc } = await import('firebase/firestore');
+      
+      const updatedProfile = {
+        ...profileData,
+        lastUpdated: new Date()
+      };
+      
+      await updateDoc(doc(db, 'users', user.uid), updatedProfile);
+      setUserProfile(updatedProfile);
+      setShowProfileModal(false);
+      alert('Perfil actualizado exitosamente');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      alert('Error al actualizar el perfil. Inténtalo de nuevo.');
+    } finally {
+      setIsUpdatingProfile(false);
+    }
+  };
+
   const submitReview = async () => {
     if (!user || !reviewingProduct || !newReview.comment.trim()) {
       alert('Por favor completa tu comentario');
@@ -962,7 +1062,7 @@ function App() {
       const reviewData = {
         productId: reviewingProduct.id,
         productName: reviewingProduct.nombre,
-        userName: user.displayName || user.email.split('@')[0],
+        userName: userProfile?.name || user.displayName || user.email.split('@')[0],
         userEmail: user.email,
         userId: user.uid,
         rating: newReview.rating,
@@ -2465,6 +2565,32 @@ function App() {
                     🛠️ Admin Dashboard
                   </button>
                 )}
+
+                {/* Mi Perfil Button */}
+                <button
+                  onClick={() => setShowProfileModal(true)}
+                  style={{
+                    background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                    color: "white",
+                    border: "none",
+                    padding: "0.5rem 1rem",
+                    borderRadius: "20px",
+                    fontSize: "0.9rem",
+                    cursor: "pointer",
+                    transition: "all 0.3s ease",
+                    fontWeight: "bold"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = "translateY(-2px)";
+                    e.target.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = "translateY(0)";
+                    e.target.style.boxShadow = "none";
+                  }}
+                >
+                  👤 Mi Perfil
+                </button>
 
 
                 {/* Order Tracking Button */}
@@ -7191,6 +7317,310 @@ function App() {
                     }}
                   >
                     {isLoading ? "Procesando..." : "Continuar al Pago"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* User Profile Modal */}
+        {showProfileModal && (
+          <div style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0,0,0,0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000
+          }}>
+            <div style={{
+              background: "white",
+              borderRadius: "15px",
+              padding: "2rem",
+              maxWidth: "500px",
+              width: "90%",
+              maxHeight: "90vh",
+              overflow: "auto",
+              boxShadow: "0 20px 60px rgba(0,0,0,0.3)"
+            }}>
+              <div style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "1.5rem"
+              }}>
+                <h2 style={{
+                  color: PALETAS.D.miel,
+                  margin: 0,
+                  fontSize: "1.5rem",
+                  fontWeight: "bold"
+                }}>
+                  👤 Mi Perfil
+                </h2>
+                <button
+                  onClick={() => setShowProfileModal(false)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    fontSize: "1.5rem",
+                    cursor: "pointer",
+                    color: "#666"
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                updateUserProfile();
+              }}>
+                <div style={{ marginBottom: "1rem" }}>
+                  <label style={{
+                    display: "block",
+                    marginBottom: "0.5rem",
+                    color: PALETAS.D.carbon,
+                    fontWeight: "500"
+                  }}>
+                    Nombre Completo *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={profileData.name}
+                    onChange={(e) => setProfileData(prev => ({ ...prev, name: e.target.value }))}
+                    style={{
+                      width: "100%",
+                      padding: "0.75rem",
+                      border: `2px solid ${PALETAS.D.crema}`,
+                      borderRadius: "8px",
+                      fontSize: "1rem",
+                      outline: "none",
+                      transition: "border-color 0.3s ease"
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = PALETAS.D.miel}
+                    onBlur={(e) => e.target.style.borderColor = PALETAS.D.crema}
+                  />
+                </div>
+
+                <div style={{ marginBottom: "1rem" }}>
+                  <label style={{
+                    display: "block",
+                    marginBottom: "0.5rem",
+                    color: PALETAS.D.carbon,
+                    fontWeight: "500"
+                  }}>
+                    Teléfono
+                  </label>
+                  <input
+                    type="tel"
+                    value={profileData.phone}
+                    onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
+                    style={{
+                      width: "100%",
+                      padding: "0.75rem",
+                      border: `2px solid ${PALETAS.D.crema}`,
+                      borderRadius: "8px",
+                      fontSize: "1rem",
+                      outline: "none"
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = PALETAS.D.miel}
+                    onBlur={(e) => e.target.style.borderColor = PALETAS.D.crema}
+                  />
+                </div>
+
+                <div style={{ marginBottom: "1rem" }}>
+                  <label style={{
+                    display: "block",
+                    marginBottom: "0.5rem",
+                    color: PALETAS.D.carbon,
+                    fontWeight: "500"
+                  }}>
+                    Dirección
+                  </label>
+                  <textarea
+                    value={profileData.address}
+                    onChange={(e) => setProfileData(prev => ({ ...prev, address: e.target.value }))}
+                    style={{
+                      width: "100%",
+                      padding: "0.75rem",
+                      border: `2px solid ${PALETAS.D.crema}`,
+                      borderRadius: "8px",
+                      fontSize: "1rem",
+                      outline: "none",
+                      minHeight: "80px",
+                      resize: "vertical"
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = PALETAS.D.miel}
+                    onBlur={(e) => e.target.style.borderColor = PALETAS.D.crema}
+                  />
+                </div>
+
+                <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={{
+                      display: "block",
+                      marginBottom: "0.5rem",
+                      color: PALETAS.D.carbon,
+                      fontWeight: "500"
+                    }}>
+                      Ciudad
+                    </label>
+                    <input
+                      type="text"
+                      value={profileData.city}
+                      onChange={(e) => setProfileData(prev => ({ ...prev, city: e.target.value }))}
+                      style={{
+                        width: "100%",
+                        padding: "0.75rem",
+                        border: `2px solid ${PALETAS.D.crema}`,
+                        borderRadius: "8px",
+                        fontSize: "1rem",
+                        outline: "none"
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = PALETAS.D.miel}
+                      onBlur={(e) => e.target.style.borderColor = PALETAS.D.crema}
+                    />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={{
+                      display: "block",
+                      marginBottom: "0.5rem",
+                      color: PALETAS.D.carbon,
+                      fontWeight: "500"
+                    }}>
+                      Estado
+                    </label>
+                    <input
+                      type="text"
+                      value={profileData.state}
+                      onChange={(e) => setProfileData(prev => ({ ...prev, state: e.target.value }))}
+                      style={{
+                        width: "100%",
+                        padding: "0.75rem",
+                        border: `2px solid ${PALETAS.D.crema}`,
+                        borderRadius: "8px",
+                        fontSize: "1rem",
+                        outline: "none"
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = PALETAS.D.miel}
+                      onBlur={(e) => e.target.style.borderColor = PALETAS.D.crema}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={{
+                      display: "block",
+                      marginBottom: "0.5rem",
+                      color: PALETAS.D.carbon,
+                      fontWeight: "500"
+                    }}>
+                      Código Postal
+                    </label>
+                    <input
+                      type="text"
+                      value={profileData.zipCode}
+                      onChange={(e) => setProfileData(prev => ({ ...prev, zipCode: e.target.value }))}
+                      style={{
+                        width: "100%",
+                        padding: "0.75rem",
+                        border: `2px solid ${PALETAS.D.crema}`,
+                        borderRadius: "8px",
+                        fontSize: "1rem",
+                        outline: "none"
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = PALETAS.D.miel}
+                      onBlur={(e) => e.target.style.borderColor = PALETAS.D.crema}
+                    />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={{
+                      display: "block",
+                      marginBottom: "0.5rem",
+                      color: PALETAS.D.carbon,
+                      fontWeight: "500"
+                    }}>
+                      País
+                    </label>
+                    <select
+                      value={profileData.country}
+                      onChange={(e) => setProfileData(prev => ({ ...prev, country: e.target.value }))}
+                      style={{
+                        width: "100%",
+                        padding: "0.75rem",
+                        border: `2px solid ${PALETAS.D.crema}`,
+                        borderRadius: "8px",
+                        fontSize: "1rem",
+                        outline: "none"
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = PALETAS.D.miel}
+                      onBlur={(e) => e.target.style.borderColor = PALETAS.D.crema}
+                    >
+                      <option value="México">México</option>
+                      <option value="Estados Unidos">Estados Unidos</option>
+                      <option value="Canadá">Canadá</option>
+                      <option value="España">España</option>
+                      <option value="Argentina">Argentina</option>
+                      <option value="Colombia">Colombia</option>
+                      <option value="Chile">Chile</option>
+                      <option value="Perú">Perú</option>
+                      <option value="Otro">Otro</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", gap: "1rem" }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowProfileModal(false)}
+                    style={{
+                      flex: 1,
+                      padding: "0.75rem",
+                      background: "transparent",
+                      border: `2px solid ${PALETAS.D.miel}`,
+                      color: PALETAS.D.miel,
+                      borderRadius: "8px",
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                      transition: "all 0.3s ease"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.background = PALETAS.D.miel;
+                      e.target.style.color = "white";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.background = "transparent";
+                      e.target.style.color = PALETAS.D.miel;
+                    }}
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isUpdatingProfile}
+                    style={{
+                      flex: 1,
+                      padding: "0.75rem",
+                      background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                      border: "none",
+                      color: "white",
+                      borderRadius: "8px",
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      cursor: isUpdatingProfile ? "not-allowed" : "pointer",
+                      opacity: isUpdatingProfile ? 0.7 : 1,
+                      transition: "all 0.3s ease"
+                    }}
+                  >
+                    {isUpdatingProfile ? "Guardando..." : "Guardar Perfil"}
                   </button>
                 </div>
               </form>
