@@ -355,14 +355,14 @@ function App() {
 
   // Analytics tracking
   const trackEvent = async (eventType, eventData = {}) => {
-    if (!user || !db) return;
+    if (!db) return;
     
     try {
       const { addDoc, collection } = await import('firebase/firestore');
       
       const analyticsEvent = {
-        userId: user.uid,
-        userEmail: user.email,
+        userId: user?.uid || 'anonymous',
+        userEmail: user?.email || 'anonymous@example.com',
         eventType,
         eventData,
         timestamp: new Date(),
@@ -372,7 +372,9 @@ function App() {
         url: window.location.href
       };
       
+      console.log('Tracking event:', eventType, analyticsEvent); // Debug log
       await addDoc(collection(db, 'analytics_events'), analyticsEvent);
+      console.log('Event tracked successfully:', eventType); // Debug log
     } catch (error) {
       console.error('Error tracking event:', error);
     }
@@ -1026,6 +1028,96 @@ function App() {
       referrer: document.referrer
     });
   }, []);
+
+  // Track page views on route changes
+  useEffect(() => {
+    const handleRouteChange = () => {
+      trackEvent('page_view', {
+        page: window.location.pathname,
+        referrer: document.referrer
+      });
+    };
+
+    // Track when user scrolls (engagement)
+    const handleScroll = () => {
+      trackEvent('scroll', {
+        page: window.location.pathname,
+        scrollY: window.scrollY
+      });
+    };
+
+    // Track when user clicks (engagement)
+    const handleClick = (e) => {
+      const target = e.target;
+      if (target.tagName === 'BUTTON' || target.tagName === 'A') {
+        trackEvent('click', {
+          page: window.location.pathname,
+          element: target.textContent || target.className,
+          elementType: target.tagName
+        });
+      }
+    };
+
+    // Add event listeners
+    window.addEventListener('popstate', handleRouteChange);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    document.addEventListener('click', handleClick);
+
+    return () => {
+      window.removeEventListener('popstate', handleRouteChange);
+      window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('click', handleClick);
+    };
+  }, []);
+
+  // Generate sample analytics data for testing
+  const generateSampleAnalyticsData = async () => {
+    if (!db) return;
+    
+    try {
+      const { addDoc, collection } = await import('firebase/firestore');
+      
+      // Generate sample events for the last 24 hours
+      const now = new Date();
+      const events = [];
+      
+      for (let i = 0; i < 50; i++) {
+        const randomTime = new Date(now.getTime() - Math.random() * 24 * 60 * 60 * 1000);
+        const eventTypes = ['page_view', 'product_view', 'add_to_cart', 'search', 'add_to_wishlist'];
+        const randomEventType = eventTypes[Math.floor(Math.random() * eventTypes.length)];
+        
+        const sampleEvent = {
+          userId: `sample_user_${Math.floor(Math.random() * 10)}`,
+          userEmail: `user${Math.floor(Math.random() * 10)}@example.com`,
+          eventType: randomEventType,
+          eventData: {
+            page: randomEventType === 'page_view' ? '/home' : undefined,
+            productId: randomEventType === 'product_view' ? `product_${Math.floor(Math.random() * 5)}` : undefined,
+            productName: randomEventType === 'product_view' ? `Product ${Math.floor(Math.random() * 5)}` : undefined,
+            productPrice: randomEventType === 'product_view' ? Math.floor(Math.random() * 100) + 10 : undefined,
+            searchTerm: randomEventType === 'search' ? `search term ${Math.floor(Math.random() * 5)}` : undefined
+          },
+          timestamp: randomTime,
+          date: randomTime.toISOString().split('T')[0],
+          hour: randomTime.getHours(),
+          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+          url: 'https://amorymiel.com'
+        };
+        
+        events.push(sampleEvent);
+      }
+      
+      // Add all events to Firebase
+      for (const event of events) {
+        await addDoc(collection(db, 'analytics_events'), event);
+      }
+      
+      console.log('Sample analytics data generated successfully!');
+      alert('Sample analytics data generated! Check the Analytics tab to see live traffic.');
+    } catch (error) {
+      console.error('Error generating sample data:', error);
+    }
+  };
 
   // Load user profile from Firebase
   const loadUserProfile = async () => {
@@ -2623,7 +2715,12 @@ function App() {
                 {/* Admin Dashboard Button */}
                 {isAdmin && (
                 <button
-                    onClick={() => setShowAdminDashboard(true)}
+                    onClick={() => {
+                      setShowAdminDashboard(true);
+                      trackEvent('admin_dashboard_view', {
+                        page: 'admin_dashboard'
+                      });
+                    }}
                     style={{
                       background: `linear-gradient(135deg, ${PALETAS.D.verde} 0%, #8EB080 100%)`,
                       color: "white",
@@ -2645,6 +2742,28 @@ function App() {
                     }}
                   >
                     🛠️ Admin Dashboard
+                  </button>
+                )}
+
+                {/* Test Analytics Button (for testing live traffic) */}
+                {isAdmin && (
+                <button
+                    onClick={() => {
+                      generateSampleAnalyticsData();
+                    }}
+                    style={{
+                      background: `linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%)`,
+                      color: "white",
+                      border: "none",
+                      padding: "0.5rem 1rem",
+                      borderRadius: "20px",
+                      fontSize: "0.9rem",
+                      cursor: "pointer",
+                      fontWeight: "bold",
+                      marginLeft: "1rem"
+                    }}
+                  >
+                    🧪 Test Analytics
                   </button>
                 )}
 
