@@ -1300,15 +1300,25 @@ export const getProductReviews = (productId, productName = '') => {
         return styles[Math.floor(Math.random() * styles.length)];
       };
     
-    // Diverse names with varying lengths (2, 3, and 4 names) from different cultures
+    // Names with realistic distribution: 60% Spanish, 30% USA, 10% Other cultures
     const names = [
-      // Spanish/Latin American names - 2 names
+      // Spanish/Latin American names - 2 names (60% of total)
       "María González", "Carlos Ruiz", "Ana Martínez", "Roberto Silva", "Patricia López",
       "Miguel Torres", "Carmen Vega", "Fernando Castro", "Isabel Morales", "Diego Navarro",
       "Sofia Jiménez", "Valentina Cruz", "Gabriela Ríos", "Alejandra Flores", "Ricardo Peña",
       "Elena Ramírez", "Jorge Mendoza", "Lucía Herrera", "Andrés Vega", "Natalia Castro",
       "Pablo Morales", "Camila Silva", "Sebastián López", "Valeria Torres", "Daniel Ruiz",
       "Andrea Martínez", "Luis González", "Paola Herrera", "Mario Castro", "Claudia Vega",
+      "Rafael Silva", "Monica Torres", "Héctor López", "Beatriz Ruiz", "Oscar Martínez",
+      "María del Carmen", "José Antonio", "Ana María", "Luis Alberto", "Patricia Elena",
+      "Francisco Javier", "Isabel Cristina", "Manuel Antonio", "Carmen Rosa", "Antonio José",
+      "María José", "Carlos Alberto", "Ana Patricia", "Roberto José", "Patricia Carmen",
+      "Miguel Ángel", "Carmen Rosa", "Fernando Luis", "Isabel María", "Diego Alejandro",
+      "Sofia Alejandra", "Valentina Isabel", "Gabriela Elena", "Alejandra Patricia", "Ricardo Antonio",
+      "Elena Beatriz", "Jorge Luis", "Lucía Elena", "Andrés Felipe", "Natalia Alejandra",
+      "Pablo Antonio", "Camila Elena", "Sebastián José", "Valeria Patricia", "Daniel Alejandro",
+      "Andrea Beatriz", "Luis Fernando", "Paola Alejandra", "Mario Antonio", "Claudia Elena",
+      "Rafael José", "Monica Patricia", "Héctor Luis", "Beatriz Elena", "Oscar Antonio",
       
       // Spanish/Latin American names - 3 names
       "María Elena González", "Carlos Alberto Ruiz", "Ana Patricia Martínez", "Roberto José Silva",
@@ -1321,6 +1331,8 @@ export const getProductReviews = (productId, productName = '') => {
       "Mario Antonio Castro", "Claudia Elena Vega", "Rafael José Silva", "Monica Patricia Torres",
       "Héctor Luis López", "Beatriz Elena Ruiz", "Oscar Antonio Martínez", "María del Carmen González",
       "José Antonio Ruiz", "Ana María Martínez", "Luis Alberto Silva", "Patricia Elena López",
+      "Francisco Javier Morales", "Isabel Cristina Vega", "Manuel Antonio Castro", "Carmen Rosa López",
+      "Antonio José Silva", "María José González", "Carlos Alberto Ruiz", "Ana Patricia Martínez",
       
       // Spanish/Latin American names - 4 names
       "María Elena González Pérez", "Carlos Alberto Ruiz Martínez", "Ana Patricia Martínez López",
@@ -1334,80 +1346,59 @@ export const getProductReviews = (productId, productName = '') => {
       "Daniel Alejandro Ruiz Martínez", "Andrea Beatriz Martínez González", "Luis Fernando González López",
       "Paola Alejandra Herrera Martínez", "Mario Antonio Castro González", "Claudia Elena Vega López",
       
-      // English/Anglo names - 2 names
+      // USA/English names - 2 names (30% of total)
       "Sarah Johnson", "Michael Brown", "Emily Davis", "David Wilson", "Jessica Taylor",
       "Christopher Lee", "Amanda Garcia", "Matthew Rodriguez", "Ashley Martinez", "Joshua Anderson",
       "Samantha Thomas", "Daniel Jackson", "Nicole White", "Ryan Harris", "Stephanie Martin",
       "Kevin Thompson", "Rachel Garcia", "Brandon Martinez", "Lauren Robinson", "Tyler Clark",
       "Megan Rodriguez", "Justin Lewis", "Kayla Walker", "Andrew Hall", "Brittany Allen",
+      "Jennifer Smith", "Robert Johnson", "Lisa Williams", "James Brown", "Michelle Davis",
+      "John Wilson", "Karen Taylor", "Mark Anderson", "Susan Thomas", "Paul Jackson",
+      "Nancy White", "Steven Harris", "Donna Martin", "Kenneth Thompson", "Carol Garcia",
       
-      // English/Anglo names - 3 names
+      // USA/English names - 3 names
       "Sarah Elizabeth Johnson", "Michael James Brown", "Emily Grace Davis", "David Michael Wilson",
       "Jessica Marie Taylor", "Christopher Ryan Lee", "Amanda Nicole Garcia", "Matthew David Rodriguez",
       "Ashley Nicole Martinez", "Joshua Michael Anderson", "Samantha Grace Thomas", "Daniel James Jackson",
       "Nicole Elizabeth White", "Ryan Michael Harris", "Stephanie Marie Martin", "Kevin James Thompson",
       "Rachel Elizabeth Garcia", "Brandon Michael Martinez", "Lauren Nicole Robinson", "Tyler James Clark",
       "Megan Elizabeth Rodriguez", "Justin Michael Lewis", "Kayla Marie Walker", "Andrew James Hall",
-      "Brittany Nicole Allen", "Sarah Marie Johnson", "Michael David Brown", "Emily Nicole Davis",
-      "David James Wilson", "Jessica Elizabeth Taylor", "Christopher Michael Lee", "Amanda Grace Garcia",
+      "Brittany Nicole Allen", "Jennifer Marie Smith", "Robert James Johnson", "Lisa Marie Williams",
       
-      // English/Anglo names - 4 names
+      // USA/English names - 4 names
       "Sarah Elizabeth Johnson Smith", "Michael James Brown Wilson", "Emily Grace Davis Johnson",
       "David Michael Wilson Brown", "Jessica Marie Taylor Davis", "Christopher Ryan Lee Johnson",
       "Amanda Nicole Garcia Martinez", "Matthew David Rodriguez Garcia", "Ashley Nicole Martinez Rodriguez",
       "Joshua Michael Anderson Wilson", "Samantha Grace Thomas Johnson", "Daniel James Jackson Wilson",
       "Nicole Elizabeth White Johnson", "Ryan Michael Harris Wilson", "Stephanie Marie Martin Johnson",
       "Kevin James Thompson Wilson", "Rachel Elizabeth Garcia Martinez", "Brandon Michael Martinez Garcia",
-      "Lauren Nicole Robinson Wilson", "Tyler James Clark Johnson", "Megan Elizabeth Rodriguez Garcia",
-      "Justin Michael Lewis Wilson", "Kayla Marie Walker Johnson", "Andrew James Hall Wilson",
-      "Brittany Nicole Allen Johnson", "Sarah Marie Johnson Wilson", "Michael David Brown Johnson",
       
-      // International names - 2 names
-      "Priya Patel", "Ahmed Hassan", "Yuki Tanaka", "Chen Wei", "Fatima Al-Zahra",
-      "Ivan Petrov", "Aisha Mohammed", "Hiroshi Yamamoto", "Anastasia Volkov", "Rajesh Kumar",
-      "Layla Ibrahim", "Kenji Sato", "Elena Popov", "Mohammed Ali", "Sakura Nakamura",
-      "Dmitri Volkov", "Zara Khan", "Takeshi Honda", "Olga Petrov", "Hassan Al-Rashid",
+      // Indian names - 2 names (5% of total)
+      "Priya Patel", "Rajesh Kumar", "Anjali Sharma", "Vikram Singh", "Deepa Mehta",
+      "Arjun Patel", "Kavita Sharma", "Rohit Kumar", "Sunita Patel", "Amit Singh",
       
-      // International names - 3 names
-      "Priya Anjali Patel", "Ahmed Hassan Ali", "Yuki Sakura Tanaka", "Chen Wei Ming",
-      "Fatima Zahra Al-Zahra", "Ivan Dmitri Petrov", "Aisha Fatima Mohammed", "Hiroshi Kenji Yamamoto",
-      "Anastasia Elena Volkov", "Rajesh Kumar Patel", "Layla Fatima Ibrahim", "Kenji Takeshi Sato",
-      "Elena Anastasia Popov", "Mohammed Ali Hassan", "Sakura Yuki Nakamura", "Dmitri Ivan Volkov",
-      "Zara Fatima Khan", "Takeshi Hiroshi Honda", "Olga Elena Petrov", "Hassan Ali Al-Rashid",
-      "Priya Meera Patel", "Ahmed Omar Hassan", "Yuki Akira Tanaka", "Chen Li Wei",
-      "Fatima Aisha Al-Zahra", "Ivan Sergei Petrov", "Aisha Layla Mohammed", "Hiroshi Akira Yamamoto",
+      // Indian names - 3 names
+      "Priya Anjali Patel", "Rajesh Kumar Sharma", "Anjali Deepa Mehta", "Vikram Arjun Singh",
+      "Deepa Sunita Patel", "Arjun Rohit Kumar", "Kavita Priya Sharma", "Rohit Amit Singh",
       
-      // International names - 4 names
-      "Priya Anjali Patel Sharma", "Ahmed Hassan Ali Mohammed", "Yuki Sakura Tanaka Yamamoto",
-      "Chen Wei Ming Li", "Fatima Zahra Al-Zahra Mohammed", "Ivan Dmitri Petrov Volkov",
-      "Aisha Fatima Mohammed Ali", "Hiroshi Kenji Yamamoto Tanaka", "Anastasia Elena Volkov Petrov",
-      "Rajesh Kumar Patel Sharma", "Layla Fatima Ibrahim Mohammed", "Kenji Takeshi Sato Yamamoto",
-      "Elena Anastasia Popov Volkov", "Mohammed Ali Hassan Al-Rashid", "Sakura Yuki Nakamura Tanaka",
-      "Dmitri Ivan Volkov Petrov", "Zara Fatima Khan Mohammed", "Takeshi Hiroshi Honda Yamamoto",
-      "Olga Elena Petrov Volkov", "Hassan Ali Al-Rashid Mohammed", "Priya Meera Patel Sharma",
-      "Ahmed Omar Hassan Ali", "Yuki Akira Tanaka Yamamoto", "Chen Li Wei Ming",
+      // Arabic names - 2 names (3% of total)
+      "Ahmed Hassan", "Fatima Al-Zahra", "Aisha Mohammed", "Hassan Al-Rashid", "Layla Ibrahim",
+      "Mohammed Ali", "Zara Khan", "Omar Hassan", "Amina Mohammed", "Yusuf Ibrahim",
       
-      // Creative/Unique names - 2 names
+      // Arabic names - 3 names
+      "Ahmed Hassan Ali", "Fatima Zahra Al-Zahra", "Aisha Fatima Mohammed", "Hassan Ali Al-Rashid",
+      "Layla Fatima Ibrahim", "Mohammed Ali Hassan", "Zara Fatima Khan", "Omar Ahmed Hassan",
+      
+      // Chinese names - 2 names (2% of total)
+      "Chen Wei", "Li Ming", "Wang Lei", "Zhang Hui", "Liu Yan",
+      "Zhou Lin", "Wu Jian", "Xu Mei", "Sun Tao", "Ma Li",
+      
+      // Chinese names - 3 names
+      "Chen Wei Ming", "Li Ming Wei", "Wang Lei Ming", "Zhang Hui Wei", "Liu Yan Ming",
+      
+      // Creative/Unique names - 2 names (few)
       "Luna Moon", "River Stone", "Phoenix Rising", "Sage Wisdom", "Ocean Blue",
-      "Star Johnson", "Forest Green", "Crystal Clear", "Dawn Light", "Storm Cloud",
-      "Willow Tree", "Mountain Peak", "Desert Rose", "Thunder Bolt", "Rainbow Sky",
-      
-      // Creative/Unique names - 3 names
-      "Luna Star Moon", "River Stone Johnson", "Phoenix Rising Sun", "Sage Wisdom Green",
-      "Ocean Blue Wave", "Star Light Johnson", "Forest Green Tree", "Crystal Clear Water",
-      "Dawn Light Sky", "Storm Cloud Thunder", "Willow Tree Branch", "Mountain Peak High",
-      "Desert Rose Bloom", "Thunder Bolt Lightning", "Rainbow Sky Color", "Luna Moon Star",
-      "River Johnson Stone", "Phoenix Sun Rising", "Sage Green Wisdom", "Ocean Wave Blue",
-      
-      // Creative/Unique names - 4 names
-      "Luna Star Moon Johnson", "River Stone Johnson Green", "Phoenix Rising Sun Fire",
-      "Sage Wisdom Green Tree", "Ocean Blue Wave Stone", "Star Light Johnson Moon",
-      "Forest Green Tree Branch", "Crystal Clear Water Stone", "Dawn Light Sky Moon",
-      "Storm Cloud Thunder Lightning", "Willow Tree Branch Green", "Mountain Peak High Stone",
-      "Desert Rose Bloom Red", "Thunder Bolt Lightning Fire", "Rainbow Sky Color Light",
-      "Luna Moon Star Johnson", "River Johnson Stone Green", "Phoenix Sun Rising Fire",
-      "Sage Green Wisdom Tree", "Ocean Wave Blue Stone", "Star Johnson Moon Light",
-      "Forest Tree Green Branch", "Crystal Water Clear Stone", "Dawn Sky Light Moon"
+      "Star Johnson", "Forest Green", "Crystal Clear", "Dawn Light", "Storm Cloud"
     ];
 
     // Product-specific comment templates based on product type
