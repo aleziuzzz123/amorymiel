@@ -651,7 +651,20 @@ const AdminDashboard = ({ user, onClose }) => {
       // Debug: Check authentication status
       console.log('Current user:', user);
       console.log('User email:', user?.email);
+      console.log('Email length:', user?.email?.length);
+      console.log('Email comparison 1:', user?.email === 'admin@amorymiel.com');
+      console.log('Email comparison 2:', user?.email === 'babilionllc@gmail.com');
       console.log('Is admin:', user?.email === 'admin@amorymiel.com' || user?.email === 'babilionllc@gmail.com');
+      
+      // Test Firebase rules directly
+      console.log('Testing Firebase rules...');
+      try {
+        const testQuery = query(collection(db, 'analytics_events'), limit(1));
+        const testSnapshot = await getDocs(testQuery);
+        console.log('Analytics events query successful:', testSnapshot.docs.length);
+      } catch (error) {
+        console.error('Analytics events query failed:', error.message);
+      }
       
       // Load users
       console.log('Loading users from Firestore...');

@@ -1,0 +1,13 @@
+# TEMPORARY OPEN RULES FOR TESTING - DO NOT USE IN PRODUCTION
+# This allows all reads and writes for testing purposes
+# Go to: Firebase Console > Firestore Database > Rules
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // TEMPORARY: Allow all reads and writes for testing
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
