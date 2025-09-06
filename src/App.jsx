@@ -283,6 +283,15 @@ function App() {
   const [showCart, setShowCart] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todos");
+  
+  // Advanced search filters
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 2000 });
+  const [minRating, setMinRating] = useState(0);
+  const [showInStockOnly, setShowInStockOnly] = useState(false);
+  const [sortBy, setSortBy] = useState("popularity"); // popularity, price-low, price-high, name, newest
+  const [showFilters, setShowFilters] = useState(false);
+  const [wishlist, setWishlist] = useState([]);
+  const [showWishlist, setShowWishlist] = useState(false);
   const [products, setProducts] = useState([]);
   const [services, setServices] = useState([]);
   const [kidsProducts, setKidsProducts] = useState([]);
@@ -682,19 +691,53 @@ function App() {
   // Get unique categories
   const categories = ["Todos", ...new Set(products.map(p => p.categoria))];
 
-  // Filter products based on search and category
+  // Enhanced filtering with advanced filters
   const filteredProducts = products.filter(product => {
     const matchesSearch = query === "" || 
                          product.nombre.toLowerCase().includes(query.toLowerCase()) ||
                          product.descripcion.toLowerCase().includes(query.toLowerCase()) ||
                          product.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()));
     const matchesCategory = selectedCategory === "Todos" || product.categoria === selectedCategory;
-    return matchesSearch && matchesCategory;
+    const matchesPrice = product.precio >= priceRange.min && product.precio <= priceRange.max;
+    const matchesStock = !showInStockOnly || (product.stock > 0);
+    const matchesRating = minRating === 0 || (product.rating || 0) >= minRating;
+    
+    return matchesSearch && matchesCategory && matchesPrice && matchesStock && matchesRating;
+  }).sort((a, b) => {
+    switch (sortBy) {
+      case "price-low":
+        return a.precio - b.precio;
+      case "price-high":
+        return b.precio - a.precio;
+      case "name":
+        return a.nombre.localeCompare(b.nombre);
+      case "newest":
+        return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+      case "popularity":
+      default:
+        return (b.rating || 0) - (a.rating || 0);
+    }
   });
 
   // Handle search input
   const handleSearch = (e) => {
     setQuery(e.target.value);
+  };
+
+  // Wishlist functions
+  const toggleWishlist = (product) => {
+    setWishlist(prev => {
+      const isInWishlist = prev.some(item => item.id === product.id);
+      if (isInWishlist) {
+        return prev.filter(item => item.id !== product.id);
+      } else {
+        return [...prev, product];
+      }
+    });
+  };
+
+  const isInWishlist = (productId) => {
+    return wishlist.some(item => item.id === productId);
   };
 
   const addToCart = async (product) => {
@@ -2026,6 +2069,48 @@ function App() {
               </div>
             )}
             
+            {/* Wishlist Button */}
+            <div 
+              onClick={() => setShowWishlist(true)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: window.innerWidth <= 768 ? "0.3rem" : "0.5rem",
+                cursor: "pointer",
+                padding: window.innerWidth <= 768 ? "0.4rem 0.6rem" : "0.5rem 0.8rem",
+                borderRadius: "8px",
+                background: wishlist.length > 0 
+                  ? `linear-gradient(135deg, ${PALETAS.D.verde} 0%, #8EB080 100%)` 
+                  : `linear-gradient(135deg, ${PALETAS.D.crema} 0%, #f5f5f5 100%)`,
+                border: `2px solid ${PALETAS.D.verde}`,
+                transition: "all 0.3s ease",
+                boxShadow: wishlist.length > 0 
+                  ? "0 2px 8px rgba(98, 141, 106, 0.3)"
+                  : "0 2px 8px rgba(0,0,0,0.1)"
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow = wishlist.length > 0 
+                  ? "0 4px 12px rgba(98, 141, 106, 0.4)"
+                  : "0 4px 12px rgba(0,0,0,0.2)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = wishlist.length > 0 
+                  ? "0 2px 8px rgba(98, 141, 106, 0.3)"
+                  : "0 2px 8px rgba(0,0,0,0.1)";
+              }}
+            >
+              <span style={{ fontSize: "20px" }}>{wishlist.length > 0 ? "❤️" : "🤍"}</span>
+              <span style={{
+                color: wishlist.length > 0 ? "white" : PALETAS.D.verde,
+                fontSize: window.innerWidth <= 768 ? "0.8rem" : "0.9rem",
+                fontWeight: "600"
+              }}>
+                {wishlist.length > 0 ? `Guardados (${wishlist.length})` : "Guardar"}
+              </span>
+            </div>
+            
                 <div 
                 onClick={() => setShowCart(true)}
                 style={{
@@ -2257,6 +2342,204 @@ function App() {
             ))}
           </div>
           
+          {/* Advanced Filters */}
+          <div style={{ 
+            marginTop: "1.5rem",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "1rem",
+            flexWrap: "wrap"
+          }}>
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              style={{
+                background: showFilters 
+                  ? `linear-gradient(135deg, ${PALETAS.D.verde} 0%, #8EB080 100%)` 
+                  : "white",
+                color: showFilters ? "white" : PALETAS.D.carbon,
+                border: showFilters ? "none" : `2px solid ${PALETAS.D.crema}`,
+                padding: "0.6rem 1.2rem",
+                borderRadius: "25px",
+                cursor: "pointer",
+                fontSize: "0.85rem",
+                fontWeight: "600",
+                transition: "all 0.3s ease",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
+              }}
+            >
+              🔍 Filtros Avanzados
+            </button>
+            
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              style={{
+                padding: "0.6rem 1rem",
+                borderRadius: "25px",
+                border: `2px solid ${PALETAS.D.crema}`,
+                background: "white",
+                color: PALETAS.D.carbon,
+                fontSize: "0.85rem",
+                cursor: "pointer"
+              }}
+            >
+              <option value="popularity">⭐ Más Populares</option>
+              <option value="price-low">💰 Precio: Menor a Mayor</option>
+              <option value="price-high">💰 Precio: Mayor a Menor</option>
+              <option value="name">🔤 Nombre A-Z</option>
+              <option value="newest">🆕 Más Recientes</option>
+            </select>
+          </div>
+
+          {/* Advanced Filters Panel */}
+          {showFilters && (
+            <div style={{
+              background: "white",
+              border: `2px solid ${PALETAS.D.crema}`,
+              borderRadius: "20px",
+              padding: "1.5rem",
+              marginTop: "1rem",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.08)"
+            }}>
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: window.innerWidth <= 768 ? "1fr" : "repeat(auto-fit, minmax(200px, 1fr))",
+                gap: "1.5rem",
+                alignItems: "end"
+              }}>
+                {/* Price Range */}
+                <div>
+                  <label style={{
+                    display: "block",
+                    marginBottom: "0.5rem",
+                    fontWeight: "600",
+                    color: PALETAS.D.carbon,
+                    fontSize: "0.9rem"
+                  }}>
+                    💰 Rango de Precio
+                  </label>
+                  <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                    <input
+                      type="number"
+                      value={priceRange.min}
+                      onChange={(e) => setPriceRange({...priceRange, min: parseInt(e.target.value) || 0})}
+                      placeholder="Min"
+                      style={{
+                        width: "80px",
+                        padding: "0.5rem",
+                        border: `1px solid ${PALETAS.D.crema}`,
+                        borderRadius: "8px",
+                        fontSize: "0.85rem"
+                      }}
+                    />
+                    <span style={{ color: "#666" }}>-</span>
+                    <input
+                      type="number"
+                      value={priceRange.max}
+                      onChange={(e) => setPriceRange({...priceRange, max: parseInt(e.target.value) || 2000})}
+                      placeholder="Max"
+                      style={{
+                        width: "80px",
+                        padding: "0.5rem",
+                        border: `1px solid ${PALETAS.D.crema}`,
+                        borderRadius: "8px",
+                        fontSize: "0.85rem"
+                      }}
+                    />
+                    <span style={{ color: "#666", fontSize: "0.8rem" }}>MXN</span>
+                  </div>
+                </div>
+
+                {/* Rating Filter */}
+                <div>
+                  <label style={{
+                    display: "block",
+                    marginBottom: "0.5rem",
+                    fontWeight: "600",
+                    color: PALETAS.D.carbon,
+                    fontSize: "0.9rem"
+                  }}>
+                    ⭐ Calificación Mínima
+                  </label>
+                  <select
+                    value={minRating}
+                    onChange={(e) => setMinRating(parseInt(e.target.value))}
+                    style={{
+                      width: "100%",
+                      padding: "0.5rem",
+                      border: `1px solid ${PALETAS.D.crema}`,
+                      borderRadius: "8px",
+                      background: "white",
+                      fontSize: "0.85rem"
+                    }}
+                  >
+                    <option value={0}>Todas las calificaciones</option>
+                    <option value={1}>1+ estrella</option>
+                    <option value={2}>2+ estrellas</option>
+                    <option value={3}>3+ estrellas</option>
+                    <option value={4}>4+ estrellas</option>
+                    <option value={5}>5 estrellas</option>
+                  </select>
+                </div>
+
+                {/* Stock Filter */}
+                <div>
+                  <label style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    cursor: "pointer",
+                    fontWeight: "600",
+                    color: PALETAS.D.carbon,
+                    fontSize: "0.9rem"
+                  }}>
+                    <input
+                      type="checkbox"
+                      checked={showInStockOnly}
+                      onChange={(e) => setShowInStockOnly(e.target.checked)}
+                      style={{ transform: "scale(1.2)" }}
+                    />
+                    📦 Solo productos en stock
+                  </label>
+                </div>
+
+                {/* Clear Filters */}
+                <div>
+                  <button
+                    onClick={() => {
+                      setPriceRange({ min: 0, max: 2000 });
+                      setMinRating(0);
+                      setShowInStockOnly(false);
+                      setSortBy("popularity");
+                    }}
+                    style={{
+                      background: "transparent",
+                      color: PALETAS.D.verde,
+                      border: `2px solid ${PALETAS.D.verde}`,
+                      padding: "0.5rem 1rem",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                      fontSize: "0.85rem",
+                      fontWeight: "600",
+                      transition: "all 0.3s ease"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.background = PALETAS.D.verde;
+                      e.target.style.color = "white";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.background = "transparent";
+                      e.target.style.color = PALETAS.D.verde;
+                    }}
+                  >
+                    🗑️ Limpiar Filtros
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          
           {/* Results Counter */}
           <div style={{ 
             textAlign: "center", 
@@ -2269,6 +2552,9 @@ function App() {
             }}>
               {filteredProducts.length} {filteredProducts.length === 1 ? 'producto' : 'productos'} 
               {selectedCategory !== "Todos" && ` en ${selectedCategory.toLowerCase()}`}
+              {(priceRange.min > 0 || priceRange.max < 2000) && ` • $${priceRange.min} - $${priceRange.max} MXN`}
+              {minRating > 0 && ` • ${minRating}+ estrellas`}
+              {showInStockOnly && ` • Solo en stock`}
             </span>
               </div>
               </div>
@@ -2433,6 +2719,51 @@ function App() {
                     marginTop: "auto",
                     marginBottom: "0.5rem"
                   }}>
+                    {/* Wishlist Button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleWishlist(product);
+                      }}
+                      style={{
+                        background: isInWishlist(product.id) 
+                          ? `linear-gradient(135deg, ${PALETAS.D.verde} 0%, #8EB080 100%)` 
+                          : "transparent",
+                        color: isInWishlist(product.id) ? "white" : PALETAS.D.verde,
+                        border: `2px solid ${PALETAS.D.verde}`,
+                        padding: window.innerWidth <= 768 ? "0.7rem 1rem" : "0.6rem 1rem",
+                        borderRadius: "25px",
+                        cursor: "pointer",
+                        fontSize: window.innerWidth <= 768 ? "0.85rem" : "0.8rem",
+                        fontWeight: "600",
+                        transition: "all 0.3s ease",
+                        flex: window.innerWidth <= 768 ? "1" : "0 0 auto",
+                        minWidth: window.innerWidth <= 768 ? "auto" : "90px",
+                        height: window.innerWidth <= 768 ? "44px" : "36px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center"
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isInWishlist(product.id)) {
+                          e.target.style.background = PALETAS.D.verde;
+                          e.target.style.color = "white";
+                          e.target.style.transform = "translateY(-2px)";
+                          e.target.style.boxShadow = "0 4px 12px rgba(98, 141, 106, 0.3)";
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isInWishlist(product.id)) {
+                          e.target.style.background = "transparent";
+                          e.target.style.color = PALETAS.D.verde;
+                          e.target.style.transform = "translateY(0)";
+                          e.target.style.boxShadow = "none";
+                        }
+                      }}
+                    >
+                      {isInWishlist(product.id) ? "❤️ Guardado" : "🤍 Guardar"}
+                    </button>
+                    
                     {/* Ver más Button */}
                     <button
                         onClick={() => setOpenProduct(product)}
@@ -6005,6 +6336,175 @@ function App() {
             user={user}
             onClose={() => setShowAdminDashboard(false)}
           />
+        )}
+
+        {/* Wishlist Modal */}
+        {showWishlist && (
+          <div style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0,0,0,0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+            padding: "1rem"
+          }}
+          onClick={() => setShowWishlist(false)}
+          >
+            <div style={{
+              background: "white",
+              borderRadius: "20px",
+              padding: "2rem",
+              maxWidth: "600px",
+              width: "100%",
+              maxHeight: "80vh",
+              overflow: "auto",
+              boxShadow: "0 20px 60px rgba(0,0,0,0.3)"
+            }}
+            onClick={(e) => e.stopPropagation()}
+            >
+              <div style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "1.5rem"
+              }}>
+                <h2 style={{
+                  color: PALETAS.D.carbon,
+                  margin: 0,
+                  fontSize: "1.5rem",
+                  fontWeight: "700"
+                }}>
+                  ❤️ Mis Productos Guardados
+                </h2>
+                <button
+                  onClick={() => setShowWishlist(false)}
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "1.5rem",
+                    cursor: "pointer",
+                    color: "#666",
+                    padding: "0.5rem"
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+
+              {wishlist.length === 0 ? (
+                <div style={{
+                  textAlign: "center",
+                  padding: "2rem",
+                  color: "#666"
+                }}>
+                  <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🤍</div>
+                  <p style={{ fontSize: "1.1rem", margin: 0 }}>
+                    Tu lista de deseos está vacía
+                  </p>
+                  <p style={{ fontSize: "0.9rem", margin: "0.5rem 0 0 0" }}>
+                    Guarda productos que te gusten para verlos más tarde
+                  </p>
+                </div>
+              ) : (
+                <div style={{
+                  display: "grid",
+                  gap: "1rem"
+                }}>
+                  {wishlist.map(product => (
+                    <div key={product.id} style={{
+                      display: "flex",
+                      gap: "1rem",
+                      padding: "1rem",
+                      border: `2px solid ${PALETAS.D.crema}`,
+                      borderRadius: "15px",
+                      background: "linear-gradient(145deg, #ffffff 0%, #fefefe 100%)"
+                    }}>
+                      <img 
+                        src={product.imagen} 
+                        alt={product.nombre}
+                        style={{
+                          width: "80px",
+                          height: "80px",
+                          objectFit: "cover",
+                          borderRadius: "10px"
+                        }}
+                        onError={(e) => {
+                          e.target.src = "/images/logo/amorymiellogo.png";
+                        }}
+                      />
+                      <div style={{ flex: 1 }}>
+                        <h3 style={{
+                          margin: "0 0 0.5rem 0",
+                          color: PALETAS.D.carbon,
+                          fontSize: "1.1rem",
+                          fontWeight: "600"
+                        }}>
+                          {product.nombre}
+                        </h3>
+                        <p style={{
+                          margin: "0 0 0.5rem 0",
+                          color: "#666",
+                          fontSize: "0.9rem"
+                        }}>
+                          {product.descripcion}
+                        </p>
+                        <div style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center"
+                        }}>
+                          <span style={{
+                            fontSize: "1.2rem",
+                            fontWeight: "700",
+                            color: PALETAS.D.miel
+                          }}>
+                            ${product.precio} {product.moneda}
+                          </span>
+                          <div style={{ display: "flex", gap: "0.5rem" }}>
+                            <button
+                              onClick={() => addToCart(product)}
+                              style={{
+                                background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                                color: "white",
+                                border: "none",
+                                padding: "0.5rem 1rem",
+                                borderRadius: "20px",
+                                cursor: "pointer",
+                                fontSize: "0.85rem",
+                                fontWeight: "600"
+                              }}
+                            >
+                              Agregar al Carrito
+                            </button>
+                            <button
+                              onClick={() => toggleWishlist(product)}
+                              style={{
+                                background: "transparent",
+                                color: PALETAS.D.verde,
+                                border: `2px solid ${PALETAS.D.verde}`,
+                                padding: "0.5rem 1rem",
+                                borderRadius: "20px",
+                                cursor: "pointer",
+                                fontSize: "0.85rem",
+                                fontWeight: "600"
+                              }}
+                            >
+                              ❤️ Quitar
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         )}
 
     </div>
