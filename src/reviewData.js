@@ -1273,19 +1273,39 @@ export const getProductReviews = (productId) => {
     const reviewCount = Math.floor(Math.random() * 27) + 12; // 12-38 reviews
     const reviews = [];
     
-    // Spanish names for variety
+    // Diverse names from different cultures and languages
     const names = [
+      // Spanish/Latin American names
       "María González", "Carlos Ruiz", "Ana Martínez", "Roberto Silva", "Patricia López",
       "Miguel Torres", "Carmen Vega", "Fernando Castro", "Isabel Morales", "Diego Navarro",
       "Sofia Jiménez", "Valentina Cruz", "Gabriela Ríos", "Alejandra Flores", "Ricardo Peña",
       "Elena Ramírez", "Jorge Mendoza", "Lucía Herrera", "Andrés Vega", "Natalia Castro",
       "Pablo Morales", "Camila Silva", "Sebastián López", "Valeria Torres", "Daniel Ruiz",
       "Andrea Martínez", "Luis González", "Paola Herrera", "Mario Castro", "Claudia Vega",
-      "Rafael Silva", "Monica Torres", "Héctor López", "Beatriz Ruiz", "Oscar Martínez"
+      "Rafael Silva", "Monica Torres", "Héctor López", "Beatriz Ruiz", "Oscar Martínez",
+      
+      // English/Anglo names
+      "Sarah Johnson", "Michael Brown", "Emily Davis", "David Wilson", "Jessica Taylor",
+      "Christopher Lee", "Amanda Garcia", "Matthew Rodriguez", "Ashley Martinez", "Joshua Anderson",
+      "Samantha Thomas", "Daniel Jackson", "Nicole White", "Ryan Harris", "Stephanie Martin",
+      "Kevin Thompson", "Rachel Garcia", "Brandon Martinez", "Lauren Robinson", "Tyler Clark",
+      "Megan Rodriguez", "Justin Lewis", "Kayla Walker", "Andrew Hall", "Brittany Allen",
+      
+      // International names
+      "Priya Patel", "Ahmed Hassan", "Yuki Tanaka", "Chen Wei", "Fatima Al-Zahra",
+      "Ivan Petrov", "Aisha Mohammed", "Hiroshi Yamamoto", "Anastasia Volkov", "Rajesh Kumar",
+      "Layla Ibrahim", "Kenji Sato", "Elena Popov", "Mohammed Ali", "Sakura Nakamura",
+      "Dmitri Volkov", "Zara Khan", "Takeshi Honda", "Olga Petrov", "Hassan Al-Rashid",
+      
+      // Creative/Unique names
+      "Luna Moon", "River Stone", "Phoenix Rising", "Sage Wisdom", "Ocean Blue",
+      "Star Johnson", "Forest Green", "Crystal Clear", "Dawn Light", "Storm Cloud",
+      "Willow Tree", "Mountain Peak", "Desert Rose", "Thunder Bolt", "Rainbow Sky"
     ];
     
-    // Realistic comments organized by rating
-    const fiveStarComments = [
+    // Diverse, natural comments with mixed languages, typos, and unique content
+    const allComments = [
+      // 5-star comments (Spanish)
       "¡Excelente producto! La calidad es excepcional y se nota que está hecho con mucho amor. Muy recomendado!",
       "Increíble calidad! He notado cambios positivos desde que lo uso. Definitivamente volveré a comprar.",
       "¡Increíble! Las velas tienen un aroma tan natural y relajante. Se siente la energía positiva desde el primer momento.",
@@ -1300,10 +1320,36 @@ export const getProductReviews = (productId) => {
       "¡Increíble! No puedo creer lo bien que funciona. Definitivamente voy a comprar más productos de esta marca.",
       "¡Increíble calidad! He probado muchos productos similares y este es definitivamente el mejor.",
       "¡Fantástico! El producto superó todas mis expectativas. Definitivamente lo recomiendo.",
-      "¡Perfecto para mis necesidades! El aroma es muy agradable y la calidad es excepcional."
-    ];
-
-    const fourStarComments = [
+      "¡Perfecto para mis necesidades! El aroma es muy agradable y la calidad es excepcional.",
+      
+      // 5-star comments (English)
+      "Amazing product! The quality is outstanding and you can tell it's made with love. Highly recommended!",
+      "Incredible quality! I've noticed positive changes since I started using it. Will definitely buy again.",
+      "Perfect for my rituals. The aroma is very pleasant and the quality is exceptional. Highly recommended!",
+      "Excellent product! It really works and you can tell the difference. Definitely recommend it.",
+      "Fantastic! The product exceeded my expectations. The quality is incredible and the service is excellent.",
+      "I love this product. I've been using it for weeks and I already see results. Highly recommended!",
+      "Perfect! Exactly what I needed. The aroma is delicious and the duration is excellent.",
+      "Incredible! I can't believe how well it works. I will definitely buy more products from this brand.",
+      "Incredible quality! I've tried many similar products and this is definitely the best.",
+      "Fantastic! The product exceeded all my expectations. Definitely recommend it.",
+      "Perfect for my needs! The aroma is very pleasant and the quality is exceptional.",
+      "Excellent product! The quality is exceptional and you can tell it's made with great care.",
+      "I'm very satisfied with my purchase. The product is exactly as described and delivery was fast.",
+      "Excellent service and product. Delivery was fast and the product arrived in perfect condition.",
+      "I'm very happy with my purchase. The product is exactly what I expected and more.",
+      
+      // 5-star comments (Mixed languages with typos)
+      "¡Excelente! The quality is amazing, definitivamente lo recomiendo!",
+      "Increíble producto! I love it so much, muy buena calidad!",
+      "Perfect! El aroma es delicioso, I will buy again for sure!",
+      "¡Fantástico! The product works really well, muy satisfecha!",
+      "Amazing! La calidad es excepcional, I'm so happy with this purchase!",
+      "¡Perfecto! This is exactly what I needed, muy recomendado!",
+      "Incredible! El producto superó mis expectativas, love it!",
+      "¡Excelente! The quality is outstanding, definitivamente volveré a comprar!",
+      
+      // 4-star comments (Spanish)
       "Muy bueno, aunque esperaba un poco más de cantidad. Pero la calidad general es excelente.",
       "Muy bueno, el aroma es agradable y la presentación es hermosa. Se nota que está hecho con ingredientes naturales.",
       "Muy buena calidad, el aroma es tradicional y auténtico. Perfecto para mis rituales de limpieza.",
@@ -1320,30 +1366,105 @@ export const getProductReviews = (productId) => {
       "Muy contenta con mi compra. El producto es exactamente lo que esperaba y más.",
       "Excelente servicio y producto. La entrega fue rápida y el producto llegó en perfectas condiciones.",
       "Buen producto, cumple con su función. Aunque esperaba algo un poco diferente, funciona bien.",
-      "Muy satisfecha con la compra. El producto es de excelente calidad y el aroma es delicioso."
-    ];
-
-    const threeStarComments = [
+      "Muy satisfecha con la compra. El producto es de excelente calidad y el aroma es delicioso.",
+      
+      // 4-star comments (English)
+      "Very good, although I expected a bit more quantity. But the overall quality is excellent.",
+      "Very good, the aroma is pleasant and the presentation is beautiful. You can tell it's made with natural ingredients.",
+      "Very good quality, the aroma is traditional and authentic. Perfect for my cleansing rituals.",
+      "Good product, meets expectations. Delivery was fast and packaging very careful.",
+      "Excellent quality, although the price is a bit high. But it's worth it for the quality.",
+      "Very satisfied with the purchase. The product arrived in perfect condition and works very well.",
+      "Good product in general, although I expected a more intense aroma. But the quality is good.",
+      "Excellent quality-price ratio. The product is very good and customer service is excellent.",
+      "Very happy with my purchase. The product is exactly as described and delivery was fast.",
+      "Good product, although I would like it to be a bit bigger. But the quality is excellent.",
+      "Very satisfied with the purchase. The product works very well and the presentation is beautiful.",
+      "Excellent product! The quality is exceptional and you can tell it's made with great care.",
+      "Good product in general, although the aroma could be a bit stronger. But it works well.",
+      "Very happy with my purchase. The product is exactly what I expected and more.",
+      "Excellent service and product. Delivery was fast and the product arrived in perfect condition.",
+      "Good product, fulfills its function. Although I expected something a bit different, it works well.",
+      "Very satisfied with the purchase. The product is of excellent quality and the aroma is delicious.",
+      
+      // 4-star comments (Mixed languages with typos)
+      "Muy bueno! The quality is good, aunque esperaba más cantidad. But overall I'm happy!",
+      "Good producto! El aroma es nice, aunque podría ser más fuerte. But funciona bien!",
+      "¡Buen producto! The quality is excellent, aunque el precio es un poco alto. But vale la pena!",
+      "Very good! La calidad es buena, aunque esperaba algo diferente. But I'm satisfied!",
+      "¡Excelente! The product works well, aunque el aroma podría ser más intenso. But I like it!",
+      
+      // 3-star comments (Spanish)
       "Está bien, pero esperaba algo más intenso. La calidad es buena pero no es lo que esperaba.",
       "Buen producto, aunque el aroma podría ser más fuerte. Funciona bien pero no es excepcional.",
-      "Muy satisfecho con la compra. El producto funciona muy bien y la presentación es hermosa.",
       "Está bien, cumple su función básica. No es extraordinario pero funciona.",
       "Buen producto en general, aunque esperaba más duración. Pero cumple con lo básico.",
       "Está bien, aunque el precio es un poco alto para lo que ofrece. Pero funciona.",
       "Buen producto, aunque me gustaría que fuera un poco más grande. Pero la calidad es buena.",
-      "Está bien, aunque el aroma podría ser más intenso. Pero funciona bien para el uso básico."
-    ];
-
-    const twoStarComments = [
+      "Está bien, aunque el aroma podría ser más intenso. Pero funciona bien para el uso básico.",
+      "Es un producto decente, cumple con lo básico pero no es extraordinario.",
+      "Está bien para el precio, aunque esperaba más calidad. Pero funciona.",
+      "Buen producto, aunque no es lo que esperaba. Cumple su función básica.",
+      
+      // 3-star comments (English)
+      "It's okay, but I expected something more intense. The quality is good but it's not what I expected.",
+      "Good product, although the aroma could be stronger. It works well but it's not exceptional.",
+      "It's okay, it fulfills its basic function. It's not extraordinary but it works.",
+      "Good product in general, although I expected more duration. But it meets the basics.",
+      "It's okay, although the price is a bit high for what it offers. But it works.",
+      "Good product, although I would like it to be a bit bigger. But the quality is good.",
+      "It's okay, although the aroma could be more intense. But it works well for basic use.",
+      "It's a decent product, meets the basics but it's not extraordinary.",
+      "It's okay for the price, although I expected more quality. But it works.",
+      "Good product, although it's not what I expected. It fulfills its basic function.",
+      
+      // 3-star comments (Mixed languages with typos)
+      "Está bien, but I expected more. La calidad es decente pero no es lo que esperaba.",
+      "Good producto, aunque el aroma podría ser mejor. It works but not exceptional.",
+      "¡Está bien! The quality is okay, aunque esperaba más duración. But funciona.",
+      "It's okay, la calidad es buena pero no es extraordinario. But it works.",
+      
+      // 2-star comments (Spanish)
       "No es lo que esperaba. El aroma es muy suave y la duración es corta.",
       "Está bien pero no cumple con mis expectativas. El precio es alto para lo que ofrece.",
       "No me convenció del todo. El producto funciona pero no es excepcional.",
-      "Esperaba más del producto. No es malo pero tampoco es extraordinario."
+      "Esperaba más del producto. No es malo pero tampoco es extraordinario.",
+      "No es lo que esperaba. La calidad es regular y el aroma es muy suave.",
+      "Está bien pero no vale la pena el precio. Esperaba más calidad.",
+      "No me gustó mucho. El producto funciona pero no es lo que esperaba.",
+      "Esperaba más. La calidad es regular y no cumple con mis expectativas.",
+      
+      // 2-star comments (English)
+      "It's not what I expected. The aroma is very soft and the duration is short.",
+      "It's okay but it doesn't meet my expectations. The price is high for what it offers.",
+      "It didn't convince me completely. The product works but it's not exceptional.",
+      "I expected more from the product. It's not bad but it's not extraordinary either.",
+      "It's not what I expected. The quality is regular and the aroma is very soft.",
+      "It's okay but it's not worth the price. I expected more quality.",
+      "I didn't like it much. The product works but it's not what I expected.",
+      "I expected more. The quality is regular and doesn't meet my expectations.",
+      
+      // 2-star comments (Mixed languages with typos)
+      "No es lo que esperaba. The quality is regular, no vale la pena el precio.",
+      "It's okay but no cumple con mis expectativas. La calidad es regular.",
+      "No me gustó mucho. The product works but no es lo que esperaba.",
+      "Esperaba más. The quality is regular y no cumple con mis expectativas."
     ];
+    
+    // Track used names and comments to avoid repetition
+    const usedNames = new Set();
+    const usedComments = new Set();
     
     // Generate reviews with natural distribution
     for (let i = 0; i < reviewCount; i++) {
-      const randomName = names[Math.floor(Math.random() * names.length)];
+      // Select unique name
+      let randomName;
+      let attempts = 0;
+      do {
+        randomName = names[Math.floor(Math.random() * names.length)];
+        attempts++;
+      } while (usedNames.has(randomName) && attempts < 50);
+      usedNames.add(randomName);
       
       // Natural rating distribution: 75% 5-star, 18% 4-star, 5% 3-star, 2% 2-star
       let rating;
@@ -1353,16 +1474,38 @@ export const getProductReviews = (productId) => {
       else if (rand < 0.98) rating = 3;
       else rating = 2;
       
-      // Select appropriate comment based on rating
+      // Select unique comment
       let randomComment;
-      if (rating === 5) {
-        randomComment = fiveStarComments[Math.floor(Math.random() * fiveStarComments.length)];
-      } else if (rating === 4) {
-        randomComment = fourStarComments[Math.floor(Math.random() * fourStarComments.length)];
-      } else if (rating === 3) {
-        randomComment = threeStarComments[Math.floor(Math.random() * threeStarComments.length)];
-      } else {
-        randomComment = twoStarComments[Math.floor(Math.random() * twoStarComments.length)];
+      let commentAttempts = 0;
+      do {
+        randomComment = allComments[Math.floor(Math.random() * allComments.length)];
+        commentAttempts++;
+      } while (usedComments.has(randomComment) && commentAttempts < 50);
+      usedComments.add(randomComment);
+      
+      // Add natural typos and variations to comments (10% chance)
+      let finalComment = randomComment;
+      if (Math.random() < 0.1) {
+        // Add some common typos
+        const typos = [
+          { from: 'excelente', to: 'exelente' },
+          { from: 'excepcional', to: 'exepcional' },
+          { from: 'definitivamente', to: 'definitivamente' },
+          { from: 'recomendado', to: 'recomendado' },
+          { from: 'increíble', to: 'increible' },
+          { from: 'fantástico', to: 'fantastico' },
+          { from: 'perfecto', to: 'perfecto' },
+          { from: 'calidad', to: 'calidad' },
+          { from: 'producto', to: 'producto' },
+          { from: 'amazing', to: 'amazing' },
+          { from: 'incredible', to: 'incredible' },
+          { from: 'excellent', to: 'excelent' },
+          { from: 'quality', to: 'qality' },
+          { from: 'product', to: 'product' }
+        ];
+        
+        const randomTypo = typos[Math.floor(Math.random() * typos.length)];
+        finalComment = randomComment.replace(new RegExp(randomTypo.from, 'gi'), randomTypo.to);
       }
       
       // Generate random date within last 6 months
@@ -1370,14 +1513,23 @@ export const getProductReviews = (productId) => {
       const reviewDate = new Date();
       reviewDate.setDate(reviewDate.getDate() - randomDays);
       
+      // Generate email with some variation
+      const emailVariations = [
+        `${randomName.toLowerCase().replace(/\s+/g, '.')}@gmail.com`,
+        `${randomName.toLowerCase().replace(/\s+/g, '')}@yahoo.com`,
+        `${randomName.toLowerCase().replace(/\s+/g, '_')}@hotmail.com`,
+        `${randomName.toLowerCase().replace(/\s+/g, '')}@outlook.com`
+      ];
+      const randomEmail = emailVariations[Math.floor(Math.random() * emailVariations.length)];
+      
       reviews.push({
         id: `rev-${productId}-natural-${i + 1}`,
         userName: randomName,
-        userEmail: `${randomName.toLowerCase().replace(' ', '.')}@email.com`,
+        userEmail: randomEmail,
         rating: rating,
-        comment: randomComment,
+        comment: finalComment,
         date: reviewDate.toISOString().split('T')[0],
-        verified: Math.random() > 0.1 // 90% verified purchases
+        verified: Math.random() > 0.15 // 85% verified purchases
       });
     }
     
