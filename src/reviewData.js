@@ -1391,38 +1391,56 @@ export const getProductReviews = (productId, productName = '') => {
       if (productType.includes('vela') || productNameLower.includes('vela')) {
         return {
           5: [
-            "omg estas velas estan increibles!! el olor es tan rico que no puedo parar de olerlas jajaja",
-            "las compre para mi altar y wowwwww se siente la energia desde el primer dia, mi mama tambien las ama",
-            "candles are sooo good! i use them every night now, the honey smell is like real honey not fake stuff",
-            "estan geniales las velas, mi esposo dice que huele muy rico en toda la casa, ya voy a comprar mas",
-            "perfect for my meditation! the wax burns so clean and the scent is amazing, totally worth it",
-            "me encantan estas velas!! el aroma de miel es tan natural que parece que estoy en un panal de abejas",
-            "increible calidad! estas velas han cambiado mi espacio de meditacion, la energia es tan positiva",
-            "las velas estan perfectas, el olor es delicioso y duran mucho tiempo, definitivamente las recomiendo",
-            "so good! i bought 3 more after trying the first one, my whole family loves them",
-            "estan increibles! el aroma es tan relajante que me duermo mejor cuando las uso",
-            "amazing candles! the natural wax is so pure and the honey scent is divine, perfect for rituals",
-            "me fascinan estas velas, la cera es de excelente calidad y se nota que estan hechas con amor"
+            "omg estas velas estan increibles!! 🕯️✨ el olor es tan rico que no puedo parar de olerlas jajaja... mi mama me dice que estoy obsesionada 😅",
+            "las compre para mi altar y wowwwww se siente la energia desde el primer dia! 🔥 mi mama tambien las ama (y ella es muy picky) 💕",
+            "candles are sooo good! 🕯️ i use them every night now... the honey smell is like real honey not fake stuff (you know what i mean?) 🍯",
+            "estan geniales las velas! 😍 mi esposo dice que huele muy rico en toda la casa... ya voy a comprar mas (probablemente 5 mas) 🛒",
+            "perfect for my meditation! 🧘‍♀️ the wax burns so clean and the scent is amazing... totally worth it (even tho its a bit pricey) 💸",
+            "me encantan estas velas!! 🕯️✨ el aroma de miel es tan natural que parece que estoy en un panal de abejas... (literalmente) 🐝",
+            "increible calidad! 😱 estas velas han cambiado mi espacio de meditacion... la energia es tan positiva que no puedo explicarlo ✨",
+            "las velas estan perfectas! 🕯️ el olor es delicioso y duran mucho tiempo... definitivamente las recomiendo (ya le dije a 3 amigas) 👯‍♀️",
+            "so good! 🕯️ i bought 3 more after trying the first one... my whole family loves them (even my dad who never likes anything) 😂",
+            "estan increibles! ✨ el aroma es tan relajante que me duermo mejor cuando las uso... (mi terapeuta me recomendo aromaterapia) 🛏️",
+            "amazing candles! 🕯️ the natural wax is so pure and the honey scent is divine... perfect for rituals (i do them every full moon) 🌕",
+            "me fascinan estas velas! 😍 la cera es de excelente calidad y se nota que estan hechas con amor... (se siente la diferencia) 💕",
+            "wow estas velas son increibles! 🕯️✨ el olor es tan rico que no puedo parar de olerlas... (mi esposo me dice que estoy loca) 😅",
+            "las compre para mi altar y se siente la energia! 🔥 mi mama tambien las ama... (y ella es muy picky con estas cosas) 💕",
+            "candles are sooo good! 🕯️ i use them every night now... the honey smell is like real honey not fake stuff 🍯",
+            "estan geniales las velas! 😍 mi esposo dice que huele muy rico en toda la casa... ya voy a comprar mas 🛒",
+            "perfect for my meditation! 🧘‍♀️ the wax burns so clean and the scent is amazing... totally worth it 💸",
+            "me encantan estas velas!! 🕯️✨ el aroma de miel es tan natural que parece que estoy en un panal de abejas 🐝",
+            "increible calidad! 😱 estas velas han cambiado mi espacio de meditacion... la energia es tan positiva ✨",
+            "las velas estan perfectas! 🕯️ el olor es delicioso y duran mucho tiempo... definitivamente las recomiendo 👯‍♀️"
           ],
           4: [
-            "muy buenas velas, el aroma esta rico pero esperaba que fueran mas grandes, la calidad es buena",
-            "good candles! they smell nice and burn well, aunque esperaba mas olor pero overall estan bien",
-            "estan bien las velas, el precio es un poco alto pero vale la pena, el olor es delicioso",
-            "nice candles! the honey scent is lovely pero me gustaria que duraran mas tiempo",
-            "muy bueno! las velas funcionan bien aunque esperaba mas aroma, but im happy with them",
-            "estan bien, el olor podria ser mas fuerte pero la calidad es decente, las recomiendo",
-            "good product! the scent is pleasant aunque no es tan intenso como esperaba, pero funciona"
+            "muy buenas velas! 🕯️ el aroma esta rico pero esperaba que fueran mas grandes... (la calidad es buena tho) 👍",
+            "good candles! 🕯️ they smell nice and burn well... aunque esperaba mas olor pero overall estan bien (not bad) 😊",
+            "estan bien las velas! 🕯️ el precio es un poco alto pero vale la pena... el olor es delicioso (mi esposo las ama) 💕",
+            "nice candles! 🕯️ the honey scent is lovely... pero me gustaria que duraran mas tiempo (se acaban rapido) ⏰",
+            "muy bueno! 🕯️ las velas funcionan bien aunque esperaba mas aroma... but im happy with them (overall good) 😊",
+            "estan bien! 🕯️ el olor podria ser mas fuerte pero la calidad es decente... las recomiendo (con reservas) 👍",
+            "good product! 🕯️ the scent is pleasant... aunque no es tan intenso como esperaba, pero funciona (its ok) 😊",
+            "muy buenas velas! 🕯️ el aroma esta rico pero esperaba que fueran mas grandes... (la calidad es buena tho) 👍",
+            "good candles! 🕯️ they smell nice and burn well... aunque esperaba mas olor pero overall estan bien 😊",
+            "estan bien las velas! 🕯️ el precio es un poco alto pero vale la pena... el olor es delicioso 💕"
           ],
           3: [
-            "estan ok, las velas funcionan pero el aroma podria ser mas intenso, la calidad es regular",
-            "its okay, the candles work pero esperaba mas olor, la calidad es buena pero no es excepcional",
-            "estan bien pero esperaba mas duracion, cumple su funcion basica pero no es extraordinario",
-            "regular, el olor es suave y las velas se consumen rapido, no es lo que esperaba"
+            "estan ok... 🕯️ las velas funcionan pero el aroma podria ser mas intenso... (la calidad es regular) 🤷‍♀️",
+            "its okay... 🕯️ the candles work pero esperaba mas olor... (la calidad es buena pero no es excepcional) 😕",
+            "estan bien pero esperaba mas duracion... 🕯️ cumple su funcion basica pero no es extraordinario (meh) 🤷‍♀️",
+            "regular... 🕯️ el olor es suave y las velas se consumen rapido... no es lo que esperaba (disappointed) 😔",
+            "estan ok... 🕯️ las velas funcionan pero el aroma podria ser mas intenso... (la calidad es regular) 🤷‍♀️",
+            "its okay... 🕯️ the candles work pero esperaba mas olor... (la calidad es buena pero no es excepcional) 😕",
+            "estan bien pero esperaba mas duracion... 🕯️ cumple su funcion basica pero no es extraordinario 🤷‍♀️",
+            "regular... 🕯️ el olor es suave y las velas se consumen rapido... no es lo que esperaba 😔"
           ],
           2: [
-            "no es lo que esperaba, el aroma es muy suave y las velas se acaban muy rapido",
-            "its okay pero el olor es muy debil, no vale la pena el precio para lo que ofrece",
-            "estan mal, el olor casi no se siente y se consumen muy rapido, no las recomiendo"
+            "no es lo que esperaba... 🕯️ el aroma es muy suave y las velas se acaban muy rapido... (not worth it) 😞",
+            "its okay pero el olor es muy debil... 🕯️ no vale la pena el precio para lo que ofrece... (disappointed) 😔",
+            "estan mal... 🕯️ el olor casi no se siente y se consumen muy rapido... no las recomiendo (waste of money) 💸",
+            "no es lo que esperaba... 🕯️ el aroma es muy suave y las velas se acaban muy rapido... (not worth it) 😞",
+            "its okay pero el olor es muy debil... 🕯️ no vale la pena el precio para lo que ofrece... (disappointed) 😔",
+            "estan mal... 🕯️ el olor casi no se siente y se consumen muy rapido... no las recomiendo 💸"
           ]
         };
       }
@@ -1431,37 +1449,56 @@ export const getProductReviews = (productId, productName = '') => {
       if (productType.includes('aceite') || productNameLower.includes('aceite')) {
         return {
           5: [
-            "este aceite si funciona de verdad!! desde que lo uso siento que las cosas me salen mejor, muy bueno",
-            "incredible oil! ive noticed changes in my life since using it, the energy is amazing",
-            "excelente aceite! la calidad se nota que es natural, no como otros que he comprado",
-            "perfect for my rituals! the scent is authentic and the spiritual benefits are incredible",
-            "fantastico! este aceite ha cambiado mi vida, las oportunidades llegan mas facil ahora",
-            "amazing oil! the spiritual properties are incredible and the scent is so pure",
-            "increible! el aceite funciona de verdad, he notado cambios positivos desde que lo uso",
-            "perfect! this oil has opened so many doors for me, the energy is incredible",
-            "me encanta este aceite! lo uso todos los dias y siento que mi energia ha mejorado mucho",
-            "so good! i use it before important meetings and things always go better",
-            "estan increible! el aceite es muy poderoso, mi hermana tambien quiere uno ya",
-            "amazing! the oil really works, i feel more confident and positive when i use it"
+            "este aceite si funciona de verdad!! 🛢️✨ desde que lo uso siento que las cosas me salen mejor... (mi jefe me felicito ayer) 😊",
+            "incredible oil! 🛢️ ive noticed changes in my life since using it... the energy is amazing (my friends ask what changed) 🤩",
+            "excelente aceite! 🛢️ la calidad se nota que es natural... no como otros que he comprado (waste of money) 💸",
+            "perfect for my rituals! 🛢️ the scent is authentic and the spiritual benefits are incredible... (i use it every morning) 🌅",
+            "fantastico! 🛢️ este aceite ha cambiado mi vida... las oportunidades llegan mas facil ahora (literally!) 🚀",
+            "amazing oil! 🛢️ the spiritual properties are incredible and the scent is so pure... (my mom wants one too) 👩‍👧",
+            "increible! 🛢️ el aceite funciona de verdad... he notado cambios positivos desde que lo uso (my therapist noticed too) 🧠",
+            "perfect! 🛢️ this oil has opened so many doors for me... the energy is incredible (i feel unstoppable) 💪",
+            "me encanta este aceite! 🛢️ lo uso todos los dias y siento que mi energia ha mejorado mucho... (mi esposo lo nota) 💕",
+            "so good! 🛢️ i use it before important meetings and things always go better... (got promoted last week!) 📈",
+            "estan increible! 🛢️ el aceite es muy poderoso... mi hermana tambien quiere uno ya (she's jealous) 😂",
+            "amazing! 🛢️ the oil really works... i feel more confident and positive when i use it (life changing!) 🌟",
+            "wow este aceite es increible! 🛢️✨ desde que lo uso siento que las cosas me salen mejor... (mi jefe me felicito) 😊",
+            "incredible oil! 🛢️ ive noticed changes in my life since using it... the energy is amazing 🤩",
+            "excelente aceite! 🛢️ la calidad se nota que es natural... no como otros que he comprado 💸",
+            "perfect for my rituals! 🛢️ the scent is authentic and the spiritual benefits are incredible 🌅",
+            "fantastico! 🛢️ este aceite ha cambiado mi vida... las oportunidades llegan mas facil ahora 🚀",
+            "amazing oil! 🛢️ the spiritual properties are incredible and the scent is so pure 👩‍👧",
+            "increible! 🛢️ el aceite funciona de verdad... he notado cambios positivos desde que lo uso 🧠",
+            "perfect! 🛢️ this oil has opened so many doors for me... the energy is incredible 💪"
           ],
           4: [
-            "muy bueno el aceite, funciona bien aunque esperaba mas olor, pero overall estoy contenta",
-            "good oil! it works well aunque el precio es un poco alto, but the quality is excellent",
-            "buen aceite! la calidad es buena aunque me gustaria que fuera mas concentrado",
-            "nice oil! the spiritual benefits are good aunque esperaba mas intensidad en el aroma",
-            "estan bien, el aceite funciona pero no es tan fuerte como esperaba, la calidad es decente",
-            "its okay, the oil works pero esperaba mas beneficios espirituales, la calidad es regular"
+            "muy bueno el aceite! 🛢️ funciona bien aunque esperaba mas olor... pero overall estoy contenta (its good) 😊",
+            "good oil! 🛢️ it works well aunque el precio es un poco alto... but the quality is excellent (worth it) 💰",
+            "buen aceite! 🛢️ la calidad es buena aunque me gustaria que fuera mas concentrado... (still works tho) 👍",
+            "nice oil! 🛢️ the spiritual benefits are good aunque esperaba mas intensidad en el aroma... (its ok) 😊",
+            "estan bien! 🛢️ el aceite funciona pero no es tan fuerte como esperaba... (la calidad es decente) 🤷‍♀️",
+            "its okay! 🛢️ the oil works pero esperaba mas beneficios espirituales... (la calidad es regular) 😕",
+            "muy bueno el aceite! 🛢️ funciona bien aunque esperaba mas olor... pero overall estoy contenta 😊",
+            "good oil! 🛢️ it works well aunque el precio es un poco alto... but the quality is excellent 💰",
+            "buen aceite! 🛢️ la calidad es buena aunque me gustaria que fuera mas concentrado 👍",
+            "nice oil! 🛢️ the spiritual benefits are good aunque esperaba mas intensidad en el aroma 😊"
           ],
           3: [
-            "esta bien, el aceite funciona pero no es lo que esperaba, la calidad es decente",
-            "its okay, the oil works pero esperaba mas beneficios espirituales, la calidad es regular",
-            "estan ok pero esperaba mas, el aceite es suave y no siento mucho cambio",
-            "regular, funciona pero no es tan poderoso como otros que he usado"
+            "esta bien... 🛢️ el aceite funciona pero no es lo que esperaba... (la calidad es decente) 🤷‍♀️",
+            "its okay... 🛢️ the oil works pero esperaba mas beneficios espirituales... (la calidad es regular) 😕",
+            "estan ok pero esperaba mas... 🛢️ el aceite es suave y no siento mucho cambio... (meh) 🤷‍♀️",
+            "regular... 🛢️ funciona pero no es tan poderoso como otros que he usado... (disappointed) 😔",
+            "esta bien... 🛢️ el aceite funciona pero no es lo que esperaba... (la calidad es decente) 🤷‍♀️",
+            "its okay... 🛢️ the oil works pero esperaba mas beneficios espirituales... (la calidad es regular) 😕",
+            "estan ok pero esperaba mas... 🛢️ el aceite es suave y no siento mucho cambio 🤷‍♀️",
+            "regular... 🛢️ funciona pero no es tan poderoso como otros que he usado 😔"
           ],
           2: [
-            "no es lo que esperaba, el aceite es muy suave y no siento los beneficios espirituales",
-            "its okay pero no cumple con mis expectativas, las propiedades espirituales son muy debiles",
-            "estan mal, el aceite no funciona como esperaba, no lo recomiendo"
+            "no es lo que esperaba... 🛢️ el aceite es muy suave y no siento los beneficios espirituales... (not worth it) 😞",
+            "its okay pero no cumple con mis expectativas... 🛢️ las propiedades espirituales son muy debiles... (disappointed) 😔",
+            "estan mal... 🛢️ el aceite no funciona como esperaba... no lo recomiendo (waste of money) 💸",
+            "no es lo que esperaba... 🛢️ el aceite es muy suave y no siento los beneficios espirituales 😞",
+            "its okay pero no cumple con mis expectativas... 🛢️ las propiedades espirituales son muy debiles 😔",
+            "estan mal... 🛢️ el aceite no funciona como esperaba... no lo recomiendo 💸"
           ]
         };
       }
@@ -1470,37 +1507,56 @@ export const getProductReviews = (productId, productName = '') => {
       if (productType.includes('agua') || productNameLower.includes('agua') || productType.includes('florida')) {
         return {
           5: [
-            "el agua florida mas pura que he encontrado! perfecta para limpiar mi casa, el olor es autentico",
-            "perfect florida water! the spiritual cleansing properties are incredible and the scent is authentic",
-            "excelente agua florida! la calidad se nota que es tradicional, no como otras que he comprado",
-            "amazing spiritual water! i use it daily for cleansing and the energy difference is incredible",
-            "fantastico! esta agua florida es la mas pura que he usado, perfecta para mis rituales",
-            "incredible florida water! the traditional recipe and spiritual properties are exactly what i needed",
-            "perfecto! el agua florida funciona de maravilla para limpiar energias negativas, muy recomendado",
-            "excellent spiritual water! the cleansing properties are powerful and the scent is traditional",
-            "me encanta esta agua! la uso todos los dias y siento que mi casa esta mas limpia energeticamente",
-            "so good! i spray it around my house every morning and feel so much better",
-            "estan increible! el agua florida es muy poderosa, mi mama tambien quiere una botella",
-            "amazing! this water really works for cleansing, i feel more peaceful at home"
+            "el agua florida mas pura que he encontrado! 💧✨ perfecta para limpiar mi casa... el olor es autentico (como la de mi abuela) 👵",
+            "perfect florida water! 💧 the spiritual cleansing properties are incredible and the scent is authentic... (my house feels so clean) 🏠",
+            "excelente agua florida! 💧 la calidad se nota que es tradicional... no como otras que he comprado (fake stuff) 💸",
+            "amazing spiritual water! 💧 i use it daily for cleansing and the energy difference is incredible... (my cat loves it too) 🐱",
+            "fantastico! 💧 esta agua florida es la mas pura que he usado... perfecta para mis rituales (every full moon) 🌕",
+            "incredible florida water! 💧 the traditional recipe and spiritual properties are exactly what i needed... (life changing!) 🌟",
+            "perfecto! 💧 el agua florida funciona de maravilla para limpiar energias negativas... muy recomendado (mi vecina quiere saber donde comprarlo) 👥",
+            "excellent spiritual water! 💧 the cleansing properties are powerful and the scent is traditional... (my mom wants one) 👩‍👧",
+            "me encanta esta agua! 💧 la uso todos los dias y siento que mi casa esta mas limpia energeticamente... (mi esposo lo nota) 💕",
+            "so good! 💧 i spray it around my house every morning and feel so much better... (my plants are happier too) 🌱",
+            "estan increible! 💧 el agua florida es muy poderosa... mi mama tambien quiere una botella (she's obsessed) 😂",
+            "amazing! 💧 this water really works for cleansing... i feel more peaceful at home (my anxiety is better) 🧘‍♀️",
+            "wow el agua florida mas pura que he encontrado! 💧✨ perfecta para limpiar mi casa... el olor es autentico 👵",
+            "perfect florida water! 💧 the spiritual cleansing properties are incredible and the scent is authentic 🏠",
+            "excelente agua florida! 💧 la calidad se nota que es tradicional... no como otras que he comprado 💸",
+            "amazing spiritual water! 💧 i use it daily for cleansing and the energy difference is incredible 🐱",
+            "fantastico! 💧 esta agua florida es la mas pura que he usado... perfecta para mis rituales 🌕",
+            "incredible florida water! 💧 the traditional recipe and spiritual properties are exactly what i needed 🌟",
+            "perfecto! 💧 el agua florida funciona de maravilla para limpiar energias negativas... muy recomendado 👥",
+            "excellent spiritual water! 💧 the cleansing properties are powerful and the scent is traditional 👩‍👧"
           ],
           4: [
-            "muy buena agua florida, el aroma es tradicional y autentico, perfecto para mis rituales",
-            "good florida water! the cleansing properties work well aunque esperaba mas olor",
-            "buen agua! la calidad es buena aunque me gustaria que fuera mas concentrada",
-            "nice spiritual water! it works well aunque el precio es un poco alto para la cantidad",
-            "estan bien, el agua florida funciona pero el aroma podria ser mas fuerte, la calidad es decente",
-            "its okay, the spiritual water works pero esperaba mas poder de limpieza, la calidad es regular"
+            "muy buena agua florida! 💧 el aroma es tradicional y autentico... perfecto para mis rituales (its good) 😊",
+            "good florida water! 💧 the cleansing properties work well aunque esperaba mas olor... (still works tho) 👍",
+            "buen agua! 💧 la calidad es buena aunque me gustaria que fuera mas concentrada... (its ok) 😊",
+            "nice spiritual water! 💧 it works well aunque el precio es un poco alto para la cantidad... (worth it) 💰",
+            "estan bien! 💧 el agua florida funciona pero el aroma podria ser mas fuerte... (la calidad es decente) 🤷‍♀️",
+            "its okay! 💧 the spiritual water works pero esperaba mas poder de limpieza... (la calidad es regular) 😕",
+            "muy buena agua florida! 💧 el aroma es tradicional y autentico... perfecto para mis rituales 😊",
+            "good florida water! 💧 the cleansing properties work well aunque esperaba mas olor 👍",
+            "buen agua! 💧 la calidad es buena aunque me gustaria que fuera mas concentrada 😊",
+            "nice spiritual water! 💧 it works well aunque el precio es un poco alto para la cantidad 💰"
           ],
           3: [
-            "esta bien, el agua florida funciona pero el aroma podria ser mas fuerte, la calidad es decente",
-            "its okay, the spiritual water works pero esperaba mas poder de limpieza, la calidad es regular",
-            "estan ok pero esperaba mas, el agua es suave y no siento mucho cambio energetico",
-            "regular, funciona pero no es tan poderosa como otras que he usado"
+            "esta bien... 💧 el agua florida funciona pero el aroma podria ser mas fuerte... (la calidad es decente) 🤷‍♀️",
+            "its okay... 💧 the spiritual water works pero esperaba mas poder de limpieza... (la calidad es regular) 😕",
+            "estan ok pero esperaba mas... 💧 el agua es suave y no siento mucho cambio energetico... (meh) 🤷‍♀️",
+            "regular... 💧 funciona pero no es tan poderosa como otras que he usado... (disappointed) 😔",
+            "esta bien... 💧 el agua florida funciona pero el aroma podria ser mas fuerte... (la calidad es decente) 🤷‍♀️",
+            "its okay... 💧 the spiritual water works pero esperaba mas poder de limpieza... (la calidad es regular) 😕",
+            "estan ok pero esperaba mas... 💧 el agua es suave y no siento mucho cambio energetico 🤷‍♀️",
+            "regular... 💧 funciona pero no es tan poderosa como otras que he usado 😔"
           ],
           2: [
-            "no es lo que esperaba, el agua florida es muy suave y no siento los beneficios de limpieza",
-            "its okay pero las propiedades de limpieza espiritual son muy debiles, no vale la pena el precio",
-            "estan mal, el agua no funciona como esperaba, no la recomiendo"
+            "no es lo que esperaba... 💧 el agua florida es muy suave y no siento los beneficios de limpieza... (not worth it) 😞",
+            "its okay pero las propiedades de limpieza espiritual son muy debiles... 💧 no vale la pena el precio... (disappointed) 😔",
+            "estan mal... 💧 el agua no funciona como esperaba... no la recomiendo (waste of money) 💸",
+            "no es lo que esperaba... 💧 el agua florida es muy suave y no siento los beneficios de limpieza 😞",
+            "its okay pero las propiedades de limpieza espiritual son muy debiles... 💧 no vale la pena el precio 😔",
+            "estan mal... 💧 el agua no funciona como esperaba... no la recomiendo 💸"
           ]
         };
       }
@@ -1587,38 +1643,38 @@ export const getProductReviews = (productId, productName = '') => {
       // Default comments for other products
       return {
         5: [
-          "excelente producto! la calidad es excepcional y se nota que esta hecho con mucho amor, muy recomendado",
-          "amazing product! the quality is outstanding and you can tell its made with love, highly recommended",
-          "fantastico! el producto supero mis expectativas, la calidad es increible y el servicio excelente",
-          "perfect! this product has transformed my spiritual practice, the energy and benefits are incredible",
-          "increible! este producto realmente funciona, he notado cambios positivos desde que lo uso",
-          "excellent product! the spiritual properties are incredible and the quality is exceptional",
-          "perfecto! exactamente lo que necesitaba, la calidad es excepcional y los beneficios son increibles",
-          "incredible product! the spiritual benefits are life-changing and the quality is outstanding",
-          "me encanta este producto! lo uso todos los dias y siento que mi energia ha mejorado mucho",
-          "so good! i bought 2 more after trying the first one, my whole family loves it",
-          "estan increible! el producto es muy poderoso, mi hermana tambien quiere uno",
-          "amazing! this product really works, i feel more confident and positive when i use it"
+          "excelente producto! ✨ la calidad es excepcional y se nota que esta hecho con mucho amor... muy recomendado (mi mama lo ama) 👩‍👧",
+          "amazing product! ✨ the quality is outstanding and you can tell its made with love... highly recommended (life changing!) 🌟",
+          "fantastico! ✨ el producto supero mis expectativas... la calidad es increible y el servicio excelente (worth every penny) 💰",
+          "perfect! ✨ this product has transformed my spiritual practice... the energy and benefits are incredible (my therapist noticed) 🧠",
+          "increible! ✨ este producto realmente funciona... he notado cambios positivos desde que lo uso (my friends ask what changed) 👥",
+          "excellent product! ✨ the spiritual properties are incredible and the quality is exceptional... (my whole family uses it) 👨‍👩‍👧‍👦",
+          "perfecto! ✨ exactamente lo que necesitaba... la calidad es excepcional y los beneficios son increibles (game changer!) 🎮",
+          "incredible product! ✨ the spiritual benefits are life-changing and the quality is outstanding... (i feel unstoppable) 💪",
+          "me encanta este producto! ✨ lo uso todos los dias y siento que mi energia ha mejorado mucho... (mi esposo lo nota) 💕",
+          "so good! ✨ i bought 2 more after trying the first one... my whole family loves it (even my dad!) 👨‍👧",
+          "estan increible! ✨ el producto es muy poderoso... mi hermana tambien quiere uno (she's jealous) 😂",
+          "amazing! ✨ this product really works... i feel more confident and positive when i use it (life changing!) 🌟"
         ],
         4: [
-          "muy bueno aunque esperaba un poco mas de cantidad, pero la calidad general es excelente",
-          "good product! the quality is good aunque esperaba mas beneficios espirituales, but overall im happy",
-          "buen producto! la calidad es buena aunque el precio es un poco alto, but vale la pena",
-          "nice product! it works well aunque esperaba mas intensidad, but im satisfied",
-          "estan bien, el producto funciona pero no es tan poderoso como esperaba, la calidad es decente",
-          "its okay, the product works pero esperaba mas beneficios espirituales, la calidad es regular"
+          "muy bueno! ✨ aunque esperaba un poco mas de cantidad... pero la calidad general es excelente (its good) 😊",
+          "good product! ✨ the quality is good aunque esperaba mas beneficios espirituales... but overall im happy (worth it) 👍",
+          "buen producto! ✨ la calidad es buena aunque el precio es un poco alto... but vale la pena (still good) 💰",
+          "nice product! ✨ it works well aunque esperaba mas intensidad... but im satisfied (its ok) 😊",
+          "estan bien! ✨ el producto funciona pero no es tan poderoso como esperaba... (la calidad es decente) 🤷‍♀️",
+          "its okay! ✨ the product works pero esperaba mas beneficios espirituales... (la calidad es regular) 😕"
         ],
         3: [
-          "esta bien pero esperaba algo mas intenso, la calidad es buena pero no es lo que esperaba",
-          "its okay but i expected more, la calidad es decente pero no es lo que esperaba",
-          "good producto aunque el aroma podria ser mejor, it works but not exceptional",
-          "estan ok pero esperaba mas, el producto es suave y no siento mucho cambio",
-          "regular, funciona pero no es tan poderoso como otros que he usado"
+          "esta bien pero esperaba algo mas intenso... ✨ la calidad es buena pero no es lo que esperaba... (meh) 🤷‍♀️",
+          "its okay but i expected more... ✨ la calidad es decente pero no es lo que esperaba... (disappointed) 😔",
+          "good producto aunque el aroma podria ser mejor... ✨ it works but not exceptional... (regular) 🤷‍♀️",
+          "estan ok pero esperaba mas... ✨ el producto es suave y no siento mucho cambio... (meh) 🤷‍♀️",
+          "regular... ✨ funciona pero no es tan poderoso como otros que he usado... (disappointed) 😔"
         ],
         2: [
-          "no es lo que esperaba, el producto es muy suave y no siento los beneficios espirituales",
-          "its okay pero no cumple con mis expectativas, la calidad es regular",
-          "estan mal, el producto no funciona como esperaba, no lo recomiendo"
+          "no es lo que esperaba... ✨ el producto es muy suave y no siento los beneficios espirituales... (not worth it) 😞",
+          "its okay pero no cumple con mis expectativas... ✨ la calidad es regular... (disappointed) 😔",
+          "estan mal... ✨ el producto no funciona como esperaba... no lo recomiendo (waste of money) 💸"
         ]
       };
     };
