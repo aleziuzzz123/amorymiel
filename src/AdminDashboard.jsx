@@ -1294,6 +1294,12 @@ const AdminDashboard = ({ user, onClose }) => {
     setIsAddingCoupon(true);
     
     try {
+      // Debug: Check current user authentication
+      console.log('🔍 Current user:', user);
+      console.log('🔍 User email:', user?.email);
+      console.log('🔍 User UID:', user?.uid);
+      console.log('🔍 Is authenticated:', !!user);
+      
       // Validate required fields
       if (!newCoupon.code || !newCoupon.type || newCoupon.value <= 0) {
         alert('Por favor completa todos los campos requeridos');
@@ -1321,6 +1327,10 @@ const AdminDashboard = ({ user, onClose }) => {
       
       // Use dynamic import to avoid Firebase bundling issues
       const { addDoc, collection } = await import('firebase/firestore');
+      
+      console.log('🔄 Attempting to add document to coupons collection...');
+      console.log('🔄 Database instance:', db);
+      console.log('🔄 Collection reference:', collection(db, 'coupons'));
       
       const docRef = await addDoc(collection(db, 'coupons'), couponData);
       console.log('✅ Coupon created with ID:', docRef.id);
