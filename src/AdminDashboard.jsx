@@ -4751,6 +4751,19 @@ const AdminDashboard = ({ user, onClose }) => {
               </div>
             </div>
 
+            {/* Info Message */}
+            <div style={{
+              background: '#e3f2fd',
+              border: '1px solid #2196f3',
+              borderRadius: '6px',
+              padding: '0.75rem',
+              marginBottom: '1rem',
+              fontSize: '0.85rem',
+              color: '#1976d2'
+            }}>
+              <strong>💡 Información:</strong> Puedes seleccionar cualquier reseña (incluyendo las del sistema), pero solo las reseñas de usuarios pueden ser modificadas. Las reseñas del sistema son de solo lectura.
+            </div>
+
             {/* Search and Filter Controls */}
             <div style={{
               background: 'white',
@@ -4863,15 +4876,17 @@ const AdminDashboard = ({ user, onClose }) => {
                     background: isSelected ? '#f8f9fa' : 'white',
                     opacity: isStatic ? 0.9 : 1
                   }}>
-                    <div>
-                      <input
-                        type="checkbox"
-                        checked={isSelected}
-                        onChange={() => toggleReviewSelection(review.id)}
-                        style={{ transform: 'scale(1.2)' }}
-                        disabled={isStatic}
-                      />
-                    </div>
+                 <div>
+                   <input 
+                     type="checkbox" 
+                     checked={isSelected} 
+                     onChange={() => toggleReviewSelection(review.id)} 
+                     style={{ 
+                       transform: 'scale(1.2)',
+                       cursor: 'pointer'
+                     }}
+                   />
+                 </div>
                     <div>
                       <div style={{ fontWeight: '600', color: '#333' }}>
                         {review.userName}
@@ -4915,17 +4930,26 @@ const AdminDashboard = ({ user, onClose }) => {
                     </div>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                       {isStatic ? (
-                        <span style={{
-                          padding: '0.25rem 0.5rem',
-                          background: '#6c757d',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '4px',
-                          fontSize: '0.8rem',
-                          cursor: 'not-allowed'
-                        }}>
-                          🔒 Sistema
-                        </span>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', alignItems: 'center' }}>
+                          <span style={{
+                            padding: '0.25rem 0.5rem',
+                            background: '#6c757d',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '4px',
+                            fontSize: '0.8rem',
+                            cursor: 'not-allowed'
+                          }}>
+                            🔒 Sistema
+                          </span>
+                          <span style={{
+                            fontSize: '0.6rem',
+                            color: '#6c757d',
+                            textAlign: 'center'
+                          }}>
+                            Solo lectura
+                          </span>
+                        </div>
                       ) : (
                         <>
                           {!review.approved && review.status !== 'rejected' && (
