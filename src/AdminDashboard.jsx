@@ -648,6 +648,11 @@ const AdminDashboard = ({ user, onClose }) => {
   const loadDashboardData = async () => {
     setLoading(true);
     try {
+      // Debug: Check authentication status
+      console.log('Current user:', user);
+      console.log('User email:', user?.email);
+      console.log('Is admin:', user?.email === 'admin@amorymiel.com' || user?.email === 'babilionllc@gmail.com');
+      
       // Load users
       console.log('Loading users from Firestore...');
       let usersSnapshot;
