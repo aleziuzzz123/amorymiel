@@ -1613,12 +1613,6 @@ const AdminDashboard = ({ user, onClose }) => {
 
   const approveReview = async (reviewId) => {
     try {
-      // Check if it's a static review
-      if (reviewId.startsWith('static-')) {
-        alert('Esta reseña ya está aprobada (es una reseña pre-aprobada del sistema)');
-        return;
-      }
-      
       const { updateDoc, doc } = await import('firebase/firestore');
       await updateDoc(doc(db, 'reviews', reviewId), {
         approved: true,
@@ -1636,12 +1630,6 @@ const AdminDashboard = ({ user, onClose }) => {
 
   const rejectReview = async (reviewId) => {
     try {
-      // Check if it's a static review
-      if (reviewId.startsWith('static-')) {
-        alert('No se pueden rechazar las reseñas pre-aprobadas del sistema');
-        return;
-      }
-      
       const { updateDoc, doc } = await import('firebase/firestore');
       await updateDoc(doc(db, 'reviews', reviewId), {
         approved: false,
@@ -1658,12 +1646,6 @@ const AdminDashboard = ({ user, onClose }) => {
   };
 
   const deleteReview = async (reviewId) => {
-    // Check if it's a static review
-    if (reviewId.startsWith('static-')) {
-      alert('No se pueden eliminar las reseñas pre-aprobadas del sistema');
-      return;
-    }
-    
     if (window.confirm('¿Estás seguro de que quieres eliminar esta reseña?')) {
       try {
         const { deleteDoc, doc } = await import('firebase/firestore');
@@ -1703,15 +1685,8 @@ const AdminDashboard = ({ user, onClose }) => {
       const { updateDoc, doc, deleteDoc } = await import('firebase/firestore');
       
       let processedCount = 0;
-      let staticCount = 0;
       
       for (const reviewId of selectedReviews) {
-        // Skip static reviews
-        if (reviewId.startsWith('static-')) {
-          staticCount++;
-          continue;
-        }
-        
         if (action === 'approve') {
           await updateDoc(doc(db, 'reviews', reviewId), {
             approved: true,
@@ -1735,11 +1710,7 @@ const AdminDashboard = ({ user, onClose }) => {
       await loadReviews();
       setSelectedReviews([]);
       
-      let message = `${processedCount} reseña(s) ${action === 'approve' ? 'aprobada(s)' : action === 'reject' ? 'rechazada(s)' : 'eliminada(s)'} exitosamente`;
-      if (staticCount > 0) {
-        message += ` (${staticCount} reseñas pre-aprobadas del sistema fueron omitidas)`;
-      }
-      alert(message);
+      alert(`${processedCount} reseña(s) ${action === 'approve' ? 'aprobada(s)' : action === 'reject' ? 'rechazada(s)' : 'eliminada(s)'} exitosamente`);
     } catch (error) {
       console.error('Error performing bulk action:', error);
       alert('Error al realizar la acción');
@@ -4753,15 +4724,15 @@ const AdminDashboard = ({ user, onClose }) => {
 
             {/* Info Message */}
             <div style={{
-              background: '#e3f2fd',
-              border: '1px solid #2196f3',
+              background: '#e8f5e8',
+              border: '1px solid #4caf50',
               borderRadius: '6px',
               padding: '0.75rem',
               marginBottom: '1rem',
               fontSize: '0.85rem',
-              color: '#1976d2'
+              color: '#2e7d32'
             }}>
-              <strong>💡 Información:</strong> Puedes seleccionar cualquier reseña (incluyendo las del sistema), pero solo las reseñas de usuarios pueden ser modificadas. Las reseñas del sistema son de solo lectura.
+              <strong>💡 Información:</strong> Ahora puedes gestionar TODAS las reseñas (incluyendo las del sistema). Puedes aprobar, rechazar o eliminar cualquier reseña. Las reseñas del sistema están marcadas con "Sistema" pero son completamente editables.
             </div>
 
             {/* Search and Filter Controls */}
@@ -4929,76 +4900,63 @@ const AdminDashboard = ({ user, onClose }) => {
                       </span>
                     </div>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      {isStatic ? (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', alignItems: 'center' }}>
-                          <span style={{
+                      {!review.approved && review.status !== 'rejected' && (
+                        <button
+                          onClick={() => approveReview(review.id)}
+                          style={{
                             padding: '0.25rem 0.5rem',
-                            background: '#6c757d',
+                            background: '#51cf66',
                             color: 'white',
                             border: 'none',
                             borderRadius: '4px',
-                            fontSize: '0.8rem',
-                            cursor: 'not-allowed'
-                          }}>
-                            🔒 Sistema
-                          </span>
-                          <span style={{
-                            fontSize: '0.6rem',
-                            color: '#6c757d',
-                            textAlign: 'center'
-                          }}>
-                            Solo lectura
-                          </span>
-                        </div>
-                      ) : (
-                        <>
-                          {!review.approved && review.status !== 'rejected' && (
-                            <button
-                              onClick={() => approveReview(review.id)}
-                              style={{
-                                padding: '0.25rem 0.5rem',
-                                background: '#51cf66',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                                fontSize: '0.8rem'
-                              }}
-                            >
-                              ✅
-                            </button>
-                          )}
-                          {review.status !== 'rejected' && (
-                            <button
-                              onClick={() => rejectReview(review.id)}
-                              style={{
-                                padding: '0.25rem 0.5rem',
-                                background: '#ff6b6b',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                                fontSize: '0.8rem'
-                              }}
-                            >
-                              ❌
-                            </button>
-                          )}
-                          <button
-                            onClick={() => deleteReview(review.id)}
-                            style={{
-                              padding: '0.25rem 0.5rem',
-                              background: '#ff4757',
-                              color: 'white',
-                              border: 'none',
-                              borderRadius: '4px',
-                              cursor: 'pointer',
-                              fontSize: '0.8rem'
-                            }}
-                          >
-                            🗑️
-                          </button>
-                        </>
+                            cursor: 'pointer',
+                            fontSize: '0.8rem'
+                          }}
+                        >
+                          ✅
+                        </button>
+                      )}
+                      {review.status !== 'rejected' && (
+                        <button
+                          onClick={() => rejectReview(review.id)}
+                          style={{
+                            padding: '0.25rem 0.5rem',
+                            background: '#ff6b6b',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontSize: '0.8rem'
+                          }}
+                        >
+                          ❌
+                        </button>
+                      )}
+                      <button
+                        onClick={() => deleteReview(review.id)}
+                        style={{
+                          padding: '0.25rem 0.5rem',
+                          background: '#ff4757',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontSize: '0.8rem'
+                        }}
+                      >
+                        🗑️
+                      </button>
+                      {isStatic && (
+                        <span style={{
+                          padding: '0.25rem 0.5rem',
+                          background: '#6c757d',
+                          color: 'white',
+                          borderRadius: '4px',
+                          fontSize: '0.7rem',
+                          fontWeight: '500'
+                        }}>
+                          Sistema
+                        </span>
                       )}
                     </div>
                   </div>
