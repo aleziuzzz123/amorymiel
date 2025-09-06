@@ -448,6 +448,7 @@ function App() {
     const paymentStatus = urlParams.get('payment');
     const orderId = urlParams.get('order_id');
     const couponCode = urlParams.get('coupon');
+    const action = urlParams.get('action');
     
     if (paymentStatus && orderId) {
       handlePaymentReturn(paymentStatus, orderId);
@@ -458,6 +459,16 @@ function App() {
     // Handle coupon from email link
     if (couponCode) {
       setCouponCode(couponCode);
+      
+      // If action=cart, automatically open cart and apply coupon
+      if (action === 'cart') {
+        setShowCart(true);
+        // Auto-apply the coupon after a short delay to ensure cart is open
+        setTimeout(() => {
+          applyCoupon(couponCode);
+        }, 500);
+      }
+      
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }

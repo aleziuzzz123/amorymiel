@@ -128,7 +128,7 @@ exports.handler = async (event, context) => {
 
                     <!-- CTA Button -->
                     <div style="text-align: center; margin: 30px 0;">
-                        <a href="https://amorymiel.com?coupon=WELCOME10" class="cta-button" style="display: inline-block; background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); color: #ffffff; text-decoration: none; padding: 18px 40px; border-radius: 8px; font-size: 18px; font-weight: bold; box-shadow: 0 4px 15px rgba(212, 165, 116, 0.4);">
+                        <a href="https://amorymiel.com?coupon=WELCOME10&action=cart" class="cta-button" style="display: inline-block; background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); color: #ffffff; text-decoration: none; padding: 18px 40px; border-radius: 8px; font-size: 18px; font-weight: bold; box-shadow: 0 4px 15px rgba(212, 165, 116, 0.4);">
                             🛒 ¡COMPLETAR COMPRA CON DESCUENTO! 🛒
                         </a>
                         <p style="color: #666666; font-size: 14px; margin: 15px 0 0 0;">
