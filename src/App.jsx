@@ -2748,7 +2748,7 @@ function App() {
                       style={{
                         position: "absolute",
                         top: "12px",
-                        right: "12px",
+                        left: "12px",
                         width: "36px",
                         height: "36px",
                         borderRadius: "50%",
