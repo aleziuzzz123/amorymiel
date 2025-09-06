@@ -29,7 +29,117 @@ exports.handler = async (event, context) => {
 
     let result;
 
-    if (emailType === 'cart-abandonment') {
+            if (emailType === 'special-holiday') {
+              const holidayData = data.holidayData || {};
+              const holidayName = holidayData.name || 'Special Day';
+              const discountCode = holidayData.discountCode || 'SPECIAL10';
+              const discountPercent = holidayData.discountPercent || 10;
+              const theme = holidayData.theme || 'love';
+              const message = holidayData.message || 'Celebrate with us!';
+              
+              const htmlContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>${holidayName} - Amor y Miel</title>
+                    <style>
+                        @keyframes pulse {
+                            0% { transform: scale(1); opacity: 0.7; }
+                            50% { transform: scale(1.05); opacity: 1; }
+                            100% { transform: scale(1); opacity: 0.7; }
+                        }
+                        @keyframes glow {
+                            0%, 100% { box-shadow: 0 8px 20px rgba(212, 165, 116, 0.5); }
+                            50% { box-shadow: 0 8px 30px rgba(212, 165, 116, 0.8); }
+                        }
+                        .cta-button:hover {
+                            animation: glow 1s infinite;
+                            transform: translateY(-2px);
+                        }
+                    </style>
+                </head>
+                <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f9fa;">
+                    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+                        <!-- Header -->
+                        <div style="background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); padding: 30px 20px; text-align: center; box-shadow: 0 4px 15px rgba(212, 165, 116, 0.3);">
+                            <div style="margin-bottom: 15px;">
+                                <img src="https://amorymiel.com/images/logo/logo3.png" alt="Amor y Miel" style="height: 50px; max-width: 100%;" />
+                            </div>
+                            <h2 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.4);">${holidayName}</h2>
+                        </div>
+
+                        <!-- Main Content -->
+                        <div style="padding: 30px 20px;">
+                            <p style="color: #333333; font-size: 18px; line-height: 1.6; margin: 0 0 20px 0; font-weight: 500;">
+                                ¡Hola ${userName}! 👋
+                            </p>
+
+                            <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                                ${message}
+                            </p>
+
+                            <!-- Special Offer Banner -->
+                            <div style="background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); border-radius: 12px; padding: 25px; margin: 25px 0; text-align: center; box-shadow: 0 6px 20px rgba(212, 165, 116, 0.3);">
+                                <h3 style="color: #ffffff; margin: 0 0 15px 0; font-size: 22px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.4);">
+                                    🎉 ¡OFERTA ESPECIAL! 🔥
+                                </h3>
+                                <div style="background-color: #ffffff; border-radius: 8px; padding: 20px; margin: 15px 0;">
+                                    <p style="color: #2c3e50; font-size: 18px; margin: 0 0 10px 0; font-weight: 600;">
+                                        Usa el código: <span style="background-color: #d4a574; color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 18px; font-weight: bold;">${discountCode}</span>
+                                    </p>
+                                    <p style="color: #d4a574; font-size: 24px; margin: 0; font-weight: bold;">
+                                        ${discountPercent}% DE DESCUENTO
+                                    </p>
+                                </div>
+                                <p style="color: #ffffff; font-size: 14px; margin: 0; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">
+                                    ⏰ Solo por tiempo limitado - ¡No te lo pierdas!
+                                </p>
+                            </div>
+
+                            <!-- CTA Button -->
+                            <div style="text-align: center; margin: 30px 0;">
+                                <a href="https://amorymiel.com?coupon=${discountCode}&action=cart" class="cta-button" style="display: inline-block; background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); color: #ffffff; text-decoration: none; padding: 18px 40px; border-radius: 8px; font-size: 18px; font-weight: bold; box-shadow: 0 4px 15px rgba(212, 165, 116, 0.4);">
+                                    🛒 ¡APROVECHA LA OFERTA! 🛒
+                                </a>
+                                <p style="color: #666666; font-size: 14px; margin: 15px 0 0 0;">
+                                    💡 Ingresa el código <strong style="background-color: #d4a574; color: #fff; padding: 2px 6px; border-radius: 4px;">${discountCode}</strong> en tu carrito
+                                </p>
+                            </div>
+
+                            <p style="color: #666666; font-size: 14px; line-height: 1.6; margin: 20px 0 0 0; text-align: center;">
+                                Con amor y bendiciones,<br>El equipo de Amor y Miel 💝
+                            </p>
+                        </div>
+
+                        <!-- Footer -->
+                        <div style="background-color: #f8f9fa; padding: 20px; text-align: center; border-top: 1px solid #e9ecef;">
+                            <p style="color: #666666; font-size: 12px; margin: 0 0 10px 0;">
+                                Amor y Miel - Productos artesanales de miel
+                            </p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+              `;
+              
+              return {
+                statusCode: 200,
+                body: JSON.stringify({
+                  success: true,
+                  message: 'Holiday email sent successfully',
+                  result: await resend.emails.send({
+                    from: 'info@amorymiel.com',
+                    to: userEmail,
+                    subject: `🎉 ${holidayName} - ${discountPercent}% OFF en Amor y Miel`,
+                    html: htmlContent,
+                  })
+                })
+              };
+            }
+
+            if (emailType === 'cart-abandonment') {
       // Build cart items text
       const cartItemsText = cartItems.map(item =>
         `${item.productName || item.nombre} x ${item.quantity}`
