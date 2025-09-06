@@ -82,8 +82,12 @@
     </script>
     
     <!-- Google Analytics 4 -->
+    <script>
+      console.log('🔍 GA4 Script starting to load...');
+    </script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-6J7QCG478Z"></script>
     <script>
+      console.log('🔍 GA4 Script loaded, initializing...');
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
@@ -98,7 +102,7 @@
       });
       
       // Debug: Log when GA4 loads
-      console.log('Google Analytics 4 loaded with ID: G-6J7QCG478Z');
+      console.log('✅ Google Analytics 4 loaded with ID: G-6J7QCG478Z');
       gtag('event', 'page_view', {
         page_title: 'Amor Y Miel - Productos Holísticos Artesanales',
         page_location: window.location.href
