@@ -11,7 +11,7 @@ exports.handler = async (event, context) => {
 
   try {
     // Parse the request body
-    const { emailType, userEmail, userName, cartItems, cartTotal, orderId, message, subject, htmlContent } = JSON.parse(event.body);
+    const { emailType, userEmail, userName, cartItems, cartTotal, orderId, message, subject, htmlContent, holidayData } = JSON.parse(event.body);
 
     // Initialize Resend with API key from environment
     const resend = new Resend(process.env.RESEND_API_KEY);
@@ -30,12 +30,12 @@ exports.handler = async (event, context) => {
     let result;
 
             if (emailType === 'special-holiday') {
-              const holidayData = data.holidayData || {};
-              const holidayName = holidayData.name || 'Special Day';
-              const discountCode = holidayData.discountCode || 'SPECIAL10';
-              const discountPercent = holidayData.discountPercent || 10;
-              const theme = holidayData.theme || 'love';
-              const message = holidayData.message || 'Celebrate with us!';
+              const holidayInfo = holidayData || {};
+              const holidayName = holidayInfo.name || 'Special Day';
+              const discountCode = holidayInfo.discountCode || 'SPECIAL10';
+              const discountPercent = holidayInfo.discountPercent || 10;
+              const theme = holidayInfo.theme || 'love';
+              const message = holidayInfo.message || 'Celebrate with us!';
               
               const htmlContent = `
                 <!DOCTYPE html>
