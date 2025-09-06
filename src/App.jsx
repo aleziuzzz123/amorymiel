@@ -750,15 +750,36 @@ function App() {
   // Coupon system functions
   const loadCoupons = async () => {
     try {
+      if (!db) {
+        console.error('❌ Firebase not initialized');
+        return;
+      }
+      
+      console.log('🔄 Loading coupons from database...');
       const couponsQuery = query(collection(db, 'coupons'), where('active', '==', true));
       const couponsSnapshot = await getDocs(couponsQuery);
-      const couponsData = couponsSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+      const couponsData = couponsSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          code: data.code || '',
+          type: data.type || 'percentage',
+          value: data.value || 0,
+          minPurchase: data.minPurchase || 0,
+          maxUses: data.maxUses || 100,
+          usedCount: data.usedCount || 0,
+          perCustomerLimit: data.perCustomerLimit || 1,
+          startDate: data.startDate || '',
+          endDate: data.endDate || '',
+          active: data.active !== false,
+          description: data.description || ''
+        };
+      });
+      
+      console.log('✅ Loaded coupons:', couponsData);
       setCoupons(couponsData);
     } catch (error) {
-      console.error('Error loading coupons:', error);
+      console.error('❌ Error loading coupons:', error);
     }
   };
 
@@ -797,6 +818,8 @@ function App() {
   };
 
   const applyCoupon = async () => {
+    console.log('🎫 Starting coupon application process...');
+    
     if (!couponCode.trim()) {
       setCouponError('Por favor ingresa un código de cupón');
       return;
@@ -813,22 +836,20 @@ function App() {
         return;
       }
 
-      // First, refresh coupons from database to get latest data
-      console.log('🔄 Refreshing coupons from database...');
-      const couponsQuery = query(collection(db, 'coupons'), where('active', '==', true));
-      const couponsSnapshot = await getDocs(couponsQuery);
-      const freshCoupons = couponsSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+      // Load fresh coupons from database
+      console.log('🔄 Loading fresh coupons from database...');
+      await loadCoupons();
       
-      console.log('📋 Fresh coupons from database:', freshCoupons.map(c => c.code));
+      // Wait a moment for state to update
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      console.log('📋 Current coupons state:', coupons);
       console.log('🔍 Looking for coupon code:', couponCode.toUpperCase());
       
-      const coupon = freshCoupons.find(c => c.code.toUpperCase() === couponCode.toUpperCase());
+      const coupon = coupons.find(c => c && c.code && c.code.toUpperCase() === couponCode.toUpperCase());
       
       if (!coupon) {
-        console.log('❌ Coupon not found in database');
+        console.log('❌ Coupon not found in current coupons state');
         setCouponError('Código de cupón no válido');
         return;
       }
@@ -855,26 +876,15 @@ function App() {
 
       console.log('✅ Coupon validation passed, applying coupon...');
       
-      // Set the applied coupon first
+      // Set the applied coupon
       setAppliedCoupon(coupon);
+      setCouponSuccess('¡Cupón aplicado exitosamente!');
+      setCouponCode('');
       
-      // Wait a moment for state to update, then show success
-      setTimeout(() => {
-        setCouponSuccess('¡Cupón aplicado exitosamente!');
-        setCouponCode('');
-        console.log('✅ Coupon applied successfully');
-      }, 100);
-      
-      // Update the coupons state with fresh data
-      setCoupons(freshCoupons);
+      console.log('✅ Coupon applied successfully');
       
     } catch (error) {
       console.error('❌ Error applying coupon:', error);
-      console.error('❌ Error details:', {
-        message: error.message,
-        code: error.code,
-        stack: error.stack
-      });
       setCouponError(`Error al aplicar el cupón: ${error.message}`);
     }
   };
@@ -886,24 +896,24 @@ function App() {
   };
 
   // Test function to check if coupon exists
-  const testCouponExists = async (couponCode) => {
+  const testCouponExists = async (testCode) => {
     try {
       if (!db) {
         console.error('❌ Firebase not initialized');
         return false;
       }
 
-      console.log('🧪 Testing if coupon exists:', couponCode);
-      const couponsQuery = query(collection(db, 'coupons'));
-      const couponsSnapshot = await getDocs(couponsQuery);
-      const allCoupons = couponsSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+      console.log('🧪 Testing if coupon exists:', testCode);
       
-      console.log('📋 All coupons in database:', allCoupons.map(c => ({ code: c.code, active: c.active })));
+      // Load coupons first
+      await loadCoupons();
       
-      const coupon = allCoupons.find(c => c.code.toUpperCase() === couponCode.toUpperCase());
+      // Wait for state to update
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      console.log('📋 Current coupons state:', coupons);
+      
+      const coupon = coupons.find(c => c && c.code && c.code.toUpperCase() === testCode.toUpperCase());
       console.log('🔍 Found coupon:', coupon);
       
       return coupon;
