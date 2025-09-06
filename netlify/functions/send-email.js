@@ -70,13 +70,11 @@ exports.handler = async (event, context) => {
         </head>
         <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f9fa;">
             <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
-                <!-- Header -->
-                <div style="background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); padding: 40px 20px; text-align: center; box-shadow: 0 4px 15px rgba(212, 165, 116, 0.3);">
-                    <div style="margin-bottom: 20px;">
-                        <img src="https://amorymiel.com/images/logo/amorymiellogo.png" alt="Amor y Miel" style="height: 60px; max-width: 100%;" />
-                    </div>
-                    <h2 style="color: #ffffff; margin: 15px 0 0 0; font-size: 22px; font-weight: 500; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">¿Olvidaste algo en tu carrito?</h2>
-                </div>
+                        <!-- Header -->
+                        <div style="background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); padding: 30px 20px; text-align: center; box-shadow: 0 4px 15px rgba(212, 165, 116, 0.3);">
+                            <h2 style="color: #ffffff; margin: 0 0 10px 0; font-size: 24px; font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.4);">¿Olvidaste algo en tu carrito?</h2>
+                            <p style="color: #ffffff; margin: 0; font-size: 16px; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">Amor y Miel</p>
+                        </div>
 
                 <!-- Main Content -->
                 <div style="padding: 30px 20px;">
@@ -89,94 +87,50 @@ exports.handler = async (event, context) => {
                         <strong>¡No te preocupes! Tus productos siguen esperándote.</strong>
                     </p>
 
-                    <!-- Product Benefits -->
-                    <div style="background-color: #f8f9fa; border-radius: 10px; padding: 20px; margin: 20px 0; border-left: 4px solid #d4a574;">
-                        <h4 style="color: #2c3e50; margin: 0 0 15px 0; font-size: 18px; text-align: center;">✨ ¿Por qué elegir nuestros productos?</h4>
-                        <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 15px; text-align: center;">
-                            <div style="flex: 1; min-width: 120px;">
-                                <div style="font-size: 24px; margin-bottom: 8px;">🌿</div>
-                                <p style="color: #2c3e50; font-size: 14px; margin: 0; font-weight: 600;">100% Natural</p>
-                            </div>
-                            <div style="flex: 1; min-width: 120px;">
-                                <div style="font-size: 24px; margin-bottom: 8px;">💝</div>
-                                <p style="color: #2c3e50; font-size: 14px; margin: 0; font-weight: 600;">Hecho con Amor</p>
-                            </div>
-                            <div style="flex: 1; min-width: 120px;">
-                                <div style="font-size: 24px; margin-bottom: 8px;">🚚</div>
-                                <p style="color: #2c3e50; font-size: 14px; margin: 0; font-weight: 600;">Envío Gratis</p>
-                            </div>
-                            <div style="flex: 1; min-width: 120px;">
-                                <div style="font-size: 24px; margin-bottom: 8px;">⭐</div>
-                                <p style="color: #2c3e50; font-size: 14px; margin: 0; font-weight: 600;">Calidad Premium</p>
-                            </div>
-                        </div>
+                    <!-- Simple Benefits -->
+                    <div style="background-color: #ffffff; border: 2px solid #d4a574; border-radius: 8px; padding: 15px; margin: 20px 0; text-align: center;">
+                        <p style="color: #2c3e50; font-size: 16px; margin: 0; font-weight: 600;">
+                            🌿 100% Natural • 💝 Hecho con Amor • 🚚 Envío Gratis • ⭐ Calidad Premium
+                        </p>
                     </div>
 
                     <!-- Special Offer Banner -->
-                    <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); border-radius: 15px; padding: 30px; margin: 30px 0; text-align: center; box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4); border: 3px solid #fff;">
-                        <div style="font-size: 40px; margin-bottom: 20px;">🎉</div>
-                        <h3 style="color: #ffffff; margin: 0 0 15px 0; font-size: 26px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.4);">
-                            ¡OFERTA ESPECIAL PARA TI! 🔥
+                    <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); border-radius: 12px; padding: 25px; margin: 25px 0; text-align: center; box-shadow: 0 6px 20px rgba(231, 76, 60, 0.3);">
+                        <h3 style="color: #ffffff; margin: 0 0 15px 0; font-size: 22px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.4);">
+                            🎉 ¡OFERTA ESPECIAL! 🔥
                         </h3>
-                        <p style="color: #ffffff; font-size: 18px; margin: 0 0 25px 0; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.4);">
-                            No dejes que otros se lleven tus productos favoritos
+                        <div style="background-color: #ffffff; border-radius: 8px; padding: 20px; margin: 15px 0;">
+                            <p style="color: #2c3e50; font-size: 18px; margin: 0 0 10px 0; font-weight: 600;">
+                                Usa el código: <span style="background-color: #e74c3c; color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 18px; font-weight: bold;">WELCOME10</span>
+                            </p>
+                            <p style="color: #27ae60; font-size: 24px; margin: 0; font-weight: bold;">
+                                10% DE DESCUENTO
+                            </p>
+                        </div>
+                        <p style="color: #ffffff; font-size: 14px; margin: 0; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">
+                            ⏰ Solo por 24 horas - ¡No te lo pierdas!
                         </p>
-                        <div style="background-color: #ffffff; border-radius: 12px; padding: 20px; margin: 20px 0; border: 2px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                            <p style="color: #2c3e50; font-size: 18px; margin: 0 0 15px 0; font-weight: 600;">
-                                Usa el código: <strong style="background-color: #e74c3c; color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 20px;">WELCOME10</strong>
-                            </p>
-                            <div style="background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); border-radius: 8px; padding: 15px; margin: 10px 0;">
-                                <span style="color: #ffffff; font-size: 32px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
-                                    10% DE DESCUENTO
-                                </span>
-                            </div>
-                        </div>
-                        <div style="background-color: #ffffff; border-radius: 25px; padding: 12px 20px; display: inline-block; margin-top: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                            <p style="color: #e74c3c; font-size: 16px; margin: 0; font-weight: bold;">
-                                ⏰ SOLO POR 24 HORAS - ¡NO TE LO PIERDAS!
-                            </p>
-                        </div>
                     </div>
 
                     <!-- Cart Items -->
-                    <div style="background-color: #f8f9fa; border-radius: 12px; padding: 20px; margin: 25px 0; border: 2px solid #dee2e6;">
-                        <h3 style="color: #333333; margin: 0 0 15px 0; font-size: 18px; text-align: center;">🛍️ Tus Productos</h3>
-                        <p style="color: #666666; font-size: 16px; margin: 0 0 15px 0; text-align: center;">${cartItemsText}</p>
-                        <div style="text-align: center; background-color: #ffffff; border-radius: 8px; padding: 15px; margin: 10px 0;">
-                            <p style="color: #333333; font-size: 18px; font-weight: bold; margin: 0;">
-                                Total: ${cartTotalFormatted}
-                            </p>
-                            <p style="color: #e74c3c; font-size: 16px; font-weight: 600; margin: 5px 0 0 0;">
-                                Con WELCOME10: Ahorra ${new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(cartTotal * 0.1)}
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Urgency Message -->
-                    <div style="background: linear-gradient(135deg, #ff4757 0%, #ff3838 100%); border-radius: 15px; padding: 25px; margin: 30px 0; text-align: center; box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4); border: 3px solid #fff;">
-                        <div style="font-size: 30px; margin-bottom: 15px;">⚡</div>
-                        <p style="color: #ffffff; font-size: 22px; margin: 0 0 15px 0; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
-                            ¡ATENCIÓN! ⚡
+                    <div style="background-color: #f8f9fa; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
+                        <p style="color: #333333; font-size: 16px; margin: 0 0 10px 0; font-weight: 600;">🛍️ Tus Productos</p>
+                        <p style="color: #666666; font-size: 14px; margin: 0 0 15px 0;">${cartItemsText}</p>
+                        <p style="color: #333333; font-size: 18px; font-weight: bold; margin: 0;">
+                            Total: ${cartTotalFormatted}
                         </p>
-                        <p style="color: #ffffff; font-size: 18px; margin: 0; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">
-                            Esta oferta expira en <strong style="background-color: rgba(255, 255, 255, 0.3); padding: 2px 8px; border-radius: 4px;">24 horas</strong>. ¡No pierdas esta oportunidad única!
+                        <p style="color: #e74c3c; font-size: 14px; font-weight: 600; margin: 5px 0 0 0;">
+                            Con WELCOME10: Ahorra ${new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(cartTotal * 0.1)}
                         </p>
                     </div>
 
                     <!-- CTA Button -->
-                    <div style="text-align: center; margin: 40px 0; padding: 20px; background-color: #f8f9fa; border-radius: 15px; border: 2px solid #e9ecef;">
-                        <a href="https://amorymiel.com" class="cta-button" style="display: inline-block; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: #ffffff; text-decoration: none; padding: 25px 50px; border-radius: 50px; font-size: 22px; font-weight: bold; box-shadow: 0 10px 30px rgba(231, 76, 60, 0.5); text-transform: uppercase; letter-spacing: 2px; border: 3px solid #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="https://amorymiel.com" class="cta-button" style="display: inline-block; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: #ffffff; text-decoration: none; padding: 18px 40px; border-radius: 8px; font-size: 18px; font-weight: bold; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);">
                             🛒 ¡COMPLETAR COMPRA CON DESCUENTO! 🛒
                         </a>
-                        <p style="color: #2c3e50; font-size: 16px; margin: 20px 0 0 0; font-style: italic; font-weight: 600;">
-                            Haz clic aquí para completar tu compra y ahorrar dinero
-                        </p>
-                    </div>
-
-                    <!-- Simple Instructions -->
-                    <div style="background-color: #e8f5e8; border-radius: 10px; padding: 15px; margin: 20px 0; text-align: center; border-left: 4px solid #27ae60;">
-                        <p style="color: #2c3e50; font-size: 16px; margin: 0; font-weight: 600;">
-                            💡 <strong>Cómo usar tu descuento:</strong> Haz clic en el botón de arriba → Ve a tu carrito → Ingresa <strong style="background-color: #e74c3c; color: #fff; padding: 2px 8px; border-radius: 4px;">WELCOME10</strong>
+                        <p style="color: #666666; font-size: 14px; margin: 15px 0 0 0;">
+                            💡 Ingresa el código <strong style="background-color: #e74c3c; color: #fff; padding: 2px 6px; border-radius: 4px;">WELCOME10</strong> en tu carrito
                         </p>
                     </div>
 
