@@ -121,6 +121,27 @@ exports.handler = async (event, context) => {
         subject: subject,
         html: htmlContent
       });
+    } else if (emailType === 'order-confirmation') {
+      result = await resend.emails.send({
+        from: 'info@amorymiel.com',
+        to: [userEmail],
+        subject: subject,
+        html: htmlContent
+      });
+    } else if (emailType === 'shipping-update') {
+      result = await resend.emails.send({
+        from: 'info@amorymiel.com',
+        to: [userEmail],
+        subject: subject,
+        html: htmlContent
+      });
+    } else if (emailType === 'delivery-confirmation') {
+      result = await resend.emails.send({
+        from: 'info@amorymiel.com',
+        to: [userEmail],
+        subject: subject,
+        html: htmlContent
+      });
     }
 
     console.log('✅ Email sent successfully:', result);

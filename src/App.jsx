@@ -1299,11 +1299,18 @@ function App() {
         estimated_delivery: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString('es-MX')
       };
 
-      await resend.emails.send({
-        from: 'info@amorymiel.com',
-        to: userEmail,
-        subject: `Order Confirmed #${order.id}!`,
-        html: `<h1>Order Confirmed!</h1><p>Hello ${userName}, your order ${order.id} has been confirmed!</p>`
+      // Send via Netlify function
+      await fetch('/.netlify/functions/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          emailType: 'order-confirmation',
+          userEmail: userEmail,
+          userName: userName,
+          orderId: order.id,
+          subject: `Order Confirmed #${order.id}!`,
+          htmlContent: `<h1>Order Confirmed!</h1><p>Hello ${userName}, your order ${order.id} has been confirmed!</p>`
+        })
       });
       
       console.log('Order confirmation email sent to:', userEmail);
@@ -1325,11 +1332,18 @@ function App() {
         tracking_url: `https://amorymiel.com/rastrear?order=${order.trackingNumber}`
       };
 
-      await resend.emails.send({
-        from: 'info@amorymiel.com',
-        to: userEmail,
-        subject: `Your order ${order.id} is on the way!`,
-        html: `<h1>Shipping Update!</h1><p>Hello ${userName}, your order ${order.id} is on the way!</p>`
+      // Send via Netlify function
+      await fetch('/.netlify/functions/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          emailType: 'shipping-update',
+          userEmail: userEmail,
+          userName: userName,
+          orderId: order.id,
+          subject: `Your order ${order.id} is on the way!`,
+          htmlContent: `<h1>Shipping Update!</h1><p>Hello ${userName}, your order ${order.id} is on the way!</p>`
+        })
       });
       
       console.log('Shipping update email sent to:', userEmail);
@@ -1350,11 +1364,18 @@ function App() {
         reorder_url: `https://amorymiel.com/productos`
       };
 
-      await resend.emails.send({
-        from: 'info@amorymiel.com',
-        to: userEmail,
-        subject: `Your order ${order.id} has been delivered!`,
-        html: `<h1>Order Delivered!</h1><p>Hello ${userName}, your order ${order.id} has been delivered!</p>`
+      // Send via Netlify function
+      await fetch('/.netlify/functions/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          emailType: 'delivery-confirmation',
+          userEmail: userEmail,
+          userName: userName,
+          orderId: order.id,
+          subject: `Your order ${order.id} has been delivered!`,
+          htmlContent: `<h1>Order Delivered!</h1><p>Hello ${userName}, your order ${order.id} has been delivered!</p>`
+        })
       });
       
       console.log('Delivery confirmation email sent to:', userEmail);
