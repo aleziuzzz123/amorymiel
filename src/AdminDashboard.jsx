@@ -430,6 +430,105 @@ const AdminDashboard = ({ user, onClose }) => {
   };
 
 
+  const loadDashboardData = async () => {
+    setLoading(true);
+    try {
+      // Load users
+      console.log('Loading users from Firestore...');
+      let usersSnapshot;
+      try {
+        const usersQuery = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
+        usersSnapshot = await getDocs(usersQuery);
+      } catch (error) {
+        console.log('OrderBy failed, trying without orderBy:', error.message);
+        const usersQuery = query(collection(db, 'users'));
+        usersSnapshot = await getDocs(usersQuery);
+      }
+      
+      let usersData = [];
+      if (!usersSnapshot.empty) {
+        usersData = usersSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+      }
+      
+      setUsers(usersData);
+      console.log(`Loaded ${usersData.length} users`);
+      
+      // Load orders
+      console.log('Loading orders from Firestore...');
+      const ordersQuery = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
+      const ordersSnapshot = await getDocs(ordersQuery);
+      const ordersData = ordersSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setOrders(ordersData);
+      console.log(`Loaded ${ordersData.length} orders`);
+      
+      // Load products
+      console.log('Loading products from Firestore...');
+      const productsQuery = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
+      const productsSnapshot = await getDocs(productsQuery);
+      const productsData = productsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setProducts(productsData);
+      console.log(`Loaded ${productsData.length} products`);
+      
+      // Load cart items
+      console.log('Loading cart items from Firestore...');
+      const cartQuery = query(collection(db, 'cartItems'), orderBy('createdAt', 'desc'));
+      const cartSnapshot = await getDocs(cartQuery);
+      const cartData = cartSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setCartItems(cartData);
+      console.log(`Loaded ${cartData.length} cart items`);
+      
+      // Load coupons
+      console.log('Loading coupons from Firestore...');
+      const couponsQuery = query(collection(db, 'coupons'), orderBy('createdAt', 'desc'));
+      const couponsSnapshot = await getDocs(couponsQuery);
+      const couponsData = couponsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setCoupons(couponsData);
+      console.log(`Loaded ${couponsData.length} coupons`);
+      
+      // Load reviews
+      await loadReviews();
+      
+      // Calculate stats
+      const totalRevenue = ordersData.reduce((sum, order) => sum + (order.total || 0), 0);
+      const totalOrders = ordersData.length;
+      const totalUsers = usersData.length;
+      const totalProducts = productsData.length;
+      const abandonedCarts = cartData.filter(item => 
+        item.status === 'abandoned' && 
+        new Date() - new Date(item.createdAt) > 24 * 60 * 60 * 1000
+      ).length;
+      
+      setStats({
+        totalRevenue,
+        totalOrders,
+        totalUsers,
+        totalProducts,
+        abandonedCarts
+      });
+      
+      console.log('Dashboard data loaded successfully');
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const refreshDashboardData = async () => {
     try {
       // Load users
