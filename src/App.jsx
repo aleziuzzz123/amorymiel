@@ -942,6 +942,13 @@ function App() {
     }
   };
 
+  // Load reviews when a product is opened
+  useEffect(() => {
+    if (openProduct) {
+      loadProductReviews(openProduct.id, openProduct.nombre);
+    }
+  }, [openProduct?.id, openProduct?.nombre]);
+
   const submitReview = async () => {
     if (!user || !reviewingProduct || !newReview.comment.trim()) {
       alert('Por favor completa tu comentario');
@@ -5373,22 +5380,16 @@ function App() {
 
             {/* Product Detail Modal */}
       {openProduct && (() => {
-        // Merge product data with detailed information
-        const detailedProduct = {
-          ...openProduct,
-          ...(PRODUCT_DETAILS[openProduct.nombre] || {})
-        };
+        try {
+          // Merge product data with detailed information
+          const detailedProduct = {
+            ...openProduct,
+            ...(PRODUCT_DETAILS[openProduct.nombre] || {})
+          };
 
-        // Load reviews when product is opened
-        React.useEffect(() => {
-          if (detailedProduct) {
-            loadProductReviews(detailedProduct.id, detailedProduct.nombre);
-          }
-        }, [detailedProduct]);
-
-        // Get reviews and ratings for this product
-        const reviews = productReviews[detailedProduct.id] || [];
-        const rating = productRatings[detailedProduct.id] || { average: 0, count: 0 };
+          // Get reviews and ratings for this product
+          const reviews = productReviews[detailedProduct.id] || [];
+          const rating = productRatings[detailedProduct.id] || { average: 0, count: 0 };
         
         return (
           <div style={{ 
@@ -5901,6 +5902,46 @@ function App() {
             </div>
           </div>
         );
+        } catch (error) {
+          console.error('Error rendering product modal:', error);
+          return (
+            <div style={{ 
+              position: "fixed",
+              top: 0, 
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: "rgba(0,0,0,0.8)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 1000
+            }}>
+              <div style={{
+                background: "white",
+                padding: "2rem",
+                borderRadius: "8px",
+                textAlign: "center"
+              }}>
+                <h3>Error al cargar el producto</h3>
+                <p>Por favor intenta de nuevo.</p>
+                <button
+                  onClick={() => setOpenProduct(null)}
+                  style={{
+                    background: PALETAS.D.miel,
+                    color: "white",
+                    border: "none",
+                    padding: "0.5rem 1rem",
+                    borderRadius: "4px",
+                    cursor: "pointer"
+                  }}
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          );
+        }
       })()}
 
       {/* Professional Cart Sidebar */}
