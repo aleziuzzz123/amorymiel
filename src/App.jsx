@@ -7,6 +7,7 @@ import {
   onAuthStateChanged,
   sendPasswordResetEmail
 } from 'firebase/auth';
+import { getProductReviews, calculateAverageRating, getReviewCount } from './reviewData';
 import { 
   doc, 
   setDoc, 
@@ -322,6 +323,12 @@ function App() {
   const [showAdminDashboard, setShowAdminDashboard] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isAddingProducts, setIsAddingProducts] = useState(false);
+
+  // Review system state
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewingProduct, setReviewingProduct] = useState(null);
+  const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
   // Load products from Firestore and separate by category
   const loadProductsFromFirestore = async () => {
@@ -764,6 +771,44 @@ function App() {
 
   const isInWishlist = (productId) => {
     return wishlist.some(item => item.id === productId);
+  };
+
+  // Review system functions
+  const openReviewModal = (product) => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+    setReviewingProduct(product);
+    setNewReview({ rating: 5, comment: '' });
+    setShowReviewModal(true);
+  };
+
+  const closeReviewModal = () => {
+    setShowReviewModal(false);
+    setReviewingProduct(null);
+    setNewReview({ rating: 5, comment: '' });
+  };
+
+  const submitReview = async () => {
+    if (!user || !reviewingProduct || !newReview.comment.trim()) {
+      alert('Por favor completa tu comentario');
+      return;
+    }
+
+    setIsSubmittingReview(true);
+    
+    try {
+      // In a real app, you would save this to Firebase
+      // For now, we'll just show a success message
+      alert('¡Gracias por tu reseña! Será publicada después de la revisión.');
+      closeReviewModal();
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      alert('Error al enviar la reseña. Inténtalo de nuevo.');
+    } finally {
+      setIsSubmittingReview(false);
+    }
   };
 
   // Coupon system functions
@@ -2965,7 +3010,7 @@ function App() {
                   <p style={{ 
                     color: "#666", 
                     fontSize: "clamp(0.85rem, 2.5vw, 0.95rem)", 
-                    margin: "0 0 1.5rem 0", 
+                    margin: "0 0 1rem 0", 
                     lineHeight: "1.6",
                     display: "-webkit-box",
                     WebkitLineClamp: 3,
@@ -2974,6 +3019,36 @@ function App() {
                   }}>
                     {product.descripcion}
                   </p>
+                  
+                  {/* Rating Display */}
+                  <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    marginBottom: "1rem"
+                  }}>
+                    <div style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.2rem"
+                    }}>
+                      {[...Array(5)].map((_, i) => (
+                        <span key={i} style={{
+                          color: i < Math.floor(calculateAverageRating(product.id)) ? "#FFD700" : "#E0E0E0",
+                          fontSize: "14px"
+                        }}>
+                          ⭐
+                        </span>
+                      ))}
+                    </div>
+                    <span style={{
+                      fontSize: "0.8rem",
+                      color: "#666",
+                      fontWeight: "500"
+                    }}>
+                      {calculateAverageRating(product.id).toFixed(1)} ({getReviewCount(product.id)})
+                    </span>
+                  </div>
                   <div style={{ 
                     display: "flex", 
                     justifyContent: "space-between", 
@@ -3147,6 +3222,45 @@ function App() {
                             return 'Agregar';
                           }
                         })()}
+                    </button>
+                    
+                    {/* Write Review Button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openReviewModal(product);
+                      }}
+                      style={{
+                        background: "transparent",
+                        color: PALETAS.D.verde,
+                        border: `2px solid ${PALETAS.D.verde}`,
+                        padding: window.innerWidth <= 768 ? "0.7rem 1rem" : "0.6rem 1rem",
+                        borderRadius: "25px",
+                        cursor: "pointer",
+                        fontSize: window.innerWidth <= 768 ? "0.85rem" : "0.8rem",
+                        fontWeight: "600",
+                        transition: "all 0.3s ease",
+                        flex: window.innerWidth <= 768 ? "1" : "0 0 auto",
+                        minWidth: window.innerWidth <= 768 ? "auto" : "100px",
+                        height: window.innerWidth <= 768 ? "44px" : "36px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.background = PALETAS.D.verde;
+                        e.target.style.color = "white";
+                        e.target.style.transform = "translateY(-2px)";
+                        e.target.style.boxShadow = "0 4px 12px rgba(98, 141, 106, 0.3)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.background = "transparent";
+                        e.target.style.color = PALETAS.D.verde;
+                        e.target.style.transform = "translateY(0)";
+                        e.target.style.boxShadow = "none";
+                      }}
+                    >
+                      ⭐ Reseñar
                     </button>
               </div>
                   
@@ -5172,6 +5286,171 @@ function App() {
               )}
         </div>
 
+                {/* Reviews Section */}
+                <div style={{
+                  marginBottom: "1rem",
+                  background: "linear-gradient(145deg, #fafafa 0%, #f5f5f5 100%)",
+                  borderRadius: "12px",
+                  padding: "1rem",
+                  border: `2px solid ${PALETAS.D.crema}`
+                }}>
+                  <div style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "1rem"
+                  }}>
+                    <h4 style={{
+                      color: PALETAS.D.miel,
+                      margin: 0,
+                      fontSize: "1rem",
+                      fontWeight: "700",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem"
+                    }}>
+                      ⭐ Reseñas ({getReviewCount(detailedProduct.id)})
+                    </h4>
+                    <div style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem"
+                    }}>
+                      <div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.2rem"
+                      }}>
+                        {[...Array(5)].map((_, i) => (
+                          <span key={i} style={{
+                            color: i < Math.floor(calculateAverageRating(detailedProduct.id)) ? "#FFD700" : "#E0E0E0",
+                            fontSize: "16px"
+                          }}>
+                            ⭐
+                          </span>
+                        ))}
+                      </div>
+                      <span style={{
+                        fontSize: "0.9rem",
+                        color: "#666",
+                        fontWeight: "600"
+                      }}>
+                        {calculateAverageRating(detailedProduct.id).toFixed(1)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Reviews List */}
+                  <div style={{
+                    maxHeight: "200px",
+                    overflowY: "auto",
+                    paddingRight: "0.5rem"
+                  }}>
+                    {getProductReviews(detailedProduct.id).map((review, index) => (
+                      <div key={review.id} style={{
+                        background: "white",
+                        padding: "0.75rem",
+                        borderRadius: "8px",
+                        marginBottom: "0.75rem",
+                        border: `1px solid ${PALETAS.D.crema}`,
+                        borderLeft: `4px solid ${PALETAS.D.miel}`
+                      }}>
+                        <div style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginBottom: "0.5rem"
+                        }}>
+                          <div style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "0.5rem"
+                          }}>
+                            <span style={{
+                              fontWeight: "600",
+                              color: PALETAS.D.carbon,
+                              fontSize: "0.9rem"
+                            }}>
+                              {review.userName}
+                            </span>
+                            {review.verified && (
+                              <span style={{
+                                background: PALETAS.D.verde,
+                                color: "white",
+                                padding: "0.2rem 0.4rem",
+                                borderRadius: "4px",
+                                fontSize: "0.7rem",
+                                fontWeight: "600"
+                              }}>
+                                ✓ Verificado
+                              </span>
+                            )}
+                          </div>
+                          <div style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "0.2rem"
+                          }}>
+                            {[...Array(5)].map((_, i) => (
+                              <span key={i} style={{
+                                color: i < review.rating ? "#FFD700" : "#E0E0E0",
+                                fontSize: "12px"
+                              }}>
+                                ⭐
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        <p style={{
+                          color: "#555",
+                          fontSize: "0.85rem",
+                          margin: 0,
+                          lineHeight: "1.4"
+                        }}>
+                          {review.comment}
+                        </p>
+                        <div style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginTop: "0.5rem"
+                        }}>
+                          <span style={{
+                            color: "#999",
+                            fontSize: "0.75rem"
+                          }}>
+                            {new Date(review.date).toLocaleDateString('es-MX')}
+                          </span>
+                          <button
+                            onClick={() => openReviewModal(detailedProduct)}
+                            style={{
+                              background: "transparent",
+                              color: PALETAS.D.verde,
+                              border: `1px solid ${PALETAS.D.verde}`,
+                              padding: "0.3rem 0.6rem",
+                              borderRadius: "4px",
+                              cursor: "pointer",
+                              fontSize: "0.75rem",
+                              fontWeight: "500",
+                              transition: "all 0.2s ease"
+                            }}
+                            onMouseEnter={(e) => {
+                              e.target.style.background = PALETAS.D.verde;
+                              e.target.style.color = "white";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.target.style.background = "transparent";
+                              e.target.style.color = PALETAS.D.verde;
+                            }}
+                          >
+                            ⭐ Reseñar
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Price and Add to Cart */}
           <div style={{
                   borderTop: "1px solid #eee", 
@@ -6043,6 +6322,210 @@ function App() {
                     </button>
                   </p>
                 )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Review Modal */}
+        {showReviewModal && (
+          <div style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0,0,0,0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000
+          }}>
+            <div style={{
+              background: "white",
+              padding: "2rem",
+              borderRadius: "20px",
+              maxWidth: "500px",
+              width: "90%",
+              maxHeight: "90vh",
+              overflow: "auto"
+            }}>
+              <div style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "1.5rem"
+              }}>
+                <h2 style={{
+                  fontSize: "1.5rem",
+                  fontWeight: "600",
+                  color: PALETAS.D.carbon,
+                  margin: 0
+                }}>
+                  Escribir Reseña
+                </h2>
+                <button
+                  onClick={closeReviewModal}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    fontSize: "1.5rem",
+                    cursor: "pointer",
+                    color: "#666"
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+
+              {reviewingProduct && (
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1rem",
+                  marginBottom: "1.5rem",
+                  padding: "1rem",
+                  background: PALETAS.D.crema,
+                  borderRadius: "12px"
+                }}>
+                  <img 
+                    src={reviewingProduct.imagen} 
+                    alt={reviewingProduct.nombre}
+                    style={{
+                      width: "60px",
+                      height: "60px",
+                      objectFit: "cover",
+                      borderRadius: "8px"
+                    }}
+                  />
+                  <div>
+                    <h3 style={{ margin: 0, color: PALETAS.D.carbon, fontSize: "1.1rem" }}>
+                      {reviewingProduct.nombre}
+                    </h3>
+                    <p style={{ margin: 0, color: "#666", fontSize: "0.9rem" }}>
+                      ${reviewingProduct.precio} {reviewingProduct.moneda}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <div style={{ marginBottom: "1.5rem" }}>
+                <label style={{
+                  display: "block",
+                  marginBottom: "0.5rem",
+                  color: PALETAS.D.carbon,
+                  fontWeight: "500"
+                }}>
+                  Calificación
+                </label>
+                <div style={{
+                  display: "flex",
+                  gap: "0.5rem",
+                  marginBottom: "1rem"
+                }}>
+                  {[...Array(5)].map((_, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => setNewReview(prev => ({ ...prev, rating: i + 1 }))}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        fontSize: "2rem",
+                        cursor: "pointer",
+                        color: i < newReview.rating ? "#FFD700" : "#E0E0E0",
+                        transition: "color 0.2s ease"
+                      }}
+                    >
+                      ⭐
+                    </button>
+                  ))}
+                </div>
+                <p style={{ margin: 0, color: "#666", fontSize: "0.9rem" }}>
+                  {newReview.rating === 1 && "Muy malo"}
+                  {newReview.rating === 2 && "Malo"}
+                  {newReview.rating === 3 && "Regular"}
+                  {newReview.rating === 4 && "Bueno"}
+                  {newReview.rating === 5 && "Excelente"}
+                </p>
+              </div>
+
+              <div style={{ marginBottom: "1.5rem" }}>
+                <label style={{
+                  display: "block",
+                  marginBottom: "0.5rem",
+                  color: PALETAS.D.carbon,
+                  fontWeight: "500"
+                }}>
+                  Comentario
+                </label>
+                <textarea
+                  value={newReview.comment}
+                  onChange={(e) => setNewReview(prev => ({ ...prev, comment: e.target.value }))}
+                  placeholder="Comparte tu experiencia con este producto..."
+                  style={{
+                    width: "100%",
+                    minHeight: "120px",
+                    padding: "0.8rem",
+                    border: `2px solid ${PALETAS.D.crema}`,
+                    borderRadius: "8px",
+                    fontSize: "1rem",
+                    fontFamily: "inherit",
+                    resize: "vertical",
+                    outline: "none",
+                    transition: "border-color 0.2s ease"
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = PALETAS.D.miel;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = PALETAS.D.crema;
+                  }}
+                />
+              </div>
+
+              <div style={{
+                display: "flex",
+                gap: "1rem",
+                justifyContent: "flex-end"
+              }}>
+                <button
+                  type="button"
+                  onClick={closeReviewModal}
+                  style={{
+                    background: "transparent",
+                    color: "#666",
+                    border: `2px solid #ddd`,
+                    padding: "0.8rem 1.5rem",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    fontSize: "1rem",
+                    fontWeight: "500",
+                    transition: "all 0.2s ease"
+                  }}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={submitReview}
+                  disabled={isSubmittingReview || !newReview.comment.trim()}
+                  style={{
+                    background: isSubmittingReview || !newReview.comment.trim() 
+                      ? "#ccc" 
+                      : `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                    color: "white",
+                    border: "none",
+                    padding: "0.8rem 1.5rem",
+                    borderRadius: "8px",
+                    cursor: isSubmittingReview || !newReview.comment.trim() ? "not-allowed" : "pointer",
+                    fontSize: "1rem",
+                    fontWeight: "600",
+                    transition: "all 0.2s ease"
+                  }}
+                >
+                  {isSubmittingReview ? "Enviando..." : "Enviar Reseña"}
+                </button>
               </div>
             </div>
           </div>
