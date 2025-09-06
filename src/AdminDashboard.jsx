@@ -13,6 +13,165 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebase';
 
+// Simple chart components
+const LineChart = ({ data, width = 400, height = 200, color = '#D4A574' }) => {
+  if (!data || data.length === 0) return <div style={{ textAlign: 'center', padding: '2rem' }}>No hay datos</div>;
+  
+  const maxValue = Math.max(...data.map(d => d.value));
+  const minValue = Math.min(...data.map(d => d.value));
+  const range = maxValue - minValue || 1;
+  
+  const points = data.map((d, i) => {
+    const x = (i / (data.length - 1)) * (width - 40) + 20;
+    const y = height - 40 - ((d.value - minValue) / range) * (height - 80);
+    return `${x},${y}`;
+  }).join(' ');
+  
+  return (
+    <div style={{ width: width, height: height, background: 'white', borderRadius: '8px', padding: '1rem' }}>
+      <svg width={width} height={height} style={{ overflow: 'visible' }}>
+        <polyline
+          fill="none"
+          stroke={color}
+          strokeWidth="2"
+          points={points}
+        />
+        {data.map((d, i) => {
+          const x = (i / (data.length - 1)) * (width - 40) + 20;
+          const y = height - 40 - ((d.value - minValue) / range) * (height - 80);
+          return (
+            <circle
+              key={i}
+              cx={x}
+              cy={y}
+              r="4"
+              fill={color}
+            />
+          );
+        })}
+      </svg>
+    </div>
+  );
+};
+
+const BarChart = ({ data, width = 400, height = 200, color = '#D4A574' }) => {
+  if (!data || data.length === 0) return <div style={{ textAlign: 'center', padding: '2rem' }}>No hay datos</div>;
+  
+  const maxValue = Math.max(...data.map(d => d.value));
+  const barWidth = (width - 40) / data.length - 10;
+  
+  return (
+    <div style={{ width: width, height: height, background: 'white', borderRadius: '8px', padding: '1rem' }}>
+      <svg width={width} height={height} style={{ overflow: 'visible' }}>
+        {data.map((d, i) => {
+          const barHeight = (d.value / maxValue) * (height - 60);
+          const x = i * (barWidth + 10) + 20;
+          const y = height - 40 - barHeight;
+          return (
+            <g key={i}>
+              <rect
+                x={x}
+                y={y}
+                width={barWidth}
+                height={barHeight}
+                fill={color}
+                opacity={0.8}
+              />
+              <text
+                x={x + barWidth / 2}
+                y={height - 20}
+                textAnchor="middle"
+                fontSize="12"
+                fill="#666"
+              >
+                {d.label}
+              </text>
+              <text
+                x={x + barWidth / 2}
+                y={y - 5}
+                textAnchor="middle"
+                fontSize="10"
+                fill="#333"
+              >
+                {d.value}
+              </text>
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+};
+
+const PieChart = ({ data, width = 200, height = 200, colors = ['#D4A574', '#E8B4B8', '#A8C09A', '#B8D4E3'] }) => {
+  if (!data || data.length === 0) return <div style={{ textAlign: 'center', padding: '2rem' }}>No hay datos</div>;
+  
+  const total = data.reduce((sum, d) => sum + d.value, 0);
+  let currentAngle = 0;
+  const radius = Math.min(width, height) / 2 - 20;
+  const centerX = width / 2;
+  const centerY = height / 2;
+  
+  return (
+    <div style={{ width: width, height: height, background: 'white', borderRadius: '8px', padding: '1rem' }}>
+      <svg width={width} height={height}>
+        {data.map((d, i) => {
+          const percentage = d.value / total;
+          const angle = percentage * 360;
+          const startAngle = currentAngle;
+          const endAngle = currentAngle + angle;
+          currentAngle += angle;
+          
+          const startAngleRad = (startAngle - 90) * Math.PI / 180;
+          const endAngleRad = (endAngle - 90) * Math.PI / 180;
+          
+          const x1 = centerX + radius * Math.cos(startAngleRad);
+          const y1 = centerY + radius * Math.sin(startAngleRad);
+          const x2 = centerX + radius * Math.cos(endAngleRad);
+          const y2 = centerY + radius * Math.sin(endAngleRad);
+          
+          const largeArcFlag = angle > 180 ? 1 : 0;
+          const pathData = [
+            `M ${centerX} ${centerY}`,
+            `L ${x1} ${y1}`,
+            `A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`,
+            'Z'
+          ].join(' ');
+          
+          return (
+            <g key={i}>
+              <path
+                d={pathData}
+                fill={colors[i % colors.length]}
+                stroke="white"
+                strokeWidth="2"
+              />
+              <text
+                x={centerX + (radius * 0.7) * Math.cos((startAngle + angle / 2 - 90) * Math.PI / 180)}
+                y={centerY + (radius * 0.7) * Math.sin((startAngle + angle / 2 - 90) * Math.PI / 180)}
+                textAnchor="middle"
+                fontSize="12"
+                fill="white"
+                fontWeight="bold"
+              >
+                {Math.round(percentage * 100)}%
+              </text>
+            </g>
+          );
+        })}
+      </svg>
+      <div style={{ marginTop: '1rem', fontSize: '0.9rem' }}>
+        {data.map((d, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+            <div style={{ width: '12px', height: '12px', background: colors[i % colors.length], marginRight: '0.5rem', borderRadius: '2px' }}></div>
+            <span>{d.label}: {d.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 // All products are now loaded from Firebase with deduplication
 
 // Comprehensive product information for detailed product modals
@@ -282,6 +441,16 @@ const AdminDashboard = ({ user, onClose }) => {
   });
   const [analyticsDateRange, setAnalyticsDateRange] = useState('30');
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  
+  // Chart data state
+  const [chartData, setChartData] = useState({
+    revenueTrend: [],
+    orderTrend: [],
+    productSales: [],
+    deviceAnalytics: [],
+    hourlyAnalytics: [],
+    geographicAnalytics: []
+  });
   
   // Order details state
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -578,6 +747,9 @@ const AdminDashboard = ({ user, onClose }) => {
         customers: customerData,
         events: eventData
       });
+
+      // Generate chart data
+      await generateChartData(startDate, endDate);
     } catch (error) {
       console.error('Error loading analytics:', error);
     } finally {
@@ -755,6 +927,218 @@ const AdminDashboard = ({ user, onClose }) => {
       console.error('Error loading event data:', error);
       return { pageViews: 0, productViews: 0, addToCart: 0, purchases: 0, searches: 0 };
     }
+  };
+
+  // Generate chart data for visualizations
+  const generateChartData = async (startDate, endDate) => {
+    try {
+      // Generate revenue trend data (last 7 days)
+      const revenueTrend = [];
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dayStart = new Date(date);
+        dayStart.setHours(0, 0, 0, 0);
+        const dayEnd = new Date(date);
+        dayEnd.setHours(23, 59, 59, 999);
+        
+        const dayOrdersQuery = query(
+          collection(db, 'orders'),
+          where('createdAt', '>=', dayStart),
+          where('createdAt', '<=', dayEnd)
+        );
+        const dayOrdersSnapshot = await getDocs(dayOrdersQuery);
+        const dayRevenue = dayOrdersSnapshot.docs.reduce((sum, doc) => sum + (doc.data().total || 0), 0);
+        
+        revenueTrend.push({
+          label: date.toLocaleDateString('es-ES', { weekday: 'short' }),
+          value: dayRevenue
+        });
+      }
+
+      // Generate order trend data
+      const orderTrend = [];
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dayStart = new Date(date);
+        dayStart.setHours(0, 0, 0, 0);
+        const dayEnd = new Date(date);
+        dayEnd.setHours(23, 59, 59, 999);
+        
+        const dayOrdersQuery = query(
+          collection(db, 'orders'),
+          where('createdAt', '>=', dayStart),
+          where('createdAt', '<=', dayEnd)
+        );
+        const dayOrdersSnapshot = await getDocs(dayOrdersQuery);
+        
+        orderTrend.push({
+          label: date.toLocaleDateString('es-ES', { weekday: 'short' }),
+          value: dayOrdersSnapshot.docs.length
+        });
+      }
+
+      // Generate product sales data for pie chart
+      const productSalesQuery = query(
+        collection(db, 'analytics_events'),
+        where('eventType', '==', 'purchase')
+      );
+      const productSalesSnapshot = await getDocs(productSalesQuery);
+      const productSalesData = {};
+      
+      productSalesSnapshot.docs.forEach(doc => {
+        const event = doc.data();
+        if (event.eventData && event.eventData.items) {
+          event.eventData.items.forEach(item => {
+            if (!productSalesData[item.productName]) {
+              productSalesData[item.productName] = 0;
+            }
+            productSalesData[item.productName] += item.quantity;
+          });
+        }
+      });
+
+      const productSales = Object.entries(productSalesData)
+        .map(([name, quantity]) => ({ label: name, value: quantity }))
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 5);
+
+      // Generate device analytics (mock data for now)
+      const deviceAnalytics = [
+        { label: 'Móvil', value: 65 },
+        { label: 'Desktop', value: 30 },
+        { label: 'Tablet', value: 5 }
+      ];
+
+      // Generate hourly analytics (mock data for now)
+      const hourlyAnalytics = [];
+      for (let i = 0; i < 24; i++) {
+        hourlyAnalytics.push({
+          label: `${i}:00`,
+          value: Math.floor(Math.random() * 20) + 5
+        });
+      }
+
+      // Generate geographic analytics (mock data for now)
+      const geographicAnalytics = [
+        { label: 'México', value: 45 },
+        { label: 'Estados Unidos', value: 25 },
+        { label: 'España', value: 15 },
+        { label: 'Argentina', value: 10 },
+        { label: 'Otros', value: 5 }
+      ];
+
+      setChartData({
+        revenueTrend,
+        orderTrend,
+        productSales,
+        deviceAnalytics,
+        hourlyAnalytics,
+        geographicAnalytics
+      });
+    } catch (error) {
+      console.error('Error generating chart data:', error);
+    }
+  };
+
+  // Export functions
+  const exportToCSV = (type) => {
+    let csvContent = '';
+    let filename = '';
+    
+    switch (type) {
+      case 'sales':
+        csvContent = 'Fecha,Ingresos,Pedidos\n';
+        chartData.revenueTrend.forEach((item, index) => {
+          csvContent += `${item.label},${item.value},${chartData.orderTrend[index]?.value || 0}\n`;
+        });
+        filename = `ventas_${new Date().toISOString().split('T')[0]}.csv`;
+        break;
+      case 'products':
+        csvContent = 'Producto,Cantidad Vendida\n';
+        chartData.productSales.forEach(item => {
+          csvContent += `${item.label},${item.value}\n`;
+        });
+        filename = `productos_${new Date().toISOString().split('T')[0]}.csv`;
+        break;
+      case 'customers':
+        csvContent = 'Total Clientes,Nuevos Clientes,Clientes Recurrentes,Valor por Cliente\n';
+        csvContent += `${analytics.customers.totalCustomers},${analytics.customers.newCustomers},${analytics.customers.returningCustomers},${analytics.customers.customerLifetimeValue}\n`;
+        filename = `clientes_${new Date().toISOString().split('T')[0]}.csv`;
+        break;
+    }
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const generatePDFReport = () => {
+    // Simple PDF generation using window.print
+    const printWindow = window.open('', '_blank');
+    const reportContent = `
+      <html>
+        <head>
+          <title>Reporte de Analytics - Amor y Miel</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            .header { text-align: center; margin-bottom: 30px; }
+            .section { margin-bottom: 25px; }
+            .metric { display: inline-block; margin: 10px; padding: 15px; background: #f5f5f5; border-radius: 8px; }
+            .chart { margin: 20px 0; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>📈 Reporte de Analytics</h1>
+            <h2>Amor y Miel - ${new Date().toLocaleDateString('es-ES')}</h2>
+          </div>
+          
+          <div class="section">
+            <h3>💰 Ventas</h3>
+            <div class="metric">Ingresos Totales: $${analytics.sales.totalRevenue.toFixed(2)}</div>
+            <div class="metric">Pedidos Totales: ${analytics.sales.totalOrders}</div>
+            <div class="metric">Valor Promedio: $${analytics.sales.averageOrderValue.toFixed(2)}</div>
+            <div class="metric">Crecimiento: ${analytics.sales.revenueGrowth >= 0 ? '+' : ''}${analytics.sales.revenueGrowth.toFixed(1)}%</div>
+          </div>
+          
+          <div class="section">
+            <h3>👥 Clientes</h3>
+            <div class="metric">Total Clientes: ${analytics.customers.totalCustomers}</div>
+            <div class="metric">Nuevos Clientes: ${analytics.customers.newCustomers}</div>
+            <div class="metric">Clientes Recurrentes: ${analytics.customers.returningCustomers}</div>
+            <div class="metric">Valor por Cliente: $${analytics.customers.customerLifetimeValue.toFixed(2)}</div>
+          </div>
+          
+          <div class="section">
+            <h3>📊 Actividad</h3>
+            <div class="metric">Vistas de Página: ${analytics.events.pageViews}</div>
+            <div class="metric">Vistas de Producto: ${analytics.events.productViews}</div>
+            <div class="metric">Agregar al Carrito: ${analytics.events.addToCart}</div>
+            <div class="metric">Compras: ${analytics.events.purchases}</div>
+            <div class="metric">Búsquedas: ${analytics.events.searches}</div>
+          </div>
+          
+          <div class="section">
+            <h3>🛍️ Productos Más Vendidos</h3>
+            ${analytics.products.bestSellers.map((product, index) => 
+              `<div class="metric">${index + 1}. ${product.productName}: ${product.totalSold} vendidos ($${product.totalRevenue.toFixed(2)})</div>`
+            ).join('')}
+          </div>
+        </body>
+      </html>
+    `;
+    
+    printWindow.document.write(reportContent);
+    printWindow.document.close();
+    printWindow.print();
   };
 
   const refreshDashboardData = async () => {
@@ -2755,6 +3139,142 @@ const AdminDashboard = ({ user, onClose }) => {
                       </div>
                       <div style={{ fontSize: '0.9rem', color: '#666' }}>Próximo Año</div>
                     </div>
+                  </div>
+                </div>
+
+                {/* Charts & Visualizations */}
+                <div style={{
+                  background: 'white',
+                  padding: '1.5rem',
+                  borderRadius: '15px',
+                  marginBottom: '2rem',
+                  boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+                }}>
+                  <h3 style={{ color: '#D4A574', marginBottom: '1.5rem' }}>📊 Gráficos y Visualizaciones</h3>
+                  
+                  {/* Revenue Trend Chart */}
+                  <div style={{ marginBottom: '2rem' }}>
+                    <h4 style={{ color: '#666', marginBottom: '1rem' }}>Tendencia de Ingresos (Últimos 7 días)</h4>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <LineChart data={chartData.revenueTrend} width={600} height={250} color="#D4A574" />
+                    </div>
+                  </div>
+
+                  {/* Order Trend Chart */}
+                  <div style={{ marginBottom: '2rem' }}>
+                    <h4 style={{ color: '#666', marginBottom: '1rem' }}>Tendencia de Pedidos (Últimos 7 días)</h4>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <BarChart data={chartData.orderTrend} width={600} height={250} color="#A8C09A" />
+                    </div>
+                  </div>
+
+                  {/* Product Sales Distribution */}
+                  <div style={{ marginBottom: '2rem' }}>
+                    <h4 style={{ color: '#666', marginBottom: '1rem' }}>Distribución de Ventas por Producto</h4>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <PieChart data={chartData.productSales} width={400} height={300} />
+                    </div>
+                  </div>
+
+                  {/* Device Analytics */}
+                  <div style={{ marginBottom: '2rem' }}>
+                    <h4 style={{ color: '#666', marginBottom: '1rem' }}>Dispositivos de Acceso</h4>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <PieChart data={chartData.deviceAnalytics} width={300} height={250} />
+                    </div>
+                  </div>
+
+                  {/* Geographic Analytics */}
+                  <div style={{ marginBottom: '2rem' }}>
+                    <h4 style={{ color: '#666', marginBottom: '1rem' }}>Distribución Geográfica</h4>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <PieChart data={chartData.geographicAnalytics} width={300} height={250} />
+                    </div>
+                  </div>
+
+                  {/* Hourly Analytics */}
+                  <div>
+                    <h4 style={{ color: '#666', marginBottom: '1rem' }}>Actividad por Hora del Día</h4>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <BarChart data={chartData.hourlyAnalytics} width={800} height={200} color="#E8B4B8" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Export & Reports */}
+                <div style={{
+                  background: 'white',
+                  padding: '1.5rem',
+                  borderRadius: '15px',
+                  marginBottom: '2rem',
+                  boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+                }}>
+                  <h3 style={{ color: '#D4A574', marginBottom: '1.5rem' }}>📤 Exportar y Reportes</h3>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '1rem'
+                  }}>
+                    <button
+                      onClick={() => exportToCSV('sales')}
+                      style={{
+                        background: 'linear-gradient(135deg, #D4A574 0%, #C9A96E 100%)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '1rem',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontSize: '0.9rem',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      📊 Exportar Ventas (CSV)
+                    </button>
+                    <button
+                      onClick={() => exportToCSV('products')}
+                      style={{
+                        background: 'linear-gradient(135deg, #A8C09A 0%, #9BB88A 100%)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '1rem',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontSize: '0.9rem',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      🛍️ Exportar Productos (CSV)
+                    </button>
+                    <button
+                      onClick={() => exportToCSV('customers')}
+                      style={{
+                        background: 'linear-gradient(135deg, #E8B4B8 0%, #E2A8AC 100%)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '1rem',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontSize: '0.9rem',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      👥 Exportar Clientes (CSV)
+                    </button>
+                    <button
+                      onClick={() => generatePDFReport()}
+                      style={{
+                        background: 'linear-gradient(135deg, #B8D4E3 0%, #A8C8D8 100%)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '1rem',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontSize: '0.9rem',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      📄 Generar Reporte PDF
+                    </button>
                   </div>
                 </div>
               </>
