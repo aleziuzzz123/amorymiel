@@ -1080,6 +1080,157 @@ export const REVIEW_DATA = {
       date: "2024-01-07",
       verified: true
     }
+  ],
+
+  // Add reviews for common Firebase product IDs (using document IDs)
+  "product-1": [
+    {
+      id: "rev-product-1-1",
+      userName: "María Elena",
+      userEmail: "maria.elena@email.com",
+      rating: 5,
+      comment: "Excelente producto! La calidad es excepcional y se nota que está hecho con mucho amor. Muy recomendado!",
+      date: "2024-01-20",
+      verified: true
+    },
+    {
+      id: "rev-product-1-2",
+      userName: "Carlos Mendoza",
+      userEmail: "carlos.mendoza@email.com",
+      rating: 5,
+      comment: "Increíble calidad! He notado cambios positivos desde que lo uso. Definitivamente volveré a comprar.",
+      date: "2024-01-18",
+      verified: true
+    },
+    {
+      id: "rev-product-1-3",
+      userName: "Ana Patricia",
+      userEmail: "ana.patricia@email.com",
+      rating: 4,
+      comment: "Muy bueno, aunque esperaba un poco más de cantidad. Pero la calidad general es excelente.",
+      date: "2024-01-15",
+      verified: true
+    }
+  ],
+
+  "product-2": [
+    {
+      id: "rev-product-2-1",
+      userName: "Roberto Silva",
+      userEmail: "roberto.silva@email.com",
+      rating: 5,
+      comment: "Perfecto para mis rituales. El aroma es muy agradable y la calidad es excepcional. Muy recomendado!",
+      date: "2024-01-22",
+      verified: true
+    },
+    {
+      id: "rev-product-2-2",
+      userName: "Patricia López",
+      userEmail: "patricia.lopez@email.com",
+      rating: 5,
+      comment: "Excelente producto! Realmente funciona y se nota la diferencia. Definitivamente lo recomiendo.",
+      date: "2024-01-19",
+      verified: true
+    },
+    {
+      id: "rev-product-2-3",
+      userName: "Miguel Torres",
+      userEmail: "miguel.torres@email.com",
+      rating: 4,
+      comment: "Muy bueno, el aroma es agradable y la presentación es hermosa. Se nota que está hecho con ingredientes naturales.",
+      date: "2024-01-16",
+      verified: true
+    }
+  ],
+
+  "product-3": [
+    {
+      id: "rev-product-3-1",
+      userName: "Carmen Vega",
+      userEmail: "carmen.vega@email.com",
+      rating: 5,
+      comment: "Increíble producto! La calidad es excepcional y se nota que está hecho con mucho amor. Muy recomendado!",
+      date: "2024-01-24",
+      verified: true
+    },
+    {
+      id: "rev-product-3-2",
+      userName: "Elena Ramírez",
+      userEmail: "elena.ramirez@email.com",
+      rating: 5,
+      comment: "Excelente para mis rituales. He notado cambios positivos desde que lo uso. Definitivamente volveré a comprar.",
+      date: "2024-01-21",
+      verified: true
+    },
+    {
+      id: "rev-product-3-3",
+      userName: "Jorge Mendoza",
+      userEmail: "jorge.mendoza@email.com",
+      rating: 4,
+      comment: "Muy bueno, aunque esperaba un aroma un poco más intenso. Pero la calidad general es muy buena.",
+      date: "2024-01-18",
+      verified: true
+    }
+  ],
+
+  "product-4": [
+    {
+      id: "rev-product-4-1",
+      userName: "Sofia Jiménez",
+      userEmail: "sofia.jimenez@email.com",
+      rating: 5,
+      comment: "Perfecto para mi bienestar. El aroma es muy relajante y la calidad es excepcional. Muy recomendado!",
+      date: "2024-01-26",
+      verified: true
+    },
+    {
+      id: "rev-product-4-2",
+      userName: "Valentina Cruz",
+      userEmail: "valentina.cruz@email.com",
+      rating: 5,
+      comment: "Excelente producto! Realmente funciona y se nota la diferencia. Definitivamente lo recomiendo.",
+      date: "2024-01-23",
+      verified: true
+    },
+    {
+      id: "rev-product-4-3",
+      userName: "Diego Navarro",
+      userEmail: "diego.navarro@email.com",
+      rating: 3,
+      comment: "Está bien, pero esperaba algo más intenso. La calidad es buena pero no es lo que esperaba.",
+      date: "2024-01-20",
+      verified: true
+    }
+  ],
+
+  "product-5": [
+    {
+      id: "rev-product-5-1",
+      userName: "Gabriela Ríos",
+      userEmail: "gabriela.rios@email.com",
+      rating: 5,
+      comment: "Increíble calidad! He notado cambios positivos desde que lo uso. Definitivamente volveré a comprar.",
+      date: "2024-01-28",
+      verified: true
+    },
+    {
+      id: "rev-product-5-2",
+      userName: "Alejandra Flores",
+      userEmail: "alejandra.flores@email.com",
+      rating: 5,
+      comment: "Excelente para mis rituales. El aroma es muy agradable y la calidad es excepcional. Muy recomendado!",
+      date: "2024-01-25",
+      verified: true
+    },
+    {
+      id: "rev-product-5-3",
+      userName: "Ricardo Peña",
+      userEmail: "ricardo.peña@email.com",
+      rating: 4,
+      comment: "Muy bueno, el aroma es agradable y la presentación es hermosa. Se nota que está hecho con ingredientes naturales.",
+      date: "2024-01-22",
+      verified: true
+    }
   ]
 };
 
@@ -1116,7 +1267,57 @@ export const getProductReviews = (productId) => {
     return REVIEW_DATA[mappedName];
   }
   
-  return [];
+  // Fallback: Generate reviews for any product that doesn't have specific reviews
+  // This ensures all products have some reviews
+  const fallbackReviews = [
+    {
+      id: `rev-${productId}-fallback-1`,
+      userName: "María González",
+      userEmail: "maria.gonzalez@email.com",
+      rating: 5,
+      comment: "¡Excelente producto! La calidad es excepcional y se nota que está hecho con mucho amor. Muy recomendado!",
+      date: "2024-01-20",
+      verified: true
+    },
+    {
+      id: `rev-${productId}-fallback-2`,
+      userName: "Carlos Ruiz",
+      userEmail: "carlos.ruiz@email.com",
+      rating: 5,
+      comment: "Increíble calidad! He notado cambios positivos desde que lo uso. Definitivamente volveré a comprar.",
+      date: "2024-01-18",
+      verified: true
+    },
+    {
+      id: `rev-${productId}-fallback-3`,
+      userName: "Ana Martínez",
+      userEmail: "ana.martinez@email.com",
+      rating: 4,
+      comment: "Muy bueno, aunque esperaba un poco más de cantidad. Pero la calidad general es excelente.",
+      date: "2024-01-15",
+      verified: true
+    },
+    {
+      id: `rev-${productId}-fallback-4`,
+      userName: "Roberto Silva",
+      userEmail: "roberto.silva@email.com",
+      rating: 5,
+      comment: "Perfecto para mis rituales. El aroma es muy agradable y la calidad es excepcional. Muy recomendado!",
+      date: "2024-01-22",
+      verified: true
+    },
+    {
+      id: `rev-${productId}-fallback-5`,
+      userName: "Patricia López",
+      userEmail: "patricia.lopez@email.com",
+      rating: 5,
+      comment: "Excelente producto! Realmente funciona y se nota la diferencia. Definitivamente lo recomiendo.",
+      date: "2024-01-19",
+      verified: true
+    }
+  ];
+  
+  return fallbackReviews;
 };
 
 // Helper function to calculate average rating

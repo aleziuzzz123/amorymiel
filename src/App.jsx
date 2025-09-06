@@ -401,12 +401,15 @@ function App() {
         ) && ['Servicios', 'servicios'].includes(p.categoria)
       );
       
-      console.log('Separated products:', {
-        regular: regularProducts.length,
-        services: services.length,
-        kidsProducts: kidsProducts.length,
-        kidsServices: kidsServices.length
-      });
+        console.log('Separated products:', {
+          regular: regularProducts.length,
+          services: services.length,
+          kidsProducts: kidsProducts.length,
+          kidsServices: kidsServices.length
+        });
+        
+        // Debug product IDs for reviews
+        debugProductIds();
       
       console.log('Kids Products:', kidsProducts.map(p => `${p.nombre} (${p.categoria})`));
       console.log('Kids Services:', kidsServices.map(s => `${s.nombre} (${s.categoria})`));
@@ -782,6 +785,14 @@ function App() {
     setReviewingProduct(product);
     setNewReview({ rating: 5, comment: '' });
     setShowReviewModal(true);
+  };
+
+  // Debug function to log product IDs
+  const debugProductIds = () => {
+    console.log('🔍 Debugging product IDs:');
+    console.log('Regular products:', regularProducts.map(p => ({ id: p.id, nombre: p.nombre })));
+    console.log('Services:', services.map(s => ({ id: s.id, nombre: s.nombre })));
+    console.log('Kids products:', kidsProducts.map(k => ({ id: k.id, nombre: k.nombre })));
   };
 
   // Generate WhatsApp booking link for services
