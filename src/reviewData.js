@@ -989,12 +989,134 @@ export const REVIEW_DATA = {
       date: "2024-01-23",
       verified: true
     }
+  ],
+
+  // Additional common product IDs that might exist in Firebase
+  "Velas De Miel": [
+    {
+      id: "rev-velas-miel-alt-1",
+      userName: "María González",
+      userEmail: "maria.gonzalez@email.com",
+      rating: 5,
+      comment: "¡Increíble! Las velas tienen un aroma tan natural y relajante. Se siente la energía positiva desde el primer momento.",
+      date: "2024-01-15",
+      verified: true
+    },
+    {
+      id: "rev-velas-miel-alt-2",
+      userName: "Carlos Ruiz",
+      userEmail: "carlos.ruiz@email.com",
+      rating: 5,
+      comment: "Perfectas para mis rituales de abundancia. La cera es de excelente calidad y se nota que están hechas con amor.",
+      date: "2024-01-10",
+      verified: true
+    },
+    {
+      id: "rev-velas-miel-alt-3",
+      userName: "Ana Martínez",
+      userEmail: "ana.martinez@email.com",
+      rating: 4,
+      comment: "Muy buenas velas, el aroma es delicioso. Solo me gustaría que fueran un poco más grandes, pero la calidad es excelente.",
+      date: "2024-01-08",
+      verified: true
+    }
+  ],
+
+  "Aceite Abre Caminos": [
+    {
+      id: "rev-aceite-abrecaminos-alt-1",
+      userName: "Patricia López",
+      userEmail: "patricia.lopez@email.com",
+      rating: 5,
+      comment: "Este aceite realmente funciona. Desde que lo uso siento que las oportunidades llegan más fácilmente. Muy poderoso.",
+      date: "2024-01-12",
+      verified: true
+    },
+    {
+      id: "rev-aceite-abrecaminos-alt-2",
+      userName: "Miguel Torres",
+      userEmail: "miguel.torres@email.com",
+      rating: 5,
+      comment: "Excelente calidad. Lo uso en mis rituales y he notado cambios positivos en mi vida. Definitivamente lo recomiendo.",
+      date: "2024-01-09",
+      verified: true
+    },
+    {
+      id: "rev-aceite-abrecaminos-alt-3",
+      userName: "Carmen Vega",
+      userEmail: "carmen.vega@email.com",
+      rating: 4,
+      comment: "Muy bueno, el aroma es agradable y la presentación es hermosa. Se nota que está hecho con ingredientes naturales.",
+      date: "2024-01-06",
+      verified: true
+    }
+  ],
+
+  "Agua Florida": [
+    {
+      id: "rev-agua-florida-alt-1",
+      userName: "Isabel Morales",
+      userEmail: "isabel.morales@email.com",
+      rating: 5,
+      comment: "El agua Florida más pura que he encontrado. Perfecta para limpieza espiritual. El aroma es auténtico y duradero.",
+      date: "2024-01-14",
+      verified: true
+    },
+    {
+      id: "rev-agua-florida-alt-2",
+      userName: "Fernando Castro",
+      userEmail: "fernando.castro@email.com",
+      rating: 5,
+      comment: "Excelente producto. Lo uso diariamente y siento la diferencia energética. Muy recomendado para limpieza.",
+      date: "2024-01-11",
+      verified: true
+    },
+    {
+      id: "rev-agua-florida-alt-3",
+      userName: "Lucía Herrera",
+      userEmail: "lucia.herrera@email.com",
+      rating: 4,
+      comment: "Muy buena calidad, el aroma es tradicional y auténtico. Perfecto para mis rituales de limpieza.",
+      date: "2024-01-07",
+      verified: true
+    }
   ]
 };
 
 // Helper function to get reviews for a product
 export const getProductReviews = (productId) => {
-  return REVIEW_DATA[productId] || [];
+  // First try by ID
+  if (REVIEW_DATA[productId]) {
+    return REVIEW_DATA[productId];
+  }
+  
+  // If not found by ID, try to find by common product names
+  const productNameMap = {
+    "velas-miel": "Velas De Miel",
+    "aceite-abrecaminos": "Aceite Abre Caminos", 
+    "agua-florida": "Agua Florida",
+    "bano-abrecaminos": "Baño Energético Abre Caminos",
+    "locion-atrayente": "Loción Atrayente",
+    "locion-palo-santo": "Loción Palo Santo",
+    "brisa-bendicion-dinero": "Brisa Áurica Bendición del Dinero",
+    "aceite-abundancia": "Aceite de Abundancia",
+    "bano-amor-propio": "Baño Energético Amor Propio",
+    "aceite-proteccion": "Aceite de Protección",
+    "incienso-limpieza": "Incienso de Limpieza",
+    "numerologia": "numerologia",
+    "tarot-angelical": "tarot-angelical",
+    "sonoterapia": "sonoterapia",
+    "ceremonia-cacao": "ceremonia-cacao",
+    "masaje-craneosacral-sonoterapia": "masaje-craneosacral-sonoterapia",
+    "radiestesia": "radiestesia"
+  };
+  
+  const mappedName = productNameMap[productId];
+  if (mappedName && REVIEW_DATA[mappedName]) {
+    return REVIEW_DATA[mappedName];
+  }
+  
+  return [];
 };
 
 // Helper function to calculate average rating

@@ -3488,6 +3488,28 @@ function App() {
                   <p style={{ color: "#666", fontSize: "0.9rem", margin: "0 0 1rem 0" }}>
                     {service.duracion} • {service.modalidad}
                   </p>
+                  <p style={{ 
+                    color: "#666", 
+                    fontSize: "0.85rem", 
+                    margin: "0 0 1rem 0", 
+                    lineHeight: "1.4",
+                    display: "-webkit-box",
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden"
+                  }}>
+                    {service.descripcion || (() => {
+                      const descriptions = {
+                        "numerologia": "Descubre los secretos de tu fecha de nacimiento y nombre a través de la numerología. Esta antigua ciencia nos ayuda a entender tu personalidad, talentos naturales y el camino que debes seguir.",
+                        "tarot-angelical": "Conecta con la sabiduría divina a través de las cartas del tarot angelical. Esta poderosa herramienta te ayuda a recibir mensajes claros de tus ángeles guardianes y guías espirituales.",
+                        "sonoterapia": "Sumérgete en una experiencia de sanación profunda a través de las vibraciones curativas de los cuencos tibetanos. La sonoterapia utiliza frecuencias específicas para restaurar el equilibrio energético.",
+                        "ceremonia-cacao": "Vive una experiencia transformadora con la ceremonia sagrada del cacao. Esta antigua tradición maya utiliza el cacao ceremonial para abrir el corazón y facilitar la sanación emocional.",
+                        "masaje-craneosacral-sonoterapia": "Combina la terapia craneosacral con la sonoterapia para una experiencia de sanación integral. Libera tensiones profundas mientras las vibraciones facilitan la relajación.",
+                        "radiestesia": "Aprende a utilizar la radiestesia, una técnica ancestral que permite detectar energías y vibraciones a través de péndulos y varillas. Desarrolla tu sensibilidad energética."
+                      };
+                      return descriptions[service.id] || "Servicio profesional de bienestar y sanación holística.";
+                    })()}
+                  </p>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <span style={{ fontSize: "1.3rem", fontWeight: "bold", color: PALETAS.D.miel }}>
                       ${service.precio} {service.moneda}
