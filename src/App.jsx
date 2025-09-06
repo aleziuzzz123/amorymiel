@@ -2072,41 +2072,63 @@ function App() {
             <div 
               onClick={() => setShowWishlist(true)}
               style={{
+                position: "relative",
                 display: "flex",
                 alignItems: "center",
-                gap: window.innerWidth <= 768 ? "0.3rem" : "0.5rem",
+                justifyContent: "center",
                 cursor: "pointer",
-                padding: window.innerWidth <= 768 ? "0.4rem 0.6rem" : "0.5rem 0.8rem",
-                borderRadius: "8px",
+                width: "44px",
+                height: "44px",
+                borderRadius: "50%",
                 background: wishlist.length > 0 
                   ? `linear-gradient(135deg, ${PALETAS.D.verde} 0%, #8EB080 100%)` 
-                  : `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
+                  : `linear-gradient(135deg, ${PALETAS.D.crema} 0%, #f8f6f0 100%)`,
                 border: `2px solid ${PALETAS.D.verde}`,
                 transition: "all 0.3s ease",
-                boxShadow: "0 2px 8px rgba(212, 165, 116, 0.3)",
-                fontWeight: "600"
+                boxShadow: wishlist.length > 0 
+                  ? "0 2px 8px rgba(98, 141, 106, 0.3)"
+                  : "0 2px 8px rgba(0,0,0,0.1)"
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.transform = "translateY(-2px) scale(1.05)";
                 e.currentTarget.style.boxShadow = wishlist.length > 0 
                   ? "0 4px 12px rgba(98, 141, 106, 0.4)"
                   : "0 4px 12px rgba(0,0,0,0.2)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.transform = "translateY(0) scale(1)";
                 e.currentTarget.style.boxShadow = wishlist.length > 0 
                   ? "0 2px 8px rgba(98, 141, 106, 0.3)"
                   : "0 2px 8px rgba(0,0,0,0.1)";
               }}
             >
-              <span style={{ fontSize: "20px" }}>{wishlist.length > 0 ? "❤️" : "🤍"}</span>
-              <span style={{
-                color: "white",
-                fontSize: window.innerWidth <= 768 ? "0.8rem" : "0.9rem",
-                fontWeight: "600"
+              <span style={{ 
+                fontSize: "20px",
+                color: wishlist.length > 0 ? "white" : PALETAS.D.verde
               }}>
-                {wishlist.length > 0 ? `❤️ Guardados (${wishlist.length})` : "🤍 Guardar"}
+                {wishlist.length > 0 ? "❤️" : "🤍"}
               </span>
+              {wishlist.length > 0 && (
+                <div style={{
+                  position: "absolute",
+                  top: "-8px",
+                  right: "-8px",
+                  background: PALETAS.D.miel,
+                  color: "white",
+                  borderRadius: "50%",
+                  width: "20px",
+                  height: "20px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "12px",
+                  fontWeight: "bold",
+                  border: "2px solid white",
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.2)"
+                }}>
+                  {wishlist.length}
+                </div>
+              )}
             </div>
             
                 <div 
@@ -2724,42 +2746,37 @@ function App() {
                         toggleWishlist(product);
                       }}
                       style={{
+                        position: "absolute",
+                        top: "12px",
+                        right: "12px",
+                        width: "36px",
+                        height: "36px",
+                        borderRadius: "50%",
                         background: isInWishlist(product.id) 
                           ? `linear-gradient(135deg, ${PALETAS.D.verde} 0%, #8EB080 100%)` 
-                          : `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
-                        color: "white",
+                          : `linear-gradient(135deg, ${PALETAS.D.crema} 0%, #f8f6f0 100%)`,
+                        color: isInWishlist(product.id) ? "white" : PALETAS.D.verde,
                         border: `2px solid ${PALETAS.D.verde}`,
-                        padding: window.innerWidth <= 768 ? "0.7rem 1rem" : "0.6rem 1rem",
-                        borderRadius: "25px",
                         cursor: "pointer",
-                        fontSize: window.innerWidth <= 768 ? "0.85rem" : "0.8rem",
+                        fontSize: "16px",
                         fontWeight: "600",
                         transition: "all 0.3s ease",
-                        flex: window.innerWidth <= 768 ? "1" : "0 0 auto",
-                        minWidth: window.innerWidth <= 768 ? "auto" : "90px",
-                        height: window.innerWidth <= 768 ? "44px" : "36px",
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center"
+                        justifyContent: "center",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                        zIndex: 10
                       }}
                       onMouseEnter={(e) => {
-                        if (!isInWishlist(product.id)) {
-                          e.target.style.background = PALETAS.D.verde;
-                          e.target.style.color = "white";
-                          e.target.style.transform = "translateY(-2px)";
-                          e.target.style.boxShadow = "0 4px 12px rgba(98, 141, 106, 0.3)";
-                        }
+                        e.target.style.transform = "translateY(-2px) scale(1.1)";
+                        e.target.style.boxShadow = "0 4px 12px rgba(98, 141, 106, 0.3)";
                       }}
                       onMouseLeave={(e) => {
-                        if (!isInWishlist(product.id)) {
-                          e.target.style.background = "transparent";
-                          e.target.style.color = PALETAS.D.verde;
-                          e.target.style.transform = "translateY(0)";
-                          e.target.style.boxShadow = "none";
-                        }
+                        e.target.style.transform = "translateY(0) scale(1)";
+                        e.target.style.boxShadow = "0 2px 8px rgba(0,0,0,0.1)";
                       }}
                     >
-                      {isInWishlist(product.id) ? "❤️ Guardado" : "🤍 Guardar"}
+                      {isInWishlist(product.id) ? "❤️" : "🤍"}
                     </button>
                     
                     {/* Ver más Button */}
