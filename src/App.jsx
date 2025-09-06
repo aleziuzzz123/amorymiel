@@ -306,7 +306,6 @@ function App() {
   // User authentication state
   const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
-  const [wishlist, setWishlist] = useState([]);
   const [orderHistory, setOrderHistory] = useState([]);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState('login'); // 'login' or 'register'
