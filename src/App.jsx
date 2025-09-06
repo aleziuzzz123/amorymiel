@@ -3020,13 +3020,25 @@ function App() {
                     {product.descripcion}
                   </p>
                   
-                  {/* Rating Display */}
+                  {/* Rating Display - Clickable */}
                   <div style={{
                     display: "flex",
                     alignItems: "center",
                     gap: "0.5rem",
-                    marginBottom: "1rem"
-                  }}>
+                    marginBottom: "1rem",
+                    cursor: "pointer"
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openReviewModal(product);
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.opacity = "0.8";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.opacity = "1";
+                  }}
+                  >
                     <div style={{
                       display: "flex",
                       alignItems: "center",
@@ -3035,7 +3047,8 @@ function App() {
                       {[...Array(5)].map((_, i) => (
                         <span key={i} style={{
                           color: i < Math.floor(calculateAverageRating(product.id)) ? "#FFD700" : "#E0E0E0",
-                          fontSize: "14px"
+                          fontSize: "14px",
+                          transition: "color 0.2s ease"
                         }}>
                           ⭐
                         </span>
@@ -3222,45 +3235,6 @@ function App() {
                             return 'Agregar';
                           }
                         })()}
-                    </button>
-                    
-                    {/* Write Review Button */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openReviewModal(product);
-                      }}
-                      style={{
-                        background: "transparent",
-                        color: PALETAS.D.verde,
-                        border: `2px solid ${PALETAS.D.verde}`,
-                        padding: window.innerWidth <= 768 ? "0.7rem 1rem" : "0.6rem 1rem",
-                        borderRadius: "25px",
-                        cursor: "pointer",
-                        fontSize: window.innerWidth <= 768 ? "0.85rem" : "0.8rem",
-                        fontWeight: "600",
-                        transition: "all 0.3s ease",
-                        flex: window.innerWidth <= 768 ? "1" : "0 0 auto",
-                        minWidth: window.innerWidth <= 768 ? "auto" : "100px",
-                        height: window.innerWidth <= 768 ? "44px" : "36px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center"
-                      }}
-                      onMouseEnter={(e) => {
-                        e.target.style.background = PALETAS.D.verde;
-                        e.target.style.color = "white";
-                        e.target.style.transform = "translateY(-2px)";
-                        e.target.style.boxShadow = "0 4px 12px rgba(98, 141, 106, 0.3)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.background = "transparent";
-                        e.target.style.color = PALETAS.D.verde;
-                        e.target.style.transform = "translateY(0)";
-                        e.target.style.boxShadow = "none";
-                      }}
-                    >
-                      ⭐ Reseñar
                     </button>
               </div>
                   
@@ -3538,13 +3512,25 @@ function App() {
                       {product.descripcion}
                     </p>
                     
-                    {/* Rating Display */}
+                    {/* Rating Display - Clickable */}
                     <div style={{
                       display: "flex",
                       alignItems: "center",
                       gap: "0.5rem",
-                      marginBottom: "1rem"
-                    }}>
+                      marginBottom: "1rem",
+                      cursor: "pointer"
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openReviewModal(product);
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.opacity = "0.8";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.opacity = "1";
+                    }}
+                    >
                       <div style={{
                         display: "flex",
                         alignItems: "center",
@@ -3553,7 +3539,8 @@ function App() {
                         {[...Array(5)].map((_, i) => (
                           <span key={i} style={{
                             color: i < Math.floor(calculateAverageRating(product.id)) ? "#FFD700" : "#E0E0E0",
-                            fontSize: "14px"
+                            fontSize: "14px",
+                            transition: "color 0.2s ease"
                           }}>
                             ⭐
                           </span>
@@ -3666,45 +3653,6 @@ function App() {
                       >
                         {user ? 'Agregar al Carrito' : 'Inicia sesión para comprar'}
                       </button>
-                      
-                      {/* Write Review Button */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openReviewModal(product);
-                        }}
-                        style={{
-                          background: "transparent",
-                          color: PALETAS.D.verde,
-                          border: `2px solid ${PALETAS.D.verde}`,
-                          padding: window.innerWidth <= 768 ? "0.7rem 1rem" : "0.6rem 1rem",
-                          borderRadius: "25px",
-                          cursor: "pointer",
-                          fontSize: window.innerWidth <= 768 ? "0.85rem" : "0.8rem",
-                          fontWeight: "600",
-                          transition: "all 0.3s ease",
-                          flex: window.innerWidth <= 768 ? "1" : "0 0 auto",
-                          minWidth: window.innerWidth <= 768 ? "auto" : "100px",
-                          height: window.innerWidth <= 768 ? "44px" : "36px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center"
-                        }}
-                        onMouseEnter={(e) => {
-                          e.target.style.background = PALETAS.D.verde;
-                          e.target.style.color = "white";
-                          e.target.style.transform = "translateY(-2px)";
-                          e.target.style.boxShadow = "0 4px 12px rgba(98, 141, 106, 0.3)";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.target.style.background = "transparent";
-                          e.target.style.color = PALETAS.D.verde;
-                          e.target.style.transform = "translateY(0)";
-                          e.target.style.boxShadow = "none";
-                        }}
-                      >
-                        ⭐ Reseñar
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -3760,13 +3708,25 @@ function App() {
                       {service.duracion} • {service.modalidad}
                     </p>
                     
-                    {/* Rating Display */}
+                    {/* Rating Display - Clickable */}
                     <div style={{
                       display: "flex",
                       alignItems: "center",
                       gap: "0.5rem",
-                      marginBottom: "1rem"
-                    }}>
+                      marginBottom: "1rem",
+                      cursor: "pointer"
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openReviewModal(service);
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.opacity = "0.8";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.opacity = "1";
+                    }}
+                    >
                       <div style={{
                         display: "flex",
                         alignItems: "center",
@@ -3775,7 +3735,8 @@ function App() {
                         {[...Array(5)].map((_, i) => (
                           <span key={i} style={{
                             color: i < Math.floor(calculateAverageRating(service.id)) ? "#FFD700" : "#E0E0E0",
-                            fontSize: "14px"
+                            fontSize: "14px",
+                            transition: "color 0.2s ease"
                           }}>
                             ⭐
                           </span>
@@ -3790,72 +3751,38 @@ function App() {
                       </span>
                     </div>
                     <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <span style={{ fontSize: "1.3rem", fontWeight: "bold", color: PALETAS.D.miel }}>
-                          ${service.precio} {service.moneda}
-                        </span>
-                        <a 
-                          href={service.bookingLink} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          style={{ 
-                            background: "#ffd54f",
-                            color: "white",
-                            border: "none",
-                            padding: "0.75rem 1.5rem",
-                            borderRadius: "25px",
-                            cursor: "pointer",
-                            fontSize: "0.9rem",
-                            fontWeight: "600",
-                            textDecoration: "none",
-                            transition: "all 0.3s ease"
-                          }}
-                          onMouseEnter={(e) => {
-                            e.target.style.background = "#ffc107";
-                            e.target.style.transform = "translateY(-2px)";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.target.style.background = "#ffd54f";
-                            e.target.style.transform = "translateY(0)";
-                          }}
-                        >
-                          Agendar
-                        </a>
-                      </div>
-                      
-                      {/* Write Review Button */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openReviewModal(service);
-                        }}
-                        style={{
-                          background: "transparent",
-                          color: PALETAS.D.verde,
-                          border: `2px solid ${PALETAS.D.verde}`,
-                          padding: "0.6rem 1rem",
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ fontSize: "1.3rem", fontWeight: "bold", color: PALETAS.D.miel }}>
+                        ${service.precio} {service.moneda}
+                      </span>
+                      <a 
+                        href={service.bookingLink} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        style={{ 
+                          background: "#ffd54f",
+                          color: "white",
+                          border: "none",
+                          padding: "0.75rem 1.5rem",
                           borderRadius: "25px",
                           cursor: "pointer",
-                          fontSize: "0.8rem",
+                          fontSize: "0.9rem",
                           fontWeight: "600",
-                          transition: "all 0.3s ease",
-                          width: "100%"
+                          textDecoration: "none",
+                          transition: "all 0.3s ease"
                         }}
                         onMouseEnter={(e) => {
-                          e.target.style.background = PALETAS.D.verde;
-                          e.target.style.color = "white";
+                          e.target.style.background = "#ffc107";
                           e.target.style.transform = "translateY(-2px)";
-                          e.target.style.boxShadow = "0 4px 12px rgba(98, 141, 106, 0.3)";
                         }}
                         onMouseLeave={(e) => {
-                          e.target.style.background = "transparent";
-                          e.target.style.color = PALETAS.D.verde;
+                          e.target.style.background = "#ffd54f";
                           e.target.style.transform = "translateY(0)";
-                          e.target.style.boxShadow = "none";
                         }}
                       >
-                        ⭐ Reseñar Servicio
-                      </button>
+                        Agendar
+                      </a>
+                    </div>
                     </div>
                   </div>
                 </div>
@@ -5449,8 +5376,17 @@ function App() {
                     <div style={{
                       display: "flex",
                       alignItems: "center",
-                      gap: "0.5rem"
-                    }}>
+                      gap: "0.5rem",
+                      cursor: "pointer"
+                    }}
+                    onClick={() => openReviewModal(detailedProduct)}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.opacity = "0.8";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.opacity = "1";
+                    }}
+                    >
                       <div style={{
                         display: "flex",
                         alignItems: "center",
@@ -5459,7 +5395,8 @@ function App() {
                         {[...Array(5)].map((_, i) => (
                           <span key={i} style={{
                             color: i < Math.floor(calculateAverageRating(detailedProduct.id)) ? "#FFD700" : "#E0E0E0",
-                            fontSize: "16px"
+                            fontSize: "16px",
+                            transition: "color 0.2s ease"
                           }}>
                             ⭐
                           </span>
@@ -5556,30 +5493,6 @@ function App() {
                           }}>
                             {new Date(review.date).toLocaleDateString('es-MX')}
                           </span>
-                          <button
-                            onClick={() => openReviewModal(detailedProduct)}
-                            style={{
-                              background: "transparent",
-                              color: PALETAS.D.verde,
-                              border: `1px solid ${PALETAS.D.verde}`,
-                              padding: "0.3rem 0.6rem",
-                              borderRadius: "4px",
-                              cursor: "pointer",
-                              fontSize: "0.75rem",
-                              fontWeight: "500",
-                              transition: "all 0.2s ease"
-                            }}
-                            onMouseEnter={(e) => {
-                              e.target.style.background = PALETAS.D.verde;
-                              e.target.style.color = "white";
-                            }}
-                            onMouseLeave={(e) => {
-                              e.target.style.background = "transparent";
-                              e.target.style.color = PALETAS.D.verde;
-                            }}
-                          >
-                            ⭐ Reseñar
-                          </button>
                         </div>
                       </div>
                     ))}
