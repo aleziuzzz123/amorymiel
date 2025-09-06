@@ -1113,7 +1113,7 @@ function App() {
   // Debug function to log product IDs
   const debugProductIds = () => {
     console.log('🔍 Debugging product IDs:');
-    console.log('Regular products:', regularProducts.map(p => ({ id: p.id, nombre: p.nombre })));
+    console.log('Regular products:', products.map(p => ({ id: p.id, nombre: p.nombre })));
     console.log('Services:', services.map(s => ({ id: s.id, nombre: s.nombre })));
     console.log('Kids products:', kidsProducts.map(k => ({ id: k.id, nombre: k.nombre })));
   };
