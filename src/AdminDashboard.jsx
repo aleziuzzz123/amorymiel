@@ -315,9 +315,9 @@ const AdminDashboard = ({ user, onClose }) => {
     }
   }, [user]);
 
-  // Load analytics when analytics tab is selected
+  // Load analytics when overview tab is selected
   useEffect(() => {
-    if (activeTab === 'analytics') {
+    if (activeTab === 'overview') {
       loadAnalytics();
     }
   }, [activeTab, analyticsDateRange]);
@@ -2181,7 +2181,6 @@ const AdminDashboard = ({ user, onClose }) => {
         }}>
           {[
             { id: 'overview', label: '📊 Resumen', icon: '📊' },
-            { id: 'analytics', label: '📈 Analytics', icon: '📈' },
             { id: 'users', label: '👥 Usuarios', icon: '👥' },
             { id: 'orders', label: '📦 Pedidos', icon: '📦' },
             { id: 'cart-abandonment', label: '🛒 Carritos Abandonados', icon: '🛒' },
@@ -2210,192 +2209,6 @@ const AdminDashboard = ({ user, onClose }) => {
             </button>
           ))}
         </div>
-
-        {/* Analytics Tab */}
-        {activeTab === 'analytics' && (
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-              <h2 style={{ color: '#D4A574', margin: 0 }}>Analytics Dashboard</h2>
-              <select
-                value={analyticsDateRange}
-                onChange={(e) => setAnalyticsDateRange(e.target.value)}
-                style={{
-                  padding: '0.5rem 1rem',
-                  borderRadius: '8px',
-                  border: '1px solid #ddd',
-                  background: 'white',
-                  color: '#333'
-                }}
-              >
-                <option value="7">Últimos 7 días</option>
-                <option value="30">Últimos 30 días</option>
-                <option value="90">Últimos 90 días</option>
-                <option value="365">Último año</option>
-              </select>
-            </div>
-
-            {analyticsLoading ? (
-              <div style={{ textAlign: 'center', padding: '2rem' }}>
-                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⏳</div>
-                <div>Cargando analytics...</div>
-              </div>
-            ) : (
-              <>
-                {/* Analytics Summary Cards */}
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                  gap: '1.5rem',
-                  marginBottom: '2rem'
-                }}>
-                  <div style={{
-                    background: `linear-gradient(135deg, ${PALETAS.A.miel} 0%, ${PALETAS.B.miel} 100%)`,
-                    color: 'white',
-                    padding: '1.5rem',
-                    borderRadius: '15px',
-                    textAlign: 'center'
-                  }}>
-                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>💰</div>
-                    <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>
-                      ${analytics.sales.totalRevenue.toFixed(2)}
-                    </div>
-                    <div>Ingresos Totales</div>
-                    <div style={{ fontSize: '0.9rem', opacity: 0.9, marginTop: '0.5rem' }}>
-                      {analytics.sales.revenueGrowth >= 0 ? '+' : ''}{analytics.sales.revenueGrowth.toFixed(1)}% vs período anterior
-                    </div>
-                  </div>
-
-                  <div style={{
-                    background: `linear-gradient(135deg, ${PALETAS.A.verde} 0%, ${PALETAS.B.verde} 100%)`,
-                    color: 'white',
-                    padding: '1.5rem',
-                    borderRadius: '15px',
-                    textAlign: 'center'
-                  }}>
-                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📦</div>
-                    <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{analytics.sales.totalOrders}</div>
-                    <div>Órdenes Totales</div>
-                    <div style={{ fontSize: '0.9rem', opacity: 0.9, marginTop: '0.5rem' }}>
-                      ${analytics.sales.averageOrderValue.toFixed(2)} promedio
-                    </div>
-                  </div>
-
-                  <div style={{
-                    background: `linear-gradient(135deg, ${PALETAS.A.rosa} 0%, ${PALETAS.B.rosa} 100%)`,
-                    color: 'white',
-                    padding: '1.5rem',
-                    borderRadius: '15px',
-                    textAlign: 'center'
-                  }}>
-                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>👥</div>
-                    <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{analytics.customers.totalCustomers}</div>
-                    <div>Clientes Totales</div>
-                    <div style={{ fontSize: '0.9rem', opacity: 0.9, marginTop: '0.5rem' }}>
-                      {analytics.customers.newCustomers} nuevos
-                    </div>
-                  </div>
-
-                  <div style={{
-                    background: `linear-gradient(135deg, ${PALETAS.A.azul} 0%, ${PALETAS.B.azul} 100%)`,
-                    color: 'white',
-                    padding: '1.5rem',
-                    borderRadius: '15px',
-                    textAlign: 'center'
-                  }}>
-                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🛍️</div>
-                    <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{analytics.products.totalProducts}</div>
-                    <div>Productos</div>
-                    <div style={{ fontSize: '0.9rem', opacity: 0.9, marginTop: '0.5rem' }}>
-                      {analytics.products.bestSellers.length} top sellers
-                    </div>
-                  </div>
-                </div>
-
-                {/* Event Analytics */}
-                <div style={{
-                  background: 'white',
-                  padding: '1.5rem',
-                  borderRadius: '15px',
-                  marginBottom: '2rem',
-                  boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-                }}>
-                  <h3 style={{ color: '#D4A574', marginBottom: '1rem' }}>Actividad de Usuarios</h3>
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-                    gap: '1rem'
-                  }}>
-                    <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
-                      <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#D4A574' }}>
-                        {analytics.events.pageViews}
-                      </div>
-                      <div style={{ fontSize: '0.9rem', color: '#666' }}>Vistas de Página</div>
-                    </div>
-                    <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
-                      <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#D4A574' }}>
-                        {analytics.events.productViews}
-                      </div>
-                      <div style={{ fontSize: '0.9rem', color: '#666' }}>Vistas de Producto</div>
-                    </div>
-                    <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
-                      <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#D4A574' }}>
-                        {analytics.events.addToCart}
-                      </div>
-                      <div style={{ fontSize: '0.9rem', color: '#666' }}>Agregar al Carrito</div>
-                    </div>
-                    <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
-                      <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#D4A574' }}>
-                        {analytics.events.purchases}
-                      </div>
-                      <div style={{ fontSize: '0.9rem', color: '#666' }}>Compras</div>
-                    </div>
-                    <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
-                      <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#D4A574' }}>
-                        {analytics.events.searches}
-                      </div>
-                      <div style={{ fontSize: '0.9rem', color: '#666' }}>Búsquedas</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Best Sellers */}
-                {analytics.products.bestSellers.length > 0 && (
-                  <div style={{
-                    background: 'white',
-                    padding: '1.5rem',
-                    borderRadius: '15px',
-                    marginBottom: '2rem',
-                    boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-                  }}>
-                    <h3 style={{ color: '#D4A574', marginBottom: '1rem' }}>Productos Más Vendidos</h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                      {analytics.products.bestSellers.slice(0, 5).map((product, index) => (
-                        <div key={product.productId} style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          padding: '0.75rem',
-                          background: '#f8f9fa',
-                          borderRadius: '8px'
-                        }}>
-                          <div>
-                            <div style={{ fontWeight: 'bold' }}>{product.productName}</div>
-                            <div style={{ fontSize: '0.9rem', color: '#666' }}>
-                              {product.totalSold} vendidos
-                            </div>
-                          </div>
-                          <div style={{ fontWeight: 'bold', color: '#D4A574' }}>
-                            ${product.totalRevenue.toFixed(2)}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        )}
 
         {/* Overview Tab */}
         {activeTab === 'overview' && (
@@ -2556,6 +2369,190 @@ const AdminDashboard = ({ user, onClose }) => {
                   </div>
                 )}
               </div>
+            </div>
+
+            {/* Analytics Section */}
+            <div style={{ marginTop: '2rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <h3 style={{ color: '#D4A574', margin: 0 }}>📈 Analytics Detallados</h3>
+                <select
+                  value={analyticsDateRange}
+                  onChange={(e) => setAnalyticsDateRange(e.target.value)}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    borderRadius: '8px',
+                    border: '1px solid #ddd',
+                    background: 'white',
+                    color: '#333'
+                  }}
+                >
+                  <option value="7">Últimos 7 días</option>
+                  <option value="30">Últimos 30 días</option>
+                  <option value="90">Últimos 90 días</option>
+                  <option value="365">Último año</option>
+                </select>
+              </div>
+
+              {analyticsLoading ? (
+                <div style={{ textAlign: 'center', padding: '2rem', background: 'white', borderRadius: '15px' }}>
+                  <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⏳</div>
+                  <div>Cargando analytics...</div>
+                </div>
+              ) : (
+                <>
+                  {/* Enhanced Analytics Cards */}
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '1.5rem',
+                    marginBottom: '2rem'
+                  }}>
+                    <div style={{
+                      background: `linear-gradient(135deg, ${PALETAS.A.miel} 0%, ${PALETAS.B.miel} 100%)`,
+                      color: 'white',
+                      padding: '1.5rem',
+                      borderRadius: '15px',
+                      textAlign: 'center'
+                    }}>
+                      <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>💰</div>
+                      <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>
+                        ${analytics.sales.totalRevenue.toFixed(2)}
+                      </div>
+                      <div>Ingresos Totales</div>
+                      <div style={{ fontSize: '0.9rem', opacity: 0.9, marginTop: '0.5rem' }}>
+                        {analytics.sales.revenueGrowth >= 0 ? '+' : ''}{analytics.sales.revenueGrowth.toFixed(1)}% vs período anterior
+                      </div>
+                    </div>
+
+                    <div style={{
+                      background: `linear-gradient(135deg, ${PALETAS.A.verde} 0%, ${PALETAS.B.verde} 100%)`,
+                      color: 'white',
+                      padding: '1.5rem',
+                      borderRadius: '15px',
+                      textAlign: 'center'
+                    }}>
+                      <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📦</div>
+                      <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{analytics.sales.totalOrders}</div>
+                      <div>Órdenes Totales</div>
+                      <div style={{ fontSize: '0.9rem', opacity: 0.9, marginTop: '0.5rem' }}>
+                        ${analytics.sales.averageOrderValue.toFixed(2)} promedio
+                      </div>
+                    </div>
+
+                    <div style={{
+                      background: `linear-gradient(135deg, ${PALETAS.A.rosa} 0%, ${PALETAS.B.rosa} 100%)`,
+                      color: 'white',
+                      padding: '1.5rem',
+                      borderRadius: '15px',
+                      textAlign: 'center'
+                    }}>
+                      <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>👥</div>
+                      <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{analytics.customers.totalCustomers}</div>
+                      <div>Clientes Totales</div>
+                      <div style={{ fontSize: '0.9rem', opacity: 0.9, marginTop: '0.5rem' }}>
+                        {analytics.customers.newCustomers} nuevos
+                      </div>
+                    </div>
+
+                    <div style={{
+                      background: `linear-gradient(135deg, ${PALETAS.A.azul} 0%, ${PALETAS.B.azul} 100%)`,
+                      color: 'white',
+                      padding: '1.5rem',
+                      borderRadius: '15px',
+                      textAlign: 'center'
+                    }}>
+                      <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🛍️</div>
+                      <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{analytics.products.totalProducts}</div>
+                      <div>Productos</div>
+                      <div style={{ fontSize: '0.9rem', opacity: 0.9, marginTop: '0.5rem' }}>
+                        {analytics.products.bestSellers.length} top sellers
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Event Analytics */}
+                  <div style={{
+                    background: 'white',
+                    padding: '1.5rem',
+                    borderRadius: '15px',
+                    marginBottom: '2rem',
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+                  }}>
+                    <h3 style={{ color: '#D4A574', marginBottom: '1rem' }}>Actividad de Usuarios</h3>
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                      gap: '1rem'
+                    }}>
+                      <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
+                        <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#D4A574' }}>
+                          {analytics.events.pageViews}
+                        </div>
+                        <div style={{ fontSize: '0.9rem', color: '#666' }}>Vistas de Página</div>
+                      </div>
+                      <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
+                        <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#D4A574' }}>
+                          {analytics.events.productViews}
+                        </div>
+                        <div style={{ fontSize: '0.9rem', color: '#666' }}>Vistas de Producto</div>
+                      </div>
+                      <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
+                        <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#D4A574' }}>
+                          {analytics.events.addToCart}
+                        </div>
+                        <div style={{ fontSize: '0.9rem', color: '#666' }}>Agregar al Carrito</div>
+                      </div>
+                      <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
+                        <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#D4A574' }}>
+                          {analytics.events.purchases}
+                        </div>
+                        <div style={{ fontSize: '0.9rem', color: '#666' }}>Compras</div>
+                      </div>
+                      <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
+                        <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#D4A574' }}>
+                          {analytics.events.searches}
+                        </div>
+                        <div style={{ fontSize: '0.9rem', color: '#666' }}>Búsquedas</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Best Sellers */}
+                  {analytics.products.bestSellers.length > 0 && (
+                    <div style={{
+                      background: 'white',
+                      padding: '1.5rem',
+                      borderRadius: '15px',
+                      marginBottom: '2rem',
+                      boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+                    }}>
+                      <h3 style={{ color: '#D4A574', marginBottom: '1rem' }}>Productos Más Vendidos</h3>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                        {analytics.products.bestSellers.slice(0, 5).map((product, index) => (
+                          <div key={product.productId} style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            padding: '0.75rem',
+                            background: '#f8f9fa',
+                            borderRadius: '8px'
+                          }}>
+                            <div>
+                              <div style={{ fontWeight: 'bold' }}>{product.productName}</div>
+                              <div style={{ fontSize: '0.9rem', color: '#666' }}>
+                                {product.totalSold} vendidos
+                              </div>
+                            </div>
+                            <div style={{ fontWeight: 'bold', color: '#D4A574' }}>
+                              ${product.totalRevenue.toFixed(2)}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </div>
         )}
