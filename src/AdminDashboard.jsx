@@ -1079,6 +1079,8 @@ const AdminDashboard = ({ user, onClose }) => {
       const last5Minutes = new Date(now.getTime() - 5 * 60 * 1000);
       const last24Hours = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
+      console.log('Loading live traffic...', { now, last5Minutes, last24Hours });
+
       // Get real-time events (last 5 minutes)
       const realTimeEventsQuery = query(
         collection(db, 'analytics_events'),
@@ -1086,11 +1088,15 @@ const AdminDashboard = ({ user, onClose }) => {
         orderBy('timestamp', 'desc')
       );
       const realTimeEventsSnapshot = await getDocs(realTimeEventsQuery);
+      console.log('Real-time events query result:', realTimeEventsSnapshot.docs.length);
+      
       const realTimeEvents = realTimeEventsSnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
         timeAgo: getTimeAgo(doc.data().timestamp)
       }));
+      
+      console.log('Real-time events:', realTimeEvents);
 
       // Get page views (last 24 hours)
       const pageViewsQuery = query(
@@ -1099,7 +1105,10 @@ const AdminDashboard = ({ user, onClose }) => {
         where('timestamp', '>=', last24Hours)
       );
       const pageViewsSnapshot = await getDocs(pageViewsQuery);
+      console.log('Page views query result:', pageViewsSnapshot.docs.length);
+      
       const pageViews = pageViewsSnapshot.docs.map(doc => doc.data());
+      console.log('Page views:', pageViews);
 
       // Calculate unique visitors (last 24 hours)
       const uniqueVisitors = new Set(pageViews.map(event => event.userId)).size;
@@ -1154,7 +1163,7 @@ const AdminDashboard = ({ user, onClose }) => {
         .map(([device, count]) => ({ device, count }))
         .sort((a, b) => b.count - a.count);
 
-      setLiveTraffic({
+      const liveTrafficData = {
         activeUsers,
         pageViews: pageViews.length,
         uniqueVisitors,
@@ -1164,7 +1173,10 @@ const AdminDashboard = ({ user, onClose }) => {
         topPages,
         referrers,
         userAgents
-      });
+      };
+      
+      console.log('Setting live traffic data:', liveTrafficData);
+      setLiveTraffic(liveTrafficData);
     } catch (error) {
       console.error('Error loading live traffic:', error);
     } finally {
@@ -3566,6 +3578,66 @@ const AdminDashboard = ({ user, onClose }) => {
                     <div style={{ display: 'flex', justifyContent: 'center' }}>
                       <BarChart data={chartData.hourlyAnalytics} width={800} height={200} color="#E8B4B8" />
                     </div>
+                  </div>
+                </div>
+
+                {/* Debug Analytics */}
+                <div style={{
+                  background: 'white',
+                  padding: '1.5rem',
+                  borderRadius: '15px',
+                  marginBottom: '2rem',
+                  boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+                }}>
+                  <h3 style={{ color: '#D4A574', marginBottom: '1.5rem' }}>🔧 Debug Analytics</h3>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '1rem'
+                  }}>
+                    <button
+                      onClick={async () => {
+                        try {
+                          const { getDocs, collection } = await import('firebase/firestore');
+                          const snapshot = await getDocs(collection(db, 'analytics_events'));
+                          console.log('Total analytics events in database:', snapshot.docs.length);
+                          alert(`Total analytics events in database: ${snapshot.docs.length}`);
+                        } catch (error) {
+                          console.error('Error checking analytics events:', error);
+                          alert('Error checking analytics events: ' + error.message);
+                        }
+                      }}
+                      style={{
+                        background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '1rem',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontSize: '0.9rem',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      🔍 Check Analytics Events
+                    </button>
+                    <button
+                      onClick={() => {
+                        console.log('Current live traffic state:', liveTraffic);
+                        alert('Check console for live traffic state');
+                      }}
+                      style={{
+                        background: 'linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '1rem',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontSize: '0.9rem',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      📊 Check Live Traffic State
+                    </button>
                   </div>
                 </div>
 
