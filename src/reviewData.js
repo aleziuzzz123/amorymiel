@@ -1649,6 +1649,44 @@ export const getProductReviews = (productId, productName = '') => {
       "Chen Wei", "Li Ming", "Wang Lei", "Zhang Hui", "Liu Yan",
       "Zhou Lin", "Wu Jian", "Xu Mei", "Sun Tao", "Ma Li",
       "Chen Wei Ming", "Li Ming Wei", "Wang Lei Ming", "Zhang Hui Wei", "Liu Yan Ming",
+      "Wang Xiaoli", "Zhang Wei", "Li Xiaoming", "Chen Yulan", "Liu Hong",
+      "Zhou Xiaohong", "Wu Xiaoli", "Xu Xiaoming", "Sun Xiaohong", "Ma Xiaoli",
+      
+      // Russian names
+      "Ivan Petrov", "Elena Volkov", "Dmitri Sokolov", "Natalia Morozov", "Sergei Kuznetsov",
+      "Olga Popov", "Alexei Orlov", "Tatiana Lebedev", "Vladimir Kozlov", "Irina Novikov",
+      "Ivan Petrovich", "Elena Dmitrievna", "Dmitri Sergeevich", "Natalia Vladimirovna", "Sergei Ivanovich",
+      "Olga Petrovna", "Alexei Dmitrievich", "Tatiana Sergeevna", "Vladimir Petrovich", "Irina Dmitrievna",
+      
+      // Japanese names
+      "Yuki Tanaka", "Hiroshi Sato", "Aiko Yamamoto", "Takeshi Nakamura", "Sakura Watanabe",
+      "Kenji Suzuki", "Mika Takahashi", "Yuki Sato", "Hiroshi Tanaka", "Aiko Suzuki",
+      "Yuki Hiroshi Tanaka", "Hiroshi Aiko Sato", "Aiko Yuki Yamamoto", "Takeshi Hiroshi Nakamura",
+      
+      // Korean names
+      "Min-jun Kim", "So-young Park", "Jae-ho Lee", "Hye-jin Choi", "Sung-hoon Jung",
+      "Eun-jung Kim", "Dong-hyun Park", "Ji-young Lee", "Min-kyu Choi", "So-hee Jung",
+      "Min-jun So-young Kim", "So-young Jae-ho Park", "Jae-ho Hye-jin Lee", "Hye-jin Sung-hoon Choi",
+      
+      // French names
+      "Marie Dubois", "Pierre Martin", "Sophie Bernard", "Jean Durand", "Camille Moreau",
+      "Antoine Petit", "Claire Rousseau", "François Leroy", "Isabelle Simon", "Nicolas Laurent",
+      "Marie Sophie Dubois", "Pierre Antoine Martin", "Sophie Camille Bernard", "Jean François Durand",
+      
+      // German names
+      "Hans Mueller", "Anna Schmidt", "Klaus Weber", "Greta Fischer", "Wolfgang Wagner",
+      "Ingrid Becker", "Helmut Schulz", "Ursula Hoffmann", "Dieter Richter", "Petra Klein",
+      "Hans Klaus Mueller", "Anna Greta Schmidt", "Klaus Wolfgang Weber", "Greta Ingrid Fischer",
+      
+      // Italian names
+      "Giuseppe Rossi", "Maria Bianchi", "Antonio Ferrari", "Giulia Romano", "Marco Conti",
+      "Francesca Ricci", "Alessandro Moretti", "Valentina Rizzo", "Luca Gallo", "Elena De Luca",
+      "Giuseppe Antonio Rossi", "Maria Giulia Bianchi", "Antonio Marco Ferrari", "Giulia Francesca Romano",
+      
+      // Brazilian names
+      "João Silva", "Maria Santos", "Pedro Oliveira", "Ana Costa", "Carlos Ferreira",
+      "Lucia Rodrigues", "Rafael Alves", "Fernanda Lima", "Bruno Pereira", "Camila Barbosa",
+      "João Pedro Silva", "Maria Ana Santos", "Pedro Carlos Oliveira", "Ana Lucia Costa",
       
       // Creative/Unique names
       "Luna Moon", "River Stone", "Phoenix Rising", "Sage Wisdom", "Ocean Blue",
@@ -1683,7 +1721,28 @@ export const getProductReviews = (productId, productName = '') => {
             "perfect for my meditation the wax burns so clean and the scent is amazing totally worth it",
             "me encantan estas velas el aroma de miel es tan natural que parece que estoy en un panal de abejas",
             "increible calidad estas velas han cambiado mi espacio de meditacion la energia es tan positiva",
-            "las velas estan perfectas el olor es delicioso y duran mucho tiempo definitivamente las recomiendo"
+            "las velas estan perfectas el olor es delicioso y duran mucho tiempo definitivamente las recomiendo",
+            
+            // Russian comments (2%)
+            "отличные свечи! аромат меда такой натуральный, что кажется, будто я в улье",
+            "невероятные свечи! качество воска превосходное, чувствуется, что сделаны с любовью",
+            "прекрасные свечи для медитации! аромат меда очень расслабляющий и воск отличного качества",
+            "потрясающие свечи! аромат такой богатый, что не могу перестать их нюхать",
+            "отличное качество! эти свечи изменили мое пространство для медитации, энергия невероятная",
+            
+            // Chinese comments (1.5%)
+            "这些蜡烛太棒了！蜂蜜香味如此自然，感觉就像在蜂巢里",
+            "令人难以置信的蜡烛！蜡的质量非常出色，能感受到是用爱制作的",
+            "完美的冥想蜡烛！蜂蜜香味非常放松，蜡的质量很好",
+            "惊人的蜡烛！香味如此丰富，我无法停止闻它们",
+            "优秀的产品！这些蜡烛改变了我的冥想空间，能量令人难以置信",
+            
+            // Arabic comments (1.5%)
+            "شموع رائعة! رائحة العسل طبيعية جداً، أشعر وكأنني في خلية نحل",
+            "شموع لا تصدق! جودة الشمع ممتازة، تشعر أنها مصنوعة بحب",
+            "شموع مثالية للتأمل! رائحة العسل مريحة جداً والشمع عالي الجودة",
+            "شموع مذهلة! الرائحة غنية جداً، لا أستطيع التوقف عن شمها",
+            "منتج ممتاز! هذه الشموع غيرت مساحة التأمل لدي، الطاقة لا تصدق"
           ],
           4: [
             "muy buenas velas el aroma esta rico pero esperaba que fueran mas grandes la calidad es buena tho",
@@ -1741,7 +1800,28 @@ export const getProductReviews = (productId, productName = '') => {
             "fantastico este aceite ha cambiado mi vida las oportunidades llegan mas facil ahora",
             "amazing oil the spiritual properties are incredible and the scent is so pure",
             "increible el aceite funciona de verdad he notado cambios positivos desde que lo uso",
-            "perfect this oil has opened so many doors for me the energy is incredible"
+            "perfect this oil has opened so many doors for me the energy is incredible",
+            
+            // Russian comments (2%)
+            "отличное масло! с тех пор как использую его, чувствую, что дела идут лучше",
+            "невероятное масло! качество превосходное, чувствуется, что оно натуральное",
+            "прекрасное масло для ритуалов! аромат аутентичный и духовные свойства невероятные",
+            "потрясающее масло! оно действительно работает, я заметил позитивные изменения",
+            "отличное качество! это масло изменило мою жизнь, возможности приходят легче",
+            
+            // Chinese comments (1.5%)
+            "这个油太棒了！自从使用它以来，我感觉事情变得更顺利了",
+            "令人难以置信的油！质量非常出色，能感受到它是天然的",
+            "完美的仪式用油！香味很正宗，精神益处令人难以置信",
+            "惊人的油！它真的有效，我注意到积极的变化",
+            "优秀的产品！这个油改变了我的生活，机会来得更容易了",
+            
+            // Arabic comments (1.5%)
+            "زيت رائع! منذ أن أستخدمه، أشعر أن الأمور تسير بشكل أفضل",
+            "زيت لا يصدق! الجودة ممتازة، تشعر أنه طبيعي",
+            "زيت مثالي للطقوس! الرائحة أصيلة والفوائد الروحية لا تصدق",
+            "زيت مذهل! يعمل حقاً، لاحظت تغييرات إيجابية",
+            "منتج ممتاز! هذا الزيت غير حياتي، الفرص تأتي بسهولة أكثر"
           ],
           4: [
             "muy bueno el aceite funciona bien aunque esperaba mas olor pero overall estoy contenta its good",
@@ -1801,7 +1881,28 @@ export const getProductReviews = (productId, productName = '') => {
               "fantastico, esta agua de rosas es la mas pura que he usado, perfecta para mi piel",
               "incredible rose water, the natural properties are exactly what i needed",
               "perfecto, el agua de rosas funciona de maravilla para hidratar mi piel, muy recomendado",
-              "excellent rose water, the hydrating properties are powerful and the scent is authentic"
+              "excellent rose water, the hydrating properties are powerful and the scent is authentic",
+              
+              // Russian comments (2%)
+              "отличная розовая вода! использую её каждую ночь перед сном и сплю намного лучше",
+              "невероятная розовая вода! качество исключительное, чувствуется, что сделана из натуральных лепестков",
+              "прекрасная розовая вода! использую ежедневно и моя кожа значительно улучшилась",
+              "потрясающая розовая вода! увлажняющие свойства мощные и я чувствую себя более свежей",
+              "отличное качество! эта розовая вода самая чистая, которую я когда-либо использовала",
+              
+              // Chinese comments (1.5%)
+              "这个玫瑰水太棒了！我每天晚上睡前使用，睡眠质量好多了",
+              "令人难以置信的玫瑰水！质量非常出色，能感受到是用天然花瓣制作的",
+              "完美的玫瑰水！我每天使用，皮肤改善了很多",
+              "惊人的玫瑰水！保湿效果非常强大，我感觉更清爽了",
+              "优秀的产品！这个玫瑰水是我用过最纯净的，完美适合我的护肤程序",
+              
+              // Arabic comments (1.5%)
+              "ماء ورد رائع! أستخدمه كل ليلة قبل النوم وأنام بشكل أفضل بكثير",
+              "ماء ورد لا يصدق! الجودة استثنائية، تشعر أنه مصنوع من بتلات طبيعية",
+              "ماء ورد مثالي! أستخدمه يومياً وبشرتي تحسنت كثيراً",
+              "ماء ورد مذهل! خصائص الترطيب قوية وأشعر بأنني أكثر انتعاشاً",
+              "منتج ممتاز! هذا ماء الورد هو الأكثر نقاءً الذي استخدمته، مثالي لروتيني الجلدي"
             ],
             4: [
               "muy buena agua de rosas, funciona bien aunque esperaba mas hidratacion en la piel",
@@ -1858,7 +1959,28 @@ export const getProductReviews = (productId, productName = '') => {
             "fantastico, esta agua es la mas pura que he usado, perfecta para mis rituales",
             "incredible water, the natural properties are exactly what i needed",
             "perfecto, el agua funciona de maravilla para limpiar energias negativas, muy recomendado",
-            "excellent water, the cleansing properties are powerful and the energy is authentic"
+            "excellent water, the cleansing properties are powerful and the energy is authentic",
+            
+            // Russian comments (2%)
+            "отличная вода! использую её каждую ночь перед сном и сплю намного лучше",
+            "невероятная вода! качество исключительное, чувствуется, что сделана из натуральных ингредиентов",
+            "прекрасная вода! использую ежедневно и моё самочувствие значительно улучшилось",
+            "потрясающая вода! очищающие свойства мощные и я чувствую себя более сбалансированной",
+            "отличное качество! эта вода самая чистая, которую я когда-либо использовала",
+            
+            // Chinese comments (1.5%)
+            "这个水太棒了！我每天晚上睡前使用，睡眠质量好多了",
+            "令人难以置信的水！质量非常出色，能感受到是用天然成分制作的",
+            "完美的水！我每天使用，我的健康状况改善了很多",
+            "惊人的水！净化效果非常强大，我感觉更平衡了",
+            "优秀的产品！这个水是我用过最纯净的，完美适合我的仪式",
+            
+            // Arabic comments (1.5%)
+            "ماء رائع! أستخدمه كل ليلة قبل النوم وأنام بشكل أفضل بكثير",
+            "ماء لا يصدق! الجودة استثنائية، تشعر أنه مصنوع من مكونات طبيعية",
+            "ماء مثالي! أستخدمه يومياً ورفاهيتي تحسنت كثيراً",
+            "ماء مذهل! خصائص التنظيف قوية وأشعر بأنني أكثر توازناً",
+            "منتج ممتاز! هذا الماء هو الأكثر نقاءً الذي استخدمته، مثالي لطقوسي"
           ],
           4: [
             "muy buena agua, funciona bien aunque esperaba mas intensidad en los beneficios",
