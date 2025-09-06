@@ -784,6 +784,13 @@ function App() {
     setShowReviewModal(true);
   };
 
+  // Generate WhatsApp booking link for services
+  const getWhatsAppLink = (service) => {
+    const message = `Hola! Me interesa agendar el servicio: ${service.nombre}`;
+    const encodedMessage = encodeURIComponent(message);
+    return `https://wa.me/523317361884?text=${encodedMessage}`;
+  };
+
   const closeReviewModal = () => {
     setShowReviewModal(false);
     setReviewingProduct(null);
@@ -3362,7 +3369,7 @@ function App() {
                       ${service.precio} {service.moneda}
                     </span>
                   <a 
-                    href={service.bookingLink} 
+                    href={getWhatsAppLink(service)} 
                     target="_blank" 
                       rel="noopener noreferrer"
                     style={{ 
@@ -3374,10 +3381,21 @@ function App() {
                         cursor: "pointer",
                   fontSize: "0.9rem",
                   fontWeight: "600",
-                        textDecoration: "none"
+                        textDecoration: "none",
+                        transition: "all 0.3s ease"
                       }}
+                    onMouseEnter={(e) => {
+                      e.target.style.background = "#8EB080";
+                      e.target.style.transform = "translateY(-2px)";
+                      e.target.style.boxShadow = "0 4px 12px rgba(98, 141, 106, 0.3)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.background = PALETAS.D.verde;
+                      e.target.style.transform = "translateY(0)";
+                      e.target.style.boxShadow = "none";
+                    }}
                     >
-                      Agendar
+                      📱 Agendar
               </a>
             </div>
               </div>
@@ -3755,33 +3773,35 @@ function App() {
                       <span style={{ fontSize: "1.3rem", fontWeight: "bold", color: PALETAS.D.miel }}>
                         ${service.precio} {service.moneda}
                       </span>
-                      <a 
-                        href={service.bookingLink} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        style={{ 
-                          background: "#ffd54f",
-                          color: "white",
-                          border: "none",
-                          padding: "0.75rem 1.5rem",
-                          borderRadius: "25px",
-                          cursor: "pointer",
-                          fontSize: "0.9rem",
-                          fontWeight: "600",
-                          textDecoration: "none",
-                          transition: "all 0.3s ease"
-                        }}
-                        onMouseEnter={(e) => {
-                          e.target.style.background = "#ffc107";
-                          e.target.style.transform = "translateY(-2px)";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.target.style.background = "#ffd54f";
-                          e.target.style.transform = "translateY(0)";
-                        }}
-                      >
-                        Agendar
-                      </a>
+                        <a 
+                          href={getWhatsAppLink(service)} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          style={{ 
+                            background: "#ffd54f",
+                            color: "white",
+                            border: "none",
+                            padding: "0.75rem 1.5rem",
+                            borderRadius: "25px",
+                            cursor: "pointer",
+                            fontSize: "0.9rem",
+                            fontWeight: "600",
+                            textDecoration: "none",
+                            transition: "all 0.3s ease"
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.background = "#ffc107";
+                            e.target.style.transform = "translateY(-2px)";
+                            e.target.style.boxShadow = "0 4px 12px rgba(255, 193, 7, 0.3)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.background = "#ffd54f";
+                            e.target.style.transform = "translateY(0)";
+                            e.target.style.boxShadow = "none";
+                          }}
+                        >
+                          📱 Agendar
+                        </a>
                     </div>
                     </div>
                   </div>
