@@ -72,8 +72,9 @@ exports.handler = async (event, context) => {
             <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
                 <!-- Header -->
                 <div style="background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); padding: 40px 20px; text-align: center; box-shadow: 0 4px 15px rgba(212, 165, 116, 0.3);">
-                    <div style="font-size: 60px; margin-bottom: 15px; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">🍯</div>
-                    <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Amor y Miel</h1>
+                    <div style="margin-bottom: 20px;">
+                        <img src="https://amorymiel.com/images/logo/amorymiellogo.png" alt="Amor y Miel" style="height: 60px; max-width: 100%;" />
+                    </div>
                     <h2 style="color: #ffffff; margin: 15px 0 0 0; font-size: 22px; font-weight: 500; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">¿Olvidaste algo en tu carrito?</h2>
                 </div>
 
@@ -254,11 +255,20 @@ exports.handler = async (event, context) => {
         html: htmlContent
       });
     } else if (emailType === 'contact-form') {
+      // Add logo to contact form email
+      const contactHtmlContent = htmlContent.replace(
+        '<div style="background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); padding: 30px 20px; text-align: center;">',
+        `<div style="background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); padding: 30px 20px; text-align: center;">
+          <div style="margin-bottom: 15px;">
+            <img src="https://amorymiel.com/images/logo/amorymiellogo.png" alt="Amor y Miel" style="height: 50px; max-width: 100%;" />
+          </div>`
+      );
+      
       result = await resend.emails.send({
         from: 'info@amorymiel.com',
         to: [userEmail],
         subject: subject,
-        html: htmlContent
+        html: contactHtmlContent
       });
     } else if (emailType === 'newsletter') {
       result = await resend.emails.send({
@@ -268,25 +278,52 @@ exports.handler = async (event, context) => {
         html: htmlContent
       });
     } else if (emailType === 'order-confirmation') {
+      // Add logo to order confirmation email
+      const orderHtmlContent = htmlContent.replace(
+        '<div style="background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); padding: 30px 20px; text-align: center;">',
+        `<div style="background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); padding: 30px 20px; text-align: center;">
+          <div style="margin-bottom: 15px;">
+            <img src="https://amorymiel.com/images/logo/amorymiellogo.png" alt="Amor y Miel" style="height: 50px; max-width: 100%;" />
+          </div>`
+      );
+      
       result = await resend.emails.send({
         from: 'info@amorymiel.com',
         to: [userEmail],
         subject: subject,
-        html: htmlContent
+        html: orderHtmlContent
       });
     } else if (emailType === 'shipping-update') {
+      // Add logo to shipping update email
+      const shippingHtmlContent = htmlContent.replace(
+        '<div style="background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); padding: 30px 20px; text-align: center;">',
+        `<div style="background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); padding: 30px 20px; text-align: center;">
+          <div style="margin-bottom: 15px;">
+            <img src="https://amorymiel.com/images/logo/amorymiellogo.png" alt="Amor y Miel" style="height: 50px; max-width: 100%;" />
+          </div>`
+      );
+      
       result = await resend.emails.send({
         from: 'info@amorymiel.com',
         to: [userEmail],
         subject: subject,
-        html: htmlContent
+        html: shippingHtmlContent
       });
     } else if (emailType === 'delivery-confirmation') {
+      // Add logo to delivery confirmation email
+      const deliveryHtmlContent = htmlContent.replace(
+        '<div style="background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); padding: 30px 20px; text-align: center;">',
+        `<div style="background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); padding: 30px 20px; text-align: center;">
+          <div style="margin-bottom: 15px;">
+            <img src="https://amorymiel.com/images/logo/amorymiellogo.png" alt="Amor y Miel" style="height: 50px; max-width: 100%;" />
+          </div>`
+      );
+      
       result = await resend.emails.send({
         from: 'info@amorymiel.com',
         to: [userEmail],
         subject: subject,
-        html: htmlContent
+        html: deliveryHtmlContent
       });
     }
 

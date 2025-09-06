@@ -1370,8 +1370,9 @@ function App() {
             <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
                 <!-- Header -->
                 <div style="background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); padding: 30px 20px; text-align: center;">
-                    <div style="font-size: 48px; margin-bottom: 10px;">🍯</div>
-                    <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: bold;">Amor y Miel</h1>
+                    <div style="margin-bottom: 15px;">
+                        <img src="https://amorymiel.com/images/logo/amorymiellogo.png" alt="Amor y Miel" style="height: 50px; max-width: 100%;" />
+                    </div>
                     <h2 style="color: #ffffff; margin: 10px 0 0 0; font-size: 20px; font-weight: normal;">Nuevo Mensaje de Contacto</h2>
                 </div>
 
