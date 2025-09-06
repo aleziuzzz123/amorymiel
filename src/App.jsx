@@ -8,6 +8,27 @@ import {
   sendPasswordResetEmail
 } from 'firebase/auth';
 import { getProductReviews, calculateAverageRating, getReviewCount } from './reviewData';
+
+// Helper function to render stars with half-star support
+const renderStars = (rating, fontSize = "14px") => {
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 >= 0.5;
+  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+  
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "0.1rem" }}>
+      {[...Array(fullStars)].map((_, i) => (
+        <span key={i} style={{ color: "#FFD700", fontSize }}>⭐</span>
+      ))}
+      {hasHalfStar && (
+        <span style={{ color: "#FFD700", fontSize }}>✨</span>
+      )}
+      {[...Array(emptyStars)].map((_, i) => (
+        <span key={i} style={{ color: "#E0E0E0", fontSize }}>⭐</span>
+      ))}
+    </div>
+  );
+};
 import { 
   doc, 
   setDoc, 
@@ -3103,21 +3124,7 @@ function App() {
                     e.currentTarget.style.opacity = "1";
                   }}
                   >
-                    <div style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.2rem"
-                    }}>
-                      {[...Array(5)].map((_, i) => (
-                        <span key={i} style={{
-                          color: i < Math.floor(calculateAverageRating(product.id)) ? "#FFD700" : "#E0E0E0",
-                          fontSize: "14px",
-                          transition: "color 0.2s ease"
-                        }}>
-                          ⭐
-                        </span>
-                      ))}
-                    </div>
+                    {renderStars(calculateAverageRating(product.id))}
                     <span style={{
                       fontSize: "0.8rem",
                       color: "#666",
@@ -3752,21 +3759,7 @@ function App() {
                       e.currentTarget.style.opacity = "1";
                     }}
                     >
-                      <div style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.2rem"
-                      }}>
-                        {[...Array(5)].map((_, i) => (
-                          <span key={i} style={{
-                            color: i < Math.floor(calculateAverageRating(product.id)) ? "#FFD700" : "#E0E0E0",
-                            fontSize: "14px",
-                            transition: "color 0.2s ease"
-                          }}>
-                            ⭐
-                          </span>
-                        ))}
-                      </div>
+                      {renderStars(calculateAverageRating(product.id))}
                       <span style={{
                         fontSize: "0.8rem",
                         color: "#666",
@@ -3948,21 +3941,7 @@ function App() {
                       e.currentTarget.style.opacity = "1";
                     }}
                     >
-                      <div style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.2rem"
-                      }}>
-                        {[...Array(5)].map((_, i) => (
-                          <span key={i} style={{
-                            color: i < Math.floor(calculateAverageRating(service.id)) ? "#FFD700" : "#E0E0E0",
-                            fontSize: "14px",
-                            transition: "color 0.2s ease"
-                          }}>
-                            ⭐
-                          </span>
-                        ))}
-                      </div>
+                      {renderStars(calculateAverageRating(service.id))}
                       <span style={{
                         fontSize: "0.8rem",
                         color: "#666",
@@ -5610,21 +5589,7 @@ function App() {
                       e.currentTarget.style.opacity = "1";
                     }}
                     >
-                      <div style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.2rem"
-                      }}>
-                        {[...Array(5)].map((_, i) => (
-                          <span key={i} style={{
-                            color: i < Math.floor(calculateAverageRating(detailedProduct.id)) ? "#FFD700" : "#E0E0E0",
-                            fontSize: "16px",
-                            transition: "color 0.2s ease"
-                          }}>
-                            ⭐
-                          </span>
-                        ))}
-                      </div>
+                      {renderStars(calculateAverageRating(detailedProduct.id), "16px")}
                       <span style={{
                         fontSize: "0.9rem",
                         color: "#666",
