@@ -3724,7 +3724,7 @@ const AdminDashboard = ({ user, onClose }) => {
                       color: '#333',
                       fontWeight: '500'
                     }}>
-                      Código del Cupón *
+                      🎫 Código del Cupón *
                     </label>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                       <input
@@ -3759,6 +3759,14 @@ const AdminDashboard = ({ user, onClose }) => {
                         🎲 Generar
                       </button>
                     </div>
+                    <div style={{
+                      fontSize: '0.8rem',
+                      color: '#666',
+                      marginTop: '0.25rem',
+                      fontStyle: 'italic'
+                    }}>
+                      💡 Ejemplos: WELCOME10, BLACKFRIDAY25, SUMMER2024
+                    </div>
                   </div>
                   <div>
                     <label style={{
@@ -3767,7 +3775,7 @@ const AdminDashboard = ({ user, onClose }) => {
                       color: '#333',
                       fontWeight: '500'
                     }}>
-                      Tipo de Descuento *
+                      💰 Tipo de Descuento *
                     </label>
                     <select
                       value={newCoupon.type}
@@ -3781,9 +3789,9 @@ const AdminDashboard = ({ user, onClose }) => {
                         outline: 'none'
                       }}
                     >
-                      <option value="percentage">Porcentaje (%)</option>
-                      <option value="fixed">Cantidad Fija ($)</option>
-                      <option value="freeshipping">Envío Gratis</option>
+                      <option value="percentage">📊 Porcentaje (%) - Ej: 10% de descuento</option>
+                      <option value="fixed">💵 Cantidad Fija ($) - Ej: $50 de descuento</option>
+                      <option value="freeshipping">🚚 Envío Gratis - Sin costo de envío</option>
                     </select>
                   </div>
                 </div>
@@ -3796,7 +3804,7 @@ const AdminDashboard = ({ user, onClose }) => {
                       color: '#333',
                       fontWeight: '500'
                     }}>
-                      Valor del Descuento *
+                      💵 Valor del Descuento *
                     </label>
                     <input
                       type="number"
@@ -3805,7 +3813,7 @@ const AdminDashboard = ({ user, onClose }) => {
                       step="0.01"
                       value={newCoupon.value}
                       onChange={(e) => setNewCoupon(prev => ({ ...prev, value: parseFloat(e.target.value) }))}
-                      placeholder={newCoupon.type === 'percentage' ? '10' : '5'}
+                      placeholder={newCoupon.type === 'percentage' ? '10' : '50'}
                       style={{
                         width: '100%',
                         padding: '0.75rem',
@@ -3815,6 +3823,16 @@ const AdminDashboard = ({ user, onClose }) => {
                         outline: 'none'
                       }}
                     />
+                    <div style={{
+                      fontSize: '0.8rem',
+                      color: '#666',
+                      marginTop: '0.25rem',
+                      fontStyle: 'italic'
+                    }}>
+                      {newCoupon.type === 'percentage' ? '💡 Ejemplos: 10 = 10% descuento, 25 = 25% descuento' :
+                       newCoupon.type === 'fixed' ? '💡 Ejemplos: 50 = $50 descuento, 100 = $100 descuento' :
+                       '💡 Envío gratis - no requiere valor'}
+                    </div>
                   </div>
                   <div>
                     <label style={{
@@ -3823,7 +3841,7 @@ const AdminDashboard = ({ user, onClose }) => {
                       color: '#333',
                       fontWeight: '500'
                     }}>
-                      Compra Mínima ($)
+                      🛒 Compra Mínima ($)
                     </label>
                     <input
                       type="number"
@@ -3841,6 +3859,14 @@ const AdminDashboard = ({ user, onClose }) => {
                         outline: 'none'
                       }}
                     />
+                    <div style={{
+                      fontSize: '0.8rem',
+                      color: '#666',
+                      marginTop: '0.25rem',
+                      fontStyle: 'italic'
+                    }}>
+                      💡 Ejemplos: 0 = sin mínimo, 100 = mínimo $100, 200 = mínimo $200
+                    </div>
                   </div>
                 </div>
 
@@ -3852,7 +3878,7 @@ const AdminDashboard = ({ user, onClose }) => {
                       color: '#333',
                       fontWeight: '500'
                     }}>
-                      Usos Máximos
+                      👥 Usos Máximos Totales
                     </label>
                     <input
                       type="number"
@@ -3868,6 +3894,14 @@ const AdminDashboard = ({ user, onClose }) => {
                         outline: 'none'
                       }}
                     />
+                    <div style={{
+                      fontSize: '0.8rem',
+                      color: '#666',
+                      marginTop: '0.25rem',
+                      fontStyle: 'italic'
+                    }}>
+                      💡 Ejemplos: 100 = máximo 100 usos totales, 1000 = máximo 1000 usos
+                    </div>
                   </div>
                   <div>
                     <label style={{
@@ -3876,7 +3910,7 @@ const AdminDashboard = ({ user, onClose }) => {
                       color: '#333',
                       fontWeight: '500'
                     }}>
-                      Límite por Cliente
+                      👤 Límite por Cliente
                     </label>
                     <input
                       type="number"
@@ -3892,6 +3926,14 @@ const AdminDashboard = ({ user, onClose }) => {
                         outline: 'none'
                       }}
                     />
+                    <div style={{
+                      fontSize: '0.8rem',
+                      color: '#666',
+                      marginTop: '0.25rem',
+                      fontStyle: 'italic'
+                    }}>
+                      💡 Ejemplos: 1 = 1 vez por cliente, 3 = máximo 3 veces por cliente
+                    </div>
                   </div>
                 </div>
 
@@ -3903,7 +3945,7 @@ const AdminDashboard = ({ user, onClose }) => {
                       color: '#333',
                       fontWeight: '500'
                     }}>
-                      Fecha de Inicio
+                      📅 Fecha de Inicio
                     </label>
                     <input
                       type="date"
@@ -3918,6 +3960,14 @@ const AdminDashboard = ({ user, onClose }) => {
                         outline: 'none'
                       }}
                     />
+                    <div style={{
+                      fontSize: '0.8rem',
+                      color: '#666',
+                      marginTop: '0.25rem',
+                      fontStyle: 'italic'
+                    }}>
+                      💡 Deja vacío para activar inmediatamente
+                    </div>
                   </div>
                   <div>
                     <label style={{
@@ -3926,7 +3976,7 @@ const AdminDashboard = ({ user, onClose }) => {
                       color: '#333',
                       fontWeight: '500'
                     }}>
-                      Fecha de Expiración
+                      ⏰ Fecha de Expiración
                     </label>
                     <input
                       type="date"
@@ -3941,6 +3991,129 @@ const AdminDashboard = ({ user, onClose }) => {
                         outline: 'none'
                       }}
                     />
+                    <div style={{
+                      fontSize: '0.8rem',
+                      color: '#666',
+                      marginTop: '0.25rem',
+                      fontStyle: 'italic'
+                    }}>
+                      💡 Deja vacío para sin expiración
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Date Presets */}
+                <div style={{
+                  background: '#f8f9fa',
+                  borderRadius: '8px',
+                  padding: '1rem',
+                  marginBottom: '1rem',
+                  border: '1px solid #e9ecef'
+                }}>
+                  <h4 style={{
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    color: '#333',
+                    marginBottom: '0.75rem',
+                    margin: '0 0 0.75rem 0'
+                  }}>
+                    ⚡ Presets Rápidos
+                  </h4>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const today = new Date();
+                        const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+                        setNewCoupon(prev => ({
+                          ...prev,
+                          startDate: today.toISOString().split('T')[0],
+                          endDate: nextWeek.toISOString().split('T')[0]
+                        }));
+                      }}
+                      style={{
+                        background: '#e3f2fd',
+                        color: '#1976d2',
+                        border: '1px solid #bbdefb',
+                        padding: '0.5rem 1rem',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '0.8rem',
+                        fontWeight: '500'
+                      }}
+                    >
+                      📅 1 Semana
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const today = new Date();
+                        const nextMonth = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
+                        setNewCoupon(prev => ({
+                          ...prev,
+                          startDate: today.toISOString().split('T')[0],
+                          endDate: nextMonth.toISOString().split('T')[0]
+                        }));
+                      }}
+                      style={{
+                        background: '#e8f5e8',
+                        color: '#2e7d32',
+                        border: '1px solid #c8e6c9',
+                        padding: '0.5rem 1rem',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '0.8rem',
+                        fontWeight: '500'
+                      }}
+                    >
+                      📅 1 Mes
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const today = new Date();
+                        const next3Months = new Date(today.getTime() + 90 * 24 * 60 * 60 * 1000);
+                        setNewCoupon(prev => ({
+                          ...prev,
+                          startDate: today.toISOString().split('T')[0],
+                          endDate: next3Months.toISOString().split('T')[0]
+                        }));
+                      }}
+                      style={{
+                        background: '#fff3e0',
+                        color: '#f57c00',
+                        border: '1px solid #ffcc02',
+                        padding: '0.5rem 1rem',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '0.8rem',
+                        fontWeight: '500'
+                      }}
+                    >
+                      📅 3 Meses
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setNewCoupon(prev => ({
+                          ...prev,
+                          startDate: '',
+                          endDate: ''
+                        }));
+                      }}
+                      style={{
+                        background: '#ffebee',
+                        color: '#d32f2f',
+                        border: '1px solid #ffcdd2',
+                        padding: '0.5rem 1rem',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '0.8rem',
+                        fontWeight: '500'
+                      }}
+                    >
+                      🚫 Sin Límites
+                    </button>
                   </div>
                 </div>
 
@@ -3951,12 +4124,12 @@ const AdminDashboard = ({ user, onClose }) => {
                     color: '#333',
                     fontWeight: '500'
                   }}>
-                    Descripción
+                    📝 Descripción del Cupón
                   </label>
                   <textarea
                     value={newCoupon.description}
                     onChange={(e) => setNewCoupon(prev => ({ ...prev, description: e.target.value }))}
-                    placeholder="Describe el cupón y sus condiciones..."
+                    placeholder="Ej: Descuento especial para nuevos clientes. Válido en toda la tienda. No acumulable con otras promociones."
                     style={{
                       width: '100%',
                       padding: '0.75rem',
@@ -3968,6 +4141,113 @@ const AdminDashboard = ({ user, onClose }) => {
                       resize: 'vertical'
                     }}
                   />
+                  <div style={{
+                    fontSize: '0.8rem',
+                    color: '#666',
+                    marginTop: '0.25rem',
+                    fontStyle: 'italic'
+                  }}>
+                    💡 Esta descripción aparecerá en el carrito cuando el cliente aplique el cupón
+                  </div>
+                </div>
+
+                {/* Tutorial Section */}
+                <div style={{
+                  background: 'linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%)',
+                  borderRadius: '12px',
+                  padding: '1.5rem',
+                  marginBottom: '1.5rem',
+                  border: '2px solid #bbdefb'
+                }}>
+                  <h3 style={{
+                    fontSize: '1.1rem',
+                    fontWeight: '600',
+                    color: '#1976d2',
+                    marginBottom: '1rem',
+                    margin: '0 0 1rem 0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem'
+                  }}>
+                    🎓 Guía Rápida - Cómo Crear Cupones
+                  </h3>
+                  
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div>
+                      <h4 style={{
+                        fontSize: '0.9rem',
+                        fontWeight: '600',
+                        color: '#1976d2',
+                        marginBottom: '0.5rem',
+                        margin: '0 0 0.5rem 0'
+                      }}>
+                        💰 Tipos de Descuento:
+                      </h4>
+                      <ul style={{
+                        fontSize: '0.8rem',
+                        color: '#333',
+                        margin: 0,
+                        paddingLeft: '1rem'
+                      }}>
+                        <li><strong>Porcentaje:</strong> 10 = 10% de descuento</li>
+                        <li><strong>Fijo:</strong> 50 = $50 de descuento</li>
+                        <li><strong>Envío Gratis:</strong> Sin costo de envío</li>
+                      </ul>
+                    </div>
+                    
+                    <div>
+                      <h4 style={{
+                        fontSize: '0.9rem',
+                        fontWeight: '600',
+                        color: '#1976d2',
+                        marginBottom: '0.5rem',
+                        margin: '0 0 0.5rem 0'
+                      }}>
+                        👥 Límites de Uso:
+                      </h4>
+                      <ul style={{
+                        fontSize: '0.8rem',
+                        color: '#333',
+                        margin: 0,
+                        paddingLeft: '1rem'
+                      }}>
+                        <li><strong>Usos Máximos:</strong> Total de veces que se puede usar</li>
+                        <li><strong>Por Cliente:</strong> Veces que cada cliente puede usarlo</li>
+                        <li><strong>Compra Mínima:</strong> Monto mínimo para aplicar</li>
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  <div style={{
+                    background: '#fff',
+                    borderRadius: '8px',
+                    padding: '1rem',
+                    marginTop: '1rem',
+                    border: '1px solid #e0e0e0'
+                  }}>
+                    <h4 style={{
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                      color: '#2e7d32',
+                      marginBottom: '0.5rem',
+                      margin: '0 0 0.5rem 0'
+                    }}>
+                      ✨ Ejemplo Práctico:
+                    </h4>
+                    <p style={{
+                      fontSize: '0.8rem',
+                      color: '#333',
+                      margin: 0,
+                      lineHeight: '1.4'
+                    }}>
+                      <strong>Código:</strong> WELCOME10<br/>
+                      <strong>Tipo:</strong> Porcentaje (10%)<br/>
+                      <strong>Compra Mínima:</strong> $100<br/>
+                      <strong>Usos:</strong> 100 totales, 1 por cliente<br/>
+                      <strong>Válido:</strong> 1 mes desde hoy<br/>
+                      <strong>Resultado:</strong> Nuevos clientes obtienen 10% de descuento en compras de $100 o más, máximo 1 vez por persona.
+                    </p>
+                  </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
