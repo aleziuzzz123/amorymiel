@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Resend } from 'resend';
+// Resend is now handled by Netlify functions
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
