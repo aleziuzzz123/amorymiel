@@ -71,10 +71,10 @@ exports.handler = async (event, context) => {
         <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f9fa;">
             <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
                 <!-- Header -->
-                <div style="background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); padding: 30px 20px; text-align: center;">
-                    <div style="font-size: 48px; margin-bottom: 10px;">🍯</div>
-                    <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: bold;">Amor y Miel</h1>
-                    <h2 style="color: #ffffff; margin: 10px 0 0 0; font-size: 20px; font-weight: normal;">¿Olvidaste algo en tu carrito?</h2>
+                <div style="background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); padding: 40px 20px; text-align: center; box-shadow: 0 4px 15px rgba(212, 165, 116, 0.3);">
+                    <div style="font-size: 60px; margin-bottom: 15px; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">🍯</div>
+                    <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Amor y Miel</h1>
+                    <h2 style="color: #ffffff; margin: 15px 0 0 0; font-size: 22px; font-weight: 500; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">¿Olvidaste algo en tu carrito?</h2>
                 </div>
 
                 <!-- Main Content -->
@@ -101,31 +101,28 @@ exports.handler = async (event, context) => {
                     </div>
 
                     <!-- Special Offer Banner -->
-                    <div style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); border-radius: 12px; padding: 25px; margin: 25px 0; text-align: center; box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4); position: relative; overflow: hidden;">
-                        <!-- Animated background effect -->
-                        <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); animation: pulse 2s infinite;"></div>
-                        
-                        <div style="position: relative; z-index: 2;">
-                            <div style="font-size: 32px; margin-bottom: 15px; animation: bounce 1s infinite alternate;">🚨</div>
-                            <h3 style="color: #ffffff; margin: 0 0 15px 0; font-size: 24px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
-                                ¡ÚLTIMA OPORTUNIDAD! 🔥
-                            </h3>
-                            <p style="color: #ffffff; font-size: 18px; margin: 0 0 20px 0; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">
-                                No dejes que otros se lleven tus productos favoritos
+                    <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); border-radius: 15px; padding: 30px; margin: 30px 0; text-align: center; box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4); border: 3px solid #fff;">
+                        <div style="font-size: 40px; margin-bottom: 20px;">🎉</div>
+                        <h3 style="color: #ffffff; margin: 0 0 15px 0; font-size: 26px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.4);">
+                            ¡OFERTA ESPECIAL PARA TI! 🔥
+                        </h3>
+                        <p style="color: #ffffff; font-size: 18px; margin: 0 0 25px 0; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.4);">
+                            No dejes que otros se lleven tus productos favoritos
+                        </p>
+                        <div style="background-color: rgba(255, 255, 255, 0.9); border-radius: 12px; padding: 20px; margin: 20px 0; border: 2px solid #fff;">
+                            <p style="color: #2c3e50; font-size: 18px; margin: 0 0 15px 0; font-weight: 600;">
+                                Usa el código: <strong style="background-color: #e74c3c; color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 20px;">WELCOME10</strong>
                             </p>
-                            <div style="background-color: rgba(255, 255, 255, 0.25); border-radius: 10px; padding: 15px; margin: 15px 0; border: 2px solid rgba(255, 255, 255, 0.3);">
-                                <p style="color: #ffffff; font-size: 16px; margin: 0 0 10px 0; font-weight: 500;">
-                                    Usa el código <strong style="background-color: rgba(255, 255, 255, 0.3); padding: 2px 8px; border-radius: 4px;">WELCOME10</strong>
-                                </p>
-                                <span style="color: #ffffff; font-size: 28px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                            <div style="background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); border-radius: 8px; padding: 15px; margin: 10px 0;">
+                                <span style="color: #ffffff; font-size: 32px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
                                     10% DE DESCUENTO
                                 </span>
                             </div>
-                            <div style="background-color: rgba(255, 255, 255, 0.2); border-radius: 20px; padding: 8px 16px; display: inline-block; margin-top: 10px;">
-                                <p style="color: #ffffff; font-size: 14px; margin: 0; font-weight: 600;">
-                                    ⏰ SOLO POR 24 HORAS - ¡NO TE LO PIERDAS!
-                                </p>
-                            </div>
+                        </div>
+                        <div style="background-color: rgba(255, 255, 255, 0.9); border-radius: 25px; padding: 12px 20px; display: inline-block; margin-top: 15px;">
+                            <p style="color: #e74c3c; font-size: 16px; margin: 0; font-weight: bold;">
+                                ⏰ SOLO POR 24 HORAS - ¡NO TE LO PIERDAS!
+                            </p>
                         </div>
                     </div>
 
@@ -168,44 +165,45 @@ exports.handler = async (event, context) => {
                     </div>
 
                     <!-- Urgency Message -->
-                    <div style="background: linear-gradient(135deg, #ff4757 0%, #ff3838 100%); border-radius: 10px; padding: 20px; margin: 25px 0; text-align: center; box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);">
-                        <p style="color: #ffffff; font-size: 18px; margin: 0 0 10px 0; font-weight: bold;">
-                            ⚡ ¡ATENCIÓN! ⚡
+                    <div style="background: linear-gradient(135deg, #ff4757 0%, #ff3838 100%); border-radius: 15px; padding: 25px; margin: 30px 0; text-align: center; box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4); border: 3px solid #fff;">
+                        <div style="font-size: 30px; margin-bottom: 15px;">⚡</div>
+                        <p style="color: #ffffff; font-size: 22px; margin: 0 0 15px 0; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                            ¡ATENCIÓN! ⚡
                         </p>
-                        <p style="color: #ffffff; font-size: 16px; margin: 0; font-weight: 500;">
-                            Esta oferta expira en <strong>24 horas</strong>. ¡No pierdas esta oportunidad única!
+                        <p style="color: #ffffff; font-size: 18px; margin: 0; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">
+                            Esta oferta expira en <strong style="background-color: rgba(255, 255, 255, 0.3); padding: 2px 8px; border-radius: 4px;">24 horas</strong>. ¡No pierdas esta oportunidad única!
                         </p>
                     </div>
 
                     <!-- CTA Button -->
-                    <div style="text-align: center; margin: 35px 0;">
-                        <a href="https://amorymiel.com" class="cta-button" style="display: inline-block; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); color: #ffffff; text-decoration: none; padding: 20px 40px; border-radius: 30px; font-size: 20px; font-weight: bold; box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4); text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease;">
-                            🚀 ¡RECLAMA TU DESCUENTO AHORA! 🚀
+                    <div style="text-align: center; margin: 40px 0; padding: 20px;">
+                        <a href="https://amorymiel.com" class="cta-button" style="display: inline-block; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: #ffffff; text-decoration: none; padding: 25px 50px; border-radius: 50px; font-size: 22px; font-weight: bold; box-shadow: 0 10px 30px rgba(231, 76, 60, 0.5); text-transform: uppercase; letter-spacing: 2px; border: 3px solid #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                            🛒 ¡COMPLETAR COMPRA CON DESCUENTO! 🛒
                         </a>
-                        <p style="color: #666666; font-size: 14px; margin: 15px 0 0 0; font-style: italic;">
+                        <p style="color: #666666; font-size: 16px; margin: 20px 0 0 0; font-style: italic; font-weight: 500;">
                             Haz clic aquí para completar tu compra y ahorrar dinero
                         </p>
                     </div>
 
                     <!-- Instructions -->
-                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 20px; margin: 25px 0; color: #ffffff;">
-                        <h4 style="color: #ffffff; margin: 0 0 15px 0; font-size: 18px; text-align: center;">📝 Cómo usar tu descuento (Súper Fácil):</h4>
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
-                            <div style="background-color: rgba(255, 255, 255, 0.2); border-radius: 8px; padding: 12px; display: flex; align-items: center;">
-                                <span style="background-color: #ff6b6b; color: #ffffff; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 15px;">1</span>
-                                <span style="font-size: 16px; font-weight: 500;">Haz clic en el botón de arriba</span>
+                    <div style="background-color: #f8f9fa; border: 2px solid #e74c3c; border-radius: 15px; padding: 25px; margin: 30px 0;">
+                        <h4 style="color: #2c3e50; margin: 0 0 20px 0; font-size: 20px; text-align: center; font-weight: bold;">📝 Cómo usar tu descuento (Súper Fácil):</h4>
+                        <div style="background-color: #ffffff; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                            <div style="display: flex; align-items: center; margin-bottom: 15px; padding: 10px; background-color: #f8f9fa; border-radius: 8px;">
+                                <span style="background-color: #e74c3c; color: #ffffff; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 15px; font-size: 18px;">1</span>
+                                <span style="font-size: 16px; font-weight: 600; color: #2c3e50;">Haz clic en el botón de arriba</span>
                             </div>
-                            <div style="background-color: rgba(255, 255, 255, 0.2); border-radius: 8px; padding: 12px; display: flex; align-items: center;">
-                                <span style="background-color: #ff6b6b; color: #ffffff; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 15px;">2</span>
-                                <span style="font-size: 16px; font-weight: 500;">Ve a tu carrito de compras</span>
+                            <div style="display: flex; align-items: center; margin-bottom: 15px; padding: 10px; background-color: #f8f9fa; border-radius: 8px;">
+                                <span style="background-color: #e74c3c; color: #ffffff; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 15px; font-size: 18px;">2</span>
+                                <span style="font-size: 16px; font-weight: 600; color: #2c3e50;">Ve a tu carrito de compras</span>
                             </div>
-                            <div style="background-color: rgba(255, 255, 255, 0.2); border-radius: 8px; padding: 12px; display: flex; align-items: center;">
-                                <span style="background-color: #ff6b6b; color: #ffffff; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 15px;">3</span>
-                                <span style="font-size: 16px; font-weight: 500;">Ingresa el código: <strong style="background-color: rgba(255, 255, 255, 0.3); padding: 2px 8px; border-radius: 4px;">WELCOME10</strong></span>
+                            <div style="display: flex; align-items: center; margin-bottom: 15px; padding: 10px; background-color: #f8f9fa; border-radius: 8px;">
+                                <span style="background-color: #e74c3c; color: #ffffff; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 15px; font-size: 18px;">3</span>
+                                <span style="font-size: 16px; font-weight: 600; color: #2c3e50;">Ingresa el código: <strong style="background-color: #e74c3c; color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 18px;">WELCOME10</strong></span>
                             </div>
-                            <div style="background-color: rgba(255, 255, 255, 0.2); border-radius: 8px; padding: 12px; display: flex; align-items: center;">
-                                <span style="background-color: #ff6b6b; color: #ffffff; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 15px;">4</span>
-                                <span style="font-size: 16px; font-weight: 500;">¡Disfruta tu 10% de descuento instantáneo!</span>
+                            <div style="display: flex; align-items: center; padding: 10px; background-color: #e8f5e8; border-radius: 8px; border-left: 4px solid #27ae60;">
+                                <span style="background-color: #27ae60; color: #ffffff; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 15px; font-size: 18px;">4</span>
+                                <span style="font-size: 16px; font-weight: 600; color: #2c3e50;">¡Disfruta tu 10% de descuento instantáneo!</span>
                             </div>
                         </div>
                     </div>
