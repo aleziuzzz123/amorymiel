@@ -84,43 +84,70 @@
     <!-- Google Analytics 4 -->
     <script>
       console.log('🔍 GA4 Script starting to load...');
-    </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6J7QCG478Z"></script>
-    <script>
-      console.log('🔍 GA4 Script loaded, initializing...');
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-6J7QCG478Z', {
-        page_title: 'Amor Y Miel - Productos Holísticos Artesanales',
-        page_location: window.location.href,
-        send_page_view: true,
-        custom_map: {
-          'custom_parameter_1': 'product_category',
-          'custom_parameter_2': 'user_type'
-        }
-      });
-      
-      // Debug: Log when GA4 loads
-      console.log('✅ Google Analytics 4 loaded with ID: G-6J7QCG478Z');
-      gtag('event', 'page_view', {
-        page_title: 'Amor Y Miel - Productos Holísticos Artesanales',
-        page_location: window.location.href
-      });
+      try {
+        // Load Google Analytics script
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-6J7QCG478Z';
+        script.onload = function() {
+          console.log('🔍 GA4 Script loaded, initializing...');
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-6J7QCG478Z', {
+            page_title: 'Amor Y Miel - Productos Holísticos Artesanales',
+            page_location: window.location.href,
+            send_page_view: true,
+            custom_map: {
+              'custom_parameter_1': 'product_category',
+              'custom_parameter_2': 'user_type'
+            }
+          });
+          
+          // Debug: Log when GA4 loads
+          console.log('✅ Google Analytics 4 loaded with ID: G-6J7QCG478Z');
+          gtag('event', 'page_view', {
+            page_title: 'Amor Y Miel - Productos Holísticos Artesanales',
+            page_location: window.location.href
+          });
+        };
+        script.onerror = function() {
+          console.error('❌ Failed to load Google Analytics script');
+        };
+        document.head.appendChild(script);
+      } catch (error) {
+        console.error('❌ Error loading Google Analytics:', error);
+      }
     </script>
     
-    <!-- Facebook Pixel (Replace with your actual Pixel ID) -->
+    <!-- Facebook Pixel -->
     <script>
-      !function(f,b,e,v,n,t,s)
-      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-      n.queue=[];t=b.createElement(e);t.async=!0;
-      t.src=v;s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)}(window, document,'script',
-      'https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', '1500839247611548');
-      fbq('track', 'PageView');
+      console.log('🔍 Facebook Pixel starting to load...');
+      try {
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        
+        // Wait for fbq to be available
+        function initFacebookPixel() {
+          if (typeof fbq !== 'undefined') {
+            console.log('✅ Facebook Pixel loaded, initializing...');
+            fbq('init', '1500839247611548');
+            fbq('track', 'PageView');
+            console.log('✅ Facebook Pixel initialized with ID: 1500839247611548');
+          } else {
+            setTimeout(initFacebookPixel, 100);
+          }
+        }
+        initFacebookPixel();
+      } catch (error) {
+        console.error('❌ Error loading Facebook Pixel:', error);
+      }
     </script>
   </head>
   <body>
