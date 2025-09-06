@@ -1272,29 +1272,125 @@ export const getProductReviews = (productId, productName = '') => {
       const reviewCount = Math.floor(Math.random() * 27) + 12; // 12-38 reviews
       const reviews = [];
       
-      // Create unique review styles - some with emojis, some without, some with parentheses, some with dots
+      // Create super varied review styles - short, long, simple emojis, different endings
       const createUniqueReview = (baseComment, rating) => {
+        // First, decide if this should be a short review (30% chance)
+        if (Math.random() < 0.3) {
+          const shortReviews = [
+            "Good, love it, thanks",
+            "Excelente, gracias",
+            "Perfect, thanks",
+            "Muy bueno",
+            "Love it",
+            "Me encanta",
+            "Great product",
+            "Buen producto",
+            "Amazing",
+            "Increible",
+            "Perfecto",
+            "So good",
+            "Muy bien",
+            "Excellent",
+            "Fantastico",
+            "Wonderful",
+            "Maravilloso",
+            "Awesome",
+            "Genial",
+            "Super good",
+            "Good :)",
+            "Love it :D",
+            "Muy bueno :P",
+            "Perfect!",
+            "Excelente!",
+            "Amazing!",
+            "Increible!",
+            "So good...",
+            "Muy bien.....",
+            "Great product?",
+            "Buen producto?",
+            "Love it?",
+            "Me encanta?",
+            "Perfect?",
+            "Excelente?",
+            "Amazing?",
+            "Increible?",
+            "So good?",
+            "Muy bien?",
+            "Great product?",
+            "Buen producto?"
+          ];
+          return shortReviews[Math.floor(Math.random() * shortReviews.length)];
+        }
+        
+        // 10% chance for question-style reviews
+        if (Math.random() < 0.1) {
+          const questionReviews = [
+            "Is this really that good?",
+            "¿Es realmente tan bueno?",
+            "Why is this so expensive?",
+            "¿Por qué es tan caro?",
+            "Does this really work?",
+            "¿Realmente funciona?",
+            "Is it worth the price?",
+            "¿Vale la pena el precio?",
+            "Why did I wait so long to buy this?",
+            "¿Por qué esperé tanto para comprar esto?",
+            "How did I live without this?",
+            "¿Cómo viví sin esto?",
+            "Why is everyone talking about this?",
+            "¿Por qué todos hablan de esto?",
+            "Is this the best one?",
+            "¿Es este el mejor?",
+            "Why is this so popular?",
+            "¿Por qué es tan popular?",
+            "Does everyone love this?",
+            "¿A todos les encanta esto?"
+          ];
+          return questionReviews[Math.floor(Math.random() * questionReviews.length)];
+        }
+        
+        // For longer reviews, apply various styles
         const styles = [
-          // Style 1: Simple, no emojis, no parentheses
+          // Style 1: Simple, no punctuation
           baseComment,
-          // Style 2: With emojis only
-          baseComment + " ✨",
-          // Style 3: With dots
+          // Style 2: With simple emojis :)
+          baseComment + " :)",
+          // Style 3: With simple emojis :D
+          baseComment + " :D",
+          // Style 4: With simple emojis :P
+          baseComment + " :P",
+          // Style 5: With dots
           baseComment + "...",
-          // Style 4: With parentheses
+          // Style 6: With more dots
+          baseComment + ".....",
+          // Style 7: With exclamation
+          baseComment + "!",
+          // Style 8: With question
+          baseComment + "?",
+          // Style 9: With period
+          baseComment + ".",
+          // Style 10: With parentheses
           baseComment + " (muy bueno)",
-          // Style 5: With emojis and dots
-          baseComment + " ✨...",
-          // Style 6: With parentheses and emojis
-          baseComment + " (increible) ✨",
-          // Style 7: With dots and parentheses
+          // Style 11: With emojis and dots
+          baseComment + " :)...",
+          // Style 12: With emojis and exclamation
+          baseComment + " :D!",
+          // Style 13: With emojis and question
+          baseComment + " :P?",
+          // Style 14: With dots and parentheses
           baseComment + "... (recomendado)",
-          // Style 8: All three
-          baseComment + " ✨... (amazing)",
-          // Style 9: Just emojis at start
-          "✨ " + baseComment,
-          // Style 10: Just emojis at end
-          baseComment + " 🔥"
+          // Style 15: With emojis at start
+          ":) " + baseComment,
+          // Style 16: With emojis at start and end
+          ":D " + baseComment + " :P",
+          // Style 17: With multiple dots
+          baseComment + ".....",
+          // Style 18: With emojis and multiple dots
+          baseComment + " :D.....",
+          // Style 19: With question and emojis
+          baseComment + "? :P",
+          // Style 20: With exclamation and emojis
+          baseComment + "! :D"
         ];
         
         return styles[Math.floor(Math.random() * styles.length)];
