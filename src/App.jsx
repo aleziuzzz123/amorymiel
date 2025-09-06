@@ -5140,8 +5140,17 @@ function App() {
                   
                   <button
                     onClick={() => {
-                      const mercadoPagoUrl = `https://link.mercadopago.com.mx/amorymiel?amount=${openProduct.precio}`;
-                      window.open(mercadoPagoUrl, '_blank');
+                      // Check if user is logged in
+                      if (!user) {
+                        setShowAuthModal(true);
+                        setAuthMode('login');
+                        return;
+                      }
+                      
+                      // Add product to cart and proceed to checkout
+                      addToCart(openProduct);
+                      setShowCart(false); // Close product modal
+                      setShowShippingModal(true); // Open shipping modal for checkout
                     }}
                     style={{
                       background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
