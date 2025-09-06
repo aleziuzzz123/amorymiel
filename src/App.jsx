@@ -2118,7 +2118,7 @@ function App() {
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
             <img src="/images/logo/amorymiellogo.png" alt="Amor y Miel" style={{ 
-              height: window.innerWidth <= 768 ? "60px" : "80px" 
+              height: window.innerWidth <= 768 ? "30px" : "40px" 
             }} />
           </div>
           <nav style={{ 
@@ -4775,7 +4775,7 @@ function App() {
           }}>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem" }}>
-                <img src="/images/logo/amorymiellogo.png" alt="Amor y Miel" style={{ height: "40px" }} />
+                <img src="/images/logo/amorymiellogo.png" alt="Amor y Miel" style={{ height: "20px" }} />
                 <h3 style={{ margin: 0 }}>Amor y Miel</h3>
                 </div>
               <p style={{ color: "#ccc", lineHeight: "1.6" }}>
