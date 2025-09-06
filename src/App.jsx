@@ -1126,60 +1126,6 @@ function App() {
     };
   }, []);
 
-  // Generate sample analytics data for testing
-  const generateSampleAnalyticsData = async () => {
-    if (!db) return;
-    
-    try {
-      const { addDoc, collection } = await import('firebase/firestore');
-      
-      // Generate sample events for the last 24 hours
-      const now = new Date();
-      const events = [];
-      
-      for (let i = 0; i < 50; i++) {
-        const randomTime = new Date(now.getTime() - Math.random() * 24 * 60 * 60 * 1000);
-        const eventTypes = ['page_view', 'product_view', 'add_to_cart', 'search', 'add_to_wishlist'];
-        const randomEventType = eventTypes[Math.floor(Math.random() * eventTypes.length)];
-        
-        // Create eventData object with only defined values
-        const eventData = {};
-        if (randomEventType === 'page_view') {
-          eventData.page = '/home';
-        } else if (randomEventType === 'product_view') {
-          eventData.productId = `product_${Math.floor(Math.random() * 5)}`;
-          eventData.productName = `Product ${Math.floor(Math.random() * 5)}`;
-          eventData.productPrice = Math.floor(Math.random() * 100) + 10;
-        } else if (randomEventType === 'search') {
-          eventData.searchTerm = `search term ${Math.floor(Math.random() * 5)}`;
-        }
-        
-        const sampleEvent = {
-          userId: `sample_user_${Math.floor(Math.random() * 10)}`,
-          userEmail: `user${Math.floor(Math.random() * 10)}@example.com`,
-          eventType: randomEventType,
-          eventData: eventData, // Only include defined values
-          timestamp: randomTime,
-          date: randomTime.toISOString().split('T')[0],
-          hour: randomTime.getHours(),
-          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-          url: 'https://amorymiel.com'
-        };
-        
-        events.push(sampleEvent);
-      }
-      
-      // Add all events to Firebase
-      for (const event of events) {
-        await addDoc(collection(db, 'analytics_events'), event);
-      }
-      
-      console.log('Sample analytics data generated successfully!');
-      alert('Sample analytics data generated! Check the Analytics tab to see live traffic.');
-    } catch (error) {
-      console.error('Error generating sample data:', error);
-    }
-  };
 
   // Load user profile from Firebase
   const loadUserProfile = async () => {
@@ -2807,27 +2753,6 @@ function App() {
                   </button>
                 )}
 
-                {/* Test Analytics Button (for testing live traffic) */}
-                {isAdmin && (
-                <button
-                    onClick={() => {
-                      generateSampleAnalyticsData();
-                    }}
-                    style={{
-                      background: `linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%)`,
-                      color: "white",
-                      border: "none",
-                      padding: "0.5rem 1rem",
-                      borderRadius: "20px",
-                      fontSize: "0.9rem",
-                      cursor: "pointer",
-                      fontWeight: "bold",
-                      marginLeft: "1rem"
-                    }}
-                  >
-                    🧪 Test Analytics
-                  </button>
-                )}
 
                 {/* Mi Perfil Button */}
                 <button
