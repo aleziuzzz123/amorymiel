@@ -1776,61 +1776,158 @@ export const getProductReviews = (productId, productName = '') => {
         };
       }
       
-      // Water/Moon Water comments
-      if (productType.includes('agua') || productNameLower.includes('agua') || productType.includes('luna') || productType.includes('moon')) {
+      // Water products comments - generic for all water products
+      if (productType.includes('agua') || productNameLower.includes('agua') || productType.includes('luna') || productType.includes('moon') || productType.includes('rosas') || productType.includes('rose')) {
+        // Check if it's specifically rose water
+        if (productNameLower.includes('rosas') || productNameLower.includes('rose')) {
+          return {
+            5: [
+              "esta agua de rosas es increible, la uso todas las noches antes de dormir y duermo mucho mejor",
+              "perfect rose water, i spray it in my room and feel so calm and peaceful",
+              "excelente agua de rosas, la calidad es excepcional y se nota que esta hecha con pétalos naturales",
+              "amazing rose water, i use it daily and my skin has improved so much",
+              "fantastico, esta agua de rosas es la mejor que he usado, perfecta para mi rutina de belleza",
+              "incredible rose water, the skin benefits are exactly what i needed for my skincare",
+              "perfecto, el agua de rosas funciona de maravilla para hidratar mi piel y equilibrar mi cutis",
+              "excellent rose water, the hydrating properties are powerful and i feel more refreshed",
+              "me encanta esta agua de rosas, la uso todos los dias y siento que mi piel esta mas suave",
+              "so good, i spray it on my face every morning and feel so much more refreshed",
+              "estan increible, el agua de rosas es muy hidratante, mi mama tambien quiere una botella",
+              "amazing, this rose water really works for my skin, i feel more hydrated at home",
+              "wow esta agua de rosas es la mas pura que he encontrado, perfecta para mi rutina facial",
+              "perfect rose water, the skin benefits are incredible and authentic",
+              "excelente agua de rosas, la calidad se nota que es tradicional y hecha con amor",
+              "amazing rose water, i use it daily for my skin and the difference is incredible",
+              "fantastico, esta agua de rosas es la mas pura que he usado, perfecta para mi piel",
+              "incredible rose water, the natural properties are exactly what i needed",
+              "perfecto, el agua de rosas funciona de maravilla para hidratar mi piel, muy recomendado",
+              "excellent rose water, the hydrating properties are powerful and the scent is authentic"
+            ],
+            4: [
+              "muy buena agua de rosas, funciona bien aunque esperaba mas hidratacion en la piel",
+              "good rose water, it works well aunque el precio es un poco alto pero vale la pena",
+              "buen agua de rosas, la calidad es buena aunque me gustaria que fuera mas concentrada",
+              "nice rose water, it works well aunque esperaba mas beneficios para la piel",
+              "estan bien, el agua de rosas funciona pero no es tan hidratante como esperaba",
+              "its okay, the rose water works pero esperaba mas beneficios para mi piel",
+              "muy buena agua de rosas, el aroma es suave pero funciona para hidratar",
+              "good rose water, the hydrating properties work well aunque esperaba mas intensidad",
+              "buen agua de rosas, la calidad es decente aunque no es tan fuerte como esperaba",
+              "nice rose water, it works well aunque el precio es un poco alto para la cantidad"
+            ],
+            3: [
+              "esta bien, el agua de rosas funciona pero no es tan hidratante como esperaba",
+              "its okay, the rose water works pero esperaba mas beneficios para la piel",
+              "estan ok pero esperaba mas, el agua es suave y no siento mucho cambio en mi piel",
+              "regular, funciona pero no es tan hidratante como otras que he usado",
+              "esta bien, el agua de rosas funciona pero el aroma podria ser mas fuerte",
+              "its okay, the rose water works pero esperaba mas poder de hidratacion",
+              "estan ok pero esperaba mas, el agua es suave y no siento mucho cambio",
+              "regular, funciona pero no es tan hidratante como otras que he usado"
+            ],
+            2: [
+              "no es lo que esperaba, el agua de rosas es muy suave y no siento los beneficios",
+              "its okay pero las propiedades hidratantes son muy debiles, no vale la pena el precio",
+              "estan mal, el agua no funciona como esperaba, no la recomiendo",
+              "no es lo que esperaba, el agua de rosas es muy suave y no siento los beneficios",
+              "its okay pero las propiedades hidratantes son muy debiles, no vale la pena el precio",
+              "estan mal, el agua no funciona como esperaba, no la recomiendo"
+            ]
+          };
+        }
+        
+        // Generic water comments for other water products (moon water, etc.)
         return {
           5: [
-            "esta agua de luna es increible, la uso todas las noches antes de dormir y duermo mucho mejor",
-            "perfect moon water, i spray it in my room and feel so calm and peaceful",
-            "excelente agua de luna, la calidad es excepcional y se nota que esta hecha con la energia de la luna",
-            "amazing moon water, i use it daily and my anxiety has improved so much",
-            "fantastico, esta agua de luna es la mejor que he usado, perfecta para mis rituales de luna llena",
-            "incredible moon water, the spiritual properties are exactly what i needed for my meditation",
-            "perfecto, el agua de luna funciona de maravilla para calmar mi mente y equilibrar mis emociones",
-            "excellent moon water, the cleansing properties are powerful and i feel more balanced",
-            "me encanta esta agua de luna, la uso todos los dias y siento que mi casa esta mas tranquila",
+            "esta agua es increible, la uso todas las noches antes de dormir y duermo mucho mejor",
+            "perfect water, i spray it in my room and feel so calm and peaceful",
+            "excelente agua, la calidad es excepcional y se nota que esta hecha con ingredientes naturales",
+            "amazing water, i use it daily and my well-being has improved so much",
+            "fantastico, esta agua es la mejor que he usado, perfecta para mis rituales",
+            "incredible water, the properties are exactly what i needed for my wellness",
+            "perfecto, el agua funciona de maravilla para calmar mi mente y equilibrar mis emociones",
+            "excellent water, the cleansing properties are powerful and i feel more balanced",
+            "me encanta esta agua, la uso todos los dias y siento que mi casa esta mas tranquila",
             "so good, i spray it around my house every morning and feel so much more peaceful",
-            "estan increible, el agua de luna es muy poderosa, mi mama tambien quiere una botella",
-            "amazing, this moon water really works for cleansing, i feel more peaceful at home",
-            "wow esta agua de luna es la mas pura que he encontrado, perfecta para limpiar mi espacio",
-            "perfect moon water, the spiritual cleansing properties are incredible and authentic",
-            "excelente agua de luna, la calidad se nota que es tradicional y hecha con amor",
-            "amazing moon water, i use it daily for cleansing and the energy difference is incredible",
-            "fantastico, esta agua de luna es la mas pura que he usado, perfecta para mis rituales",
-            "incredible moon water, the traditional recipe and spiritual properties are exactly what i needed",
-            "perfecto, el agua de luna funciona de maravilla para limpiar energias negativas, muy recomendado",
-            "excellent moon water, the cleansing properties are powerful and the energy is authentic"
+            "estan increible, el agua es muy poderosa, mi mama tambien quiere una botella",
+            "amazing, this water really works for cleansing, i feel more peaceful at home",
+            "wow esta agua es la mas pura que he encontrado, perfecta para limpiar mi espacio",
+            "perfect water, the cleansing properties are incredible and authentic",
+            "excelente agua, la calidad se nota que es tradicional y hecha con amor",
+            "amazing water, i use it daily for cleansing and the energy difference is incredible",
+            "fantastico, esta agua es la mas pura que he usado, perfecta para mis rituales",
+            "incredible water, the natural properties are exactly what i needed",
+            "perfecto, el agua funciona de maravilla para limpiar energias negativas, muy recomendado",
+            "excellent water, the cleansing properties are powerful and the energy is authentic"
           ],
           4: [
-            "muy buena agua de luna, funciona bien aunque esperaba mas intensidad en la energia",
-            "good moon water, it works well aunque el precio es un poco alto pero vale la pena",
-            "buen agua de luna, la calidad es buena aunque me gustaria que fuera mas concentrada",
-            "nice moon water, it works well aunque esperaba mas poder de limpieza espiritual",
-            "estan bien, el agua de luna funciona pero no es tan poderosa como esperaba",
-            "its okay, the moon water works pero esperaba mas beneficios espirituales",
-            "muy buena agua de luna, el aroma es suave pero funciona para relajarme",
-            "good moon water, the cleansing properties work well aunque esperaba mas intensidad",
-            "buen agua de luna, la calidad es decente aunque no es tan fuerte como esperaba",
-            "nice moon water, it works well aunque el precio es un poco alto para la cantidad"
+            "muy buena agua, funciona bien aunque esperaba mas intensidad en los beneficios",
+            "good water, it works well aunque el precio es un poco alto pero vale la pena",
+            "buen agua, la calidad es buena aunque me gustaria que fuera mas concentrada",
+            "nice water, it works well aunque esperaba mas poder de limpieza",
+            "estan bien, el agua funciona pero no es tan poderosa como esperaba",
+            "its okay, the water works pero esperaba mas beneficios",
+            "muy buena agua, el aroma es suave pero funciona para relajarme",
+            "good water, the properties work well aunque esperaba mas intensidad",
+            "buen agua, la calidad es decente aunque no es tan fuerte como esperaba",
+            "nice water, it works well aunque el precio es un poco alto para la cantidad"
           ],
           3: [
-            "esta bien, el agua de luna funciona pero no es tan poderosa como esperaba",
-            "its okay, the moon water works pero esperaba mas beneficios espirituales",
-            "estan ok pero esperaba mas, el agua es suave y no siento mucho cambio energetico",
+            "esta bien, el agua funciona pero no es tan poderosa como esperaba",
+            "its okay, the water works pero esperaba mas beneficios",
+            "estan ok pero esperaba mas, el agua es suave y no siento mucho cambio",
             "regular, funciona pero no es tan poderosa como otras que he usado",
-            "esta bien, el agua de luna funciona pero el aroma podria ser mas fuerte",
-            "its okay, the moon water works pero esperaba mas poder de limpieza",
+            "esta bien, el agua funciona pero el aroma podria ser mas fuerte",
+            "its okay, the water works pero esperaba mas poder de limpieza",
             "estan ok pero esperaba mas, el agua es suave y no siento mucho cambio",
             "regular, funciona pero no es tan poderosa como otras que he usado"
           ],
           2: [
-            "no es lo que esperaba, el agua de luna es muy suave y no siento los beneficios",
-            "its okay pero las propiedades espirituales son muy debiles, no vale la pena el precio",
+            "no es lo que esperaba, el agua es muy suave y no siento los beneficios",
+            "its okay pero las propiedades son muy debiles, no vale la pena el precio",
             "estan mal, el agua no funciona como esperaba, no la recomiendo",
-            "no es lo que esperaba, el agua de luna es muy suave y no siento los beneficios",
-            "its okay pero las propiedades espirituales son muy debiles, no vale la pena el precio",
+            "no es lo que esperaba, el agua es muy suave y no siento los beneficios",
+            "its okay pero las propiedades son muy debiles, no vale la pena el precio",
             "estan mal, el agua no funciona como esperaba, no la recomiendo"
           ]
+        };
+      }
+      
+      // Add some natural comparison reviews between similar products (5% chance)
+      if (Math.random() < 0.05) {
+        const comparisonReviews = [
+          // Water product comparisons
+          "me encanta el agua de rosas pero siento que el agua de luna es mejor para mi piel",
+          "i love rose water but i think moon water works better for my spiritual practice",
+          "el agua de rosas esta bien pero prefiero el agua de luna para mis rituales",
+          "rose water is good but moon water has more spiritual energy for me",
+          "agua de rosas es hidratante pero agua de luna me da mas paz mental",
+          "rose water hydrates but moon water gives me more mental peace",
+          
+          // Oil comparisons
+          "este aceite abre caminos es bueno pero el aceite de abundancia me funciona mejor",
+          "this path-opening oil is good but abundance oil works better for me",
+          "aceite abre caminos funciona pero aceite de proteccion me da mas seguridad",
+          "path-opening oil works but protection oil gives me more security",
+          
+          // Candle comparisons
+          "las velas de miel estan bien pero prefiero las velas de palo santo",
+          "honey candles are good but i prefer palo santo candles",
+          "velas de miel son buenas pero las velas de cera de abeja duran mas",
+          "honey candles are good but beeswax candles last longer",
+          
+          // Service comparisons
+          "la numerologia es interesante pero el tarot angelical me conecta mas",
+          "numerology is interesting but angelic tarot connects with me more",
+          "numerologia esta bien pero prefiero la sonoterapia para relajarme",
+          "numerology is good but i prefer sound therapy to relax"
+        ];
+        
+        return {
+          5: comparisonReviews.slice(0, 8),
+          4: comparisonReviews.slice(8, 12),
+          3: comparisonReviews.slice(12, 16),
+          2: comparisonReviews.slice(16, 20)
         };
       }
       
