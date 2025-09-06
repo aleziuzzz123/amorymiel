@@ -1099,11 +1099,10 @@ const AdminDashboard = ({ user, onClose }) => {
 
       console.log('Loading live traffic...', { now, last5Minutes, last24Hours });
 
-      // Get real-time events (last 5 minutes)
+      // Get real-time events (last 5 minutes) - without orderBy to avoid index requirement
       const realTimeEventsQuery = query(
         collection(db, 'analytics_events'),
-        where('timestamp', '>=', last5Minutes),
-        orderBy('timestamp', 'desc')
+        where('timestamp', '>=', last5Minutes)
       );
       const realTimeEventsSnapshot = await getDocs(realTimeEventsQuery);
       console.log('Real-time events query result:', realTimeEventsSnapshot.docs.length);
@@ -1116,11 +1115,10 @@ const AdminDashboard = ({ user, onClose }) => {
       
       console.log('Real-time events:', realTimeEvents);
 
-      // Get page views (last 24 hours)
+      // Get page views (last 24 hours) - simplified query
       const pageViewsQuery = query(
         collection(db, 'analytics_events'),
-        where('eventType', '==', 'page_view'),
-        where('timestamp', '>=', last24Hours)
+        where('eventType', '==', 'page_view')
       );
       const pageViewsSnapshot = await getDocs(pageViewsQuery);
       console.log('Page views query result:', pageViewsSnapshot.docs.length);
