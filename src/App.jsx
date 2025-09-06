@@ -353,6 +353,30 @@ function App() {
   });
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
 
+  // Get user location from IP
+  const getUserLocation = async () => {
+    try {
+      const response = await fetch('https://ipapi.co/json/');
+      const data = await response.json();
+      return {
+        country: data.country_name || 'Unknown',
+        region: data.region || 'Unknown', 
+        city: data.city || 'Unknown',
+        countryCode: data.country_code || 'Unknown',
+        timezone: data.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
+      };
+    } catch (error) {
+      console.log('Could not get location:', error);
+      return {
+        country: 'Unknown',
+        region: 'Unknown',
+        city: 'Unknown', 
+        countryCode: 'Unknown',
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      };
+    }
+  };
+
   // Analytics tracking
   const trackEvent = async (eventType, eventData = {}) => {
     if (!db) return;
@@ -368,6 +392,20 @@ function App() {
         }
       });
       
+      // Get location data for first-time visitors
+      let locationData = {
+        country: 'Unknown',
+        region: 'Unknown',
+        city: 'Unknown',
+        countryCode: 'Unknown',
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      };
+      
+      // Only get location for page_view events to avoid too many API calls
+      if (eventType === 'page_view') {
+        locationData = await getUserLocation();
+      }
+      
       const analyticsEvent = {
         userId: user?.uid || 'anonymous',
         userEmail: user?.email || 'anonymous@example.com',
@@ -377,7 +415,17 @@ function App() {
         date: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
         hour: new Date().getHours(),
         userAgent: navigator.userAgent,
-        url: window.location.href
+        url: window.location.href,
+        // Geographic data
+        country: locationData.country,
+        region: locationData.region,
+        city: locationData.city,
+        countryCode: locationData.countryCode,
+        timezone: locationData.timezone,
+        language: navigator.language,
+        referrer: document.referrer || 'Direct',
+        screenResolution: `${screen.width}x${screen.height}`,
+        viewportSize: `${window.innerWidth}x${window.innerHeight}`
       };
       
       console.log('Tracking event:', eventType, analyticsEvent); // Debug log

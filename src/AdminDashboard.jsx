@@ -462,7 +462,13 @@ const AdminDashboard = ({ user, onClose }) => {
     realTimeEvents: [],
     topPages: [],
     referrers: [],
-    userAgents: []
+    userAgents: [],
+    // Geographic data
+    countries: [],
+    regions: [],
+    cities: [],
+    languages: [],
+    devices: []
   });
   const [liveTrafficLoading, setLiveTrafficLoading] = useState(false);
   
@@ -1179,6 +1185,67 @@ const AdminDashboard = ({ user, onClose }) => {
         .map(([device, count]) => ({ device, count }))
         .sort((a, b) => b.count - a.count);
 
+      // Calculate geographic data
+      const countryCounts = {};
+      const regionCounts = {};
+      const cityCounts = {};
+      const languageCounts = {};
+      const deviceCounts = {};
+      
+      pageViews.forEach(event => {
+        // Countries
+        if (event.country && event.country !== 'Unknown') {
+          countryCounts[event.country] = (countryCounts[event.country] || 0) + 1;
+        }
+        
+        // Regions
+        if (event.region && event.region !== 'Unknown') {
+          regionCounts[event.region] = (regionCounts[event.region] || 0) + 1;
+        }
+        
+        // Cities
+        if (event.city && event.city !== 'Unknown') {
+          cityCounts[event.city] = (cityCounts[event.city] || 0) + 1;
+        }
+        
+        // Languages
+        if (event.language) {
+          languageCounts[event.language] = (languageCounts[event.language] || 0) + 1;
+        }
+        
+        // Devices (from user agent)
+        let device = 'Desktop';
+        if (event.userAgent) {
+          if (event.userAgent.includes('Mobile')) device = 'Mobile';
+          else if (event.userAgent.includes('Tablet')) device = 'Tablet';
+        }
+        deviceCounts[device] = (deviceCounts[device] || 0) + 1;
+      });
+      
+      const countries = Object.entries(countryCounts)
+        .map(([country, count]) => ({ country, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 10);
+        
+      const regions = Object.entries(regionCounts)
+        .map(([region, count]) => ({ region, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 10);
+        
+      const cities = Object.entries(cityCounts)
+        .map(([city, count]) => ({ city, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 10);
+        
+      const languages = Object.entries(languageCounts)
+        .map(([language, count]) => ({ language, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 10);
+        
+      const devices = Object.entries(deviceCounts)
+        .map(([device, count]) => ({ device, count }))
+        .sort((a, b) => b.count - a.count);
+
       const liveTrafficData = {
         activeUsers,
         pageViews: pageViews.length,
@@ -1188,7 +1255,13 @@ const AdminDashboard = ({ user, onClose }) => {
         realTimeEvents: realTimeEvents.slice(0, 10), // Last 10 events
         topPages,
         referrers,
-        userAgents
+        userAgents,
+        // Geographic data
+        countries,
+        regions,
+        cities,
+        languages,
+        devices
       };
       
       console.log('Setting live traffic data:', liveTrafficData);
@@ -3064,6 +3137,120 @@ const AdminDashboard = ({ user, onClose }) => {
                       <div>Crecimiento de Ventas</div>
                       <div style={{ fontSize: '0.9rem', opacity: 0.9, marginTop: '0.5rem' }}>
                         vs período anterior
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Geographic Analytics */}
+                <div style={{
+                  background: 'white',
+                  padding: '1.5rem',
+                  borderRadius: '15px',
+                  marginBottom: '2rem',
+                  boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+                }}>
+                  <h3 style={{ color: '#D4A574', marginBottom: '1.5rem' }}>🌍 Análisis Geográfico</h3>
+                  
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                    gap: '1.5rem',
+                    marginBottom: '2rem'
+                  }}>
+                    {/* Countries */}
+                    <div>
+                      <h4 style={{ color: '#E8B4B8', marginBottom: '1rem' }}>🌎 Países</h4>
+                      <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                        {liveTraffic.countries.length > 0 ? (
+                          liveTraffic.countries.map((item, index) => (
+                            <div key={index} style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              padding: '0.5rem',
+                              backgroundColor: index % 2 === 0 ? '#f8f9fa' : 'white',
+                              borderRadius: '5px',
+                              marginBottom: '0.25rem'
+                            }}>
+                              <span style={{ fontWeight: 'bold' }}>{item.country}</span>
+                              <span style={{ color: '#D4A574' }}>{item.count} visitas</span>
+                            </div>
+                          ))
+                        ) : (
+                          <p style={{ color: '#666', fontStyle: 'italic' }}>No hay datos de países disponibles</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Cities */}
+                    <div>
+                      <h4 style={{ color: '#E8B4B8', marginBottom: '1rem' }}>🏙️ Ciudades</h4>
+                      <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                        {liveTraffic.cities.length > 0 ? (
+                          liveTraffic.cities.map((item, index) => (
+                            <div key={index} style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              padding: '0.5rem',
+                              backgroundColor: index % 2 === 0 ? '#f8f9fa' : 'white',
+                              borderRadius: '5px',
+                              marginBottom: '0.25rem'
+                            }}>
+                              <span style={{ fontWeight: 'bold' }}>{item.city}</span>
+                              <span style={{ color: '#D4A574' }}>{item.count} visitas</span>
+                            </div>
+                          ))
+                        ) : (
+                          <p style={{ color: '#666', fontStyle: 'italic' }}>No hay datos de ciudades disponibles</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Languages */}
+                    <div>
+                      <h4 style={{ color: '#E8B4B8', marginBottom: '1rem' }}>🗣️ Idiomas</h4>
+                      <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                        {liveTraffic.languages.length > 0 ? (
+                          liveTraffic.languages.map((item, index) => (
+                            <div key={index} style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              padding: '0.5rem',
+                              backgroundColor: index % 2 === 0 ? '#f8f9fa' : 'white',
+                              borderRadius: '5px',
+                              marginBottom: '0.25rem'
+                            }}>
+                              <span style={{ fontWeight: 'bold' }}>{item.language}</span>
+                              <span style={{ color: '#D4A574' }}>{item.count} visitas</span>
+                            </div>
+                          ))
+                        ) : (
+                          <p style={{ color: '#666', fontStyle: 'italic' }}>No hay datos de idiomas disponibles</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Devices */}
+                    <div>
+                      <h4 style={{ color: '#E8B4B8', marginBottom: '1rem' }}>📱 Dispositivos</h4>
+                      <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                        {liveTraffic.devices.length > 0 ? (
+                          liveTraffic.devices.map((item, index) => (
+                            <div key={index} style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              padding: '0.5rem',
+                              backgroundColor: index % 2 === 0 ? '#f8f9fa' : 'white',
+                              borderRadius: '5px',
+                              marginBottom: '0.25rem'
+                            }}>
+                              <span style={{ fontWeight: 'bold' }}>{item.device}</span>
+                              <span style={{ color: '#D4A574' }}>{item.count} visitas</span>
+                            </div>
+                          ))
+                        ) : (
+                          <p style={{ color: '#666', fontStyle: 'italic' }}>No hay datos de dispositivos disponibles</p>
+                        )}
                       </div>
                     </div>
                   </div>
