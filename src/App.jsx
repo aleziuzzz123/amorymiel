@@ -360,11 +360,19 @@ function App() {
     try {
       const { addDoc, collection } = await import('firebase/firestore');
       
+      // Clean and validate eventData to remove undefined values
+      const cleanEventData = {};
+      Object.keys(eventData).forEach(key => {
+        if (eventData[key] !== undefined && eventData[key] !== null) {
+          cleanEventData[key] = eventData[key];
+        }
+      });
+      
       const analyticsEvent = {
         userId: user?.uid || 'anonymous',
         userEmail: user?.email || 'anonymous@example.com',
         eventType,
-        eventData,
+        eventData: cleanEventData, // Use cleaned data
         timestamp: new Date(),
         date: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
         hour: new Date().getHours(),
@@ -1086,17 +1094,23 @@ function App() {
         const eventTypes = ['page_view', 'product_view', 'add_to_cart', 'search', 'add_to_wishlist'];
         const randomEventType = eventTypes[Math.floor(Math.random() * eventTypes.length)];
         
+        // Create eventData object with only defined values
+        const eventData = {};
+        if (randomEventType === 'page_view') {
+          eventData.page = '/home';
+        } else if (randomEventType === 'product_view') {
+          eventData.productId = `product_${Math.floor(Math.random() * 5)}`;
+          eventData.productName = `Product ${Math.floor(Math.random() * 5)}`;
+          eventData.productPrice = Math.floor(Math.random() * 100) + 10;
+        } else if (randomEventType === 'search') {
+          eventData.searchTerm = `search term ${Math.floor(Math.random() * 5)}`;
+        }
+        
         const sampleEvent = {
           userId: `sample_user_${Math.floor(Math.random() * 10)}`,
           userEmail: `user${Math.floor(Math.random() * 10)}@example.com`,
           eventType: randomEventType,
-          eventData: {
-            page: randomEventType === 'page_view' ? '/home' : undefined,
-            productId: randomEventType === 'product_view' ? `product_${Math.floor(Math.random() * 5)}` : undefined,
-            productName: randomEventType === 'product_view' ? `Product ${Math.floor(Math.random() * 5)}` : undefined,
-            productPrice: randomEventType === 'product_view' ? Math.floor(Math.random() * 100) + 10 : undefined,
-            searchTerm: randomEventType === 'search' ? `search term ${Math.floor(Math.random() * 5)}` : undefined
-          },
+          eventData: eventData, // Only include defined values
           timestamp: randomTime,
           date: randomTime.toISOString().split('T')[0],
           hour: randomTime.getHours(),
