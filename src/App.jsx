@@ -447,9 +447,17 @@ function App() {
     const urlParams = new URLSearchParams(window.location.search);
     const paymentStatus = urlParams.get('payment');
     const orderId = urlParams.get('order_id');
+    const couponCode = urlParams.get('coupon');
     
     if (paymentStatus && orderId) {
       handlePaymentReturn(paymentStatus, orderId);
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    
+    // Handle coupon from email link
+    if (couponCode) {
+      setCouponCode(couponCode);
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }

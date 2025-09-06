@@ -105,7 +105,7 @@ exports.handler = async (event, context) => {
                             <p style="color: #2c3e50; font-size: 18px; margin: 0 0 10px 0; font-weight: 600;">
                                 Usa el código: <span style="background-color: #d4a574; color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 18px; font-weight: bold;">WELCOME10</span>
                             </p>
-                            <p style="color: #27ae60; font-size: 24px; margin: 0; font-weight: bold;">
+                            <p style="color: #d4a574; font-size: 24px; margin: 0; font-weight: bold;">
                                 10% DE DESCUENTO
                             </p>
                         </div>
@@ -121,14 +121,14 @@ exports.handler = async (event, context) => {
                         <p style="color: #333333; font-size: 18px; font-weight: bold; margin: 0;">
                             Total: ${cartTotalFormatted}
                         </p>
-                        <p style="color: #e74c3c; font-size: 14px; font-weight: 600; margin: 5px 0 0 0;">
+                        <p style="color: #d4a574; font-size: 14px; font-weight: 600; margin: 5px 0 0 0;">
                             Con WELCOME10: Ahorra ${new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(cartTotal * 0.1)}
                         </p>
                     </div>
 
                     <!-- CTA Button -->
                     <div style="text-align: center; margin: 30px 0;">
-                        <a href="https://amorymiel.com" class="cta-button" style="display: inline-block; background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); color: #ffffff; text-decoration: none; padding: 18px 40px; border-radius: 8px; font-size: 18px; font-weight: bold; box-shadow: 0 4px 15px rgba(212, 165, 116, 0.4);">
+                        <a href="https://amorymiel.com?coupon=WELCOME10" class="cta-button" style="display: inline-block; background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%); color: #ffffff; text-decoration: none; padding: 18px 40px; border-radius: 8px; font-size: 18px; font-weight: bold; box-shadow: 0 4px 15px rgba(212, 165, 116, 0.4);">
                             🛒 ¡COMPLETAR COMPRA CON DESCUENTO! 🛒
                         </a>
                         <p style="color: #666666; font-size: 14px; margin: 15px 0 0 0;">
