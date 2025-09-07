@@ -1,1 +1,169 @@
-<!doctype html><html lang="es"><head><meta charset="UTF-8" /><link rel="icon" type="image/svg+xml" href="/favicon.svg" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Amor Y Miel - Productos Holísticos Artesanales</title><meta name="description" content="Productos holísticos artesanales para el bienestar espiritual y físico. Velas de miel, aceites esenciales, lociones naturales, baños energéticos y servicios espirituales." /><link rel="manifest" href="/manifest.json" /><meta name="theme-color" content="#e91e63" /></head><body><div id="root"></div><script type="module" src="/src/main.jsx"></script></body></html>
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" href="/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#e91e63" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Amor Y Miel" />
+  <link rel="apple-touch-icon" href="/public/images/logo/logo3.png" />
+  
+  <!-- Performance Optimization -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://www.googletagmanager.com" />
+  <link rel="preconnect" href="https://connect.facebook.net" />
+  <link rel="dns-prefetch" href="https://amorymiel.com" />
+  
+  <!-- Critical CSS Inline -->
+  <style>
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; }
+    .loading { display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .header { background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .hero { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); padding: 60px 0; }
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    .product-card { background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .btn { background: #e91e63; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; }
+    .btn:hover { background: #c2185b; }
+  </style>
+  
+  <!-- Non-Critical CSS Preload -->
+  <link rel="preload" href="/src/App.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="/src/App.css" /></noscript>
+  
+  <!-- Resource Hints -->
+  <link rel="prefetch" href="/public/images/logo/logo3.png" />
+  <link rel="prefetch" href="/public/images/service/" />
+  <link rel="prefetch" href="/public/images/products/" />
+  
+  <!-- Primary Meta Tags -->
+  <title>Amor Y Miel - Productos Holísticos Artesanales en Cancún | Velas de Miel, Aceites Esenciales y Servicios Espirituales</title>
+  <meta name="title" content="Amor Y Miel - Productos Holísticos Artesanales en Cancún | Velas de Miel, Aceites Esenciales y Servicios Espirituales" />
+  <meta name="description" content="Tienda de productos holísticos artesanales en Cancún, Quintana Roo. Velas de miel, aceites esenciales, lociones naturales, baños energéticos, Conoterapia y servicios espirituales. Cuidado natural con amor. Envíos a toda México." />
+  <meta name="keywords" content="productos holísticos Cancún, velas miel Quintana Roo, aceites esenciales Cancún, servicios espirituales Quintana Roo, aromaterapia Cancún, productos naturales Cancún, bienestar holístico Quintana Roo, rituales espirituales Cancún, limpieza energética Quintana Roo, productos artesanales Cancún, Conoterapia Cancún, sanación útero Cancún, velas artesanales México, terapias holísticas Cancún" />
+  <meta name="author" content="Amor Y Miel" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large" />
+  <meta name="bingbot" content="index, follow" />
+  <meta name="language" content="Spanish" />
+  <meta name="revisit-after" content="7 days" />
+  <meta name="rating" content="general" />
+  <meta name="distribution" content="global" />
+  <meta name="coverage" content="worldwide" />
+  <meta name="target" content="all" />
+  <meta name="audience" content="all" />
+  <meta name="classification" content="business" />
+  <meta name="category" content="health, wellness, spirituality" />
+  <meta name="geo.region" content="MX-ROO" />
+  <meta name="geo.placename" content="Cancún" />
+  <meta name="geo.position" content="21.1619;-86.8515" />
+  <meta name="ICBM" content="21.1619, -86.8515" />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://amorymiel.com/" />
+  <meta property="og:title" content="Amor Y Miel - Productos Holísticos Artesanales en Cancún | Velas de Miel y Servicios Espirituales" />
+  <meta property="og:description" content="Tienda de productos holísticos artesanales en Cancún, Quintana Roo. Velas de miel, aceites esenciales, Conoterapia y servicios espirituales. Cuidado natural con amor." />
+  <meta property="og:image" content="https://amorymiel.com/public/images/logo/logo3.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Amor Y Miel - Productos Holísticos Artesanales en Cancún" />
+  <meta property="og:site_name" content="Amor Y Miel" />
+  <meta property="og:locale" content="es_MX" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:updated_time" content="2024-12-19T00:00:00Z" />
+  <meta property="article:author" content="Amor Y Miel" />
+  <meta property="article:publisher" content="https://www.facebook.com/amorymiel" />
+  <meta property="article:section" content="Health & Wellness" />
+  <meta property="article:tag" content="productos holísticos" />
+  <meta property="article:tag" content="velas de miel" />
+  <meta property="article:tag" content="aceites esenciales" />
+  <meta property="article:tag" content="servicios espirituales" />
+  <meta property="article:tag" content="Conoterapia" />
+  <meta property="article:tag" content="Cancún" />
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@amorymiel" />
+  <meta name="twitter:creator" content="@amorymiel" />
+  <meta name="twitter:url" content="https://amorymiel.com/" />
+  <meta name="twitter:title" content="Amor Y Miel - Productos Holísticos Artesanales en Cancún" />
+  <meta name="twitter:description" content="Tienda de productos holísticos artesanales en Cancún, Quintana Roo. Velas de miel, aceites esenciales, Conoterapia y servicios espirituales." />
+  <meta name="twitter:image" content="https://amorymiel.com/public/images/logo/logo3.png" />
+  <meta name="twitter:image:alt" content="Amor Y Miel - Productos Holísticos Artesanales en Cancún" />
+  <meta name="twitter:domain" content="amorymiel.com" />
+  <meta name="twitter:label1" content="Ubicación" />
+  <meta name="twitter:data1" content="Cancún, Quintana Roo" />
+  <meta name="twitter:label2" content="Especialidad" />
+  <meta name="twitter:data2" content="Productos Holísticos" />
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://amorymiel.com/" />
+  
+  <!-- Additional SEO Meta Tags -->
+  <meta name="theme-color" content="#D4A574" />
+  <meta name="msapplication-TileColor" content="#D4A574" />
+  
+  <!-- Google Analytics 4 -->
+  <script>
+    console.log('🔍 GA4 Script starting to load...');
+    try {
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://www.googletagmanager.com/gtag/js?id=G-6J7QCG478Z';
+      script.onload = function() {
+        console.log('🔍 GA4 Script loaded, initializing...');
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-6J7QCG478Z', {
+          page_title: 'Amor Y Miel - Productos Holísticos Artesanales en Cancún',
+          page_location: window.location.href,
+          send_page_view: true
+        });
+        console.log('✅ GA4 initialized successfully');
+      };
+      script.onerror = function() {
+        console.error('❌ Failed to load GA4 script');
+      };
+      document.head.appendChild(script);
+    } catch (error) {
+      console.error('❌ Error setting up GA4:', error);
+    }
+  </script>
+  
+  <!-- Facebook Pixel -->
+  <script>
+    console.log('📘 Facebook Pixel starting to load...');
+    try {
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      
+      fbq('init', 'YOUR_PIXEL_ID');
+      fbq('track', 'PageView');
+      console.log('✅ Facebook Pixel initialized successfully');
+    } catch (error) {
+      console.error('❌ Error setting up Facebook Pixel:', error);
+    }
+  </script>
+  
+  <!-- Google Search Console Verification -->
+  <meta name="google-site-verification" content="3eTXRzZXncbNUAgSYBi45LGKIFYhpEeBFHjYL1p3Atw" />
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>

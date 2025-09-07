@@ -777,6 +777,58 @@ function App() {
   const [productRatings, setProductRatings] = useState({});
 
   // Load products from Firestore and separate by category
+  
+  // Add optimized alt text to existing products
+  const addImageAltText = async () => {
+    try {
+      const { collection, query, getDocs, updateDoc, doc } = await import('firebase/firestore');
+      const productsQuery = query(collection(db, 'products'));
+      const productsSnapshot = await getDocs(productsQuery);
+      
+      for (const productDoc of productsSnapshot.docs) {
+        const product = productDoc.data();
+        const productId = productDoc.id;
+        
+        // Skip if already has alt text
+        if (product.imageAlt) {
+          continue;
+        }
+        
+        let altText = '';
+        
+        // Generate SEO-optimized alt text based on category
+        if (product.categoria === 'Velas') {
+          altText = `${product.nombre} - Velas de miel artesanales en Cancún, Quintana Roo. Productos holísticos para rituales espirituales y aromaterapia.`;
+        } else if (product.categoria === 'Servicios') {
+          altText = `${product.nombre} - Servicio holístico especializado en Cancún, Quintana Roo. Terapias espirituales para bienestar integral.`;
+        } else if (product.categoria === 'Aceites') {
+          altText = `${product.nombre} - Aceites esenciales naturales en Cancún, Quintana Roo. Aromaterapia pura para bienestar holístico.`;
+        } else if (product.categoria === 'Lociones') {
+          altText = `${product.nombre} - Lociones naturales artesanales en Cancún, Quintana Roo. Cuidado holístico de la piel con ingredientes puros.`;
+        } else if (product.categoria === 'Baños Energéticos') {
+          altText = `${product.nombre} - Baños energéticos en Cancún, Quintana Roo. Limpieza espiritual y purificación energética.`;
+        } else if (product.categoria === 'Brisas Áuricas') {
+          altText = `${product.nombre} - Brisas áuricas en Cancún, Quintana Roo. Purificación energética para abundancia y prosperidad.`;
+        } else if (product.categoria === 'Exfoliantes') {
+          altText = `${product.nombre} - Exfoliantes naturales en Cancún, Quintana Roo. Cuidado holístico de la piel con ingredientes puros.`;
+        } else if (product.categoria === 'Feromonas') {
+          altText = `${product.nombre} - Feromonas naturales en Cancún, Quintana Roo. Productos atrayentes elaborados con ingredientes naturales.`;
+        } else {
+          altText = `${product.nombre} - Productos holísticos artesanales en Cancún, Quintana Roo. Cuidado natural con ingredientes puros.`;
+        }
+        
+        await updateDoc(doc(db, 'products', productId), {
+          imageAlt: altText,
+          fechaActualizacion: new Date()
+        });
+        
+        console.log(`✅ Added alt text to ${product.nombre}`);
+      }
+    } catch (error) {
+      console.error('Error adding image alt text:', error);
+    }
+  };
+  
   // Function to add variants to products
   const addVariantsToProducts = async () => {
     try {
@@ -846,9 +898,9 @@ function App() {
           duracion: '60-90 minutos',
           imagen: '/images/service/conoterapia.jpg',
           // SEO Meta Tags
-          metaTitle: 'Conoterapia en Cancún | Terapia con Velas para Oídos | Amor Y Miel',
-          metaDescription: 'Conoterapia en Cancún, Quintana Roo. Terapia holística con velas especiales para limpieza del canal auditivo. Alivio de zumbidos, sinusitis y alergias. $250 MXN.',
-          metaKeywords: 'conoterapia Cancún, terapia con velas oídos, limpieza auditiva, zumbidos oídos, sinusitis, alergias respiratorias, terapia holística Quintana Roo',
+          metaTitle: 'Conoterapia en Cancún | Terapia Holística Ancestral con Velas | Limpieza Canal Auditivo | Amor Y Miel',
+          metaDescription: 'Conoterapia en Cancún, Quintana Roo. Terapia holística ancestral con velas especiales para limpiar y desbloquear el canal auditivo. Ideal para alergias respiratorias, mareos, zumbidos, sinusitis, ronquidos. $250 MXN. Reserva tu cita.',
+          metaKeywords: 'Conoterapia Cancún, terapia auditiva Cancún, limpieza oídos Quintana Roo, velas terapéuticas Cancún, terapia holística Quintana Roo, canal auditivo Cancún, alergias respiratorias Cancún, mareos vértigo Cancún, zumbidos oídos Cancún, sinusitis Cancún, ronquidos Cancún, natación Cancún, construcción Cancún, terapia ancestral Cancún',
           // SEO Content
           seoContent: 'La Conoterapia es una terapia ancestral que utiliza velas especiales para limpiar el canal auditivo de forma natural. Ideal para personas con dificultades auditivas, alergias respiratorias, mareos, vértigo, dolores de cabeza, zumbidos en los oídos, sinusitis, ronquidos e inflamaciones del oído. También recomendada para nadadores y trabajadores expuestos a polvo o ruido. Servicio especializado disponible en Cancún, Quintana Roo.',
           beneficios: [
@@ -926,9 +978,9 @@ function App() {
           duracion: '90-120 minutos',
           imagen: '/images/service/Sanación y bendición de útero.jpg',
           // SEO Meta Tags
-          metaTitle: 'Sanación de Útero en Cancún | Terapia Femenina Holística | Amor Y Miel',
-          metaDescription: 'Sanación y bendición de útero en Cancún, Quintana Roo. Terapia holística femenina para equilibrio hormonal, sanación de traumas uterinos y conexión con la feminidad sagrada. $450 MXN.',
-          metaKeywords: 'sanación útero Cancún, terapia femenina, bendición útero, equilibrio hormonal, sanación menstrual, feminidad sagrada, terapia holística femenina Quintana Roo',
+          metaTitle: 'Sanación y Bendición de Útero en Cancún | Terapia Femenina Holística | Equilibrio Hormonal | Amor Y Miel',
+          metaDescription: 'Sanación y bendición de útero en Cancún, Quintana Roo. Terapia holística femenina especializada para equilibrio hormonal, sanación de traumas uterinos, conexión con la feminidad sagrada y bienestar menstrual. $450 MXN. Reserva tu cita.',
+          metaKeywords: 'sanación útero Cancún, terapia femenina Cancún, bendición útero Quintana Roo, equilibrio hormonal Cancún, sanación menstrual Cancún, feminidad sagrada Cancún, terapia holística femenina Quintana Roo, bienestar femenino Cancún, sanación traumas uterinos Cancún, conexión femenina Cancún, terapia útero Cancún',
           // SEO Content
           seoContent: 'La Sanación y bendición de útero es una terapia holística especializada en la sanación energética y espiritual del útero. Esta práctica ancestral se enfoca en la limpieza, equilibrio y bendición de esta área sagrada de la mujer. Ideal para desequilibrios hormonales, dolores menstruales, problemas de fertilidad, traumas uterinos y desconexión con la feminidad. Servicio especializado disponible en Cancún, Quintana Roo.',
           beneficios: [
@@ -989,32 +1041,47 @@ function App() {
       const productsQuery = query(collection(db, 'products'));
       const productsSnapshot = await getDocs(productsQuery);
       
-      // SEO keywords by category
+      // Enhanced SEO keywords by category
       const seoKeywords = {
         'Velas': {
-          keywords: ['velas de miel', 'velas artesanales', 'velas naturales', 'velas espirituales', 'velas rituales', 'velas miel Cancún', 'velas artesanales Quintana Roo'],
-          metaTitle: 'Velas de Miel Artesanales en Cancún | Productos Holísticos | Amor Y Miel',
-          metaDescription: 'Velas de miel artesanales en Cancún, Quintana Roo. Productos holísticos naturales para rituales espirituales y aromaterapia. Elaboradas con miel pura y cera natural.'
+          keywords: ['velas de miel Cancún', 'velas artesanales Quintana Roo', 'velas naturales Cancún', 'velas espirituales Cancún', 'velas rituales Cancún', 'velas cera abeja Cancún', 'velas abundancia Cancún', 'velas prosperidad Cancún', 'aromaterapia Cancún', 'rituales espirituales Cancún'],
+          metaTitle: 'Velas de Miel Artesanales en Cancún | Rituales Espirituales | Aromaterapia Natural | Amor Y Miel',
+          metaDescription: 'Velas de miel artesanales 100% puras en Cancún, Quintana Roo. Productos holísticos naturales para rituales espirituales, aromaterapia y manifestación de deseos. Elaboradas con cera de abeja pura. Envíos a toda México.'
         },
         'Lociones': {
-          keywords: ['lociones naturales', 'loción palo santo', 'loción atrayente', 'agua florida', 'lociones artesanales', 'lociones Cancún', 'productos naturales Quintana Roo'],
-          metaTitle: 'Lociones Naturales Artesanales en Cancún | Palo Santo, Atrayente | Amor Y Miel',
-          metaDescription: 'Lociones naturales artesanales en Cancún, Quintana Roo. Palo Santo, Atrayente, Agua Florida. Productos holísticos para el cuidado natural de la piel.'
+          keywords: ['lociones naturales Cancún', 'loción palo santo Cancún', 'loción atrayente Cancún', 'agua florida Cancún', 'lociones artesanales Quintana Roo', 'cuidado piel natural Cancún', 'lociones terapéuticas Cancún', 'aromaterapia Cancún', 'bienestar holístico Cancún'],
+          metaTitle: 'Lociones Naturales Artesanales en Cancún | Palo Santo, Atrayente, Agua Florida | Cuidado Holístico | Amor Y Miel',
+          metaDescription: 'Lociones naturales artesanales en Cancún, Quintana Roo. Palo Santo, Atrayente, Agua Florida. Productos holísticos para el cuidado natural de la piel con ingredientes puros. Envíos a toda México.'
         },
         'Aceites': {
-          keywords: ['aceites esenciales', 'aceites naturales', 'aceite abre caminos', 'aceite para ungir', 'aromaterapia', 'aceites Cancún', 'aceites esenciales Quintana Roo'],
-          metaTitle: 'Aceites Esenciales Naturales en Cancún | Aromaterapia | Amor Y Miel',
-          metaDescription: 'Aceites esenciales naturales en Cancún, Quintana Roo. Aromaterapia, aceite abre caminos, aceite para ungir. Productos holísticos para bienestar integral.'
+          keywords: ['aceites esenciales Cancún', 'aceites naturales Quintana Roo', 'aceite abre caminos Cancún', 'aceite para ungir Cancún', 'aromaterapia Cancún', 'aceites terapéuticos Cancún', 'aceites puros Cancún', 'bienestar natural Cancún', 'terapias holísticas Cancún'],
+          metaTitle: 'Aceites Esenciales Naturales en Cancún | Aromaterapia Pura | Terapias Holísticas | Amor Y Miel',
+          metaDescription: 'Aceites esenciales naturales puros en Cancún, Quintana Roo. Aromaterapia, aceite abre caminos, aceite para ungir. Productos holísticos para bienestar integral y terapias naturales. Envíos a toda México.'
         },
         'Baños Energéticos': {
-          keywords: ['baños energéticos', 'baños espirituales', 'baños naturales', 'limpieza energética', 'baños rituales', 'baños Cancún', 'baños energéticos Quintana Roo'],
-          metaTitle: 'Baños Energéticos en Cancún | Limpieza Espiritual | Amor Y Miel',
-          metaDescription: 'Baños energéticos en Cancún, Quintana Roo. Limpieza espiritual, baños rituales, productos naturales para purificación energética y bienestar holístico.'
+          keywords: ['baños energéticos Cancún', 'baños espirituales Quintana Roo', 'baños naturales Cancún', 'limpieza energética Cancún', 'baños rituales Cancún', 'purificación energética Cancún', 'baños holísticos Cancún', 'bienestar espiritual Cancún', 'terapias limpieza Cancún'],
+          metaTitle: 'Baños Energéticos en Cancún | Limpieza Espiritual | Purificación Energética | Amor Y Miel',
+          metaDescription: 'Baños energéticos en Cancún, Quintana Roo. Limpieza espiritual, baños rituales, productos naturales para purificación energética y bienestar holístico. Terapias de limpieza ancestrales. Envíos a toda México.'
         },
         'Servicios': {
-          keywords: ['servicios espirituales', 'terapias holísticas', 'consultas espirituales', 'limpieza energética', 'servicios Cancún', 'terapias Quintana Roo'],
-          metaTitle: 'Servicios Espirituales en Cancún | Terapias Holísticas | Amor Y Miel',
-          metaDescription: 'Servicios espirituales en Cancún, Quintana Roo. Terapias holísticas, consultas espirituales, limpieza energética. Conoterapia, sanación de útero y más.'
+          keywords: ['servicios espirituales Cancún', 'terapias holísticas Quintana Roo', 'consultas espirituales Cancún', 'limpieza energética Cancún', 'Conoterapia Cancún', 'sanación útero Cancún', 'terapias ancestrales Cancún', 'bienestar femenino Cancún', 'terapias naturales Cancún'],
+          metaTitle: 'Servicios Espirituales en Cancún | Terapias Holísticas Especializadas | Conoterapia, Sanación Útero | Amor Y Miel',
+          metaDescription: 'Servicios espirituales especializados en Cancún, Quintana Roo. Terapias holísticas, Conoterapia, sanación de útero, consultas espirituales. Terapias ancestrales y modernas para bienestar integral. Reserva tu cita.'
+        },
+        'Brisas Áuricas': {
+          keywords: ['brisas áuricas Cancún', 'brisas energéticas Quintana Roo', 'brisas espirituales Cancún', 'brisas abundancia Cancún', 'brisas prosperidad Cancún', 'brisas bendición Cancún', 'aromaterapia Cancún', 'purificación energética Cancún'],
+          metaTitle: 'Brisas Áuricas en Cancún | Abundancia, Prosperidad, Bendición | Purificación Energética | Amor Y Miel',
+          metaDescription: 'Brisas áuricas en Cancún, Quintana Roo. Abundancia, prosperidad, bendición del dinero. Productos holísticos para purificación energética y manifestación de deseos. Envíos a toda México.'
+        },
+        'Exfoliantes': {
+          keywords: ['exfoliantes naturales Cancún', 'exfoliantes artesanales Quintana Roo', 'exfoliantes Venus Cancún', 'exfoliantes abre caminos Cancún', 'cuidado piel natural Cancún', 'exfoliantes holísticos Cancún', 'bienestar piel Cancún'],
+          metaTitle: 'Exfoliantes Naturales en Cancún | Venus, Abre Caminos | Cuidado Holístico de Piel | Amor Y Miel',
+          metaDescription: 'Exfoliantes naturales artesanales en Cancún, Quintana Roo. Venus, abre caminos. Productos holísticos para el cuidado natural de la piel con ingredientes puros. Envíos a toda México.'
+        },
+        'Feromonas': {
+          keywords: ['feromonas naturales Cancún', 'feromonas artesanales Quintana Roo', 'feromonas damas caballeros Cancún', 'feromonas atrayentes Cancún', 'productos naturales Cancún', 'bienestar personal Cancún'],
+          metaTitle: 'Feromonas Naturales en Cancún | Damas y Caballeros | Productos Atrayentes | Amor Y Miel',
+          metaDescription: 'Feromonas naturales artesanales en Cancún, Quintana Roo. Para damas y caballeros. Productos holísticos atrayentes elaborados con ingredientes naturales. Envíos a toda México.'
         }
       };
 
@@ -1071,6 +1138,9 @@ function App() {
   
   // Add SEO meta tags to existing products
   await addSEOToExistingProducts();
+  
+  // Add optimized alt text to existing products
+  await addImageAltText();
       
       const allProducts = productsSnapshot.docs.map(doc => ({
         id: doc.id,
@@ -4129,7 +4199,7 @@ function App() {
                 <div style={{ position: "relative", overflow: "hidden" }}>
                   <LazyImage 
                     src={product.imagen} 
-                    alt={product.nombre}
+                    alt={product.imageAlt || product.nombre}
                     style={{
                       width: "100%",
                       height: "350px",
@@ -4808,7 +4878,7 @@ function App() {
                   {/* Product Image */}
                   <LazyImage
                     src={product.imagen}
-                    alt={product.nombre}
+                    alt={product.imageAlt || product.nombre}
                     style={{ width: "100%", height: "350px" }}
                   />
 
@@ -9072,7 +9142,7 @@ function App() {
                     }}>
                       <LazyImage 
                         src={product.imagen} 
-                        alt={product.nombre}
+                        alt={product.imageAlt || product.nombre}
                         style={{
                           width: "80px",
                           height: "80px",
