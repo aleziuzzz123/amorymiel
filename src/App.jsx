@@ -550,6 +550,76 @@ function App() {
     }
   };
 
+  const addConoterapiaService = async () => {
+    try {
+      const { collection, query, getDocs, addDoc, doc } = await import('firebase/firestore');
+      const productsQuery = query(collection(db, 'products'));
+      const productsSnapshot = await getDocs(productsQuery);
+      
+      // Check if Conoterapia already exists
+      const existingService = productsSnapshot.docs.find(doc => 
+        doc.data().nombre === 'Conoterapia'
+      );
+      
+      if (!existingService) {
+        const conoterapiaService = {
+          nombre: 'Conoterapia',
+          categoria: 'Servicios',
+          descripcion: 'Terapia holística ancestral que utiliza velas especiales para limpiar y desbloquear el canal auditivo, mejorando la salud del oído y el bienestar general.',
+          precio: 800,
+          moneda: 'MXN',
+          duracion: '60-90 minutos',
+          imagen: '/images/service/conoterapia.jpg',
+          beneficios: [
+            'Limpieza profunda del canal auditivo',
+            'Alivio de alergias respiratorias',
+            'Reducción de mareos y vértigo',
+            'Alivio de dolores de cabeza',
+            'Tratamiento de zumbidos en los oídos',
+            'Mejora de sinusitis',
+            'Reducción de ronquidos',
+            'Protección para nadadores y trabajadores'
+          ],
+          indicaciones: [
+            'Dificultades auditivas',
+            'Alergias respiratorias',
+            'Mareos o vértigo',
+            'Dolores de cabeza frecuentes',
+            'Zumbidos o presión en los oídos',
+            'Sinusitis',
+            'Ronquidos',
+            'Inflamaciones del oído',
+            'Práctica de natación',
+            'Trabajo en construcción, aviones, albercas o lugares con polvo'
+          ],
+          keywords: [
+            'conoterapia',
+            'terapia con velas para oídos',
+            'limpieza de oídos con velas',
+            'terapia auditiva',
+            'limpieza de canal auditivo',
+            'terapia holística para oídos',
+            'sanación auditiva',
+            'tratamiento para zumbidos',
+            'terapia para sinusitis',
+            'limpieza de oídos para nadadores'
+          ],
+          stock: 999,
+          activo: true,
+          fechaCreacion: new Date(),
+          fechaActualizacion: new Date()
+        };
+        
+        await addDoc(collection(db, 'products'), conoterapiaService);
+        console.log('✅ Added Conoterapia service to Firebase');
+      } else {
+        console.log('✅ Conoterapia service already exists');
+      }
+    } catch (error) {
+      console.error('Error adding Conoterapia service:', error);
+    }
+  };
+
   const loadProductsFromFirestore = async () => {
     try {
       if (!db) {
@@ -568,8 +638,11 @@ function App() {
       const productsSnapshot = await getDocs(productsQuery);
       console.log('getDocs completed, snapshot:', productsSnapshot);
       
-      // Add variants to products if they don't have them
-      await addVariantsToProducts();
+  // Add variants to products if they don't have them
+  await addVariantsToProducts();
+  
+  // Add Conoterapia service if it doesn't exist
+  await addConoterapiaService();
       
       const allProducts = productsSnapshot.docs.map(doc => ({
         id: doc.id,
@@ -5789,6 +5862,7 @@ function App() {
             <div>
               <h4 style={{ margin: "0 0 1rem 0" }}>Servicios</h4>
               <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                <li style={{ marginBottom: "0.5rem" }}><a href="#servicios" style={{ color: "#ccc", textDecoration: "none" }}>Conoterapia</a></li>
                 <li style={{ marginBottom: "0.5rem" }}><a href="#servicios" style={{ color: "#ccc", textDecoration: "none" }}>Sonoterapia</a></li>
                 <li style={{ marginBottom: "0.5rem" }}><a href="#servicios" style={{ color: "#ccc", textDecoration: "none" }}>Ceremonia de Cacao</a></li>
                 <li style={{ marginBottom: "0.5rem" }}><a href="#servicios" style={{ color: "#ccc", textDecoration: "none" }}>Numerología</a></li>
