@@ -566,7 +566,7 @@ function App() {
           nombre: 'Conoterapia',
           categoria: 'Servicios',
           descripcion: 'Terapia holística ancestral que utiliza velas especiales para limpiar y desbloquear el canal auditivo, mejorando la salud del oído y el bienestar general.',
-          precio: 800,
+          precio: 250,
           moneda: 'MXN',
           duracion: '60-90 minutos',
           imagen: '/images/service/conoterapia.jpg',
@@ -620,6 +620,74 @@ function App() {
     }
   };
 
+  const addSanacionUteroService = async () => {
+    try {
+      const { collection, query, getDocs, addDoc, doc } = await import('firebase/firestore');
+      const productsQuery = query(collection(db, 'products'));
+      const productsSnapshot = await getDocs(productsQuery);
+      
+      // Check if Sanación y bendición de útero already exists
+      const existingService = productsSnapshot.docs.find(doc => 
+        doc.data().nombre === 'Sanación y bendición de útero'
+      );
+      
+      if (!existingService) {
+        const sanacionUteroService = {
+          nombre: 'Sanación y bendición de útero',
+          categoria: 'Servicios',
+          descripcion: 'Terapia holística especializada en la sanación energética y espiritual del útero, enfocada en la limpieza, equilibrio y bendición de esta área sagrada de la mujer.',
+          precio: 450,
+          moneda: 'MXN',
+          duracion: '90-120 minutos',
+          imagen: '/images/service/sanacion-utero.jpg',
+          beneficios: [
+            'Limpieza energética del útero',
+            'Equilibrio hormonal natural',
+            'Sanación de traumas uterinos',
+            'Conexión con la feminidad sagrada',
+            'Liberación de emociones reprimidas',
+            'Armonización del ciclo menstrual',
+            'Fortalecimiento de la autoestima femenina',
+            'Bendición y protección energética'
+          ],
+          indicaciones: [
+            'Desequilibrios hormonales',
+            'Dolores menstruales intensos',
+            'Problemas de fertilidad',
+            'Traumas relacionados con el útero',
+            'Desconexión con la feminidad',
+            'Ciclos menstruales irregulares',
+            'Emociones reprimidas',
+            'Búsqueda de sanación femenina'
+          ],
+          keywords: [
+            'sanación de útero',
+            'bendición de útero',
+            'terapia femenina',
+            'sanación energética femenina',
+            'equilibrio hormonal',
+            'terapia uterina',
+            'sanación menstrual',
+            'feminidad sagrada',
+            'terapia holística femenina',
+            'limpieza energética uterina'
+          ],
+          stock: 999,
+          activo: true,
+          fechaCreacion: new Date(),
+          fechaActualizacion: new Date()
+        };
+        
+        await addDoc(collection(db, 'products'), sanacionUteroService);
+        console.log('✅ Added Sanación y bendición de útero service to Firebase');
+      } else {
+        console.log('✅ Sanación y bendición de útero service already exists');
+      }
+    } catch (error) {
+      console.error('Error adding Sanación y bendición de útero service:', error);
+    }
+  };
+
   const loadProductsFromFirestore = async () => {
     try {
       if (!db) {
@@ -643,6 +711,9 @@ function App() {
   
   // Add Conoterapia service if it doesn't exist
   await addConoterapiaService();
+  
+  // Add Sanación y bendición de útero service if it doesn't exist
+  await addSanacionUteroService();
       
       const allProducts = productsSnapshot.docs.map(doc => ({
         id: doc.id,
@@ -5863,6 +5934,7 @@ function App() {
               <h4 style={{ margin: "0 0 1rem 0" }}>Servicios</h4>
               <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
                 <li style={{ marginBottom: "0.5rem" }}><a href="#servicios" style={{ color: "#ccc", textDecoration: "none" }}>Conoterapia</a></li>
+                <li style={{ marginBottom: "0.5rem" }}><a href="#servicios" style={{ color: "#ccc", textDecoration: "none" }}>Sanación y bendición de útero</a></li>
                 <li style={{ marginBottom: "0.5rem" }}><a href="#servicios" style={{ color: "#ccc", textDecoration: "none" }}>Sonoterapia</a></li>
                 <li style={{ marginBottom: "0.5rem" }}><a href="#servicios" style={{ color: "#ccc", textDecoration: "none" }}>Ceremonia de Cacao</a></li>
                 <li style={{ marginBottom: "0.5rem" }}><a href="#servicios" style={{ color: "#ccc", textDecoration: "none" }}>Numerología</a></li>
