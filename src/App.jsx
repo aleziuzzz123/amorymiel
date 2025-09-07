@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 // Resend is now handled by Netlify functions
 import { 
   signInWithEmailAndPassword, 
@@ -27,6 +27,136 @@ const renderStars = (rating, fontSize = "14px") => {
       {[...Array(emptyStars)].map((_, i) => (
         <span key={i} style={{ color: "#E0E0E0", fontSize }}>⭐</span>
       ))}
+    </div>
+  );
+};
+
+// Lazy Loading Hook
+const useLazyLoading = () => {
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(false);
+  const imgRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasLoaded) {
+          setIsIntersecting(true);
+          setHasLoaded(true);
+        }
+      },
+      { threshold: 0.1, rootMargin: '50px' }
+    );
+
+    if (imgRef.current) {
+      observer.observe(imgRef.current);
+    }
+
+    return () => {
+      if (imgRef.current) {
+        observer.unobserve(imgRef.current);
+      }
+    };
+  }, [hasLoaded]);
+
+  return { imgRef, isIntersecting, hasLoaded };
+};
+
+// Image Optimization Helper
+const getOptimizedImageSrc = (src, width = 400, quality = 80) => {
+  if (!src) return src;
+  
+  // For local images, we'll use a simple optimization approach
+  // In production, you might want to use a service like Cloudinary or ImageKit
+  if (src.startsWith('/images/')) {
+    // Add size and quality parameters for optimization
+    return `${src}?w=${width}&q=${quality}&f=webp`;
+  }
+  
+  return src;
+};
+
+// WebP Support Detection
+const supportsWebP = () => {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1;
+  canvas.height = 1;
+  return canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+};
+
+// Lazy Image Component with Optimization
+const LazyImage = ({ 
+  src, 
+  alt, 
+  style, 
+  className, 
+  width = 400,
+  quality = 80,
+  placeholder = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkxvYWRpbmcuLi48L3RleHQ+PC9zdmc+" 
+}) => {
+  const { imgRef, isIntersecting, hasLoaded } = useLazyLoading();
+  const [imageError, setImageError] = useState(false);
+  const [webpSupported, setWebpSupported] = useState(false);
+
+  useEffect(() => {
+    setWebpSupported(supportsWebP());
+  }, []);
+
+  const getOptimizedSrc = () => {
+    if (!src) return src;
+    
+    // Try WebP first if supported, fallback to original
+    if (webpSupported && src.startsWith('/images/')) {
+      return getOptimizedImageSrc(src, width, quality);
+    }
+    
+    return src;
+  };
+
+  return (
+    <div ref={imgRef} style={style} className={className}>
+      {isIntersecting ? (
+        <picture>
+          {webpSupported && src && src.startsWith('/images/') && (
+            <source 
+              srcSet={getOptimizedImageSrc(src, width, quality)} 
+              type="image/webp" 
+            />
+          )}
+          <img
+            src={getOptimizedSrc()}
+            alt={alt}
+            style={{ 
+              width: '100%', 
+              height: '100%', 
+              objectFit: 'cover',
+              transition: 'opacity 0.3s ease-in-out'
+            }}
+            loading="lazy"
+            decoding="async"
+            onLoad={() => {
+              console.log(`✅ Image loaded: ${alt}`);
+            }}
+            onError={(e) => {
+              console.error(`❌ Image failed to load: ${src}`);
+              setImageError(true);
+              e.target.src = placeholder;
+            }}
+          />
+        </picture>
+      ) : (
+        <img
+          src={placeholder}
+          alt="Loading..."
+          style={{ 
+            width: '100%', 
+            height: '100%', 
+            objectFit: 'cover', 
+            filter: 'blur(5px)',
+            transition: 'filter 0.3s ease-in-out'
+          }}
+        />
+      )}
     </div>
   );
 };
@@ -889,6 +1019,21 @@ function App() {
   useEffect(() => {
     loadProductsFromFirestore();
     loadCoupons();
+  }, []);
+
+  // Register Service Worker for PWA
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((registration) => {
+            console.log('✅ Service Worker registered successfully:', registration.scope);
+          })
+          .catch((error) => {
+            console.log('❌ Service Worker registration failed:', error);
+          });
+      });
+    }
   }, []);
 
   // Auto-open cart when items are added, close when empty
@@ -3837,17 +3982,13 @@ function App() {
               }}
               >
                 <div style={{ position: "relative", overflow: "hidden" }}>
-                  <img 
+                  <LazyImage 
                     src={product.imagen} 
                     alt={product.nombre}
-                      style={{
-                        width: "100%",
-                      height: "350px", 
-                        objectFit: "cover",
+                    style={{
+                      width: "100%",
+                      height: "350px",
                       transition: "transform 0.4s ease"
-                      }}
-                      onError={(e) => {
-                      e.target.src = "/images/logo/amorymiellogo.png";
                     }}
                   />
                   <div style={{ 
@@ -4520,13 +4661,10 @@ function App() {
                   </div>
 
                   {/* Product Image */}
-                  <img
+                  <LazyImage
                     src={product.imagen}
                     alt={product.nombre}
-                    style={{ width: "100%", height: "350px", objectFit: "cover" }}
-                    onError={(e) => {
-                      e.target.src = "/images/logo/amorymiellogo.png";
-                    }}
+                    style={{ width: "100%", height: "350px" }}
                   />
 
                   {/* Product Content */}
@@ -8787,17 +8925,13 @@ function App() {
                       borderRadius: "15px",
                       background: "linear-gradient(145deg, #ffffff 0%, #fefefe 100%)"
                     }}>
-                      <img 
+                      <LazyImage 
                         src={product.imagen} 
                         alt={product.nombre}
                         style={{
                           width: "80px",
                           height: "80px",
-                          objectFit: "cover",
                           borderRadius: "10px"
-                        }}
-                        onError={(e) => {
-                          e.target.src = "/images/logo/amorymiellogo.png";
                         }}
                       />
                       <div style={{ flex: 1 }}>

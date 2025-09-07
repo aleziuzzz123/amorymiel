@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Optimization Guide - Amor Y Miel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .code-block {
+            background: #f4f4f4;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 10px;
+            border-left: 4px solid #ffc107;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 Asset Optimization Guide</h1>
+    
+    <h2>Image Optimization</h2>
+    <p>We've implemented automatic image optimization with:</p>
+    <ul>
+        <li>✅ Lazy loading for all images</li>
+        <li>✅ WebP format support with fallback</li>
+        <li>✅ Responsive image sizing</li>
+        <li>✅ Quality optimization (80% by default)</li>
+    </ul>
+
+    <h2>CSS & JS Minification</h2>
+    <p>For production deployment, add these optimizations to your build process:</p>
+
+    <div class="code-block">
+        <h3>1. Install optimization tools:</h3>
+        <pre>npm install --save-dev terser cssnano postcss postcss-cli</pre>
+    </div>
+
+    <div class="code-block">
+        <h3>2. Add to package.json scripts:</h3>
+        <pre>{
+  "scripts": {
+    "build": "react-scripts build",
+    "optimize-css": "postcss build/static/css/*.css -d build/static/css/ --use cssnano",
+    "optimize-js": "terser build/static/js/*.js -o build/static/js/bundle.min.js",
+    "build-optimized": "npm run build && npm run optimize-css && npm run optimize-js"
+  }
+}</pre>
+    </div>
+
+    <div class="code-block">
+        <h3>3. Create postcss.config.js:</h3>
+        <pre>module.exports = {
+  plugins: [
+    require('cssnano')({
+      preset: 'default',
+    }),
+  ],
+}</pre>
+    </div>
+
+    <h2>Core Web Vitals Optimization</h2>
+    <p>We've implemented several optimizations:</p>
+    <ul>
+        <li>✅ Lazy loading (improves LCP)</li>
+        <li>✅ Image optimization (improves LCP)</li>
+        <li>✅ Preconnect to external domains</li>
+        <li>✅ DNS prefetch for performance</li>
+        <li>✅ Resource hints for faster loading</li>
+    </ul>
+
+    <div class="highlight">
+        <strong>Next Steps:</strong>
+        <ol>
+            <li>Run the optimization commands above</li>
+            <li>Test with Google PageSpeed Insights</li>
+            <li>Monitor Core Web Vitals in Google Search Console</li>
+            <li>Consider implementing a CDN for static assets</li>
+        </ol>
+    </div>
+
+    <h2>Performance Monitoring</h2>
+    <p>Track your performance improvements:</p>
+    <ul>
+        <li>Google PageSpeed Insights</li>
+        <li>Google Search Console Core Web Vitals</li>
+        <li>Chrome DevTools Lighthouse</li>
+        <li>WebPageTest.org</li>
+    </ul>
+</body>
+</html>
