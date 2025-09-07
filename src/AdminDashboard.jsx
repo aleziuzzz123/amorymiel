@@ -489,6 +489,22 @@ const AdminDashboard = ({ user, onClose }) => {
   const [lowStockThreshold, setLowStockThreshold] = useState(10);
   const [inventoryAlerts, setInventoryAlerts] = useState([]);
 
+  // Inventory Analytics State
+  const [inventoryAnalytics, setInventoryAnalytics] = useState({
+    totalValue: 0,
+    totalItems: 0,
+    lowStockCount: 0,
+    outOfStockCount: 0,
+    fastMovingProducts: [],
+    slowMovingProducts: [],
+    categoryBreakdown: {},
+    stockMovementTrends: [],
+    turnoverRates: {}
+  });
+  const [inventoryReports, setInventoryReports] = useState([]);
+  const [inventoryDateRange, setInventoryDateRange] = useState('30');
+  const [inventoryReportType, setInventoryReportType] = useState('overview');
+
   // Color palette matching your brand
   const PALETAS = {
     A: { miel: "#D4A574", rosa: "#E8B4B8", verde: "#A8C09A", azul: "#B8D4E3" },
@@ -531,6 +547,13 @@ const AdminDashboard = ({ user, onClose }) => {
       loadInventory();
     }
   }, [activeTab]);
+
+  // Calculate analytics when inventory data changes
+  useEffect(() => {
+    if (inventory.length > 0) {
+      calculateInventoryAnalytics();
+    }
+  }, [inventory]);
 
   // Load live traffic every 30 seconds when on analytics tab
   useEffect(() => {
@@ -2901,6 +2924,219 @@ const AdminDashboard = ({ user, onClose }) => {
     }
 
     return filtered;
+  };
+
+  // Inventory Analytics Functions
+  const calculateInventoryAnalytics = async () => {
+    try {
+      // Get orders data for movement analysis
+      const ordersQuery = query(collection(db, 'orders'));
+      const ordersSnapshot = await getDocs(ordersQuery);
+      
+      const orders = ordersSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      // Calculate analytics
+      const totalValue = inventory.reduce((sum, item) => sum + (item.precio * item.stock), 0);
+      const totalItems = inventory.reduce((sum, item) => sum + item.stock, 0);
+      const lowStockCount = inventory.filter(item => item.stock > 0 && item.stock <= item.minStock).length;
+      const outOfStockCount = inventory.filter(item => item.stock <= 0).length;
+
+      // Calculate category breakdown
+      const categoryBreakdown = inventory.reduce((acc, item) => {
+        if (!acc[item.categoria]) {
+          acc[item.categoria] = {
+            count: 0,
+            value: 0,
+            items: 0
+          };
+        }
+        acc[item.categoria].count += 1;
+        acc[item.categoria].value += item.precio * item.stock;
+        acc[item.categoria].items += item.stock;
+        return acc;
+      }, {});
+
+      // Calculate stock movement trends (last 30 days)
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      const recentOrders = orders.filter(order => 
+        order.createdAt && order.createdAt.toDate() >= thirtyDaysAgo
+      );
+
+      // Calculate product movement
+      const productMovement = {};
+      recentOrders.forEach(order => {
+        order.items?.forEach(item => {
+          if (!productMovement[item.id]) {
+            productMovement[item.id] = {
+              productName: item.nombre,
+              sold: 0,
+              revenue: 0
+            };
+          }
+          productMovement[item.id].sold += item.quantity;
+          productMovement[item.id].revenue += item.precio * item.quantity;
+        });
+      });
+
+      // Sort products by movement
+      const fastMovingProducts = Object.values(productMovement)
+        .sort((a, b) => b.sold - a.sold)
+        .slice(0, 10);
+
+      const slowMovingProducts = inventory
+        .filter(item => !productMovement[item.id] || productMovement[item.id].sold === 0)
+        .slice(0, 10);
+
+      // Calculate turnover rates
+      const turnoverRates = {};
+      inventory.forEach(item => {
+        const movement = productMovement[item.id];
+        if (movement && item.stock > 0) {
+          turnoverRates[item.id] = {
+            productName: item.nombre,
+            turnoverRate: (movement.sold / item.stock) * 100,
+            daysToSellOut: item.stock / (movement.sold / 30)
+          };
+        }
+      });
+
+      // Generate stock movement trends (daily for last 30 days)
+      const stockMovementTrends = [];
+      for (let i = 29; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dayStart = new Date(date);
+        dayStart.setHours(0, 0, 0, 0);
+        const dayEnd = new Date(date);
+        dayEnd.setHours(23, 59, 59, 999);
+        
+        const dayOrders = orders.filter(order => 
+          order.createdAt && 
+          order.createdAt.toDate() >= dayStart && 
+          order.createdAt.toDate() <= dayEnd
+        );
+        
+        const daySales = dayOrders.reduce((sum, order) => 
+          sum + (order.items?.reduce((itemSum, item) => itemSum + item.quantity, 0) || 0), 0
+        );
+        
+        stockMovementTrends.push({
+          date: date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' }),
+          sales: daySales,
+          orders: dayOrders.length
+        });
+      }
+
+      setInventoryAnalytics({
+        totalValue,
+        totalItems,
+        lowStockCount,
+        outOfStockCount,
+        fastMovingProducts,
+        slowMovingProducts,
+        categoryBreakdown,
+        stockMovementTrends,
+        turnoverRates
+      });
+
+    } catch (error) {
+      console.error('Error calculating inventory analytics:', error);
+    }
+  };
+
+  const generateInventoryReport = (reportType) => {
+    const report = {
+      id: Date.now(),
+      type: reportType,
+      generatedAt: new Date(),
+      data: {}
+    };
+
+    switch (reportType) {
+      case 'overview':
+        report.data = {
+          totalValue: inventoryAnalytics.totalValue,
+          totalItems: inventoryAnalytics.totalItems,
+          lowStockCount: inventoryAnalytics.lowStockCount,
+          outOfStockCount: inventoryAnalytics.outOfStockCount,
+          categories: Object.keys(inventoryAnalytics.categoryBreakdown).length
+        };
+        break;
+      case 'low-stock':
+        report.data = {
+          lowStockProducts: inventory.filter(item => item.stock > 0 && item.stock <= item.minStock),
+          outOfStockProducts: inventory.filter(item => item.stock <= 0),
+          recommendations: inventory.filter(item => item.stock <= item.minStock).map(item => ({
+            product: item.nombre,
+            currentStock: item.stock,
+            minStock: item.minStock,
+            suggestedOrder: item.maxStock - item.stock
+          }))
+        };
+        break;
+      case 'movement':
+        report.data = {
+          fastMoving: inventoryAnalytics.fastMovingProducts,
+          slowMoving: inventoryAnalytics.slowMovingProducts,
+          trends: inventoryAnalytics.stockMovementTrends
+        };
+        break;
+      case 'value':
+        report.data = {
+          categoryBreakdown: inventoryAnalytics.categoryBreakdown,
+          totalValue: inventoryAnalytics.totalValue,
+          averageValuePerItem: inventoryAnalytics.totalValue / inventoryAnalytics.totalItems
+        };
+        break;
+    }
+
+    setInventoryReports(prev => [report, ...prev.slice(0, 9)]); // Keep last 10 reports
+    return report;
+  };
+
+  const exportInventoryReport = (report, format = 'csv') => {
+    if (format === 'csv') {
+      let csvContent = '';
+      
+      switch (report.type) {
+        case 'overview':
+          csvContent = 'Metric,Value\n';
+          csvContent += `Total Value,${report.data.totalValue}\n`;
+          csvContent += `Total Items,${report.data.totalItems}\n`;
+          csvContent += `Low Stock Count,${report.data.lowStockCount}\n`;
+          csvContent += `Out of Stock Count,${report.data.outOfStockCount}\n`;
+          csvContent += `Categories,${report.data.categories}\n`;
+          break;
+        case 'low-stock':
+          csvContent = 'Product,Current Stock,Min Stock,Max Stock,Status,Suggested Order\n';
+          report.data.lowStockProducts.forEach(item => {
+            csvContent += `${item.nombre},${item.stock},${item.minStock},${item.maxStock},Low Stock,${item.maxStock - item.stock}\n`;
+          });
+          report.data.outOfStockProducts.forEach(item => {
+            csvContent += `${item.nombre},${item.stock},${item.minStock},${item.maxStock},Out of Stock,${item.maxStock}\n`;
+          });
+          break;
+        case 'movement':
+          csvContent = 'Product,Sold (30 days),Revenue,Turnover Rate\n';
+          report.data.fastMoving.forEach(item => {
+            csvContent += `${item.productName},${item.sold},${item.revenue},${((item.sold / 30) * 100).toFixed(2)}%\n`;
+          });
+          break;
+      }
+
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `inventory-report-${report.type}-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }
   };
 
   if (loading) {
@@ -7252,6 +7488,164 @@ const AdminDashboard = ({ user, onClose }) => {
               </div>
             </div>
 
+            {/* Inventory Analytics Overview */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: window.innerWidth <= 768 ? '1fr' : 'repeat(4, 1fr)',
+              gap: '1rem',
+              marginBottom: '1.5rem'
+            }}>
+              <div style={{
+                background: 'linear-gradient(135deg, #28a745 0%, #20c997 100%)',
+                color: 'white',
+                padding: '1.5rem',
+                borderRadius: '12px',
+                textAlign: 'center'
+              }}>
+                <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '2rem' }}>${inventoryAnalytics.totalValue.toLocaleString()}</h3>
+                <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.9 }}>Valor Total</p>
+              </div>
+              <div style={{
+                background: 'linear-gradient(135deg, #007bff 0%, #6610f2 100%)',
+                color: 'white',
+                padding: '1.5rem',
+                borderRadius: '12px',
+                textAlign: 'center'
+              }}>
+                <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '2rem' }}>{inventoryAnalytics.totalItems}</h3>
+                <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.9 }}>Total Items</p>
+              </div>
+              <div style={{
+                background: 'linear-gradient(135deg, #ffc107 0%, #fd7e14 100%)',
+                color: 'white',
+                padding: '1.5rem',
+                borderRadius: '12px',
+                textAlign: 'center'
+              }}>
+                <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '2rem' }}>{inventoryAnalytics.lowStockCount}</h3>
+                <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.9 }}>Stock Bajo</p>
+              </div>
+              <div style={{
+                background: 'linear-gradient(135deg, #dc3545 0%, #e83e8c 100%)',
+                color: 'white',
+                padding: '1.5rem',
+                borderRadius: '12px',
+                textAlign: 'center'
+              }}>
+                <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '2rem' }}>{inventoryAnalytics.outOfStockCount}</h3>
+                <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.9 }}>Agotados</p>
+              </div>
+            </div>
+
+            {/* Inventory Reports Section */}
+            <div style={{
+              background: '#f8f9fa',
+              border: '1px solid #ddd',
+              borderRadius: '8px',
+              padding: '1.5rem',
+              marginBottom: '1.5rem'
+            }}>
+              <h3 style={{ color: '#D4A574', margin: '0 0 1rem 0' }}>📊 Reportes de Inventario</h3>
+              <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => generateInventoryReport('overview')}
+                  style={{
+                    background: '#28a745',
+                    color: 'white',
+                    border: 'none',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem'
+                  }}
+                >
+                  📈 Resumen General
+                </button>
+                <button
+                  onClick={() => generateInventoryReport('low-stock')}
+                  style={{
+                    background: '#ffc107',
+                    color: 'white',
+                    border: 'none',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem'
+                  }}
+                >
+                  ⚠️ Stock Bajo
+                </button>
+                <button
+                  onClick={() => generateInventoryReport('movement')}
+                  style={{
+                    background: '#007bff',
+                    color: 'white',
+                    border: 'none',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem'
+                  }}
+                >
+                  📊 Movimiento
+                </button>
+                <button
+                  onClick={() => generateInventoryReport('value')}
+                  style={{
+                    background: '#6f42c1',
+                    color: 'white',
+                    border: 'none',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem'
+                  }}
+                >
+                  💰 Valor
+                </button>
+              </div>
+              
+              {/* Recent Reports */}
+              {inventoryReports.length > 0 && (
+                <div>
+                  <h4 style={{ color: '#666', margin: '0 0 0.5rem 0' }}>Reportes Recientes:</h4>
+                  {inventoryReports.slice(0, 3).map(report => (
+                    <div key={report.id} style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '0.5rem',
+                      background: 'white',
+                      borderRadius: '4px',
+                      marginBottom: '0.5rem',
+                      border: '1px solid #eee'
+                    }}>
+                      <span style={{ fontSize: '0.9rem' }}>
+                        {report.type === 'overview' ? '📈 Resumen General' :
+                         report.type === 'low-stock' ? '⚠️ Stock Bajo' :
+                         report.type === 'movement' ? '📊 Movimiento' : '💰 Valor'} - 
+                        {report.generatedAt.toLocaleString('es-ES')}
+                      </span>
+                      <button
+                        onClick={() => exportInventoryReport(report)}
+                        style={{
+                          background: '#D4A574',
+                          color: 'white',
+                          border: 'none',
+                          padding: '0.25rem 0.5rem',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontSize: '0.8rem'
+                        }}
+                      >
+                        📥 CSV
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
             {/* Inventory Alerts */}
             {inventoryAlerts.length > 0 && (
               <div style={{
@@ -7276,6 +7670,113 @@ const AdminDashboard = ({ user, onClose }) => {
                 ))}
               </div>
             )}
+
+            {/* Inventory Charts */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: window.innerWidth <= 768 ? '1fr' : '1fr 1fr',
+              gap: '1rem',
+              marginBottom: '1.5rem'
+            }}>
+              {/* Category Breakdown Chart */}
+              <div style={{
+                background: 'white',
+                borderRadius: '8px',
+                padding: '1.5rem',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+              }}>
+                <h3 style={{ color: '#D4A574', margin: '0 0 1rem 0' }}>📊 Distribución por Categoría</h3>
+                <div style={{ height: '200px', overflow: 'auto' }}>
+                  {Object.entries(inventoryAnalytics.categoryBreakdown).map(([category, data]) => (
+                    <div key={category} style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '0.5rem 0',
+                      borderBottom: '1px solid #eee'
+                    }}>
+                      <span style={{ fontSize: '0.9rem', fontWeight: '600' }}>{category}</span>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: '0.8rem', color: '#666' }}>{data.count} productos</div>
+                        <div style={{ fontSize: '0.8rem', color: '#D4A574', fontWeight: '600' }}>
+                          ${data.value.toLocaleString()}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Fast Moving Products */}
+              <div style={{
+                background: 'white',
+                borderRadius: '8px',
+                padding: '1.5rem',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+              }}>
+                <h3 style={{ color: '#D4A574', margin: '0 0 1rem 0' }}>🚀 Productos Más Vendidos (30 días)</h3>
+                <div style={{ height: '200px', overflow: 'auto' }}>
+                  {inventoryAnalytics.fastMovingProducts.length > 0 ? (
+                    inventoryAnalytics.fastMovingProducts.map((product, index) => (
+                      <div key={index} style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '0.5rem 0',
+                        borderBottom: '1px solid #eee'
+                      }}>
+                        <span style={{ fontSize: '0.9rem', fontWeight: '600' }}>{product.productName}</span>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontSize: '0.8rem', color: '#28a745', fontWeight: '600' }}>
+                            {product.sold} vendidos
+                          </div>
+                          <div style={{ fontSize: '0.8rem', color: '#666' }}>
+                            ${product.revenue.toLocaleString()}
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div style={{ textAlign: 'center', color: '#666', padding: '2rem' }}>
+                      No hay datos de ventas recientes
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Stock Movement Trends Chart */}
+            <div style={{
+              background: 'white',
+              borderRadius: '8px',
+              padding: '1.5rem',
+              marginBottom: '1.5rem',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}>
+              <h3 style={{ color: '#D4A574', margin: '0 0 1rem 0' }}>📈 Tendencia de Movimiento (30 días)</h3>
+              <div style={{ height: '200px', overflow: 'auto' }}>
+                {inventoryAnalytics.stockMovementTrends.length > 0 ? (
+                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'end', height: '150px' }}>
+                    {inventoryAnalytics.stockMovementTrends.map((trend, index) => (
+                      <div key={index} style={{ textAlign: 'center', flex: 1 }}>
+                        <div style={{
+                          background: '#D4A574',
+                          height: `${Math.max(10, (trend.sales / Math.max(...inventoryAnalytics.stockMovementTrends.map(t => t.sales))) * 100)}px`,
+                          borderRadius: '4px 4px 0 0',
+                          marginBottom: '0.5rem'
+                        }}></div>
+                        <div style={{ fontSize: '0.7rem', color: '#666' }}>{trend.date}</div>
+                        <div style={{ fontSize: '0.7rem', color: '#D4A574', fontWeight: '600' }}>{trend.sales}</div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{ textAlign: 'center', color: '#666', padding: '2rem' }}>
+                    No hay datos de tendencias disponibles
+                  </div>
+                )}
+              </div>
+            </div>
 
             {/* Bulk Update Panel */}
             {showBulkInventoryUpdate && (
