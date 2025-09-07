@@ -3266,7 +3266,8 @@ const AdminDashboard = ({ user, onClose }) => {
             { id: 'cart-abandonment', label: '🛒 Carritos Abandonados', icon: '🛒' },
             { id: 'products', label: '🛍️ Productos', icon: '🛍️' },
             { id: 'coupons', label: '🎫 Cupones', icon: '🎫' },
-            { id: 'reviews', label: '⭐ Reseñas', icon: '⭐' }
+            { id: 'reviews', label: '⭐ Reseñas', icon: '⭐' },
+            { id: 'blog', label: '📝 Blog', icon: '📝' }
           ].map(tab => (
             <button
               key={tab.id}
@@ -8030,6 +8031,521 @@ const AdminDashboard = ({ user, onClose }) => {
                 )}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Blog Management Tab */}
+        {activeTab === 'blog' && (
+          <div>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '1.5rem'
+            }}>
+              <h2 style={{ color: '#D4A574', margin: 0 }}>📝 Gestión del Blog</h2>
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <button
+                  onClick={() => window.open('/blog.html', '_blank')}
+                  style={{
+                    background: 'linear-gradient(135deg, #D4A574 0%, #B8941F 100%)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '0.75rem 1.5rem',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    fontWeight: 'bold',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem'
+                  }}
+                >
+                  🌐 Ver Blog Público
+                </button>
+              </div>
+            </div>
+
+            {/* Blog Articles Grid */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '1.5rem',
+              marginBottom: '2rem'
+            }}>
+              {/* Main Blog Page */}
+              <div style={{
+                background: 'white',
+                borderRadius: '12px',
+                padding: '1.5rem',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                border: '1px solid #e0e0e0'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                  <div style={{
+                    background: 'linear-gradient(135deg, #D4A574 0%, #B8941F 100%)',
+                    color: 'white',
+                    width: '50px',
+                    height: '50px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.5rem'
+                  }}>
+                    📝
+                  </div>
+                  <div>
+                    <h3 style={{ margin: 0, color: '#333', fontSize: '1.2rem' }}>Página Principal del Blog</h3>
+                    <p style={{ margin: '0.5rem 0 0 0', color: '#666', fontSize: '0.9rem' }}>Portal principal con todos los artículos</p>
+                  </div>
+                </div>
+                <p style={{ color: '#666', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+                  Página principal del blog que contiene enlaces a todos los artículos y guías SEO.
+                </p>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button
+                    onClick={() => window.open('/blog.html', '_blank')}
+                    style={{
+                      background: '#D4A574',
+                      color: 'white',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: '600'
+                    }}
+                  >
+                    🌐 Ver Página
+                  </button>
+                  <button
+                    onClick={() => window.open('/blog.html', '_blank')}
+                    style={{
+                      background: 'transparent',
+                      color: '#D4A574',
+                      border: '1px solid #D4A574',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: '600'
+                    }}
+                  >
+                    ✏️ Editar
+                  </button>
+                </div>
+              </div>
+
+              {/* Conoterapia Article */}
+              <div style={{
+                background: 'white',
+                borderRadius: '12px',
+                padding: '1.5rem',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                border: '1px solid #e0e0e0'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                  <div style={{
+                    background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)',
+                    color: 'white',
+                    width: '50px',
+                    height: '50px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.5rem'
+                  }}>
+                    🕯️
+                  </div>
+                  <div>
+                    <h3 style={{ margin: 0, color: '#333', fontSize: '1.2rem' }}>Conoterapia: Terapia Ancestral</h3>
+                    <p style={{ margin: '0.5rem 0 0 0', color: '#666', fontSize: '0.9rem' }}>Artículo sobre Conoterapia</p>
+                  </div>
+                </div>
+                <p style={{ color: '#666', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+                  Guía completa sobre la Conoterapia, sus beneficios y cómo se realiza esta terapia ancestral.
+                </p>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button
+                    onClick={() => window.open('/articulo-conoterapia.html', '_blank')}
+                    style={{
+                      background: '#4CAF50',
+                      color: 'white',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: '600'
+                    }}
+                  >
+                    🌐 Ver Artículo
+                  </button>
+                  <button
+                    onClick={() => window.open('/articulo-conoterapia.html', '_blank')}
+                    style={{
+                      background: 'transparent',
+                      color: '#4CAF50',
+                      border: '1px solid #4CAF50',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: '600'
+                    }}
+                  >
+                    ✏️ Editar
+                  </button>
+                </div>
+              </div>
+
+              {/* Velas de Miel Article */}
+              <div style={{
+                background: 'white',
+                borderRadius: '12px',
+                padding: '1.5rem',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                border: '1px solid #e0e0e0'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                  <div style={{
+                    background: 'linear-gradient(135deg, #FF9800 0%, #F57C00 100%)',
+                    color: 'white',
+                    width: '50px',
+                    height: '50px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.5rem'
+                  }}>
+                    🍯
+                  </div>
+                  <div>
+                    <h3 style={{ margin: 0, color: '#333', fontSize: '1.2rem' }}>Velas de Miel Artesanales</h3>
+                    <p style={{ margin: '0.5rem 0 0 0', color: '#666', fontSize: '0.9rem' }}>Artículo sobre velas de miel</p>
+                  </div>
+                </div>
+                <p style={{ color: '#666', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+                  Información detallada sobre las velas de miel artesanales, sus propiedades y beneficios.
+                </p>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button
+                    onClick={() => window.open('/articulo-velas-miel.html', '_blank')}
+                    style={{
+                      background: '#FF9800',
+                      color: 'white',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: '600'
+                    }}
+                  >
+                    🌐 Ver Artículo
+                  </button>
+                  <button
+                    onClick={() => window.open('/articulo-velas-miel.html', '_blank')}
+                    style={{
+                      background: 'transparent',
+                      color: '#FF9800',
+                      border: '1px solid #FF9800',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: '600'
+                    }}
+                  >
+                    ✏️ Editar
+                  </button>
+                </div>
+              </div>
+
+              {/* FAQ Page */}
+              <div style={{
+                background: 'white',
+                borderRadius: '12px',
+                padding: '1.5rem',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                border: '1px solid #e0e0e0'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                  <div style={{
+                    background: 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)',
+                    color: 'white',
+                    width: '50px',
+                    height: '50px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.5rem'
+                  }}>
+                    ❓
+                  </div>
+                  <div>
+                    <h3 style={{ margin: 0, color: '#333', fontSize: '1.2rem' }}>Preguntas Frecuentes</h3>
+                    <p style={{ margin: '0.5rem 0 0 0', color: '#666', fontSize: '0.9rem' }}>FAQ optimizada para SEO</p>
+                  </div>
+                </div>
+                <p style={{ color: '#666', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+                  Página de preguntas frecuentes con Schema markup para mejorar el SEO.
+                </p>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button
+                    onClick={() => window.open('/faq.html', '_blank')}
+                    style={{
+                      background: '#2196F3',
+                      color: 'white',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: '600'
+                    }}
+                  >
+                    🌐 Ver FAQ
+                  </button>
+                  <button
+                    onClick={() => window.open('/faq.html', '_blank')}
+                    style={{
+                      background: 'transparent',
+                      color: '#2196F3',
+                      border: '1px solid #2196F3',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: '600'
+                    }}
+                  >
+                    ✏️ Editar
+                  </button>
+                </div>
+              </div>
+
+              {/* Local SEO Page */}
+              <div style={{
+                background: 'white',
+                borderRadius: '12px',
+                padding: '1.5rem',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                border: '1px solid #e0e0e0'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                  <div style={{
+                    background: 'linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%)',
+                    color: 'white',
+                    width: '50px',
+                    height: '50px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.5rem'
+                  }}>
+                    📍
+                  </div>
+                  <div>
+                    <h3 style={{ margin: 0, color: '#333', fontSize: '1.2rem' }}>SEO Local</h3>
+                    <p style={{ margin: '0.5rem 0 0 0', color: '#666', fontSize: '0.9rem' }}>Página de SEO local</p>
+                  </div>
+                </div>
+                <p style={{ color: '#666', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+                  Página optimizada para SEO local con palabras clave de Cancún y Quintana Roo.
+                </p>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button
+                    onClick={() => window.open('/local-seo.html', '_blank')}
+                    style={{
+                      background: '#9C27B0',
+                      color: 'white',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: '600'
+                    }}
+                  >
+                    🌐 Ver Página
+                  </button>
+                  <button
+                    onClick={() => window.open('/local-seo.html', '_blank')}
+                    style={{
+                      background: 'transparent',
+                      color: '#9C27B0',
+                      border: '1px solid #9C27B0',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: '600'
+                    }}
+                  >
+                    ✏️ Editar
+                  </button>
+                </div>
+              </div>
+
+              {/* Technical SEO Guide */}
+              <div style={{
+                background: 'white',
+                borderRadius: '12px',
+                padding: '1.5rem',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                border: '1px solid #e0e0e0'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                  <div style={{
+                    background: 'linear-gradient(135deg, #607D8B 0%, #455A64 100%)',
+                    color: 'white',
+                    width: '50px',
+                    height: '50px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.5rem'
+                  }}>
+                    ⚙️
+                  </div>
+                  <div>
+                    <h3 style={{ margin: 0, color: '#333', fontSize: '1.2rem' }}>Guía SEO Técnico</h3>
+                    <p style={{ margin: '0.5rem 0 0 0', color: '#666', fontSize: '0.9rem' }}>Guía técnica de SEO</p>
+                  </div>
+                </div>
+                <p style={{ color: '#666', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+                  Guía completa sobre optimización técnica para motores de búsqueda.
+                </p>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button
+                    onClick={() => window.open('/technical-seo-guide.html', '_blank')}
+                    style={{
+                      background: '#607D8B',
+                      color: 'white',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: '600'
+                    }}
+                  >
+                    🌐 Ver Guía
+                  </button>
+                  <button
+                    onClick={() => window.open('/technical-seo-guide.html', '_blank')}
+                    style={{
+                      background: 'transparent',
+                      color: '#607D8B',
+                      border: '1px solid #607D8B',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: '600'
+                    }}
+                  >
+                    ✏️ Editar
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div style={{
+              background: 'white',
+              borderRadius: '12px',
+              padding: '1.5rem',
+              boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+              border: '1px solid #e0e0e0'
+            }}>
+              <h3 style={{ color: '#D4A574', marginBottom: '1rem' }}>🚀 Acciones Rápidas</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                <button
+                  onClick={() => window.open('/blog.html', '_blank')}
+                  style={{
+                    background: 'linear-gradient(135deg, #D4A574 0%, #B8941F 100%)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '1rem',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem'
+                  }}
+                >
+                  🌐 Ver Blog Completo
+                </button>
+                <button
+                  onClick={() => window.open('/sitemap.xml', '_blank')}
+                  style={{
+                    background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '1rem',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem'
+                  }}
+                >
+                  🗺️ Ver Sitemap
+                </button>
+                <button
+                  onClick={() => window.open('/robots.txt', '_blank')}
+                  style={{
+                    background: 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '1rem',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem'
+                  }}
+                >
+                  🤖 Ver Robots.txt
+                </button>
+                <button
+                  onClick={() => window.open('https://search.google.com/search-console', '_blank')}
+                  style={{
+                    background: 'linear-gradient(135deg, #FF9800 0%, #F57C00 100%)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '1rem',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem'
+                  }}
+                >
+                  📊 Google Search Console
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
