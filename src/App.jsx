@@ -571,11 +571,11 @@ function App() {
           duracion: '60-90 minutos',
           imagen: '/images/service/conoterapia.jpg',
           // SEO Meta Tags
-          metaTitle: 'Conoterapia en Mérida | Terapia con Velas para Oídos | Amor Y Miel',
-          metaDescription: 'Conoterapia en Mérida, Yucatán. Terapia holística con velas especiales para limpieza del canal auditivo. Alivio de zumbidos, sinusitis y alergias. $250 MXN.',
-          metaKeywords: 'conoterapia Mérida, terapia con velas oídos, limpieza auditiva, zumbidos oídos, sinusitis, alergias respiratorias, terapia holística Yucatán',
+          metaTitle: 'Conoterapia en Cancún | Terapia con Velas para Oídos | Amor Y Miel',
+          metaDescription: 'Conoterapia en Cancún, Quintana Roo. Terapia holística con velas especiales para limpieza del canal auditivo. Alivio de zumbidos, sinusitis y alergias. $250 MXN.',
+          metaKeywords: 'conoterapia Cancún, terapia con velas oídos, limpieza auditiva, zumbidos oídos, sinusitis, alergias respiratorias, terapia holística Quintana Roo',
           // SEO Content
-          seoContent: 'La Conoterapia es una terapia ancestral que utiliza velas especiales para limpiar el canal auditivo de forma natural. Ideal para personas con dificultades auditivas, alergias respiratorias, mareos, vértigo, dolores de cabeza, zumbidos en los oídos, sinusitis, ronquidos e inflamaciones del oído. También recomendada para nadadores y trabajadores expuestos a polvo o ruido. Servicio especializado disponible en Mérida, Yucatán.',
+          seoContent: 'La Conoterapia es una terapia ancestral que utiliza velas especiales para limpiar el canal auditivo de forma natural. Ideal para personas con dificultades auditivas, alergias respiratorias, mareos, vértigo, dolores de cabeza, zumbidos en los oídos, sinusitis, ronquidos e inflamaciones del oído. También recomendada para nadadores y trabajadores expuestos a polvo o ruido. Servicio especializado disponible en Cancún, Quintana Roo.',
           beneficios: [
             'Limpieza profunda del canal auditivo',
             'Alivio de alergias respiratorias',
@@ -609,10 +609,10 @@ function App() {
             'tratamiento para zumbidos',
             'terapia para sinusitis',
             'limpieza de oídos para nadadores',
-            'conoterapia Mérida',
-            'terapia auditiva Yucatán',
+            'conoterapia Cancún',
+            'terapia auditiva Quintana Roo',
             'limpieza oídos natural',
-            'terapia holística Mérida'
+            'terapia holística Cancún'
           ],
           stock: 999,
           activo: true,
@@ -651,11 +651,11 @@ function App() {
           duracion: '90-120 minutos',
           imagen: '/images/service/sanacion-utero.jpg',
           // SEO Meta Tags
-          metaTitle: 'Sanación de Útero en Mérida | Terapia Femenina Holística | Amor Y Miel',
-          metaDescription: 'Sanación y bendición de útero en Mérida, Yucatán. Terapia holística femenina para equilibrio hormonal, sanación de traumas uterinos y conexión con la feminidad sagrada. $450 MXN.',
-          metaKeywords: 'sanación útero Mérida, terapia femenina, bendición útero, equilibrio hormonal, sanación menstrual, feminidad sagrada, terapia holística femenina Yucatán',
+          metaTitle: 'Sanación de Útero en Cancún | Terapia Femenina Holística | Amor Y Miel',
+          metaDescription: 'Sanación y bendición de útero en Cancún, Quintana Roo. Terapia holística femenina para equilibrio hormonal, sanación de traumas uterinos y conexión con la feminidad sagrada. $450 MXN.',
+          metaKeywords: 'sanación útero Cancún, terapia femenina, bendición útero, equilibrio hormonal, sanación menstrual, feminidad sagrada, terapia holística femenina Quintana Roo',
           // SEO Content
-          seoContent: 'La Sanación y bendición de útero es una terapia holística especializada en la sanación energética y espiritual del útero. Esta práctica ancestral se enfoca en la limpieza, equilibrio y bendición de esta área sagrada de la mujer. Ideal para desequilibrios hormonales, dolores menstruales, problemas de fertilidad, traumas uterinos y desconexión con la feminidad. Servicio especializado disponible en Mérida, Yucatán.',
+          seoContent: 'La Sanación y bendición de útero es una terapia holística especializada en la sanación energética y espiritual del útero. Esta práctica ancestral se enfoca en la limpieza, equilibrio y bendición de esta área sagrada de la mujer. Ideal para desequilibrios hormonales, dolores menstruales, problemas de fertilidad, traumas uterinos y desconexión con la feminidad. Servicio especializado disponible en Cancún, Quintana Roo.',
           beneficios: [
             'Limpieza energética del útero',
             'Equilibrio hormonal natural',
@@ -687,9 +687,9 @@ function App() {
             'feminidad sagrada',
             'terapia holística femenina',
             'limpieza energética uterina',
-            'sanación útero Mérida',
-            'terapia femenina Yucatán',
-            'bendición útero Mérida',
+            'sanación útero Cancún',
+            'terapia femenina Quintana Roo',
+            'bendición útero Cancún',
             'equilibrio hormonal natural'
           ],
           stock: 999,
@@ -717,29 +717,29 @@ function App() {
       // SEO keywords by category
       const seoKeywords = {
         'Velas': {
-          keywords: ['velas de miel', 'velas artesanales', 'velas naturales', 'velas espirituales', 'velas rituales', 'velas miel Mérida', 'velas artesanales Yucatán'],
-          metaTitle: 'Velas de Miel Artesanales en Mérida | Productos Holísticos | Amor Y Miel',
-          metaDescription: 'Velas de miel artesanales en Mérida, Yucatán. Productos holísticos naturales para rituales espirituales y aromaterapia. Elaboradas con miel pura y cera natural.'
+          keywords: ['velas de miel', 'velas artesanales', 'velas naturales', 'velas espirituales', 'velas rituales', 'velas miel Cancún', 'velas artesanales Quintana Roo'],
+          metaTitle: 'Velas de Miel Artesanales en Cancún | Productos Holísticos | Amor Y Miel',
+          metaDescription: 'Velas de miel artesanales en Cancún, Quintana Roo. Productos holísticos naturales para rituales espirituales y aromaterapia. Elaboradas con miel pura y cera natural.'
         },
         'Lociones': {
-          keywords: ['lociones naturales', 'loción palo santo', 'loción atrayente', 'agua florida', 'lociones artesanales', 'lociones Mérida', 'productos naturales Yucatán'],
-          metaTitle: 'Lociones Naturales Artesanales en Mérida | Palo Santo, Atrayente | Amor Y Miel',
-          metaDescription: 'Lociones naturales artesanales en Mérida, Yucatán. Palo Santo, Atrayente, Agua Florida. Productos holísticos para el cuidado natural de la piel.'
+          keywords: ['lociones naturales', 'loción palo santo', 'loción atrayente', 'agua florida', 'lociones artesanales', 'lociones Cancún', 'productos naturales Quintana Roo'],
+          metaTitle: 'Lociones Naturales Artesanales en Cancún | Palo Santo, Atrayente | Amor Y Miel',
+          metaDescription: 'Lociones naturales artesanales en Cancún, Quintana Roo. Palo Santo, Atrayente, Agua Florida. Productos holísticos para el cuidado natural de la piel.'
         },
         'Aceites': {
-          keywords: ['aceites esenciales', 'aceites naturales', 'aceite abre caminos', 'aceite para ungir', 'aromaterapia', 'aceites Mérida', 'aceites esenciales Yucatán'],
-          metaTitle: 'Aceites Esenciales Naturales en Mérida | Aromaterapia | Amor Y Miel',
-          metaDescription: 'Aceites esenciales naturales en Mérida, Yucatán. Aromaterapia, aceite abre caminos, aceite para ungir. Productos holísticos para bienestar integral.'
+          keywords: ['aceites esenciales', 'aceites naturales', 'aceite abre caminos', 'aceite para ungir', 'aromaterapia', 'aceites Cancún', 'aceites esenciales Quintana Roo'],
+          metaTitle: 'Aceites Esenciales Naturales en Cancún | Aromaterapia | Amor Y Miel',
+          metaDescription: 'Aceites esenciales naturales en Cancún, Quintana Roo. Aromaterapia, aceite abre caminos, aceite para ungir. Productos holísticos para bienestar integral.'
         },
         'Baños Energéticos': {
-          keywords: ['baños energéticos', 'baños espirituales', 'baños naturales', 'limpieza energética', 'baños rituales', 'baños Mérida', 'baños energéticos Yucatán'],
-          metaTitle: 'Baños Energéticos en Mérida | Limpieza Espiritual | Amor Y Miel',
-          metaDescription: 'Baños energéticos en Mérida, Yucatán. Limpieza espiritual, baños rituales, productos naturales para purificación energética y bienestar holístico.'
+          keywords: ['baños energéticos', 'baños espirituales', 'baños naturales', 'limpieza energética', 'baños rituales', 'baños Cancún', 'baños energéticos Quintana Roo'],
+          metaTitle: 'Baños Energéticos en Cancún | Limpieza Espiritual | Amor Y Miel',
+          metaDescription: 'Baños energéticos en Cancún, Quintana Roo. Limpieza espiritual, baños rituales, productos naturales para purificación energética y bienestar holístico.'
         },
         'Servicios': {
-          keywords: ['servicios espirituales', 'terapias holísticas', 'consultas espirituales', 'limpieza energética', 'servicios Mérida', 'terapias Yucatán'],
-          metaTitle: 'Servicios Espirituales en Mérida | Terapias Holísticas | Amor Y Miel',
-          metaDescription: 'Servicios espirituales en Mérida, Yucatán. Terapias holísticas, consultas espirituales, limpieza energética. Conoterapia, sanación de útero y más.'
+          keywords: ['servicios espirituales', 'terapias holísticas', 'consultas espirituales', 'limpieza energética', 'servicios Cancún', 'terapias Quintana Roo'],
+          metaTitle: 'Servicios Espirituales en Cancún | Terapias Holísticas | Amor Y Miel',
+          metaDescription: 'Servicios espirituales en Cancún, Quintana Roo. Terapias holísticas, consultas espirituales, limpieza energética. Conoterapia, sanación de útero y más.'
         }
       };
 
@@ -754,7 +754,7 @@ function App() {
             metaTitle: seoData.metaTitle,
             metaDescription: seoData.metaDescription,
             metaKeywords: seoData.keywords.join(', '),
-            seoContent: `${product.descripcion} ${seoData.keywords.slice(0, 5).join(', ')}. Producto artesanal disponible en Mérida, Yucatán.`,
+            seoContent: `${product.descripcion} ${seoData.keywords.slice(0, 5).join(', ')}. Producto artesanal disponible en Cancún, Quintana Roo.`,
             keywords: [...(product.keywords || []), ...seoData.keywords],
             fechaActualizacion: new Date()
           });
