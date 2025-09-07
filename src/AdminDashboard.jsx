@@ -476,6 +476,19 @@ const AdminDashboard = ({ user, onClose }) => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showOrderDetails, setShowOrderDetails] = useState(false);
 
+  // Inventory Management State
+  const [inventory, setInventory] = useState([]);
+  const [inventoryLoading, setInventoryLoading] = useState(false);
+  const [inventorySearchTerm, setInventorySearchTerm] = useState('');
+  const [inventoryFilterCategory, setInventoryFilterCategory] = useState('all');
+  const [inventoryFilterStock, setInventoryFilterStock] = useState('all');
+  const [selectedInventoryItems, setSelectedInventoryItems] = useState([]);
+  const [showBulkInventoryUpdate, setShowBulkInventoryUpdate] = useState(false);
+  const [bulkInventoryAction, setBulkInventoryAction] = useState('');
+  const [bulkInventoryValue, setBulkInventoryValue] = useState('');
+  const [lowStockThreshold, setLowStockThreshold] = useState(10);
+  const [inventoryAlerts, setInventoryAlerts] = useState([]);
+
   // Color palette matching your brand
   const PALETAS = {
     A: { miel: "#D4A574", rosa: "#E8B4B8", verde: "#A8C09A", azul: "#B8D4E3" },
@@ -511,6 +524,13 @@ const AdminDashboard = ({ user, onClose }) => {
       loadLiveTraffic();
     }
   }, [activeTab, analyticsDateRange]);
+
+  // Load inventory when inventory tab is selected
+  useEffect(() => {
+    if (activeTab === 'inventory') {
+      loadInventory();
+    }
+  }, [activeTab]);
 
   // Load live traffic every 30 seconds when on analytics tab
   useEffect(() => {
@@ -2716,6 +2736,173 @@ const AdminDashboard = ({ user, onClose }) => {
     }
   };
 
+  // Inventory Management Functions
+  const loadInventory = async () => {
+    setInventoryLoading(true);
+    try {
+      const productsQuery = query(collection(db, 'products'));
+      const productsSnapshot = await getDocs(productsQuery);
+      
+      const inventoryData = productsSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          nombre: data.nombre || 'Sin nombre',
+          categoria: data.categoria || 'Sin categoría',
+          precio: data.precio || 0,
+          stock: data.stock || 0,
+          minStock: data.minStock || 5,
+          maxStock: data.maxStock || 100,
+          lastUpdated: data.lastUpdated || null,
+          imagen: data.imagen || '/images/placeholder.jpg',
+          descripcion: data.descripcion || '',
+          status: data.stock <= 0 ? 'out-of-stock' : 
+                 data.stock <= (data.minStock || 5) ? 'low-stock' : 'in-stock'
+        };
+      });
+
+      setInventory(inventoryData);
+      
+      // Generate inventory alerts
+      const alerts = [];
+      inventoryData.forEach(item => {
+        if (item.stock <= 0) {
+          alerts.push({
+            type: 'out-of-stock',
+            message: `${item.nombre} está agotado`,
+            productId: item.id,
+            severity: 'high'
+          });
+        } else if (item.stock <= item.minStock) {
+          alerts.push({
+            type: 'low-stock',
+            message: `${item.nombre} tiene stock bajo (${item.stock} unidades)`,
+            productId: item.id,
+            severity: 'medium'
+          });
+        }
+      });
+      
+      setInventoryAlerts(alerts);
+    } catch (error) {
+      console.error('Error loading inventory:', error);
+    } finally {
+      setInventoryLoading(false);
+    }
+  };
+
+  const updateInventoryItem = async (productId, updates) => {
+    try {
+      const productRef = doc(db, 'products', productId);
+      await updateDoc(productRef, {
+        ...updates,
+        lastUpdated: new Date()
+      });
+      
+      // Reload inventory
+      await loadInventory();
+      alert('✅ Inventario actualizado correctamente');
+    } catch (error) {
+      console.error('Error updating inventory:', error);
+      alert('❌ Error al actualizar inventario');
+    }
+  };
+
+  const handleBulkInventoryUpdate = async () => {
+    if (!bulkInventoryAction || !bulkInventoryValue) {
+      alert('❌ Por favor completa todos los campos');
+      return;
+    }
+
+    const value = parseInt(bulkInventoryValue);
+    if (isNaN(value)) {
+      alert('❌ El valor debe ser un número');
+      return;
+    }
+
+    try {
+      const updates = selectedInventoryItems.map(itemId => {
+        const item = inventory.find(i => i.id === itemId);
+        if (!item) return null;
+
+        let newStock = item.stock;
+        switch (bulkInventoryAction) {
+          case 'add':
+            newStock = item.stock + value;
+            break;
+          case 'subtract':
+            newStock = Math.max(0, item.stock - value);
+            break;
+          case 'set':
+            newStock = value;
+            break;
+          case 'set-min':
+            return { id: itemId, minStock: value };
+          case 'set-max':
+            return { id: itemId, maxStock: value };
+          default:
+            return null;
+        }
+
+        return { id: itemId, stock: newStock };
+      }).filter(Boolean);
+
+      // Update each item
+      for (const update of updates) {
+        const { id, ...updateData } = update;
+        await updateDoc(doc(db, 'products', id), {
+          ...updateData,
+          lastUpdated: new Date()
+        });
+      }
+
+      setSelectedInventoryItems([]);
+      setBulkInventoryAction('');
+      setBulkInventoryValue('');
+      setShowBulkInventoryUpdate(false);
+      
+      await loadInventory();
+      alert(`✅ ${updates.length} productos actualizados correctamente`);
+    } catch (error) {
+      console.error('Error in bulk update:', error);
+      alert('❌ Error en actualización masiva');
+    }
+  };
+
+  const getFilteredInventory = () => {
+    let filtered = inventory;
+
+    // Search filter
+    if (inventorySearchTerm) {
+      filtered = filtered.filter(item =>
+        item.nombre.toLowerCase().includes(inventorySearchTerm.toLowerCase()) ||
+        item.categoria.toLowerCase().includes(inventorySearchTerm.toLowerCase())
+      );
+    }
+
+    // Category filter
+    if (inventoryFilterCategory !== 'all') {
+      filtered = filtered.filter(item => item.categoria === inventoryFilterCategory);
+    }
+
+    // Stock filter
+    if (inventoryFilterStock !== 'all') {
+      switch (inventoryFilterStock) {
+        case 'in-stock':
+          filtered = filtered.filter(item => item.stock > 0);
+          break;
+        case 'low-stock':
+          filtered = filtered.filter(item => item.stock > 0 && item.stock <= item.minStock);
+          break;
+        case 'out-of-stock':
+          filtered = filtered.filter(item => item.stock <= 0);
+          break;
+      }
+    }
+
+    return filtered;
+  };
+
   if (loading) {
     return (
       <div style={{
@@ -2837,6 +3024,7 @@ const AdminDashboard = ({ user, onClose }) => {
           {[
             { id: 'overview', label: '📊 Resumen', icon: '📊' },
             { id: 'analytics', label: '📈 Analytics', icon: '📈' },
+            { id: 'inventory', label: '📦 Inventario', icon: '📦' },
             { id: 'users', label: '👥 Usuarios', icon: '👥' },
             { id: 'orders', label: '📦 Pedidos', icon: '📦' },
             { id: 'cart-abandonment', label: '🛒 Carritos Abandonados', icon: '🛒' },
@@ -7019,6 +7207,328 @@ const AdminDashboard = ({ user, onClose }) => {
                 </button>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Inventory Management Tab */}
+        {activeTab === 'inventory' && (
+          <div>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '1.5rem'
+            }}>
+              <h2 style={{ color: '#D4A574', margin: 0 }}>Gestión de Inventario ({inventory.length} productos)</h2>
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <button
+                  onClick={() => setShowBulkInventoryUpdate(!showBulkInventoryUpdate)}
+                  style={{
+                    background: showBulkInventoryUpdate ? '#D4A574' : '#f8f9fa',
+                    color: showBulkInventoryUpdate ? 'white' : '#666',
+                    border: '1px solid #ddd',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem'
+                  }}
+                >
+                  {showBulkInventoryUpdate ? '❌ Cancelar' : '📦 Actualización Masiva'}
+                </button>
+                <button
+                  onClick={loadInventory}
+                  style={{
+                    background: '#28a745',
+                    color: 'white',
+                    border: 'none',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem'
+                  }}
+                >
+                  🔄 Actualizar
+                </button>
+              </div>
+            </div>
+
+            {/* Inventory Alerts */}
+            {inventoryAlerts.length > 0 && (
+              <div style={{
+                background: '#fff3cd',
+                border: '1px solid #ffeaa7',
+                borderRadius: '8px',
+                padding: '1rem',
+                marginBottom: '1.5rem'
+              }}>
+                <h3 style={{ color: '#856404', margin: '0 0 0.5rem 0' }}>⚠️ Alertas de Inventario</h3>
+                {inventoryAlerts.map((alert, index) => (
+                  <div key={index} style={{
+                    background: alert.severity === 'high' ? '#f8d7da' : '#d1ecf1',
+                    color: alert.severity === 'high' ? '#721c24' : '#0c5460',
+                    padding: '0.5rem',
+                    borderRadius: '4px',
+                    marginBottom: '0.5rem',
+                    fontSize: '0.9rem'
+                  }}>
+                    {alert.message}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Bulk Update Panel */}
+            {showBulkInventoryUpdate && (
+              <div style={{
+                background: '#f8f9fa',
+                border: '1px solid #ddd',
+                borderRadius: '8px',
+                padding: '1.5rem',
+                marginBottom: '1.5rem'
+              }}>
+                <h3 style={{ color: '#D4A574', margin: '0 0 1rem 0' }}>Actualización Masiva</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr auto', gap: '1rem', alignItems: 'end' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600' }}>Acción:</label>
+                    <select
+                      value={bulkInventoryAction}
+                      onChange={(e) => setBulkInventoryAction(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '0.5rem',
+                        border: '1px solid #ddd',
+                        borderRadius: '4px'
+                      }}
+                    >
+                      <option value="">Seleccionar acción</option>
+                      <option value="add">Sumar stock</option>
+                      <option value="subtract">Restar stock</option>
+                      <option value="set">Establecer stock</option>
+                      <option value="set-min">Establecer stock mínimo</option>
+                      <option value="set-max">Establecer stock máximo</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600' }}>Valor:</label>
+                    <input
+                      type="number"
+                      value={bulkInventoryValue}
+                      onChange={(e) => setBulkInventoryValue(e.target.value)}
+                      placeholder="Cantidad"
+                      style={{
+                        width: '100%',
+                        padding: '0.5rem',
+                        border: '1px solid #ddd',
+                        borderRadius: '4px'
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600' }}>Productos seleccionados:</label>
+                    <span style={{ color: '#666' }}>{selectedInventoryItems.length} productos</span>
+                  </div>
+                  <button
+                    onClick={handleBulkInventoryUpdate}
+                    disabled={!bulkInventoryAction || !bulkInventoryValue || selectedInventoryItems.length === 0}
+                    style={{
+                      background: (!bulkInventoryAction || !bulkInventoryValue || selectedInventoryItems.length === 0) ? '#ccc' : '#D4A574',
+                      color: 'white',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '4px',
+                      cursor: (!bulkInventoryAction || !bulkInventoryValue || selectedInventoryItems.length === 0) ? 'not-allowed' : 'pointer'
+                    }}
+                  >
+                    Aplicar
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Filters */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: window.innerWidth <= 768 ? '1fr' : '1fr 1fr 1fr',
+              gap: '1rem',
+              marginBottom: '1.5rem'
+            }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600' }}>Buscar:</label>
+                <input
+                  type="text"
+                  value={inventorySearchTerm}
+                  onChange={(e) => setInventorySearchTerm(e.target.value)}
+                  placeholder="Buscar por nombre o categoría..."
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px'
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600' }}>Categoría:</label>
+                <select
+                  value={inventoryFilterCategory}
+                  onChange={(e) => setInventoryFilterCategory(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px'
+                  }}
+                >
+                  <option value="all">Todas las categorías</option>
+                  {[...new Set(inventory.map(item => item.categoria))].map(category => (
+                    <option key={category} value={category}>{category}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600' }}>Estado de Stock:</label>
+                <select
+                  value={inventoryFilterStock}
+                  onChange={(e) => setInventoryFilterStock(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px'
+                  }}
+                >
+                  <option value="all">Todos</option>
+                  <option value="in-stock">En Stock</option>
+                  <option value="low-stock">Stock Bajo</option>
+                  <option value="out-of-stock">Agotado</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Inventory Table */}
+            {inventoryLoading ? (
+              <div style={{ textAlign: 'center', padding: '2rem' }}>
+                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⏳</div>
+                <p>Cargando inventario...</p>
+              </div>
+            ) : (
+              <div style={{
+                background: 'white',
+                borderRadius: '8px',
+                overflow: 'hidden',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+              }}>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: window.innerWidth <= 768 ? '1fr' : 'auto 1fr 1fr 1fr 1fr 1fr 1fr auto',
+                  gap: '1rem',
+                  padding: '1rem',
+                  background: '#f8f9fa',
+                  borderBottom: '1px solid #ddd',
+                  fontWeight: '600',
+                  fontSize: '0.9rem'
+                }}>
+                  <div>Sel.</div>
+                  <div>Producto</div>
+                  <div>Categoría</div>
+                  <div>Stock</div>
+                  <div>Mín.</div>
+                  <div>Máx.</div>
+                  <div>Estado</div>
+                  <div>Acciones</div>
+                </div>
+
+                {getFilteredInventory().map((item) => (
+                  <div key={item.id} style={{
+                    display: 'grid',
+                    gridTemplateColumns: window.innerWidth <= 768 ? '1fr' : 'auto 1fr 1fr 1fr 1fr 1fr 1fr auto',
+                    gap: '1rem',
+                    padding: '1rem',
+                    borderBottom: '1px solid #eee',
+                    alignItems: 'center'
+                  }}>
+                    <div>
+                      <input
+                        type="checkbox"
+                        checked={selectedInventoryItems.includes(item.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedInventoryItems([...selectedInventoryItems, item.id]);
+                          } else {
+                            setSelectedInventoryItems(selectedInventoryItems.filter(id => id !== item.id));
+                          }
+                        }}
+                      />
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <img
+                        src={item.imagen}
+                        alt={item.nombre}
+                        style={{
+                          width: '40px',
+                          height: '40px',
+                          objectFit: 'cover',
+                          borderRadius: '4px'
+                        }}
+                        onError={(e) => {
+                          e.target.src = '/images/placeholder.jpg';
+                        }}
+                      />
+                      <div>
+                        <div style={{ fontWeight: '600' }}>{item.nombre}</div>
+                        <div style={{ fontSize: '0.8rem', color: '#666' }}>${item.precio} MXN</div>
+                      </div>
+                    </div>
+                    <div>{item.categoria}</div>
+                    <div style={{ fontWeight: '600', color: item.stock <= 0 ? '#dc3545' : item.stock <= item.minStock ? '#ffc107' : '#28a745' }}>
+                      {item.stock}
+                    </div>
+                    <div>{item.minStock}</div>
+                    <div>{item.maxStock}</div>
+                    <div>
+                      <span style={{
+                        background: item.status === 'out-of-stock' ? '#dc3545' : 
+                                   item.status === 'low-stock' ? '#ffc107' : '#28a745',
+                        color: 'white',
+                        padding: '0.25rem 0.5rem',
+                        borderRadius: '12px',
+                        fontSize: '0.8rem'
+                      }}>
+                        {item.status === 'out-of-stock' ? 'Agotado' : 
+                         item.status === 'low-stock' ? 'Bajo' : 'En Stock'}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button
+                        onClick={() => {
+                          const newStock = prompt(`Actualizar stock para ${item.nombre}:`, item.stock);
+                          if (newStock !== null && !isNaN(newStock)) {
+                            updateInventoryItem(item.id, { stock: parseInt(newStock) });
+                          }
+                        }}
+                        style={{
+                          background: '#007bff',
+                          color: 'white',
+                          border: 'none',
+                          padding: '0.25rem 0.5rem',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontSize: '0.8rem'
+                        }}
+                      >
+                        ✏️
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                {getFilteredInventory().length === 0 && (
+                  <div style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>
+                    No se encontraron productos
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
