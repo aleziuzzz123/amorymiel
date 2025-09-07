@@ -46,6 +46,13 @@ import { auth, db } from './firebase';
 import AdminDashboard from './AdminDashboard';
 import MercadoPagoCheckout from './components/MercadoPagoCheckout';
 
+// Variants helper function
+const V = (arr) => arr.map(([sku, titulo, precio]) => ({ sku, titulo, precio }));
+
+// Variants helper functions
+const hasVariants = (item) => item.categoria !== 'Servicios' && Array.isArray(item.variantes) && item.variantes.length > 0;
+const minPrice = (item) => hasVariants(item) ? Math.min(...item.variantes.map(v => v.precio || 0)) : (item.precio || 0);
+
 // Color palette matching the image
 const PALETAS = { 
   D: { 
@@ -327,6 +334,7 @@ function App() {
   const [kidsProducts, setKidsProducts] = useState([]);
   const [kidsServices, setKidsServices] = useState([]);
   const [openProduct, setOpenProduct] = useState(null);
+  const [selectedVariant, setSelectedVariant] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState("");
@@ -340,7 +348,7 @@ function App() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState('login'); // 'login' or 'register'
   const [authMessage, setAuthMessage] = useState("");
-  
+
   // User profile management
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [profileData, setProfileData] = useState({
@@ -494,6 +502,54 @@ function App() {
   const [productRatings, setProductRatings] = useState({});
 
   // Load products from Firestore and separate by category
+  // Function to add variants to products
+  const addVariantsToProducts = async () => {
+    try {
+      const { collection, query, getDocs, updateDoc, doc } = await import('firebase/firestore');
+      const productsQuery = query(collection(db, 'products'));
+      const productsSnapshot = await getDocs(productsQuery);
+      
+      const productsToUpdate = [
+        {
+          name: 'Velas De Miel',
+          variants: V([['ch', 'Chica', 150], ['gd', 'Grande', 200]])
+        },
+        {
+          name: 'Loción Atrayente',
+          variants: V([['ch', 'Chica', 180], ['gd', 'Grande', 250]])
+        },
+        {
+          name: 'Loción Palo Santo',
+          variants: V([['ch', 'Chica', 200], ['gd', 'Grande', 280]])
+        },
+        {
+          name: 'Agua Florida',
+          variants: V([['ch', 'Chica', 80], ['gd', 'Grande', 150]])
+        },
+        {
+          name: 'Aceite Abre Caminos',
+          variants: V([['ch', 'Chica', 120], ['gd', 'Grande', 200]])
+        }
+      ];
+
+      for (const productData of productsToUpdate) {
+        const product = productsSnapshot.docs.find(doc => 
+          doc.data().nombre === productData.name
+        );
+        
+        if (product && !product.data().variantes) {
+          await updateDoc(doc(db, 'products', product.id), {
+            variantes: productData.variants,
+            precio: minPrice({ variantes: productData.variants })
+          });
+          console.log(`✅ Added variants to ${productData.name}`);
+        }
+      }
+    } catch (error) {
+      console.error('Error adding variants:', error);
+    }
+  };
+
   const loadProductsFromFirestore = async () => {
     try {
       if (!db) {
@@ -511,6 +567,9 @@ function App() {
       console.log('About to call getDocs...');
       const productsSnapshot = await getDocs(productsQuery);
       console.log('getDocs completed, snapshot:', productsSnapshot);
+      
+      // Add variants to products if they don't have them
+      await addVariantsToProducts();
       
       const allProducts = productsSnapshot.docs.map(doc => ({
         id: doc.id,
@@ -1560,9 +1619,18 @@ function App() {
       return;
     }
 
+    // Check if product has variants and one is selected
+    if (hasVariants(product) && !product.variante) {
+      alert('❌ Por favor selecciona una variante del producto.');
+      return;
+    }
+
     // Check stock availability
     const currentStock = product.stock || 0;
-    const existingItem = cart.find(item => item.id === product.id);
+    const existingItem = cart.find(item => 
+      item.id === product.id && 
+      (!product.variante || item.variante?.sku === product.variante?.sku)
+    );
     const currentQuantity = existingItem ? existingItem.quantity : 0;
     
     if (currentStock === 0) {
@@ -1576,16 +1644,24 @@ function App() {
     }
 
     setCart(prev => {
-      const existingItem = prev.find(item => item.id === product.id);
+      const existingItem = prev.find(item => 
+        item.id === product.id && 
+        (!product.variante || item.variante?.sku === product.variante?.sku)
+      );
       let newCart;
       if (existingItem) {
         newCart = prev.map(item => 
-          item.id === product.id 
+          item.id === product.id && 
+          (!product.variante || item.variante?.sku === product.variante?.sku)
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       } else {
-        newCart = [...prev, { ...product, quantity: 1 }];
+        newCart = [...prev, { 
+          ...product, 
+          quantity: 1,
+          variante: product.variante || null
+        }];
       }
       
       // Save to localStorage
@@ -1723,9 +1799,9 @@ function App() {
     }
     setCart(prev => {
       const newCart = prev.map(item => 
-        item.id === productId 
-          ? { ...item, quantity: newQuantity }
-          : item
+      item.id === productId 
+        ? { ...item, quantity: newQuantity }
+        : item
       );
       localStorage.setItem('amor-y-miel-cart', JSON.stringify(newCart));
       return newCart;
@@ -2171,7 +2247,7 @@ function App() {
           style: 'currency',
           currency: 'MXN'
         }).format(order.total),
-        order_items: order.items.map(item => `${item.nombre} x${item.quantity}`).join(', '),
+        order_items: order.items.map(item => `${item.nombre} ${item.variante ? `(${item.variante.titulo})` : ''} x${item.quantity}`).join(', '),
         tracking_number: order.trackingNumber,
         order_date: new Date(order.createdAt).toLocaleDateString('es-MX'),
         estimated_delivery: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString('es-MX')
@@ -3642,7 +3718,17 @@ function App() {
                         color: PALETAS.D.miel,
                         lineHeight: "1"
                       }}>
-                        ${product.precio}
+                        ${hasVariants(product) ? minPrice(product) : product.precio}
+                        {hasVariants(product) && (
+                          <span style={{ 
+                            fontSize: "0.8rem", 
+                            color: "#999",
+                            fontWeight: "500",
+                            marginLeft: "0.25rem"
+                          }}>
+                            +
+                          </span>
+                        )}
                     </span>
                       <span style={{ 
                         fontSize: "0.8rem", 
@@ -8329,7 +8415,7 @@ function App() {
                             color: PALETAS.D.carbon,
                             fontSize: "0.9rem"
                           }}>
-                            {item.nombre} x{item.quantity}
+                            {item.nombre} {item.variante ? `(${item.variante.titulo})` : ''} x{item.quantity}
                           </span>
                           <span style={{
                             color: PALETAS.D.carbon,
@@ -8512,11 +8598,57 @@ function App() {
                             fontWeight: "700",
                             color: PALETAS.D.miel
                           }}>
-                            ${product.precio} {product.moneda}
+                            ${hasVariants(product) ? minPrice(product) : product.precio} {product.moneda}
+                            {hasVariants(product) && (
+                              <span style={{ 
+                                fontSize: "0.8rem", 
+                                color: "#999",
+                                fontWeight: "500",
+                                marginLeft: "0.25rem"
+                              }}>
+                                +
+                              </span>
+                            )}
                           </span>
+                          {/* Variants Selector */}
+                          {hasVariants(product) && (
+                            <div style={{ marginBottom: "1rem" }}>
+                              <label style={{ 
+                                display: "block", 
+                                marginBottom: "0.5rem", 
+                                fontWeight: "600",
+                                color: PALETAS.D.carbon
+                              }}>
+                                Seleccionar Variante:
+                              </label>
+                              <select
+                                value={selectedVariant?.sku || ''}
+                                onChange={(e) => {
+                                  const variant = product.variantes.find(v => v.sku === e.target.value);
+                                  setSelectedVariant(variant);
+                                }}
+                                style={{
+                                  width: "100%",
+                                  padding: "0.5rem",
+                                  border: `2px solid ${PALETAS.D.crema}`,
+                                  borderRadius: "8px",
+                                  fontSize: "0.9rem",
+                                  background: "white"
+                                }}
+                              >
+                                <option value="">Seleccionar opción</option>
+                                {product.variantes.map(variant => (
+                                  <option key={variant.sku} value={variant.sku}>
+                                    {variant.titulo} - ${variant.precio} {product.moneda}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          )}
+
                           <div style={{ display: "flex", gap: "0.5rem" }}>
                             <button
-                              onClick={() => addToCart(product)}
+                              onClick={() => addToCart(selectedVariant ? { ...product, precio: selectedVariant.precio, variante: selectedVariant } : product)}
                               style={{
                                 background: `linear-gradient(135deg, ${PALETAS.D.miel} 0%, #d4a574 100%)`,
                                 color: "white",
