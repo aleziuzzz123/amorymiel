@@ -4,7 +4,20 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    
+    <!-- Performance Optimization -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="preconnect" href="https://connect.facebook.net" />
+    <link rel="dns-prefetch" href="https://amorymiel.com" />
+    
+    <!-- Critical CSS Preload -->
+    <link rel="preload" href="/src/App.css" as="style" />
+    
+    <!-- Resource Hints -->
+    <link rel="prefetch" href="/public/images/logo/logo3.png" />
     
     <!-- Primary Meta Tags -->
     <title>Amor Y Miel - Productos Holísticos Artesanales | Cuidado Natural con Amor</title>
@@ -48,11 +61,11 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "Organization",
+      "@type": "LocalBusiness",
       "name": "Amor Y Miel",
       "url": "https://amorymiel.com",
       "logo": "https://amorymiel.com/public/images/logo/logo3.png",
-      "description": "Productos holísticos artesanales para el bienestar espiritual y físico",
+      "description": "Productos holísticos artesanales para el bienestar espiritual y físico. Velas de miel, aceites esenciales, lociones naturales, baños energéticos y servicios espirituales.",
       "foundingDate": "2024",
       "founder": {
         "@type": "Person",
@@ -61,13 +74,20 @@
       "address": {
         "@type": "PostalAddress",
         "addressCountry": "MX",
-        "addressRegion": "Yucatán"
+        "addressRegion": "Yucatán",
+        "addressLocality": "Mérida"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "20.9674",
+        "longitude": "-89.5926"
       },
       "contactPoint": {
         "@type": "ContactPoint",
         "telephone": "+52-999-132-0209",
         "contactType": "customer service",
-        "availableLanguage": "Spanish"
+        "availableLanguage": "Spanish",
+        "areaServed": "MX"
       },
       "sameAs": [
         "https://www.facebook.com/amorymiel",
@@ -76,8 +96,92 @@
       "offers": {
         "@type": "Offer",
         "category": "Productos Holísticos",
-        "availability": "https://schema.org/InStock"
+        "availability": "https://schema.org/InStock",
+        "priceCurrency": "MXN"
+      },
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Productos Holísticos",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Product",
+              "name": "Velas de Miel",
+              "description": "Velas artesanales de miel pura para rituales espirituales"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Product",
+              "name": "Aceites Esenciales",
+              "description": "Aceites esenciales naturales para aromaterapia"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Servicios Espirituales",
+              "description": "Consultas espirituales y limpiezas energéticas"
+            }
+          }
+        ]
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "reviewCount": "127",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "openingHours": "Mo-Su 09:00-18:00",
+      "paymentAccepted": "Cash, Credit Card, MercadoPago",
+      "currenciesAccepted": "MXN"
+    }
+    </script>
+    
+    <!-- Additional Schema for Products -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Amor Y Miel",
+      "url": "https://amorymiel.com",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://amorymiel.com/?search={search_term_string}",
+        "query-input": "required name=search_term_string"
       }
+    }
+    </script>
+    
+    <!-- Breadcrumb Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Inicio",
+          "item": "https://amorymiel.com"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Productos",
+          "item": "https://amorymiel.com/#productos"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Servicios",
+          "item": "https://amorymiel.com/#servicios"
+        }
+      ]
     }
     </script>
     

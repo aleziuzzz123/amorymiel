@@ -11,6 +11,10 @@ Crawl-delay: 1
 Disallow: /admin/
 Disallow: /dashboard/
 Disallow: /api/
+Disallow: /src/
+Disallow: /node_modules/
+Disallow: /.git/
+Disallow: /netlify/
 
 # Allow important pages
 Allow: /productos/
@@ -18,3 +22,30 @@ Allow: /servicios/
 Allow: /ninos/
 Allow: /quienes-somos/
 Allow: /contacto/
+Allow: /faq.html
+Allow: /blog.html
+
+# Allow static resources
+Allow: /public/images/
+Allow: /public/css/
+Allow: /public/js/
+Allow: /*.css
+Allow: /*.js
+Allow: /*.png
+Allow: /*.jpg
+Allow: /*.jpeg
+Allow: /*.gif
+Allow: /*.svg
+Allow: /*.ico
+
+# Specific bot instructions
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+User-agent: facebookexternalhit
+Allow: /

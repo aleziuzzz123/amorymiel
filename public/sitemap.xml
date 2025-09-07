@@ -55,4 +55,20 @@
     <priority>0.8</priority>
   </url>
   
+  <!-- FAQ -->
+  <url>
+    <loc>https://amorymiel.com/faq.html</loc>
+    <lastmod>2024-09-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Blog -->
+  <url>
+    <loc>https://amorymiel.com/blog.html</loc>
+    <lastmod>2024-09-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
 </urlset>
