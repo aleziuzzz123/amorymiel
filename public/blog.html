@@ -3,200 +3,276 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog - Amor Y Miel | Consejos Holísticos y Bienestar Natural</title>
-    <meta name="description" content="Descubre consejos sobre bienestar holístico, aromaterapia, rituales espirituales y el uso de productos naturales. Blog especializado en cuidado integral.">
-    <meta name="keywords" content="blog holístico, bienestar natural, aromaterapia, rituales espirituales, productos naturales, consejos salud">
-    <link rel="canonical" href="https://amorymiel.com/blog.html">
+    <title>Blog de Bienestar Holístico | Amor Y Miel - Cancún</title>
+    <meta name="description" content="Descubre artículos sobre bienestar holístico, terapias naturales, productos artesanales y consejos para una vida equilibrada. Blog especializado en Cancún, Quintana Roo.">
+    <meta name="keywords" content="blog bienestar holístico, terapias naturales Cancún, consejos espirituales, productos artesanales, aromaterapia, limpieza energética, blog Cancún">
     
     <!-- Open Graph -->
-    <meta property="og:title" content="Blog - Amor Y Miel | Consejos Holísticos">
-    <meta property="og:description" content="Consejos y guías sobre bienestar holístico, aromaterapia y productos naturales.">
-    <meta property="og:url" content="https://amorymiel.com/blog.html">
     <meta property="og:type" content="website">
+    <meta property="og:title" content="Blog de Bienestar Holístico | Amor Y Miel">
+    <meta property="og:description" content="Descubre artículos sobre bienestar holístico, terapias naturales y consejos para una vida equilibrada en Cancún.">
+    <meta property="og:image" content="https://amorymiel.com/public/images/logo/logo3.png">
+    <meta property="og:url" content="https://amorymiel.com/blog.html">
     
-    <!-- Structured Data -->
+    <!-- Canonical -->
+    <link rel="canonical" href="https://amorymiel.com/blog.html">
+    
+    <!-- Schema Markup -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Blog",
-      "name": "Blog Amor Y Miel",
-      "description": "Blog especializado en bienestar holístico y productos naturales",
+      "name": "Blog de Bienestar Holístico - Amor Y Miel",
+      "description": "Blog especializado en bienestar holístico, terapias naturales y productos artesanales",
       "url": "https://amorymiel.com/blog.html",
       "publisher": {
         "@type": "Organization",
         "name": "Amor Y Miel",
-        "url": "https://amorymiel.com"
+        "url": "https://amorymiel.com",
+        "logo": "https://amorymiel.com/public/images/logo/logo3.png"
       },
-      "blogPost": [
-        {
-          "@type": "BlogPosting",
-          "headline": "Guía Completa de Aromaterapia para Principiantes",
-          "description": "Aprende los fundamentos de la aromaterapia y cómo usar aceites esenciales para el bienestar.",
-          "url": "https://amorymiel.com/blog.html#aromaterapia-principiantes",
-          "datePublished": "2024-09-01",
-          "author": {
-            "@type": "Person",
-            "name": "Amor Y Miel"
-          }
-        },
-        {
-          "@type": "BlogPosting",
-          "headline": "Cómo Crear un Ritual Espiritual con Velas de Miel",
-          "description": "Descubre cómo usar las velas de miel para rituales espirituales y meditación.",
-          "url": "https://amorymiel.com/blog.html#ritual-velas-miel",
-          "datePublished": "2024-08-28",
-          "author": {
-            "@type": "Person",
-            "name": "Amor Y Miel"
-          }
-        }
-      ]
+      "inLanguage": "es-MX",
+      "mainEntityOfPage": "https://amorymiel.com/blog.html"
     }
     </script>
     
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             margin: 0;
-            padding: 20px;
-            background-color: #f9f7f4;
-            color: #333;
+            padding: 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
         }
         .container {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
         }
-        h1 {
-            color: #D4A574;
+        .header {
             text-align: center;
+            background: white;
+            padding: 40px 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             margin-bottom: 30px;
         }
-        .blog-post {
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2em;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
             margin-bottom: 40px;
-            padding-bottom: 30px;
-            border-bottom: 2px solid #f0f0f0;
         }
-        .blog-post:last-child {
-            border-bottom: none;
+        .blog-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .post-title {
-            color: #D4A574;
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        .blog-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, #e91e63, #9c27b0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
             font-size: 1.5em;
-            margin-bottom: 15px;
             font-weight: bold;
         }
-        .post-meta {
-            color: #999;
-            font-size: 0.9em;
-            margin-bottom: 15px;
+        .blog-content {
+            padding: 25px;
         }
-        .post-excerpt {
-            color: #666;
-            line-height: 1.7;
+        .blog-title {
+            color: #2c3e50;
+            font-size: 1.4em;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+        .blog-excerpt {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        .blog-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #95a5a6;
+            font-size: 0.9em;
             margin-bottom: 15px;
         }
         .read-more {
-            color: #D4A574;
+            background: #e91e63;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
             text-decoration: none;
-            font-weight: bold;
+            display: inline-block;
+            transition: background 0.3s ease;
         }
         .read-more:hover {
-            text-decoration: underline;
-        }
-        .back-link {
-            text-align: center;
-            margin-top: 30px;
-        }
-        .back-link a {
-            color: #D4A574;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .back-link a:hover {
-            text-decoration: underline;
+            background: #c2185b;
         }
         .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
             margin-bottom: 30px;
-            text-align: center;
+            justify-content: center;
         }
         .category-tag {
-            display: inline-block;
-            background: #D4A574;
+            background: #e91e63;
             color: white;
-            padding: 5px 15px;
-            margin: 5px;
+            padding: 8px 16px;
             border-radius: 20px;
             text-decoration: none;
             font-size: 0.9em;
+            transition: background 0.3s ease;
         }
         .category-tag:hover {
-            background: #c1965a;
+            background: #c2185b;
+        }
+        .back-to-home {
+            text-align: center;
+            margin-top: 40px;
+        }
+        .back-to-home a {
+            background: #2c3e50;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s ease;
+        }
+        .back-to-home a:hover {
+            background: #34495e;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Blog - Bienestar Holístico</h1>
-        
+        <div class="header">
+            <h1>🌿 Blog de Bienestar Holístico</h1>
+            <p>Descubre artículos especializados sobre terapias naturales, productos artesanales y consejos para una vida equilibrada en Cancún, Quintana Roo.</p>
+        </div>
+
         <div class="categories">
-            <a href="#aromaterapia" class="category-tag">Aromaterapia</a>
-            <a href="#rituales" class="category-tag">Rituales</a>
-            <a href="#productos-naturales" class="category-tag">Productos Naturales</a>
+            <a href="#terapias" class="category-tag">Terapias Naturales</a>
+            <a href="#productos" class="category-tag">Productos Artesanales</a>
             <a href="#bienestar" class="category-tag">Bienestar</a>
+            <a href="#espiritualidad" class="category-tag">Espiritualidad</a>
+            <a href="#consejos" class="category-tag">Consejos</a>
         </div>
-        
-        <div class="blog-post" id="aromaterapia-principiantes">
-            <div class="post-title">Guía Completa de Aromaterapia para Principiantes</div>
-            <div class="post-meta">Publicado el 1 de Septiembre, 2024 | Categoría: Aromaterapia</div>
-            <div class="post-excerpt">
-                La aromaterapia es una práctica milenaria que utiliza aceites esenciales para promover el bienestar físico y emocional. En esta guía completa, aprenderás los fundamentos de la aromaterapia, cómo elegir los aceites esenciales adecuados, y las mejores formas de incorporarlos en tu rutina diaria. Descubre cómo el poder de los aromas puede transformar tu bienestar...
-            </div>
-            <a href="#" class="read-more">Leer más →</a>
+
+        <div class="blog-grid">
+            <!-- Artículo 1 -->
+            <article class="blog-card">
+                <div class="blog-image">🕯️</div>
+                <div class="blog-content">
+                    <h2 class="blog-title">La Magia de las Velas de Miel: Beneficios y Usos Espirituales</h2>
+                    <div class="blog-meta">
+                        <span>📅 19 Dic 2024</span>
+                        <span>⏱️ 5 min lectura</span>
+                    </div>
+                    <p class="blog-excerpt">Descubre los increíbles beneficios de las velas de miel artesanales para rituales espirituales, meditación y limpieza energética. Aprende técnicas ancestrales...</p>
+                    <a href="#articulo-velas-miel" class="read-more">Leer más</a>
+                </div>
+            </article>
+
+            <!-- Artículo 2 -->
+            <article class="blog-card">
+                <div class="blog-image">🌿</div>
+                <div class="blog-content">
+                    <h2 class="blog-title">Conoterapia: La Terapia Ancestral para la Salud Auditiva</h2>
+                    <div class="blog-meta">
+                        <span>📅 18 Dic 2024</span>
+                        <span>⏱️ 7 min lectura</span>
+                    </div>
+                    <p class="blog-excerpt">La Conoterapia es una terapia holística ancestral que utiliza velas especiales para limpiar el canal auditivo. Conoce sus beneficios y cuándo aplicarla...</p>
+                    <a href="#articulo-conoterapia" class="read-more">Leer más</a>
+                </div>
+            </article>
+
+            <!-- Artículo 3 -->
+            <article class="blog-card">
+                <div class="blog-image">💎</div>
+                <div class="blog-content">
+                    <h2 class="blog-title">Sanación Femenina: El Poder de la Sanación de Útero</h2>
+                    <div class="blog-meta">
+                        <span>📅 17 Dic 2024</span>
+                        <span>⏱️ 6 min lectura</span>
+                    </div>
+                    <p class="blog-excerpt">Explora la importancia de la sanación energética del útero para el bienestar femenino. Una terapia holística que conecta con la feminidad sagrada...</p>
+                    <a href="#articulo-sanacion-utero" class="read-more">Leer más</a>
+                </div>
+            </article>
+
+            <!-- Artículo 4 -->
+            <article class="blog-card">
+                <div class="blog-image">🛁</div>
+                <div class="blog-content">
+                    <h2 class="blog-title">Baños Energéticos: Purificación y Limpieza Espiritual</h2>
+                    <div class="blog-meta">
+                        <span>📅 16 Dic 2024</span>
+                        <span>⏱️ 8 min lectura</span>
+                    </div>
+                    <p class="blog-excerpt">Aprende a preparar baños energéticos efectivos para limpiar tu aura, eliminar energías negativas y atraer positividad a tu vida...</p>
+                    <a href="#articulo-banos-energeticos" class="read-more">Leer más</a>
+                </div>
+            </article>
+
+            <!-- Artículo 5 -->
+            <article class="blog-card">
+                <div class="blog-image">🎵</div>
+                <div class="blog-content">
+                    <h2 class="blog-title">Sonoterapia: Sanación a Través del Sonido y Vibraciones</h2>
+                    <div class="blog-meta">
+                        <span>📅 15 Dic 2024</span>
+                        <span>⏱️ 6 min lectura</span>
+                    </div>
+                    <p class="blog-excerpt">Descubre cómo la Sonoterapia utiliza frecuencias sonoras para sanar el cuerpo y la mente. Una terapia milenaria para el bienestar integral...</p>
+                    <a href="#articulo-sonoterapia" class="read-more">Leer más</a>
+                </div>
+            </article>
+
+            <!-- Artículo 6 -->
+            <article class="blog-card">
+                <div class="blog-image">🔮</div>
+                <div class="blog-content">
+                    <h2 class="blog-title">Numerología: Descifra el Significado de los Números en tu Vida</h2>
+                    <div class="blog-meta">
+                        <span>📅 14 Dic 2024</span>
+                        <span>⏱️ 9 min lectura</span>
+                    </div>
+                    <p class="blog-excerpt">La Numerología es una herramienta poderosa para el autoconocimiento. Aprende a calcular tu número de vida y descubrir tu propósito...</p>
+                    <a href="#articulo-numerologia" class="read-more">Leer más</a>
+                </div>
+            </article>
         </div>
-        
-        <div class="blog-post" id="ritual-velas-miel">
-            <div class="post-title">Cómo Crear un Ritual Espiritual con Velas de Miel</div>
-            <div class="post-meta">Publicado el 28 de Agosto, 2024 | Categoría: Rituales</div>
-            <div class="post-excerpt">
-                Las velas de miel tienen propiedades especiales que las hacen ideales para rituales espirituales y meditación. En este artículo, te enseñamos cómo crear un ritual personalizado usando nuestras velas artesanales de miel pura. Aprende sobre la preparación del espacio, la intención correcta, y cómo aprovechar al máximo la energía de la miel natural...
-            </div>
-            <a href="#" class="read-more">Leer más →</a>
-        </div>
-        
-        <div class="blog-post">
-            <div class="post-title">Los Beneficios de los Baños Energéticos para el Bienestar</div>
-            <div class="post-meta">Publicado el 25 de Agosto, 2024 | Categoría: Bienestar</div>
-            <div class="post-excerpt">
-                Los baños energéticos son una práctica ancestral que combina agua, sales naturales y aceites esenciales para limpiar no solo el cuerpo, sino también la energía. Descubre cómo nuestros baños energéticos pueden ayudarte a relajarte, purificar tu aura y restaurar el equilibrio energético. Incluye recetas caseras y consejos profesionales...
-            </div>
-            <a href="#" class="read-more">Leer más →</a>
-        </div>
-        
-        <div class="blog-post">
-            <div class="post-title">Productos Naturales para Niños: Seguridad y Beneficios</div>
-            <div class="post-meta">Publicado el 22 de Agosto, 2024 | Categoría: Productos Naturales</div>
-            <div class="post-excerpt">
-                Los niños tienen necesidades especiales cuando se trata de productos naturales. En este artículo, exploramos cómo elegir productos holísticos seguros para niños, qué ingredientes evitar, y cómo nuestros productos especiales para niños pueden beneficiar su desarrollo y bienestar. Incluye guía de edades y recomendaciones...
-            </div>
-            <a href="#" class="read-more">Leer más →</a>
-        </div>
-        
-        <div class="blog-post">
-            <div class="post-title">Meditación y Aromaterapia: Una Combinación Perfecta</div>
-            <div class="post-meta">Publicado el 20 de Agosto, 2024 | Categoría: Aromaterapia</div>
-            <div class="post-excerpt">
-                La meditación y la aromaterapia trabajan juntas para crear una experiencia de relajación profunda. Aprende cómo usar nuestros aceites esenciales durante la meditación para mejorar la concentración, reducir el estrés y alcanzar estados de calma más profundos. Incluye técnicas específicas y recomendaciones de productos...
-            </div>
-            <a href="#" class="read-more">Leer más →</a>
-        </div>
-        
-        <div class="back-link">
-            <a href="https://amorymiel.com">← Volver a Amor Y Miel</a>
+
+        <div class="back-to-home">
+            <a href="/">🏠 Volver al Inicio</a>
         </div>
     </div>
 </body>
