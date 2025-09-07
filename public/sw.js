@@ -1,7 +1,9 @@
-// Service Worker for Amor Y Miel
-const CACHE_NAME = 'amor-y-miel-v1.0.0';
-const STATIC_CACHE = 'static-v1.0.0';
-const DYNAMIC_CACHE = 'dynamic-v1.0.0';
+// Service Worker for Amor Y Miel - Enhanced PWA
+const CACHE_NAME = 'amor-y-miel-v2.0.0';
+const STATIC_CACHE = 'static-v2.0.0';
+const DYNAMIC_CACHE = 'dynamic-v2.0.0';
+const IMAGE_CACHE = 'images-v2.0.0';
+const API_CACHE = 'api-v2.0.0';
 
 // Static assets to cache
 const STATIC_ASSETS = [
@@ -11,25 +13,51 @@ const STATIC_ASSETS = [
   '/favicon.ico',
   '/favicon.svg',
   '/public/images/logo/logo3.png',
-  '/manifest.json'
+  '/manifest.json',
+  '/blog.html',
+  '/articulo-velas-miel.html',
+  '/articulo-conoterapia.html',
+  '/faq.html',
+  '/local-seo.html'
+];
+
+// Critical images to cache
+const CRITICAL_IMAGES = [
+  '/public/images/logo/logo3.png',
+  '/public/images/service/conoterapia.jpg',
+  '/public/images/service/Sanación y bendición de útero.jpg'
+];
+
+// API endpoints to cache
+const API_ENDPOINTS = [
+  '/api/products',
+  '/api/services',
+  '/api/coupons'
 ];
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
   console.log('🔧 Service Worker installing...');
   event.waitUntil(
-    caches.open(STATIC_CACHE)
-      .then((cache) => {
+    Promise.all([
+      // Cache static assets
+      caches.open(STATIC_CACHE).then((cache) => {
         console.log('📦 Caching static assets');
         return cache.addAll(STATIC_ASSETS);
+      }),
+      // Cache critical images
+      caches.open(IMAGE_CACHE).then((cache) => {
+        console.log('🖼️ Caching critical images');
+        return cache.addAll(CRITICAL_IMAGES);
       })
-      .then(() => {
-        console.log('✅ Static assets cached successfully');
-        return self.skipWaiting();
-      })
-      .catch((error) => {
-        console.error('❌ Error caching static assets:', error);
-      })
+    ])
+    .then(() => {
+      console.log('✅ All assets cached successfully');
+      return self.skipWaiting();
+    })
+    .catch((error) => {
+      console.error('❌ Error caching assets:', error);
+    })
   );
 });
 

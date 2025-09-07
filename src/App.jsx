@@ -31,6 +31,151 @@ const renderStars = (rating, fontSize = "14px") => {
   );
 };
 
+// Mobile-First CSS Styles
+const mobileStyles = {
+  // Touch-friendly button styles
+  touchButton: {
+    minHeight: '44px',
+    minWidth: '44px',
+    padding: '12px 20px',
+    fontSize: '16px',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    border: 'none',
+    transition: 'all 0.3s ease',
+    userSelect: 'none',
+    WebkitTapHighlightColor: 'transparent',
+    touchAction: 'manipulation'
+  },
+  
+  // Mobile-optimized input styles
+  mobileInput: {
+    minHeight: '44px',
+    fontSize: '16px', // Prevents zoom on iOS
+    padding: '12px 16px',
+    borderRadius: '8px',
+    border: '1px solid #ddd',
+    width: '100%',
+    boxSizing: 'border-box'
+  },
+  
+  // Mobile navigation styles
+  mobileNav: {
+    position: 'fixed',
+    bottom: '0',
+    left: '0',
+    right: '0',
+    background: 'white',
+    borderTop: '1px solid #eee',
+    padding: '10px',
+    zIndex: 1000,
+    display: 'flex',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    boxShadow: '0 -2px 10px rgba(0,0,0,0.1)'
+  },
+  
+  // Mobile product grid
+  mobileProductGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+    gap: '16px',
+    padding: '16px',
+    marginBottom: '80px' // Space for mobile nav
+  },
+  
+  // Mobile modal styles
+  mobileModal: {
+    position: 'fixed',
+    top: '0',
+    left: '0',
+    right: '0',
+    bottom: '0',
+    background: 'rgba(0,0,0,0.5)',
+    zIndex: 2000,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '20px'
+  },
+  
+  // Mobile modal content
+  mobileModalContent: {
+    background: 'white',
+    borderRadius: '12px',
+    padding: '20px',
+    maxWidth: '100%',
+    maxHeight: '90vh',
+    overflow: 'auto',
+    width: '100%'
+  },
+  
+  // Mobile cart styles
+  mobileCart: {
+    position: 'fixed',
+    top: '0',
+    right: '0',
+    width: '100%',
+    height: '100vh',
+    background: 'white',
+    zIndex: 1500,
+    transform: 'translateX(100%)',
+    transition: 'transform 0.3s ease',
+    overflow: 'auto'
+  },
+  
+  // Mobile cart open
+  mobileCartOpen: {
+    transform: 'translateX(0)'
+  },
+  
+  // Mobile header
+  mobileHeader: {
+    position: 'sticky',
+    top: '0',
+    background: 'white',
+    zIndex: 1000,
+    padding: '12px 16px',
+    borderBottom: '1px solid #eee',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  
+  // Mobile search
+  mobileSearch: {
+    position: 'relative',
+    width: '100%',
+    margin: '0 16px'
+  },
+  
+  // Mobile filters
+  mobileFilters: {
+    position: 'fixed',
+    bottom: '80px',
+    left: '0',
+    right: '0',
+    background: 'white',
+    padding: '20px',
+    borderTop: '1px solid #eee',
+    zIndex: 1200,
+    maxHeight: '60vh',
+    overflow: 'auto'
+  },
+  
+  // Responsive breakpoints
+  breakpoints: {
+    mobile: '480px',
+    tablet: '768px',
+    desktop: '1024px'
+  }
+};
+
+// Media query helper
+const isMobile = () => window.innerWidth <= 768;
+const isTablet = () => window.innerWidth > 768 && window.innerWidth <= 1024;
+const isDesktop = () => window.innerWidth > 1024;
+
 // Lazy Loading Hook
 const useLazyLoading = () => {
   const [isIntersecting, setIsIntersecting] = useState(false);
