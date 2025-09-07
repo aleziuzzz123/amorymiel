@@ -570,6 +570,12 @@ function App() {
           moneda: 'MXN',
           duracion: '60-90 minutos',
           imagen: '/images/service/conoterapia.jpg',
+          // SEO Meta Tags
+          metaTitle: 'Conoterapia en Mérida | Terapia con Velas para Oídos | Amor Y Miel',
+          metaDescription: 'Conoterapia en Mérida, Yucatán. Terapia holística con velas especiales para limpieza del canal auditivo. Alivio de zumbidos, sinusitis y alergias. $250 MXN.',
+          metaKeywords: 'conoterapia Mérida, terapia con velas oídos, limpieza auditiva, zumbidos oídos, sinusitis, alergias respiratorias, terapia holística Yucatán',
+          // SEO Content
+          seoContent: 'La Conoterapia es una terapia ancestral que utiliza velas especiales para limpiar el canal auditivo de forma natural. Ideal para personas con dificultades auditivas, alergias respiratorias, mareos, vértigo, dolores de cabeza, zumbidos en los oídos, sinusitis, ronquidos e inflamaciones del oído. También recomendada para nadadores y trabajadores expuestos a polvo o ruido. Servicio especializado disponible en Mérida, Yucatán.',
           beneficios: [
             'Limpieza profunda del canal auditivo',
             'Alivio de alergias respiratorias',
@@ -602,7 +608,11 @@ function App() {
             'sanación auditiva',
             'tratamiento para zumbidos',
             'terapia para sinusitis',
-            'limpieza de oídos para nadadores'
+            'limpieza de oídos para nadadores',
+            'conoterapia Mérida',
+            'terapia auditiva Yucatán',
+            'limpieza oídos natural',
+            'terapia holística Mérida'
           ],
           stock: 999,
           activo: true,
@@ -640,6 +650,12 @@ function App() {
           moneda: 'MXN',
           duracion: '90-120 minutos',
           imagen: '/images/service/sanacion-utero.jpg',
+          // SEO Meta Tags
+          metaTitle: 'Sanación de Útero en Mérida | Terapia Femenina Holística | Amor Y Miel',
+          metaDescription: 'Sanación y bendición de útero en Mérida, Yucatán. Terapia holística femenina para equilibrio hormonal, sanación de traumas uterinos y conexión con la feminidad sagrada. $450 MXN.',
+          metaKeywords: 'sanación útero Mérida, terapia femenina, bendición útero, equilibrio hormonal, sanación menstrual, feminidad sagrada, terapia holística femenina Yucatán',
+          // SEO Content
+          seoContent: 'La Sanación y bendición de útero es una terapia holística especializada en la sanación energética y espiritual del útero. Esta práctica ancestral se enfoca en la limpieza, equilibrio y bendición de esta área sagrada de la mujer. Ideal para desequilibrios hormonales, dolores menstruales, problemas de fertilidad, traumas uterinos y desconexión con la feminidad. Servicio especializado disponible en Mérida, Yucatán.',
           beneficios: [
             'Limpieza energética del útero',
             'Equilibrio hormonal natural',
@@ -670,7 +686,11 @@ function App() {
             'sanación menstrual',
             'feminidad sagrada',
             'terapia holística femenina',
-            'limpieza energética uterina'
+            'limpieza energética uterina',
+            'sanación útero Mérida',
+            'terapia femenina Yucatán',
+            'bendición útero Mérida',
+            'equilibrio hormonal natural'
           ],
           stock: 999,
           activo: true,
@@ -685,6 +705,65 @@ function App() {
       }
     } catch (error) {
       console.error('Error adding Sanación y bendición de útero service:', error);
+    }
+  };
+
+  const addSEOToExistingProducts = async () => {
+    try {
+      const { collection, query, getDocs, updateDoc, doc } = await import('firebase/firestore');
+      const productsQuery = query(collection(db, 'products'));
+      const productsSnapshot = await getDocs(productsQuery);
+      
+      // SEO keywords by category
+      const seoKeywords = {
+        'Velas': {
+          keywords: ['velas de miel', 'velas artesanales', 'velas naturales', 'velas espirituales', 'velas rituales', 'velas miel Mérida', 'velas artesanales Yucatán'],
+          metaTitle: 'Velas de Miel Artesanales en Mérida | Productos Holísticos | Amor Y Miel',
+          metaDescription: 'Velas de miel artesanales en Mérida, Yucatán. Productos holísticos naturales para rituales espirituales y aromaterapia. Elaboradas con miel pura y cera natural.'
+        },
+        'Lociones': {
+          keywords: ['lociones naturales', 'loción palo santo', 'loción atrayente', 'agua florida', 'lociones artesanales', 'lociones Mérida', 'productos naturales Yucatán'],
+          metaTitle: 'Lociones Naturales Artesanales en Mérida | Palo Santo, Atrayente | Amor Y Miel',
+          metaDescription: 'Lociones naturales artesanales en Mérida, Yucatán. Palo Santo, Atrayente, Agua Florida. Productos holísticos para el cuidado natural de la piel.'
+        },
+        'Aceites': {
+          keywords: ['aceites esenciales', 'aceites naturales', 'aceite abre caminos', 'aceite para ungir', 'aromaterapia', 'aceites Mérida', 'aceites esenciales Yucatán'],
+          metaTitle: 'Aceites Esenciales Naturales en Mérida | Aromaterapia | Amor Y Miel',
+          metaDescription: 'Aceites esenciales naturales en Mérida, Yucatán. Aromaterapia, aceite abre caminos, aceite para ungir. Productos holísticos para bienestar integral.'
+        },
+        'Baños Energéticos': {
+          keywords: ['baños energéticos', 'baños espirituales', 'baños naturales', 'limpieza energética', 'baños rituales', 'baños Mérida', 'baños energéticos Yucatán'],
+          metaTitle: 'Baños Energéticos en Mérida | Limpieza Espiritual | Amor Y Miel',
+          metaDescription: 'Baños energéticos en Mérida, Yucatán. Limpieza espiritual, baños rituales, productos naturales para purificación energética y bienestar holístico.'
+        },
+        'Servicios': {
+          keywords: ['servicios espirituales', 'terapias holísticas', 'consultas espirituales', 'limpieza energética', 'servicios Mérida', 'terapias Yucatán'],
+          metaTitle: 'Servicios Espirituales en Mérida | Terapias Holísticas | Amor Y Miel',
+          metaDescription: 'Servicios espirituales en Mérida, Yucatán. Terapias holísticas, consultas espirituales, limpieza energética. Conoterapia, sanación de útero y más.'
+        }
+      };
+
+      for (const productDoc of productsSnapshot.docs) {
+        const product = productDoc.data();
+        const category = product.categoria;
+        
+        if (seoKeywords[category] && !product.metaTitle) {
+          const seoData = seoKeywords[category];
+          
+          await updateDoc(doc(db, 'products', productDoc.id), {
+            metaTitle: seoData.metaTitle,
+            metaDescription: seoData.metaDescription,
+            metaKeywords: seoData.keywords.join(', '),
+            seoContent: `${product.descripcion} ${seoData.keywords.slice(0, 5).join(', ')}. Producto artesanal disponible en Mérida, Yucatán.`,
+            keywords: [...(product.keywords || []), ...seoData.keywords],
+            fechaActualizacion: new Date()
+          });
+          
+          console.log(`✅ Added SEO to ${product.nombre}`);
+        }
+      }
+    } catch (error) {
+      console.error('Error adding SEO to existing products:', error);
     }
   };
 
@@ -714,6 +793,9 @@ function App() {
   
   // Add Sanación y bendición de útero service if it doesn't exist
   await addSanacionUteroService();
+  
+  // Add SEO meta tags to existing products
+  await addSEOToExistingProducts();
       
       const allProducts = productsSnapshot.docs.map(doc => ({
         id: doc.id,
