@@ -924,7 +924,7 @@ function App() {
           precio: 450,
           moneda: 'MXN',
           duracion: '90-120 minutos',
-          imagen: '/images/service/sanacion-utero.jpg',
+          imagen: '/images/service/Sanación y bendición de útero.jpg',
           // SEO Meta Tags
           metaTitle: 'Sanación de Útero en Cancún | Terapia Femenina Holística | Amor Y Miel',
           metaDescription: 'Sanación y bendición de útero en Cancún, Quintana Roo. Terapia holística femenina para equilibrio hormonal, sanación de traumas uterinos y conexión con la feminidad sagrada. $450 MXN.',
