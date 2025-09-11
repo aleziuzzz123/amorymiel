@@ -585,13 +585,6 @@ const CATEGORIES = ["Todos", "Velas", "Lociones", "Brisas Áuricas", "Exfoliante
 
 function App() {
   const [cart, setCart] = useState([]);
-  
-  // DEBUG: Wrap setCart to track all calls
-  const debugSetCart = (newCart) => {
-    console.log('🔧 setCart called with:', newCart);
-    console.trace('🔧 setCart call stack');
-    setCart(newCart);
-  };
   const [showCart, setShowCart] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todos");
@@ -1310,7 +1303,7 @@ function App() {
         });
         
         // Clear cart
-        debugSetCart([]);
+        setCart([]);
         
         alert('✅ ¡Pago confirmado! Tu orden ha sido procesada exitosamente.');
       } else if (status === 'failure') {
@@ -1619,7 +1612,7 @@ function App() {
     return wishlist.some(item => item.id === productId);
   };
 
-  // Load wishlist and cart from localStorage on component mount
+  // NUCLEAR CART RESET - Complete cart wipe on every page load
   useEffect(() => {
     // Load wishlist
     const savedWishlist = localStorage.getItem('amor-y-miel-wishlist');
@@ -1633,38 +1626,41 @@ function App() {
       }
     }
 
-    // AGGRESSIVE CART CLEARING - Remove all possible cart data
-    // This prevents automatic items from being added on page load
-    localStorage.removeItem('amor-y-miel-cart');
-    localStorage.removeItem('amym-cart');
-    localStorage.removeItem('cart');
-    localStorage.removeItem('shopping-cart');
-    localStorage.removeItem('user-cart');
+    // NUCLEAR OPTION: Clear absolutely everything that could contain cart data
+    const cartKeys = [
+      'amor-y-miel-cart', 'amym-cart', 'cart', 'shopping-cart', 'user-cart',
+      'amorymiel-cart', 'ecommerce-cart', 'store-cart', 'productos-cart',
+      'items-cart', 'carrito', 'productos', 'items'
+    ];
     
-    // Clear any cart data from sessionStorage as well
-    sessionStorage.removeItem('amor-y-miel-cart');
-    sessionStorage.removeItem('amym-cart');
-    sessionStorage.removeItem('cart');
+    // Clear from localStorage
+    cartKeys.forEach(key => {
+      localStorage.removeItem(key);
+    });
     
-    // Force cart to be empty
-    debugSetCart([]);
+    // Clear from sessionStorage
+    cartKeys.forEach(key => {
+      sessionStorage.removeItem(key);
+    });
     
-    console.log('🧹 Cart cleared on page load - no automatic items should appear');
+    // Force cart to be completely empty - no exceptions
+    setCart([]);
     
-    // DEBUG: Monitor cart changes
-    console.log('🔍 Initial cart state:', []);
+    // Force cart widget to be closed
+    setShowCart(false);
+    
+    console.log('🧹 NUCLEAR CART RESET - All cart data wiped');
     
     // Also clear any Firebase cart data for the current user
     clearFirebaseCartData();
+    
+    // Add a timeout to ensure cart stays empty
+    setTimeout(() => {
+      setCart([]);
+      console.log('🧹 Double-check cart reset after timeout');
+    }, 1000);
   }, []);
 
-  // DEBUG: Monitor cart changes
-  useEffect(() => {
-    console.log('🛒 Cart state changed:', cart);
-    if (cart.length > 0) {
-      console.log('🛒 Cart items:', cart.map(item => ({ nombre: item.nombre, precio: item.precio })));
-    }
-  }, [cart]);
 
   // Function to clear Firebase cart data
   const clearFirebaseCartData = async () => {
@@ -2246,10 +2242,6 @@ function App() {
   };
 
   const addToCart = async (product) => {
-    // DEBUG: Log when addToCart is called
-    console.log('🛒 addToCart called with product:', product?.nombre, 'Price:', product?.precio);
-    console.trace('🛒 addToCart call stack');
-    
     // Require user to be logged in to add items to cart
     if (!user) {
       setShowAuthModal(true);
@@ -2281,7 +2273,7 @@ function App() {
       return;
     }
 
-    debugSetCart(prev => {
+    setCart(prev => {
       const existingItem = prev.find(item => 
         item.id === product.id && 
         (!product.variante || item.variante?.sku === product.variante?.sku)
@@ -2423,7 +2415,7 @@ function App() {
   // Migration function removed - no longer needed
 
   const removeFromCart = (productId) => {
-    debugSetCart(prev => {
+    setCart(prev => {
       const newCart = prev.filter(item => item.id !== productId);
       localStorage.setItem('amor-y-miel-cart', JSON.stringify(newCart));
       return newCart;
@@ -2435,7 +2427,7 @@ function App() {
       removeFromCart(productId);
       return;
     }
-    debugSetCart(prev => {
+    setCart(prev => {
       const newCart = prev.map(item => 
       item.id === productId 
         ? { ...item, quantity: newQuantity }
@@ -3249,7 +3241,7 @@ function App() {
       console.log('Stock reduced successfully');
       
       // Clear cart
-      debugSetCart([]);
+      setCart([]);
       console.log('Cart cleared');
       
       // Send order confirmation email
@@ -7146,7 +7138,7 @@ function App() {
                 {/* Clear Cart Button */}
                 <button
                 onClick={() => {
-                  debugSetCart([]);
+                  setCart([]);
                   setShowCart(false);
                 }}
                   style={{
@@ -8697,7 +8689,7 @@ function App() {
                     });
                     
                     // Clear cart
-                    debugSetCart([]);
+                    setCart([]);
                     
                     // Close checkout
                     setShowCheckout(false);
