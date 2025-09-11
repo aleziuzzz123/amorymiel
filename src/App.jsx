@@ -6036,7 +6036,7 @@ function App() {
                       Cancún, Q. Roo. CP 77515
                     </p>
                     <a 
-                      href="https://maps.google.com/?q=Centro+Comercial+Cancún+Maya,+Calle+Yaxcopoil+M2+SM59,+Edificio+9,+Supermanzana+Gestalt+del+Caribe+Local+217,+77515+Cancún,+Q.R."
+                      href="https://maps.google.com/?q=Calle+Yaxcopoil+M2+SM59,+Edificio+9,+Supermanzana+Gestalt+del+Caribe+Local+217,+77515+Cancún,+Q.R."
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{
