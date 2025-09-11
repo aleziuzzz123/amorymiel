@@ -6031,8 +6031,9 @@ function App() {
                   }}>
                     <p style={{ margin: "0" }}>
                       <strong>📍 Gestalt del Caribe</strong><br/>
-                      Centro Comercial Cancún Maya, Local 217<br/>
-                      Cancún, Quintana Roo, México
+                      Calle Yaxcopoil M2 SM59, Edificio 9,<br/>
+                      Local 217 Centro Comercial Cancún Maya,<br/>
+                      Cancún, Q. Roo. CP 77515
                     </p>
                     <a 
                       href="https://maps.google.com/?q=Centro+Comercial+Cancún+Maya,+Calle+Yaxcopoil+M2+SM59,+Edificio+9,+Supermanzana+Gestalt+del+Caribe+Local+217,+77515+Cancún,+Q.R."
