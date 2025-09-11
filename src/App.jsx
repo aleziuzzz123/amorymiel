@@ -6013,7 +6013,7 @@ function App() {
                     background: "#f8f9fa"
                   }}>
                     <iframe
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3720.123456789!2d-86.8515!3d21.1619!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f4c2b123456789%3A0x123456789abcdef!2sAmor%20y%20Miel!5e0!3m2!1ses!2smx!4v1234567890123!5m2!1ses!2smx"
+                      src="https://www.google.com/maps/embed?q=Amor+y+Miel,+Calle+Yaxcopoil+M2+SM59,+Edificio+9,+Local+217+Centro+Comercial+Cancún+Maya,+Cancún,+Q.+Roo.+CP+77515&zoom=16"
                       width="100%"
                       height="100%"
                       style={{ border: 0 }}
