@@ -1310,7 +1310,7 @@ function App() {
         });
         
         // Clear cart
-        setCart([]);
+        debugSetCart([]);
         
         alert('✅ ¡Pago confirmado! Tu orden ha sido procesada exitosamente.');
       } else if (status === 'failure') {
@@ -2423,7 +2423,7 @@ function App() {
   // Migration function removed - no longer needed
 
   const removeFromCart = (productId) => {
-    setCart(prev => {
+    debugSetCart(prev => {
       const newCart = prev.filter(item => item.id !== productId);
       localStorage.setItem('amor-y-miel-cart', JSON.stringify(newCart));
       return newCart;
@@ -2435,7 +2435,7 @@ function App() {
       removeFromCart(productId);
       return;
     }
-    setCart(prev => {
+    debugSetCart(prev => {
       const newCart = prev.map(item => 
       item.id === productId 
         ? { ...item, quantity: newQuantity }
@@ -3249,7 +3249,7 @@ function App() {
       console.log('Stock reduced successfully');
       
       // Clear cart
-      setCart([]);
+      debugSetCart([]);
       console.log('Cart cleared');
       
       // Send order confirmation email
@@ -7146,7 +7146,7 @@ function App() {
                 {/* Clear Cart Button */}
                 <button
                 onClick={() => {
-                  setCart([]);
+                  debugSetCart([]);
                   setShowCart(false);
                 }}
                   style={{
@@ -8697,7 +8697,7 @@ function App() {
                     });
                     
                     // Clear cart
-                    setCart([]);
+                    debugSetCart([]);
                     
                     // Close checkout
                     setShowCheckout(false);
