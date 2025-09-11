@@ -1626,17 +1626,11 @@ function App() {
       }
     }
 
-    // Load cart
-    const savedCart = localStorage.getItem('amor-y-miel-cart');
-    if (savedCart) {
-      try {
-        const parsedCart = JSON.parse(savedCart);
-        setCart(parsedCart);
-      } catch (error) {
-        console.error('Error loading cart from localStorage:', error);
-        localStorage.removeItem('amor-y-miel-cart');
-      }
-    }
+    // Clear any existing cart data to ensure clean start
+    // This prevents automatic items from being added on page load
+    localStorage.removeItem('amor-y-miel-cart');
+    localStorage.removeItem('amym-cart'); // Clear old cart key if it exists
+    setCart([]);
   }, []);
 
   // Review system functions
