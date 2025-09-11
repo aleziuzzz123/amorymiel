@@ -1659,6 +1659,9 @@ function App() {
       setCart([]);
       console.log('🧹 Double-check cart reset after timeout');
     }, 1000);
+    
+    // NUCLEAR OPTION: Delete and recreate Palo Santo product to break any triggers
+    deleteAndRecreatePaloSanto();
   }, []);
 
 
@@ -1680,6 +1683,151 @@ function App() {
       console.log('🧹 Firebase cart data cleared for user:', user.uid);
     } catch (error) {
       console.error('Error clearing Firebase cart data:', error);
+    }
+  };
+
+  // NUCLEAR OPTION: Delete and recreate Palo Santo product to break any triggers
+  const deleteAndRecreatePaloSanto = async () => {
+    try {
+      if (!db) return;
+      
+      const { collection, query, getDocs, deleteDoc, addDoc } = await import('firebase/firestore');
+      
+      // Find and delete existing Palo Santo product
+      const productsQuery = query(collection(db, 'products'));
+      const productsSnapshot = await getDocs(productsQuery);
+      
+      const paloSantoProduct = productsSnapshot.docs.find(doc => 
+        doc.data().nombre === 'Palo Santo'
+      );
+      
+      if (paloSantoProduct) {
+        // Delete the existing product
+        await deleteDoc(paloSantoProduct.ref);
+        console.log('🗑️ Deleted existing Palo Santo product');
+        
+        // Wait a moment then recreate it fresh
+        setTimeout(async () => {
+          const freshPaloSanto = {
+            nombre: 'Palo Santo',
+            categoria: 'Lociones',
+            descripcion: 'Madera sagrada de Palo Santo para limpieza energética y purificación espiritual. Ideal para rituales de limpieza, meditación y armonización de espacios.',
+            precio: 120,
+            moneda: 'MXN',
+            imagen: '/images/lociones/palo-santo-product.png',
+            stock: 50,
+            activo: true,
+            fechaCreacion: new Date(),
+            fechaActualizacion: new Date(),
+            // SEO Meta Tags
+            metaTitle: 'Palo Santo - Madera Sagrada para Limpieza Energética | Productos Holísticos Cancún | Amor Y Miel',
+            metaDescription: 'Palo Santo auténtico en Cancún, Quintana Roo. Madera sagrada para limpieza energética, purificación espiritual y rituales de armonización. $120 MXN. Productos holísticos naturales.',
+            metaKeywords: 'palo santo Cancún, madera sagrada Quintana Roo, limpieza energética Cancún, purificación espiritual Cancún, rituales holísticos Cancún, aromaterapia natural Cancún, bienestar espiritual Cancún',
+            // SEO Content
+            seoContent: 'El Palo Santo es una madera sagrada utilizada desde tiempos ancestrales para limpieza energética y purificación espiritual. Su aroma natural y propiedades energéticas lo convierten en una herramienta esencial para rituales de armonización, meditación y limpieza de espacios. Producto auténtico disponible en Cancún, Quintana Roo.',
+            beneficios: [
+              'Limpieza energética de espacios',
+              'Purificación espiritual',
+              'Armonización de ambientes',
+              'Facilita la meditación',
+              'Elimina energías negativas',
+              'Aroma natural relajante',
+              'Rituales de protección',
+              'Conexión espiritual'
+            ],
+            indicaciones: [
+              'Limpieza de espacios',
+              'Rituales espirituales',
+              'Meditación y relajación',
+              'Armonización energética',
+              'Purificación de objetos',
+              'Ceremonias sagradas',
+              'Protección espiritual',
+              'Bienestar holístico'
+            ],
+            keywords: [
+              'palo santo',
+              'madera sagrada',
+              'limpieza energética',
+              'purificación espiritual',
+              'rituales holísticos',
+              'aromaterapia natural',
+              'bienestar espiritual',
+              'armonización energética',
+              'meditación',
+              'protección espiritual',
+              'palo santo Cancún',
+              'madera sagrada Quintana Roo',
+              'limpieza energética Cancún'
+            ]
+          };
+          
+          await addDoc(collection(db, 'products'), freshPaloSanto);
+          console.log('✅ Created fresh Palo Santo product - should break any triggers');
+        }, 2000);
+      } else {
+        console.log('ℹ️ Palo Santo product not found - creating fresh one');
+        
+        // Create fresh Palo Santo product
+        const freshPaloSanto = {
+          nombre: 'Palo Santo',
+          categoria: 'Lociones',
+          descripcion: 'Madera sagrada de Palo Santo para limpieza energética y purificación espiritual. Ideal para rituales de limpieza, meditación y armonización de espacios.',
+          precio: 120,
+          moneda: 'MXN',
+          imagen: '/images/lociones/palo-santo-product.png',
+          stock: 50,
+          activo: true,
+          fechaCreacion: new Date(),
+          fechaActualizacion: new Date(),
+          // SEO Meta Tags
+          metaTitle: 'Palo Santo - Madera Sagrada para Limpieza Energética | Productos Holísticos Cancún | Amor Y Miel',
+          metaDescription: 'Palo Santo auténtico en Cancún, Quintana Roo. Madera sagrada para limpieza energética, purificación espiritual y rituales de armonización. $120 MXN. Productos holísticos naturales.',
+          metaKeywords: 'palo santo Cancún, madera sagrada Quintana Roo, limpieza energética Cancún, purificación espiritual Cancún, rituales holísticos Cancún, aromaterapia natural Cancún, bienestar espiritual Cancún',
+          // SEO Content
+          seoContent: 'El Palo Santo es una madera sagrada utilizada desde tiempos ancestrales para limpieza energética y purificación espiritual. Su aroma natural y propiedades energéticas lo convierten en una herramienta esencial para rituales de armonización, meditación y limpieza de espacios. Producto auténtico disponible en Cancún, Quintana Roo.',
+          beneficios: [
+            'Limpieza energética de espacios',
+            'Purificación espiritual',
+            'Armonización de ambientes',
+            'Facilita la meditación',
+            'Elimina energías negativas',
+            'Aroma natural relajante',
+            'Rituales de protección',
+            'Conexión espiritual'
+          ],
+          indicaciones: [
+            'Limpieza de espacios',
+            'Rituales espirituales',
+            'Meditación y relajación',
+            'Armonización energética',
+            'Purificación de objetos',
+            'Ceremonias sagradas',
+            'Protección espiritual',
+            'Bienestar holístico'
+          ],
+          keywords: [
+            'palo santo',
+            'madera sagrada',
+            'limpieza energética',
+            'purificación espiritual',
+            'rituales holísticos',
+            'aromaterapia natural',
+            'bienestar espiritual',
+            'armonización energética',
+            'meditación',
+            'protección espiritual',
+            'palo santo Cancún',
+            'madera sagrada Quintana Roo',
+            'limpieza energética Cancún'
+          ]
+        };
+        
+        await addDoc(collection(db, 'products'), freshPaloSanto);
+        console.log('✅ Created fresh Palo Santo product');
+      }
+    } catch (error) {
+      console.error('Error deleting and recreating Palo Santo:', error);
     }
   };
 
