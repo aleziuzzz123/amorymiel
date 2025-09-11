@@ -1626,12 +1626,48 @@ function App() {
       }
     }
 
-    // Clear any existing cart data to ensure clean start
+    // AGGRESSIVE CART CLEARING - Remove all possible cart data
     // This prevents automatic items from being added on page load
     localStorage.removeItem('amor-y-miel-cart');
-    localStorage.removeItem('amym-cart'); // Clear old cart key if it exists
+    localStorage.removeItem('amym-cart');
+    localStorage.removeItem('cart');
+    localStorage.removeItem('shopping-cart');
+    localStorage.removeItem('user-cart');
+    
+    // Clear any cart data from sessionStorage as well
+    sessionStorage.removeItem('amor-y-miel-cart');
+    sessionStorage.removeItem('amym-cart');
+    sessionStorage.removeItem('cart');
+    
+    // Force cart to be empty
     setCart([]);
+    
+    console.log('🧹 Cart cleared on page load - no automatic items should appear');
+    
+    // Also clear any Firebase cart data for the current user
+    clearFirebaseCartData();
   }, []);
+
+  // Function to clear Firebase cart data
+  const clearFirebaseCartData = async () => {
+    try {
+      if (!user || !db) return;
+      
+      const { collection, query, getDocs, deleteDoc, where } = await import('firebase/firestore');
+      
+      // Get all cart items for this user
+      const cartItemsQuery = query(collection(db, 'cart_items'), where('userId', '==', user.uid));
+      const cartItemsSnapshot = await getDocs(cartItemsQuery);
+      
+      // Delete all cart items
+      const deletePromises = cartItemsSnapshot.docs.map(doc => deleteDoc(doc.ref));
+      await Promise.all(deletePromises);
+      
+      console.log('🧹 Firebase cart data cleared for user:', user.uid);
+    } catch (error) {
+      console.error('Error clearing Firebase cart data:', error);
+    }
+  };
 
   // Review system functions
   const openReviewModal = (product) => {
