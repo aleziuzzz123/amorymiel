@@ -585,6 +585,13 @@ const CATEGORIES = ["Todos", "Velas", "Lociones", "Brisas Áuricas", "Exfoliante
 
 function App() {
   const [cart, setCart] = useState([]);
+  
+  // DEBUG: Wrap setCart to track all calls
+  const debugSetCart = (newCart) => {
+    console.log('🔧 setCart called with:', newCart);
+    console.trace('🔧 setCart call stack');
+    setCart(newCart);
+  };
   const [showCart, setShowCart] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todos");
@@ -1640,13 +1647,24 @@ function App() {
     sessionStorage.removeItem('cart');
     
     // Force cart to be empty
-    setCart([]);
+    debugSetCart([]);
     
     console.log('🧹 Cart cleared on page load - no automatic items should appear');
+    
+    // DEBUG: Monitor cart changes
+    console.log('🔍 Initial cart state:', []);
     
     // Also clear any Firebase cart data for the current user
     clearFirebaseCartData();
   }, []);
+
+  // DEBUG: Monitor cart changes
+  useEffect(() => {
+    console.log('🛒 Cart state changed:', cart);
+    if (cart.length > 0) {
+      console.log('🛒 Cart items:', cart.map(item => ({ nombre: item.nombre, precio: item.precio })));
+    }
+  }, [cart]);
 
   // Function to clear Firebase cart data
   const clearFirebaseCartData = async () => {
@@ -2228,6 +2246,10 @@ function App() {
   };
 
   const addToCart = async (product) => {
+    // DEBUG: Log when addToCart is called
+    console.log('🛒 addToCart called with product:', product?.nombre, 'Price:', product?.precio);
+    console.trace('🛒 addToCart call stack');
+    
     // Require user to be logged in to add items to cart
     if (!user) {
       setShowAuthModal(true);
@@ -2259,7 +2281,7 @@ function App() {
       return;
     }
 
-    setCart(prev => {
+    debugSetCart(prev => {
       const existingItem = prev.find(item => 
         item.id === product.id && 
         (!product.variante || item.variante?.sku === product.variante?.sku)
